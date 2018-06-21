@@ -65,11 +65,20 @@ void OSS_Window::setFullScreen()
 void OSS_Window::setWindowed()
 {
     SDL_SetWindowFullscreen(window, SDL_FALSE);
+    fullscreen = false;
 }
 
 void OSS_Window::setBorder(SDL_bool bordered)
 {
     SDL_SetWindowBordered(window, bordered);
+    if (bordered == SDL_TRUE)
+    {
+        border = true;
+    }
+    else
+    {
+        border = false;
+    }
 }
 
 bool OSS_Window::isMinimized()
