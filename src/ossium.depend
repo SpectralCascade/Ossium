@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1529587589 source:/root/Ossium/ossium/src/main.cpp
+	<SDL2/SDL.h>
+	"oss_window.h"
+
+1529591411 /root/Ossium/ossium/src/oss_window.h
+	<string>
+	<SDL2/SDL.h>
+
+1529591423 source:/root/Ossium/ossium/src/oss_window.cpp
+	<SDL2/SDL.h>
+	"oss_window.h"
+
