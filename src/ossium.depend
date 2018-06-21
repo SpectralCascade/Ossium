@@ -1,13 +1,27 @@
 # depslib dependency file v1.0
-1529587589 source:/root/Ossium/ossium/src/main.cpp
+1529603950 source:/root/Ossium/ossium/src/main.cpp
+	<iostream>
 	<SDL2/SDL.h>
 	"oss_window.h"
+	"oss_texture.h"
 
 1529591411 /root/Ossium/ossium/src/oss_window.h
 	<string>
 	<SDL2/SDL.h>
 
-1529591423 source:/root/Ossium/ossium/src/oss_window.cpp
+1529592061 source:/root/Ossium/ossium/src/oss_window.cpp
 	<SDL2/SDL.h>
 	"oss_window.h"
+
+1529604209 source:/root/Ossium/ossium/src/oss_texture.cpp
+	<string>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	<SDL2/SDL_ttf.h>
+	"oss_texture.h"
+
+1529600319 /root/Ossium/ossium/src/oss_texture.h
+	<string>
+	<SDL2/SDL.h>
+	<SDL2/SDL_ttf.h>
 
