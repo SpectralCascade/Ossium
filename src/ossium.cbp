@@ -38,6 +38,8 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="oss_texture.cpp" />
 		<Unit filename="oss_texture.h" />
+		<Unit filename="oss_timer.cpp" />
+		<Unit filename="oss_timer.h" />
 		<Unit filename="oss_window.cpp" />
 		<Unit filename="oss_window.h" />
 		<Extensions>
