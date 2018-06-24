@@ -10,6 +10,5 @@ All these components are listed on the [SDL website](https://www.libsdl.org/down
 
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on 64-bit (arm) Linux
-with the GNU GCC mingw compiler. However, SDL is a cross-platform framework.
-Therefore it should be pretty easy to port it to Windows or Mac OS - check out
-Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL.
+with the GNU GCC mingw compiler. For the Windows branch, [click here](https://github.com/SpectralCascade/ossium/tree/windows).
+Check out Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL.
