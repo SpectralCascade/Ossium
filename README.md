@@ -2,7 +2,7 @@
 Ossium is a bare-bones 2D game engine built with SDL 2.
 
 # Pre-requisites
-All these components are listed on the [SDL website](https://www.libsdl.org/download-2.0.php)
+All these components are listed on the [main SDL 2 webpage](https://www.libsdl.org/download-2.0.php) and the [SDL 2 projects page](https://www.libsdl.org/projects).
 * SDL 2.0.8 (or greater)
 * SDL_Image
 * SDL_Mixer
