@@ -1,6 +1,9 @@
 #include <cstdio>
+#include <string.h>
 #include <SDL2/SDL.h>
 
+#include "oss_config.h"
+#include "oss_init.h"
 #include "oss_window.h"
 #include "oss_texture.h"
 #include "oss_timer.h"
@@ -10,21 +13,31 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     bool quit = false;
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (OSS_Init() < 0)
     {
-        printf("Error initialising SDL 2.");
+        printf("ERROR: Failed to initialise Ossium engine.");
     }
     else
     {
+        /// Load configuration settings
+        OSS_Config settings;
+        OSS_LoadConfig(&settings);
+
+        /// Create the window
+        OSS_Window mainWindow("Ossium Engine", 640, 480, settings.fullscreen);
+
+        /// Create renderer
+        SDL_Renderer* mainRenderer = OSS_CreateRenderer(mainWindow.getWindow(), settings.vsync);
+
+        /// Change pixel filtering setting
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
+
         OSS_Timer timer;
         float prevtime = 0.0;
         float deltatime = 0.0;
-        OSS_Window windowTest("Test", 640, 480);
         SDL_Event e;
         OSS_Texture textureTest;
-        SDL_Window* window_sdl = windowTest.getWindow();
-        SDL_Renderer* renderer = SDL_CreateRenderer(window_sdl, -1, SDL_RENDERER_ACCELERATED);
-        if (!textureTest.loadImage("test.png", renderer, SDL_GetWindowPixelFormat(window_sdl)))
+        if (!textureTest.loadImage("test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow())))
         {
             SDL_Log("%s", SDL_GetError());
         }
@@ -36,21 +49,21 @@ int main(int argc, char* argv[])
             prevtime = timer.getTicks();
             while (SDL_PollEvent(&e) != 0)
             {
-                windowTest.handle_events(e);
+                mainWindow.handle_events(e);
                 if (e.type == SDL_QUIT)
                 {
                     quit = true;
                     break;
                 }
             }
-            SDL_RenderClear(renderer);
-            angle += 90.0 * deltatime;
+            SDL_RenderClear(mainRenderer);
+            angle += 25.0 * deltatime;
             if (angle >= 360.0)
             {
                 angle -= 360.0;
             }
-            textureTest.render(renderer, 0, 0, NULL, angle);
-            SDL_RenderPresent(renderer);
+            textureTest.render(mainRenderer, 0, 0, NULL, angle);
+            SDL_RenderPresent(mainRenderer);
         }
     }
     return 0;

@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-D DEBUG" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -36,6 +37,10 @@
 			<Add option="`sdl2-config --libs`" />
 		</Linker>
 		<Unit filename="main.cpp" />
+		<Unit filename="oss_config.cpp" />
+		<Unit filename="oss_config.h" />
+		<Unit filename="oss_init.cpp" />
+		<Unit filename="oss_init.h" />
 		<Unit filename="oss_texture.cpp" />
 		<Unit filename="oss_texture.h" />
 		<Unit filename="oss_timer.cpp" />

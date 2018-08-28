@@ -4,7 +4,7 @@
 #include <string>
 #include <SDL2/SDL.h>
 
-/// Wrapper class for combined SDL_Window and SDL_Renderer
+/// Wrapper class for SDL_Window
 class OSS_Window
 {
 public:
