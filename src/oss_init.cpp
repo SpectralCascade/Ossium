@@ -37,6 +37,7 @@ int OSS_Init()
             {
                 /// Change this number of channels later as necessary
                 Mix_AllocateChannels(16);
+                #ifdef _SDL_TTF_H
                 if (TTF_Init() == -1)
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, TTF_GetError());
@@ -46,6 +47,7 @@ int OSS_Init()
                 {
                     SDL_Log("Initialised OSSIUM ENGINE successfully!");
                 }
+                #endif // _SDL_TTF_H
             }
         }
     }

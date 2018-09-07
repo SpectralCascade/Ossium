@@ -32,9 +32,16 @@ int main(int argc, char* argv[])
 
         /// Create texture manager
         OSS_ResourceManager<OSS_Texture> textureManager;
-        textureManager.loadTexture("testing.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        if (textureManager.loadResource("test.png"))
+        {
+            textureManager.postLoadInit("test.png", mainRenderer);
+        }
+        else
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load resource!");
+        }
 
-        /// Change pixel filtering setting
+        /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
 
         OSS_Timer timer;

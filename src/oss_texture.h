@@ -21,11 +21,15 @@ public:
     /// Load an image file to a surface and returns true if it was successful
     bool load(string guid_path);
 
-    /// Post-load texture initialisation
-    bool postLoadInit(string guid_path, SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+    /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate
+    /// the texture's pixel data
+    bool postLoadInit(SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
 
+    #ifdef _SDL_TTF_H
     /// Creates a texture using a TrueType Font and a given string, returns success
+    /// TODO: Transfer and refactor this method to a new class dedicated to text rendering
     bool createText(string text, SDL_Renderer* renderer, TTF_Font* font, SDL_Color color);
+    #endif // _SDL_TTF_H
 
     /// Set mod blending mode
     void setBlendMode(SDL_BlendMode blend);
@@ -37,14 +41,15 @@ public:
     /// Renders the texture to video memory; supports simple texture clipping
     void render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-    /// Overloaded for simplicity
+    /// Simplified overload method
+    void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+    /// Even simpler overload method!
     void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
 
-    /// Get dimensions
+    /// Get texture dimensions
     int getWidth();
     int getHeight();
-    //void setWidth(int w);
-    //void setHeight(int h);
 
     /// In order to manipulate the individual pixels of a texture, we need to lock/unlock it as necessary
     bool lockPixels();
@@ -56,7 +61,7 @@ public:
     int getPitch();
 
 private:
-    /// Actual image as temporary surface
+    /// Actual image as temporary SDL_Surface; converted to SDL_Texture by post-load initialisation method
     SDL_Surface* tempSurface;
 
     /// Texture image
