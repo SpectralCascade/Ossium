@@ -41,10 +41,13 @@
 		<Unit filename="oss_config.h" />
 		<Unit filename="oss_init.cpp" />
 		<Unit filename="oss_init.h" />
+		<Unit filename="oss_resourcemanager.h" />
 		<Unit filename="oss_texture.cpp" />
 		<Unit filename="oss_texture.h" />
 		<Unit filename="oss_timer.cpp" />
 		<Unit filename="oss_timer.h" />
+		<Unit filename="oss_vector.cpp" />
+		<Unit filename="oss_vector.h" />
 		<Unit filename="oss_window.cpp" />
 		<Unit filename="oss_window.h" />
 		<Extensions>

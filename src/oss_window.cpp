@@ -11,6 +11,11 @@ OSS_Window::OSS_Window(const char* title, int width, int height, bool fullscrn)
     border = true;
 
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
+    if (window == NULL)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Window creation failed! SDL_Error: %s", SDL_GetError());
+        throw;
+    }
 
     if (fullscreen)
     {

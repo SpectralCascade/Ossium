@@ -7,6 +7,7 @@
 #include "oss_window.h"
 #include "oss_texture.h"
 #include "oss_timer.h"
+#include "oss_resourcemanager.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ int main(int argc, char* argv[])
     bool quit = false;
     if (OSS_Init() < 0)
     {
-        printf("ERROR: Failed to initialise Ossium engine.");
+        printf("ERROR: Failed to initialise Ossium engine.\n");
     }
     else
     {
@@ -29,6 +30,10 @@ int main(int argc, char* argv[])
         /// Create renderer
         SDL_Renderer* mainRenderer = OSS_CreateRenderer(mainWindow.getWindow(), settings.vsync);
 
+        /// Create texture manager
+        OSS_ResourceManager<OSS_Texture> textureManager;
+        textureManager.loadTexture("testing.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+
         /// Change pixel filtering setting
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
 
@@ -36,11 +41,7 @@ int main(int argc, char* argv[])
         float prevtime = 0.0;
         float deltatime = 0.0;
         SDL_Event e;
-        OSS_Texture textureTest;
-        if (!textureTest.loadImage("test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow())))
-        {
-            SDL_Log("%s", SDL_GetError());
-        }
+
         float angle = 0.0;
         timer.start();
         while (!quit)
@@ -62,7 +63,10 @@ int main(int argc, char* argv[])
             {
                 angle -= 360.0;
             }
-            textureTest.render(mainRenderer, 0, 0, NULL, angle);
+            if (textureManager.getResource("test.png") != NULL)
+            {
+                textureManager.getResource("test.png")->render(mainRenderer, 0, 0, NULL, angle);
+            }
             SDL_RenderPresent(mainRenderer);
         }
     }

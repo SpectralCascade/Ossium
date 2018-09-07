@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1535468331 source:/root/Ossium/ossium/src/main.cpp
+1535575221 source:/root/Ossium/ossium/src/main.cpp
 	<cstdio>
 	<string.h>
 	<SDL2/SDL.h>
@@ -8,23 +8,24 @@
 	"oss_window.h"
 	"oss_texture.h"
 	"oss_timer.h"
+	"oss_resourcemanager.h"
 
 1535448717 /root/Ossium/ossium/src/oss_window.h
 	<string>
 	<SDL2/SDL.h>
 
-1529592061 source:/root/Ossium/ossium/src/oss_window.cpp
+1535574511 source:/root/Ossium/ossium/src/oss_window.cpp
 	<SDL2/SDL.h>
 	"oss_window.h"
 
-1529604209 source:/root/Ossium/ossium/src/oss_texture.cpp
+1535574932 source:/root/Ossium/ossium/src/oss_texture.cpp
 	<string>
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<SDL2/SDL_ttf.h>
 	"oss_texture.h"
 
-1529600319 /root/Ossium/ossium/src/oss_texture.h
+1535622128 /root/Ossium/ossium/src/oss_texture.h
 	<string>
 	<SDL2/SDL.h>
 	<SDL2/SDL_ttf.h>
@@ -33,13 +34,13 @@
 	<SDL2/SDL.h>
 	"oss_timer.h"
 
-1529608681 /root/Ossium/ossium/src/oss_timer.h
+1535531489 /root/Ossium/ossium/src/oss_timer.h
 	<SDL2/SDL.h>
 
 1535465416 /root/Ossium/ossium/src/oss_init.h
 	<SDL2/SDL.h>
 
-1535466978 source:/root/Ossium/ossium/src/oss_init.cpp
+1535575810 source:/root/Ossium/ossium/src/oss_init.cpp
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<SDL2/SDL_ttf.h>
@@ -399,7 +400,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1535467996 source:/root/Ossium/ossium/src/oss_config.cpp
+1535574176 source:/root/Ossium/ossium/src/oss_config.cpp
 	<string>
 	<iostream>
 	<fstream>
@@ -407,4 +408,21 @@
 	"oss_config.h"
 
 1535468217 /root/Ossium/ossium/src/oss_config.h
+
+1535485654 source:/root/Ossium/ossium/src/oss_vector.cpp
+	<math.h>
+	"oss_vector.h"
+
+1535486099 /root/Ossium/ossium/src/oss_vector.h
+
+1535557527 source:/root/Ossium/ossium/src/oss_resourcemanager.cpp
+	<string>
+	<map>
+	<iterator>
+	"oss_resourcemanager.h"
+
+1535618272 /root/Ossium/ossium/src/oss_resourcemanager.h
+	<string.h>
+	<map>
+	<SDL2/SDL.h>
 

@@ -44,14 +44,14 @@ bool OSS_Texture::loadImage(string path, SDL_Renderer* renderer, Uint32 windowPi
             SDL_Surface* formattedSurface = SDL_ConvertSurfaceFormat(loadedSurface, windowPixelFormat, 0);
             if (formattedSurface == NULL)
             {
-                SDL_Log("%s", SDL_GetError());
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
             }
             else
             {
                 newTexture = SDL_CreateTexture(renderer, windowPixelFormat, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
                 if (newTexture == NULL)
                 {
-                    SDL_Log("%s", SDL_GetError());
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
                 }
                 else
                 {
@@ -72,7 +72,7 @@ bool OSS_Texture::loadImage(string path, SDL_Renderer* renderer, Uint32 windowPi
             newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
             if (newTexture == NULL)
             {
-                SDL_Log("%s", SDL_GetError());
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
             }
             else
             {
@@ -98,7 +98,7 @@ bool OSS_Texture::createText(string text, SDL_Renderer* renderer, TTF_Font* font
         newTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
         if (newTexture == NULL)
         {
-            SDL_Log("%s", SDL_GetError());
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
         }
         else
         {
@@ -126,19 +126,30 @@ void OSS_Texture::setColorMod(Uint8 r, Uint8 g, Uint8 b)
     SDL_SetTextureColorMod(texture, r, g, b);
 }
 
-void OSS_Texture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+void OSS_Texture::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
 {
-    SDL_Rect dest = {x, y, width, height};
     if (clip != NULL)
     {
-        dest.w = clip->w;
-        dest.h = clip->h;
         SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
     }
     else
     {
         SDL_Rect src = {0, 0, width, height};
         SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
+    }
+}
+
+void OSS_Texture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
+{
+    SDL_Rect dest = {x, y, width, height};
+    if (clip != NULL)
+    {
+        SDL_RenderCopy(renderer, texture, clip, &dest);
+    }
+    else
+    {
+        SDL_Rect src = {0, 0, width, height};
+        SDL_RenderCopy(renderer, texture, &src, &dest);
     }
 }
 
@@ -151,7 +162,7 @@ int OSS_Texture::getHeight()
 {
     return height;
 }
-
+/*
 void OSS_Texture::setWidth(int w)
 {
     width = w;
@@ -161,7 +172,7 @@ void OSS_Texture::setHeight(int h)
 {
     height = h;
 }
-
+*/
 bool OSS_Texture::lockPixels()
 {
     bool success = true;

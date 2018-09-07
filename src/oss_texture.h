@@ -18,8 +18,11 @@ public:
     /// Destroys the texture and makes it NULL
     void freeTexture();
 
-    /// Load an image file and returns true if it was successful, need window pixel format for pixel manipulation
-    bool loadImage(string path, SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+    /// Load an image file to a surface and returns true if it was successful
+    bool load(string guid_path);
+
+    /// Post-load texture initialisation
+    bool postLoadInit(string guid_path, SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
 
     /// Creates a texture using a TrueType Font and a given string, returns success
     bool createText(string text, SDL_Renderer* renderer, TTF_Font* font, SDL_Color color);
@@ -32,13 +35,16 @@ public:
     void setColorMod(Uint8 r, Uint8 g, Uint8 b);
 
     /// Renders the texture to video memory; supports simple texture clipping
-    void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+    void render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-    /// Get and set dimensions
+    /// Overloaded for simplicity
+    void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
+
+    /// Get dimensions
     int getWidth();
     int getHeight();
-    void setWidth(int w);
-    void setHeight(int h);
+    //void setWidth(int w);
+    //void setHeight(int h);
 
     /// In order to manipulate the individual pixels of a texture, we need to lock/unlock it as necessary
     bool lockPixels();
@@ -50,7 +56,10 @@ public:
     int getPitch();
 
 private:
-    /// Actual texture image
+    /// Actual image as temporary surface
+    SDL_Surface* tempSurface;
+
+    /// Texture image
     SDL_Texture* texture;
 
     /// Texture dimensions

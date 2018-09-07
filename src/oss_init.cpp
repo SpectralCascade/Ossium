@@ -9,7 +9,7 @@ int OSS_Init()
 {
     /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
     #ifdef DEBUG
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_WARN);
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
     #endif // DEBUG
 
     int error = 0;
@@ -41,6 +41,10 @@ int OSS_Init()
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, TTF_GetError());
                     error = OSS_INIT_ERROR_TTF;
+                }
+                else
+                {
+                    SDL_Log("Initialised OSSIUM ENGINE successfully!");
                 }
             }
         }
