@@ -37,7 +37,7 @@ void OSS_Texture::freeTexture()
     }
 }
 
-bool OSS_Texture::load(string guid_path)
+bool OSS_Texture::load(string guid_path, int* loadArgs)
 {
     if (tempSurface != NULL)
     {
@@ -114,6 +114,11 @@ bool OSS_Texture::postLoadInit(SDL_Renderer* renderer, Uint32 windowPixelFormat)
         SDL_FreeSurface(tempSurface);
         tempSurface = NULL;
     }
+    if (texture != NULL)
+    {
+        /// Enable hardware-accelerated alpha blending by default
+        setBlendMode(SDL_BLENDMODE_BLEND);
+    }
     return texture != NULL;
 }
 
@@ -181,7 +186,7 @@ void OSS_Texture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, f
     render(renderer, {x, y, width, height}, clip, angle, origin, flip);
 }
 
-void OSS_Texture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
+void OSS_Texture::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
 {
     SDL_assert(texture != NULL);
     SDL_assert(renderer != NULL);

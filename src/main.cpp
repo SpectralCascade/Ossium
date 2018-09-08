@@ -7,6 +7,8 @@
 #include "oss_window.h"
 #include "oss_texture.h"
 #include "oss_timer.h"
+#include "oss_font.h"
+#include "oss_text.h"
 #include "oss_resourcemanager.h"
 
 using namespace std;
@@ -39,6 +41,25 @@ int main(int argc, char* argv[])
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'testing.png'!");
             }
         }
+
+        /// Create font manager
+        OSS_ResourceManager<OSS_Font> fontManager;
+        fontManager.loadResource("consolas.ttf");
+        int fontSize = 56;
+        fontManager.loadResource("serif.ttf", &fontSize);
+        /// Test fonts
+        OSS_Text testOne;
+        OSS_Text testTwo;
+        testTwo.setStyling(TTF_STYLE_UNDERLINE | TTF_STYLE_BOLD | TTF_STYLE_ITALIC, 2);
+        testTwo.setRenderMode(OSS_RENDERTEXT_BLEND);
+        testTwo.setColor({0xFF, 0x00, 0x00, 0xFF});
+        testOne.setText("Muhahahaha! FONTS!");
+        testOne.setBackgroundColor({0xFF, 0x00, 0x00, 0xFF});
+        testOne.setRenderMode(OSS_RENDERTEXT_BLEND);
+        testOne.textToTexture(mainRenderer, fontManager.getResource("consolas.ttf")->getFont());
+        testTwo.setText("Fancy font :D");
+        testTwo.textToTexture(mainRenderer, fontManager.getResource("serif.ttf")->getFont());
+        testOne.setBox(true);
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
@@ -75,6 +96,9 @@ int main(int argc, char* argv[])
                 float height = textureManager.getResource("test.png")->getHeight() * zoom;
                 textureManager.getResource("test.png")->render(mainRenderer, { (int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
             }
+            testOne.renderSimple(mainRenderer, 0, 0, NULL);
+            testTwo.renderSimple(mainRenderer, 0, 200, NULL);
+            SDL_SetRenderDrawColor(mainRenderer, 0x00, 0x00, 0x00, 0xFF);
             SDL_RenderPresent(mainRenderer);
         }
     }

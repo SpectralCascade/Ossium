@@ -19,7 +19,7 @@ public:
     void freeTexture();
 
     /// Load an image file to a surface and returns true if it was successful
-    bool load(string guid_path);
+    bool load(string guid_path, int* loadArgs = NULL);
 
     /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate
     /// the texture's pixel data
@@ -44,8 +44,8 @@ public:
     /// Simplified overload method
     void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-    /// Even simpler overload method!
-    void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
+    /// Even simpler render method
+    void renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
 
     /// Get texture dimensions
     int getWidth();

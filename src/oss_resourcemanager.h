@@ -13,10 +13,23 @@ class OSS_ResourceManager
 {
 public:
     /// Loads a resource and adds it to the registry
-    bool loadResource(string guid_path)
+    bool loadResource(string guid_path, int* loadArgs = NULL)
     {
+        bool success = true;
         resourceType* resource = new resourceType();
-        if (resource->load(guid_path))
+        /// Load arguments aren't always necessary - allow resources that don't accept additional load arguments
+        if (loadArgs != NULL)
+        {
+            if (!resource->load(guid_path, loadArgs))
+            {
+                success = false;
+            }
+        }
+        else if (!resource->load(guid_path))
+        {
+            success = false;
+        }
+        if (success)
         {
             /// Add to registry
             registry[guid_path] = resource;
@@ -24,9 +37,8 @@ public:
         else
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to load resource '%s'.", guid_path.c_str());
-            return false;
         }
-        return true;
+        return success;
     };
 
     /// Post-load initialisation method for general resources
