@@ -32,9 +32,12 @@ int main(int argc, char* argv[])
 
         /// Create texture manager
         OSS_ResourceManager<OSS_Texture> textureManager;
-        if (textureManager.loadResource("testing.png"))
+        if (textureManager.loadResource("test.png"))
         {
-            textureManager.postLoadInit("testing.png", mainRenderer);
+            if (!textureManager.postLoadInit("test.png", mainRenderer))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'testing.png'!");
+            }
         }
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
