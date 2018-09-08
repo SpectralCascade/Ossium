@@ -17,6 +17,10 @@ public:
 
     /// Get/Set specifiers
     SDL_Window* getWindow();
+    int getWidth();
+    int getHeight();
+    void setWidth(int newWidth);
+    void setHeight(int newHeight);
     void setFullScreen();
     void setWindowed();
     void setBorder(SDL_bool bordered);
@@ -29,6 +33,10 @@ public:
 private:
     /// Individual window instance
     SDL_Window* window;
+
+    /// Window dimensions
+    int width;
+    int height;
 
     /// Active flags
     bool minimized;

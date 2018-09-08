@@ -61,6 +61,30 @@ SDL_Window* OSS_Window::getWindow()
     return window;
 }
 
+int OSS_Window::getWidth()
+{
+    SDL_GetWindowSize(window, &width, &height);
+    return width;
+}
+
+int OSS_Window::getHeight()
+{
+    SDL_GetWindowSize(window, &width, &height);
+    return height;
+}
+
+void OSS_Window::setWidth(int newWidth)
+{
+    width = newWidth;
+    SDL_SetWindowSize(window, width, height);
+}
+
+void OSS_Window::setHeight(int newHeight)
+{
+    height = newHeight;
+    SDL_SetWindowSize(window, width, height);
+}
+
 void OSS_Window::setFullScreen()
 {
     SDL_SetWindowFullscreen(window, SDL_TRUE);

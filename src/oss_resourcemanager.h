@@ -29,24 +29,6 @@ public:
         return true;
     };
 
-    /// OLD METHOD; deprecated as OSS_Texture is being refactored to work with loadResource() and postLoadInit()
-    /*/// Similar to loadResource method but specifically for textures
-    bool loadTexture(string guid_path, SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN)
-    {
-        resourceType* texture = new resourceType();
-        if (texture->loadImage(guid_path, renderer, windowPixelFormat))
-        {
-            /// Add to registry
-            registry[guid_path] = texture;
-        }
-        else
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to load texture '%s'.", guid_path.c_str());
-            return false;
-        }
-        return true;
-    };*/
-
     /// Post-load initialisation method for general resources
     bool postLoadInit(string guid_path)
     {
@@ -60,7 +42,7 @@ public:
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path);
+            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
         }
         return false;
     };

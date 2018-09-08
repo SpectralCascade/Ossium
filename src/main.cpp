@@ -32,13 +32,9 @@ int main(int argc, char* argv[])
 
         /// Create texture manager
         OSS_ResourceManager<OSS_Texture> textureManager;
-        if (textureManager.loadResource("test.png"))
+        if (textureManager.loadResource("testing.png"))
         {
-            textureManager.postLoadInit("test.png", mainRenderer);
-        }
-        else
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load resource!");
+            textureManager.postLoadInit("testing.png", mainRenderer);
         }
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
@@ -49,7 +45,7 @@ int main(int argc, char* argv[])
         float deltatime = 0.0;
         SDL_Event e;
 
-        float angle = 0.0;
+        float zoom = 1.0;
         timer.start();
         while (!quit)
         {
@@ -65,14 +61,16 @@ int main(int argc, char* argv[])
                 }
             }
             SDL_RenderClear(mainRenderer);
-            angle += 25.0 * deltatime;
-            if (angle >= 360.0)
+            zoom += 0.1 * deltatime;
+            if (zoom >= 1.0)
             {
-                angle -= 360.0;
+                zoom = 0.1;
             }
             if (textureManager.getResource("test.png") != NULL)
             {
-                textureManager.getResource("test.png")->render(mainRenderer, 0, 0, NULL, angle);
+                float width = textureManager.getResource("test.png")->getWidth() * zoom;
+                float height = textureManager.getResource("test.png")->getHeight() * zoom;
+                textureManager.getResource("test.png")->render(mainRenderer, { (int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
             }
             SDL_RenderPresent(mainRenderer);
         }
