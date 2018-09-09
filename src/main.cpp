@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
         /// Test fonts
         OSS_Text testOne;
         OSS_Text testTwo;
-        testTwo.setStyling(TTF_STYLE_UNDERLINE | TTF_STYLE_BOLD | TTF_STYLE_ITALIC, 2);
+        testTwo.setStyling(TTF_STYLE_UNDERLINE | TTF_STYLE_BOLD | TTF_STYLE_ITALIC, 2, TTF_HINTING_NONE);
         testTwo.setRenderMode(OSS_RENDERTEXT_BLEND);
         testTwo.setColor({0xFF, 0x00, 0x00, 0xFF});
         testOne.setText("Muhahahaha! FONTS!");
@@ -94,10 +94,10 @@ int main(int argc, char* argv[])
             {
                 float width = textureManager.getResource("test.png")->getWidth() * zoom;
                 float height = textureManager.getResource("test.png")->getHeight() * zoom;
-                textureManager.getResource("test.png")->render(mainRenderer, { (int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
+                textureManager.getResource("test.png")->render(mainRenderer, {(int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
             }
             testOne.renderSimple(mainRenderer, 0, 0, NULL);
-            testTwo.renderSimple(mainRenderer, 0, 200, NULL);
+            testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), 240 - (testTwo.getHeight() / 2), NULL);
             SDL_SetRenderDrawColor(mainRenderer, 0x00, 0x00, 0x00, 0xFF);
             SDL_RenderPresent(mainRenderer);
         }
