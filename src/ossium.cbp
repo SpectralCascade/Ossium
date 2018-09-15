@@ -48,10 +48,8 @@
 		<Unit filename="oss_text.h" />
 		<Unit filename="oss_texture.cpp" />
 		<Unit filename="oss_texture.h" />
-		<Unit filename="oss_timeline.cpp" />
-		<Unit filename="oss_timeline.h" />
-		<Unit filename="oss_timer.cpp" />
-		<Unit filename="oss_timer.h" />
+		<Unit filename="oss_time.cpp" />
+		<Unit filename="oss_time.h" />
 		<Unit filename="oss_vector.cpp" />
 		<Unit filename="oss_vector.h" />
 		<Unit filename="oss_window.cpp" />

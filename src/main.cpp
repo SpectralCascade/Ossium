@@ -6,7 +6,7 @@
 #include "oss_init.h"
 #include "oss_window.h"
 #include "oss_texture.h"
-#include "oss_timer.h"
+#include "oss_time.h"
 #include "oss_font.h"
 #include "oss_text.h"
 #include "oss_resourcemanager.h"
