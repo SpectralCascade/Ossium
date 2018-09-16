@@ -43,7 +43,7 @@
 		<Unit filename="oss_font.h" />
 		<Unit filename="oss_init.cpp" />
 		<Unit filename="oss_init.h" />
-		<Unit filename="oss_resourcemanager.h" />
+		<Unit filename="oss_resourcecontroller.h" />
 		<Unit filename="oss_text.cpp" />
 		<Unit filename="oss_text.h" />
 		<Unit filename="oss_texture.cpp" />

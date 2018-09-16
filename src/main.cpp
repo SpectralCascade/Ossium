@@ -9,7 +9,7 @@
 #include "oss_time.h"
 #include "oss_font.h"
 #include "oss_text.h"
-#include "oss_resourcemanager.h"
+#include "oss_resourcecontroller.h"
 
 using namespace std;
 
@@ -33,20 +33,20 @@ int main(int argc, char* argv[])
         SDL_Renderer* mainRenderer = OSS_CreateRenderer(mainWindow.getWindow(), settings.vsync);
 
         /// Create texture manager
-        OSS_ResourceManager<OSS_Texture> textureManager;
-        if (textureManager.loadResource("test.png"))
+        OSS_ResourceController<OSS_Texture> textureController;
+        if (textureController.loadResource("test.png"))
         {
-            if (!textureManager.postLoadInit("test.png", mainRenderer))
+            if (!textureController.postLoadInit("test.png", mainRenderer))
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'testing.png'!");
             }
         }
 
         /// Create font manager
-        OSS_ResourceManager<OSS_Font> fontManager;
-        fontManager.loadResource("consolas.ttf");
+        OSS_ResourceController<OSS_Font> fontController;
+        fontController.loadResource("consolas.ttf");
         int fontSize = 56;
-        fontManager.loadResource("serif.ttf", &fontSize);
+        fontController.loadResource("serif.ttf", &fontSize);
         /// Test fonts
         OSS_Text testOne;
         OSS_Text testTwo;
@@ -56,9 +56,9 @@ int main(int argc, char* argv[])
         testOne.setText("Muhahahaha! FONTS!");
         testOne.setBackgroundColor({0xFF, 0x00, 0x00, 0xFF});
         testOne.setRenderMode(OSS_RENDERTEXT_BLEND);
-        testOne.textToTexture(mainRenderer, fontManager.getResource("consolas.ttf")->getFont());
+        testOne.textToTexture(mainRenderer, fontController.getResource("consolas.ttf")->getFont());
         testTwo.setText("Fancy font :D");
-        testTwo.textToTexture(mainRenderer, fontManager.getResource("serif.ttf")->getFont());
+        testTwo.textToTexture(mainRenderer, fontController.getResource("serif.ttf")->getFont());
         testOne.setBox(true);
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
@@ -90,11 +90,11 @@ int main(int argc, char* argv[])
             {
                 zoom = 0.1;
             }
-            if (textureManager.getResource("test.png") != NULL)
+            if (textureController.getResource("test.png") != NULL)
             {
-                float width = textureManager.getResource("test.png")->getWidth() * zoom;
-                float height = textureManager.getResource("test.png")->getHeight() * zoom;
-                textureManager.getResource("test.png")->render(mainRenderer, {(int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
+                float width = textureController.getResource("test.png")->getWidth() * zoom;
+                float height = textureController.getResource("test.png")->getHeight() * zoom;
+                textureController.getResource("test.png")->render(mainRenderer, {(int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
             }
             testOne.renderSimple(mainRenderer, 0, 0, NULL);
             testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), 240 - (testTwo.getHeight() / 2), NULL);

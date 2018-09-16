@@ -13,7 +13,7 @@ public:
     OSS_Font();
     ~OSS_Font();
 
-    /// Load and post-load initialisation methods required for OSS_ResourceManager
+    /// Load and post-load initialisation methods required for OSS_ResourceController
     bool load(string guid_path, int* ptSize = NULL);
     bool postLoadInit(string guid_path);
 

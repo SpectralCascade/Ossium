@@ -1,5 +1,5 @@
-#ifndef OSS_RESOURCEMANAGER_H
-#define OSS_RESOURCEMANAGER_H
+#ifndef OSS_RESOURCECONTROLLER_H
+#define OSS_RESOURCECONTROLLER_H
 
 #include <string.h>
 #include <map>
@@ -9,7 +9,7 @@ using namespace std;
 
 /// Resource manager template for managing different types of resources
 template <class resourceType>
-class OSS_ResourceManager
+class OSS_ResourceController
 {
 public:
     /// Loads a resource and adds it to the registry
@@ -33,6 +33,7 @@ public:
         {
             /// Add to registry
             registry[guid_path] = resource;
+            crossReferences[resource] = 0;
         }
         else
         {
@@ -113,12 +114,17 @@ public:
             }
         }
         registry.clear();
+        crossReferences.clear();
     };
 
 private:
     /// Lookup registry; key = guid_path, value = pointer to resource
     map<string, resourceType*> registry;
 
+    /// Cross-reference table - if a resource has no references by other resources, it is safe to destroy
+    /// key = pointer to resource, value = reference count
+    map<resourceType*, unsigned int> crossReferences;
+
 };
 
-#endif // OSS_RESOURCEMANAGER_H
+#endif // OSS_RESOURCECONTROLLER_H
