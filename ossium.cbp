@@ -36,24 +36,25 @@
 		<Linker>
 			<Add option="`sdl2-config --libs`" />
 		</Linker>
-		<Unit filename="main.cpp" />
-		<Unit filename="oss_config.cpp" />
-		<Unit filename="oss_config.h" />
-		<Unit filename="oss_font.cpp" />
-		<Unit filename="oss_font.h" />
-		<Unit filename="oss_init.cpp" />
-		<Unit filename="oss_init.h" />
-		<Unit filename="oss_resourcecontroller.h" />
-		<Unit filename="oss_text.cpp" />
-		<Unit filename="oss_text.h" />
-		<Unit filename="oss_texture.cpp" />
-		<Unit filename="oss_texture.h" />
-		<Unit filename="oss_time.cpp" />
-		<Unit filename="oss_time.h" />
-		<Unit filename="oss_vector.cpp" />
-		<Unit filename="oss_vector.h" />
-		<Unit filename="oss_window.cpp" />
-		<Unit filename="oss_window.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/oss_config.cpp" />
+		<Unit filename="src/oss_config.h" />
+		<Unit filename="src/oss_entity.h" />
+		<Unit filename="src/oss_font.cpp" />
+		<Unit filename="src/oss_font.h" />
+		<Unit filename="src/oss_init.cpp" />
+		<Unit filename="src/oss_init.h" />
+		<Unit filename="src/oss_resourcecontroller.h" />
+		<Unit filename="src/oss_text.cpp" />
+		<Unit filename="src/oss_text.h" />
+		<Unit filename="src/oss_texture.cpp" />
+		<Unit filename="src/oss_texture.h" />
+		<Unit filename="src/oss_time.cpp" />
+		<Unit filename="src/oss_time.h" />
+		<Unit filename="src/oss_vector.cpp" />
+		<Unit filename="src/oss_vector.h" />
+		<Unit filename="src/oss_window.cpp" />
+		<Unit filename="src/oss_window.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

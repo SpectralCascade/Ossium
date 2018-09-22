@@ -51,7 +51,7 @@ bool OSS_Text::load(string guid_path)
     return true;
 }
 
-bool OSS_Text::postLoadInit(string guid_path)
+bool OSS_Text::init(string guid_path)
 {
     return true;
 }

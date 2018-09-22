@@ -40,7 +40,7 @@ bool OSS_Font::load(string guid_path, int* ptSize)
     return font != NULL;
 }
 
-bool OSS_Font::postLoadInit(string guid_path)
+bool OSS_Font::init(string guid_path)
 {
     return true;
 }

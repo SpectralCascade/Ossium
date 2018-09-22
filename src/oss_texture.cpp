@@ -60,7 +60,7 @@ bool OSS_Texture::load(string guid_path, int* loadArgs)
     return tempSurface != NULL;
 }
 
-bool OSS_Texture::postLoadInit(SDL_Renderer* renderer, Uint32 windowPixelFormat)
+bool OSS_Texture::init(SDL_Renderer* renderer, Uint32 windowPixelFormat)
 {
     SDL_assert(renderer != NULL);
     freeTexture();

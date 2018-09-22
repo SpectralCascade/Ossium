@@ -7,7 +7,7 @@
 
 using namespace std;
 
-/// Resource manager template for managing different types of resources
+/// Standalone resource controller template class
 template <class resourceType>
 class OSS_ResourceController
 {
@@ -33,7 +33,6 @@ public:
         {
             /// Add to registry
             registry[guid_path] = resource;
-            crossReferences[resource] = 0;
         }
         else
         {
@@ -48,7 +47,7 @@ public:
         resourceType* resource = getResource(guid_path);
         if (resource != NULL)
         {
-            if (resource->postLoadInit())
+            if (resource->init())
             {
                 return true;
             }
@@ -67,7 +66,7 @@ public:
         resourceType* resource = getResource(guid_path);
         if (resource != NULL)
         {
-            if (resource->postLoadInit(renderer, windowPixelFormat))
+            if (resource->init(renderer, windowPixelFormat))
             {
                 return true;
             }
@@ -114,16 +113,11 @@ public:
             }
         }
         registry.clear();
-        crossReferences.clear();
     };
 
 private:
     /// Lookup registry; key = guid_path, value = pointer to resource
     map<string, resourceType*> registry;
-
-    /// Cross-reference table - if a resource has no references by other resources, it is safe to destroy
-    /// key = pointer to resource, value = reference count
-    map<resourceType*, unsigned int> crossReferences;
 
 };
 

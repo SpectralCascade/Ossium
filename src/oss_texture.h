@@ -23,7 +23,7 @@ public:
 
     /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate
     /// the texture's pixel data
-    bool postLoadInit(SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+    bool init(SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
 
     #ifdef _SDL_TTF_H
     /// Creates a texture using a TrueType Font and a given string, returns success

@@ -22,7 +22,7 @@ public:
 
     /// These two methods may be removed/replaced at some point, as OSS_Text is really an entity, not a resource
     bool load(string guid_path);
-    bool postLoadInit(string guid_path);
+    bool init(string guid_path);
 
     /// Renders textData to a texture using a TrueType Font
     bool textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse);

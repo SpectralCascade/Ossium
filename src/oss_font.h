@@ -15,7 +15,7 @@ public:
 
     /// Load and post-load initialisation methods required for OSS_ResourceController
     bool load(string guid_path, int* ptSize = NULL);
-    bool postLoadInit(string guid_path);
+    bool init(string guid_path);
 
     /// Returns pointer to the font
     TTF_Font* getFont();
