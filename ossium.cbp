@@ -44,6 +44,8 @@
 		<Unit filename="src/oss_font.h" />
 		<Unit filename="src/oss_init.cpp" />
 		<Unit filename="src/oss_init.h" />
+		<Unit filename="src/oss_primitives.cpp" />
+		<Unit filename="src/oss_primitives.h" />
 		<Unit filename="src/oss_resourcecontroller.h" />
 		<Unit filename="src/oss_text.cpp" />
 		<Unit filename="src/oss_text.h" />

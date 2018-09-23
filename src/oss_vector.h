@@ -38,10 +38,10 @@ OSS_Vector OSS_CalcUnitVector(OSS_Vector vec);
 OSS_Vector OSS_CalcProjectVector(OSS_Vector vec_a, OSS_Vector vec_b);
 
 /// Calculate distance squared between two point vectors
-float OSS_CalcDistanceSquared(OSS_Vector vec_a, OSS_Vector vec_b);
+float OSS_CalcDistanceSquared(OSS_Vector pointA, OSS_Vector pointB);
 
 /// Calculate distance between two point vectors
-float OSS_CalcDistance(OSS_Vector vec_a, OSS_Vector vec_b);
+float OSS_CalcDistance(OSS_Vector pointA, OSS_Vector pointB);
 
 /// Calculate reflection of vector
 OSS_Vector OSS_CalcReflectionVector(OSS_Vector vec, OSS_Vector normal);

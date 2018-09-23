@@ -67,14 +67,14 @@ OSS_Vector OSS_CalcProjectVector(OSS_Vector vec_a, OSS_Vector vec_b)
     return vec_b * (OSS_CalcDotProduct(vec_a, vec_b) / OSS_CalcMagnitudeSquared(vec_b));
 }
 
-float OSS_CalcDistanceSquared(OSS_Vector vec_a, OSS_Vector vec_b)
+float OSS_CalcDistanceSquared(OSS_Vector pointA, OSS_Vector pointB)
 {
-    return OSS_CalcMagnitudeSquared(vec_b - vec_a);
+    return OSS_CalcMagnitudeSquared(pointB - pointA);
 }
 
-float OSS_CalcDistance(OSS_Vector vec_a, OSS_Vector vec_b)
+float OSS_CalcDistance(OSS_Vector pointA, OSS_Vector pointB)
 {
-    return OSS_CalcMagnitude(vec_b - vec_a);
+    return OSS_CalcMagnitude(pointB - pointA);
 }
 
 OSS_Vector OSS_CalcReflectionVector(OSS_Vector vec, OSS_Vector normal)
