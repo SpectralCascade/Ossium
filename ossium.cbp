@@ -47,6 +47,8 @@
 		<Unit filename="src/oss_primitives.cpp" />
 		<Unit filename="src/oss_primitives.h" />
 		<Unit filename="src/oss_resourcecontroller.h" />
+		<Unit filename="src/oss_statesprite.cpp" />
+		<Unit filename="src/oss_statesprite.h" />
 		<Unit filename="src/oss_text.cpp" />
 		<Unit filename="src/oss_text.h" />
 		<Unit filename="src/oss_texture.cpp" />
