@@ -9,6 +9,9 @@
 #include "oss_time.h"
 #include "oss_font.h"
 #include "oss_text.h"
+#include "oss_vector.h"
+#include "oss_primitives.h"
+#include "oss_statesprite.h"
 #include "oss_resourcecontroller.h"
 
 using namespace std;
@@ -43,7 +46,7 @@ int main(int argc, char* argv[])
         }
 
         /// Create font manager
-        OSS_ResourceController<OSS_Font> fontController;
+        /*OSS_ResourceController<OSS_Font> fontController;
         fontController.loadResource("consolas.ttf");
         int fontSize = 56;
         fontController.loadResource("serif.ttf", &fontSize);
@@ -59,7 +62,12 @@ int main(int argc, char* argv[])
         testOne.textToTexture(mainRenderer, fontController.getResource("consolas.ttf")->getFont());
         testTwo.setText("Fancy font :D");
         testTwo.textToTexture(mainRenderer, fontController.getResource("serif.ttf")->getFont());
-        testOne.setBox(true);
+        testOne.setBox(true);*/
+
+        /// State sprite and primitives for testing
+        OSS_Rectangle buttonRect = {0, 0, 640, 240};
+        OSS_StateSprite buttonSprite;
+        buttonSprite.addState("idle", textureController.getResource("test.png"), true, 2);
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
@@ -83,21 +91,28 @@ int main(int argc, char* argv[])
                     quit = true;
                     break;
                 }
+                if (e.type == SDL_MOUSEMOTION)
+                {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    OSS_Vector vec = {(float)x, (float)y};
+                    if (OSS_Intersect(vec, buttonRect))
+                    {
+                        buttonSprite.changeSubState(1);
+                    }
+                    else
+                    {
+                        buttonSprite.changeSubState(0);
+                    }
+                }
             }
             SDL_RenderClear(mainRenderer);
-            zoom += 0.1 * deltatime;
-            if (zoom >= 1.0)
-            {
-                zoom = 0.1;
-            }
             if (textureController.getResource("test.png") != NULL)
             {
-                float width = textureController.getResource("test.png")->getWidth() * zoom;
-                float height = textureController.getResource("test.png")->getHeight() * zoom;
-                textureController.getResource("test.png")->render(mainRenderer, {(int)(320 - (width / 2.0)), (int)(240 - (height / 2.0)), (int)width, (int)height}, NULL, zoom * 360.0);
+                buttonSprite.render(mainRenderer, buttonRect.x, buttonRect.y);
             }
-            testOne.renderSimple(mainRenderer, 0, 0, NULL);
-            testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), 240 - (testTwo.getHeight() / 2), NULL);
+            //testOne.renderSimple(mainRenderer, 0, 0, NULL);
+            //testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), 240 - (testTwo.getHeight() / 2), NULL);
             SDL_SetRenderDrawColor(mainRenderer, 0x00, 0x00, 0x00, 0xFF);
             SDL_RenderPresent(mainRenderer);
         }

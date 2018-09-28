@@ -172,6 +172,14 @@ void OSS_Texture::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, 
     SDL_assert(renderer != NULL);
     if (clip != NULL)
     {
+        if (dest.w == 0)
+        {
+            dest.w = clip->w;
+        }
+        if (dest.h == 0)
+        {
+            dest.h = clip->h;
+        }
         SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
     }
     else
@@ -183,7 +191,20 @@ void OSS_Texture::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, 
 
 void OSS_Texture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
 {
-    render(renderer, {x, y, width, height}, clip, angle, origin, flip);
+    SDL_assert(texture != NULL);
+    SDL_assert(renderer != NULL);
+    SDL_Rect dest = {x, y, width, height};
+    if (clip != NULL)
+    {
+        dest.w = clip->w;
+        dest.h = clip->h;
+        SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
+    }
+    else
+    {
+        SDL_Rect src = {0, 0, width, height};
+        SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
+    }
 }
 
 void OSS_Texture::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
@@ -193,6 +214,8 @@ void OSS_Texture::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* c
     SDL_Rect dest = {x, y, width, height};
     if (clip != NULL)
     {
+        dest.w = clip->w;
+        dest.h = clip->h;
         SDL_RenderCopy(renderer, texture, clip, &dest);
     }
     else
