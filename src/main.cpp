@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
         }
 
         /// Create font manager
-        /*OSS_ResourceController<OSS_Font> fontController;
+        OSS_ResourceController<OSS_Font> fontController;
         fontController.loadResource("consolas.ttf");
         int fontSize = 56;
         fontController.loadResource("serif.ttf", &fontSize);
@@ -58,11 +58,12 @@ int main(int argc, char* argv[])
         testTwo.setColor({0xFF, 0x00, 0x00, 0xFF});
         testOne.setText("Muhahahaha! FONTS!");
         testOne.setBackgroundColor({0xFF, 0x00, 0x00, 0xFF});
+        fontController.getResource("consolas.ttf");
         testOne.setRenderMode(OSS_RENDERTEXT_BLEND);
-        testOne.textToTexture(mainRenderer, fontController.getResource("consolas.ttf")->getFont());
+        testOne.textToTexture(mainRenderer, fontController.getResource("consolas.ttf"));
         testTwo.setText("Fancy font :D");
-        testTwo.textToTexture(mainRenderer, fontController.getResource("serif.ttf")->getFont());
-        testOne.setBox(true);*/
+        testTwo.textToTexture(mainRenderer, fontController.getResource("serif.ttf"));
+        testOne.setBox(true);
 
         /// State sprite and primitives for testing
         OSS_Rectangle buttonRect = {0, 0, 640, 240};
@@ -77,7 +78,6 @@ int main(int argc, char* argv[])
         float deltatime = 0.0;
         SDL_Event e;
 
-        float zoom = 1.0;
         timer.start();
         while (!quit)
         {

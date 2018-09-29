@@ -56,19 +56,13 @@ bool OSS_Text::init(string guid_path)
     return true;
 }
 
-bool OSS_Text::textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse)
+bool OSS_Text::textToTexture(SDL_Renderer* renderer, OSS_Font* fontToUse)
 {
     if (update)
     {
         update = false;
     }
-    /// Free texture
-    if (texture != NULL)
-    {
-        SDL_DestroyTexture(texture);
-        texture = NULL;
-    }
-    /// If for whatever reason fontToUse is NULL (e.g. texture is updating), attempt to use last known font
+    /// If for whatever reason fontToUse is NULL, attempt to use last known font
     if (fontToUse == NULL)
     {
         fontToUse = font;
@@ -78,15 +72,24 @@ bool OSS_Text::textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse)
             return false;
         }
     }
-    else
+    TTF_Font* actualFont = fontToUse->getFont();
+    if (actualFont == NULL)
     {
-        font = fontToUse;
+        return false;
+    }
+    font = fontToUse;
+
+    /// Free texture
+    if (texture != NULL)
+    {
+        SDL_DestroyTexture(texture);
+        texture = NULL;
     }
     /// Configure font
-    TTF_SetFontHinting(fontToUse, hinting);
-    TTF_SetFontKerning(fontToUse, (int)kerning);
-    TTF_SetFontOutline(fontToUse, outline);
-    TTF_SetFontStyle(fontToUse, style);
+    TTF_SetFontHinting(actualFont, hinting);
+    TTF_SetFontKerning(actualFont, (int)kerning);
+    TTF_SetFontOutline(actualFont, outline);
+    TTF_SetFontStyle(actualFont, style);
     /// Now render the text to a surface - do the outline first if one exists and we're not doing a shaded render
     SDL_Surface* textSurface = NULL;
     if (outline > 0 && renderMode != OSS_RENDERTEXT_SHADED)
@@ -100,11 +103,11 @@ bool OSS_Text::textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse)
         {
             case OSS_RENDERTEXT_BLEND:
             {
-                textSurface = TTF_RenderText_Blended(fontToUse, textData.c_str(), bgColor);
+                textSurface = TTF_RenderText_Blended(actualFont, textData.c_str(), bgColor);
             }
             default:
             {
-                textSurface = TTF_RenderText_Solid(fontToUse, textData.c_str(), bgColor);
+                textSurface = TTF_RenderText_Solid(actualFont, textData.c_str(), bgColor);
             }
         }
         if (textSurface != NULL)
@@ -125,24 +128,24 @@ bool OSS_Text::textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse)
         }
     }
     /// Now do the actual text texture
-    TTF_SetFontOutline(fontToUse, 0);
+    TTF_SetFontOutline(actualFont, 0);
     switch (renderMode)
     {
         case OSS_RENDERTEXT_SOLID:
         {
-            textSurface = TTF_RenderText_Solid(fontToUse, textData.c_str(), color);
+            textSurface = TTF_RenderText_Solid(actualFont, textData.c_str(), color);
         }
         case OSS_RENDERTEXT_SHADED:
         {
-            textSurface = TTF_RenderText_Shaded(fontToUse, textData.c_str(), color, bgColor);
+            textSurface = TTF_RenderText_Shaded(actualFont, textData.c_str(), color, bgColor);
         }
         case OSS_RENDERTEXT_BLEND:
         {
-            textSurface = TTF_RenderText_Blended(fontToUse, textData.c_str(), color);
+            textSurface = TTF_RenderText_Blended(actualFont, textData.c_str(), color);
         }
         default:
         {
-            textSurface = TTF_RenderText_Solid(fontToUse, textData.c_str(), color);
+            textSurface = TTF_RenderText_Solid(actualFont, textData.c_str(), color);
         }
     }
     if (textSurface != NULL)
@@ -167,12 +170,12 @@ bool OSS_Text::textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse)
 
 void OSS_Text::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
 {
-    SDL_assert(texture != NULL);
-    SDL_assert(renderer != NULL);
     if (update && font != NULL)
     {
         textToTexture(renderer, font);
     }
+    SDL_assert(texture != NULL);
+    SDL_assert(renderer != NULL);
     if (box)
     {
         SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
@@ -182,6 +185,7 @@ void OSS_Text::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, flo
     {
         if (outline > 0 && !box)
         {
+            SDL_assert(outlineTexture != NULL);
             SDL_RenderCopyEx(renderer, outlineTexture, clip, &dest, angle, origin, flip);
         }
         SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
@@ -191,6 +195,7 @@ void OSS_Text::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, flo
         SDL_Rect src;
         if (outline > 0 && !box)
         {
+            SDL_assert(outlineTexture != NULL);
             src = {0, 0, outlineWidth, outlineHeight};
             SDL_RenderCopyEx(renderer, outlineTexture, &src, &dest, angle, origin, flip);
         }
@@ -207,12 +212,12 @@ void OSS_Text::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, floa
 
 void OSS_Text::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
 {
-    SDL_assert(texture != NULL);
-    SDL_assert(renderer != NULL);
     if (update && font != NULL)
     {
         textToTexture(renderer, font);
     }
+    SDL_assert(texture != NULL);
+    SDL_assert(renderer != NULL);
     SDL_Rect dest = {x, y, width, height};
     if (box)
     {
@@ -223,6 +228,7 @@ void OSS_Text::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip
     {
         if (outline > 0 && !box)
         {
+            SDL_assert(outlineTexture != NULL);
             SDL_RenderCopy(renderer, outlineTexture, clip, &dest);
         }
         SDL_RenderCopy(renderer, texture, clip, &dest);
@@ -232,6 +238,7 @@ void OSS_Text::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip
         SDL_Rect src;
         if (outline > 0 && !box)
         {
+            SDL_assert(outlineTexture != NULL);
             src = {0, 0, outlineWidth, outlineHeight};
             SDL_RenderCopy(renderer, outlineTexture, &src, &dest);
         }

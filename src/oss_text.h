@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "oss_font.h"
+
 using namespace std;
 
 enum TextRenderModes
@@ -25,7 +27,7 @@ public:
     bool init(string guid_path);
 
     /// Renders textData to a texture using a TrueType Font
-    bool textToTexture(SDL_Renderer* renderer, TTF_Font* fontToUse);
+    bool textToTexture(SDL_Renderer* renderer, OSS_Font* fontToUse);
 
     /// Renders the texture in a similar way to OSS_Texture::render()
     void render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -40,8 +42,8 @@ public:
     void setStyling(int textStyle = TTF_STYLE_NORMAL, int textOutline = 0, int textHinting = TTF_HINTING_NORMAL, SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF});
 
     /// Oh boy, here come the get-set methods!
-    /// I only added these because if a member is set, the text texture should be updated
-    /// with the text text styling accordingly
+    /// I added these because if a member is set, the current text texture should be updated
+    /// with the new text styling accordingly
     string getText();
     SDL_Color getColor();
     SDL_Color getBackgroundColor();
@@ -80,8 +82,8 @@ private:
     /// The outline texture for the text
     SDL_Texture* outlineTexture;
 
-    /// Pointer to actual font
-    TTF_Font* font;
+    /// Pointer to font
+    OSS_Font* font;
 
     /// GUID of font to use:
     string font_guid;
