@@ -47,12 +47,18 @@ public:
     string getText();
     SDL_Color getColor();
     SDL_Color getBackgroundColor();
+
+    /// Returns the dimensions of the text, or the dimensions of the box
+    /// if the box is enabled
     int getWidth();
     int getHeight();
+
     int getOutline();
     int getStyle();
     int getHinting();
     int getRenderMode();
+    int getBoxPaddingWidth();
+    int getBoxPaddingHeight();
     bool isKerning();
     bool isBoxed();
     /// Set methods follow:
@@ -63,12 +69,18 @@ public:
     void setStyle(int textStyle);
     void setHinting(int textHinting);
     void setRenderMode(int textRenderMode);
+    void setBoxPaddingWidth(int padWidth);
+    void setBoxPaddingHeight(int padHeight);
     void setKerning(bool enabled);
     void setBox(bool enabled);
 
 private:
     /// If true, render box behind text in the background colour
     bool box;
+
+    /// Box padding, in pixels
+    int boxPadWidth;
+    int boxPadHeight;
 
     /// If true, next time render() is called, the text is rerendered to texture first with textToTexture()
     bool update;

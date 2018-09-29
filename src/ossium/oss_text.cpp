@@ -21,6 +21,8 @@ OSS_Text::OSS_Text()
     outlineWidth = 0;
     outlineHeight = 0;
     outline = 0;
+    boxPadWidth = 4;
+    boxPadHeight = 2;
     kerning = true;
     box = false;
 }
@@ -178,6 +180,9 @@ void OSS_Text::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, flo
     SDL_assert(renderer != NULL);
     if (box)
     {
+        dest.x += boxPadWidth;
+        dest.y += boxPadHeight;
+        SDL_Rect boxDest = {dest.x - boxPadWidth, dest.y - boxPadHeight, dest.w + (2 * boxPadWidth), dest.h + (2 * boxPadHeight)};
         SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
         SDL_RenderFillRect(renderer, &dest);
     }
@@ -207,6 +212,11 @@ void OSS_Text::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, flo
 void OSS_Text::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
 {
     SDL_Rect dest = {x, y, width, height};
+    if (clip != NULL)
+    {
+        dest.w = clip->w;
+        dest.h = clip->h;
+    }
     render(renderer, dest, clip, angle, origin, flip);
 }
 
@@ -219,10 +229,18 @@ void OSS_Text::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip
     SDL_assert(texture != NULL);
     SDL_assert(renderer != NULL);
     SDL_Rect dest = {x, y, width, height};
+    if (clip != NULL)
+    {
+        dest.w = clip->w;
+        dest.h = clip->h;
+    }
     if (box)
     {
+        dest.x += boxPadWidth;
+        dest.y += boxPadHeight;
+        SDL_Rect boxDest = {dest.x - boxPadWidth, dest.y - boxPadHeight, dest.w + (2 * boxPadWidth), dest.h + (2 * boxPadHeight)};
         SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
-        SDL_RenderFillRect(renderer, &dest);
+        SDL_RenderFillRect(renderer, &boxDest);
     }
     if (clip != NULL)
     {
@@ -282,11 +300,11 @@ SDL_Color OSS_Text::getBackgroundColor()
 }
 int OSS_Text::getWidth()
 {
-    return width;
+    return width + ((int)box * boxPadWidth * 2);
 }
 int OSS_Text::getHeight()
 {
-    return height;
+    return height + ((int)box * boxPadHeight * 2);
 }
 int OSS_Text::getOutline()
 {
@@ -303,6 +321,14 @@ int OSS_Text::getHinting()
 int OSS_Text::getRenderMode()
 {
     return renderMode;
+}
+int OSS_Text::getBoxPaddingWidth()
+{
+    return boxPadWidth;
+}
+int OSS_Text::getBoxPaddingHeight()
+{
+    return boxPadHeight;
 }
 bool OSS_Text::isKerning()
 {
@@ -358,12 +384,19 @@ void OSS_Text::setRenderMode(int textRenderMode)
     renderMode = textRenderMode;
     update = true;
 }
+void OSS_Text::setBoxPaddingWidth(int padWidth)
+{
+    boxPadWidth = padWidth;
+}
+void OSS_Text::setBoxPaddingHeight(int padHeight)
+{
+    boxPadHeight = padHeight;
+}
 void OSS_Text::setKerning(bool enabled)
 {
     kerning = enabled;
     update = true;
 }
-
 void OSS_Text::setBox(bool enabled)
 {
     box = enabled;

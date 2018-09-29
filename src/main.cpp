@@ -58,7 +58,8 @@ int main(int argc, char* argv[])
         testTwo.setColor({0xFF, 0x00, 0x00, 0xFF});
         testTwo.setBackgroundColor({50, 0, 255, 255});
         testOne.setText("Muhahahaha! FONTS!");
-        testOne.setBackgroundColor({0xFF, 0x00, 0x00, 0xFF});
+        testOne.setBackgroundColor({0x00, 0x00, 0x00, 110});
+        testOne.setBoxPaddingWidth(20);
         fontController.getResource("consolas.ttf");
         testOne.setRenderMode(OSS_RENDERTEXT_BLEND);
         testOne.textToTexture(mainRenderer, fontController.getResource("consolas.ttf"));
@@ -78,6 +79,8 @@ int main(int argc, char* argv[])
         float prevtime = 0.0;
         float deltatime = 0.0;
         SDL_Event e;
+
+        SDL_SetRenderDrawBlendMode(mainRenderer, SDL_BLENDMODE_BLEND);
 
         timer.start();
         while (!quit)
