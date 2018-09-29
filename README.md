@@ -10,5 +10,5 @@ All these components are listed on the [main SDL 2 webpage](https://www.libsdl.o
 
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on 64-bit (arm) Linux
-with the GNU GCC mingw compiler. For the Windows branch, [click here](https://github.com/SpectralCascade/ossium/tree/windows).
+with the GNU GCC MinGW compiler. For the Windows branch, [click here](https://github.com/SpectralCascade/ossium/tree/windows).
 Check out Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL.
