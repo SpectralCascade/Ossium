@@ -96,6 +96,7 @@ public:
     {
         if (registry.find(guid_path) == registry.end())
         {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to retrieve resource with GUID '%s'!", guid_path.c_str());
             return NULL;
         }
         return registry[guid_path];
