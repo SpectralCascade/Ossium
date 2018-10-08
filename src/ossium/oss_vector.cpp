@@ -1,39 +1,40 @@
 #include <math.h>
 
+#include "oss_basics.h"
 #include "oss_vector.h"
 
 using namespace std;
 
-OSS_Vector operator+(OSS_Vector vec_a, OSS_Vector vec_b)
+OSS_Vector operator+(const OSS_Vector& vec_a, const OSS_Vector& vec_b)
 {
     return {vec_a.x + vec_b.x, vec_a.y + vec_b.y};
 }
 
-void operator+=(OSS_Vector &vec_a, OSS_Vector vec_b)
+void operator+=(OSS_Vector &vec_a, const OSS_Vector& vec_b)
 {
     vec_a = {vec_a.x + vec_b.x, vec_a.y + vec_b.y};
 }
 
-OSS_Vector operator-(OSS_Vector vec_a, OSS_Vector vec_b)
+OSS_Vector operator-(const OSS_Vector& vec_a, const OSS_Vector& vec_b)
 {
     return {vec_a.x - vec_b.x, vec_a.y - vec_b.y};
 }
 
-void operator-=(OSS_Vector &vec_a, OSS_Vector vec_b)
+void operator-=(OSS_Vector& vec_a, const OSS_Vector& vec_b)
 {
     vec_a = {vec_a.x - vec_b.x, vec_a.y - vec_b.y};
 }
 
-OSS_Vector operator*(OSS_Vector vec_a, OSS_Vector vec_b)
+OSS_Vector operator*(const OSS_Vector& vec_a, const OSS_Vector& vec_b)
 {
     return {vec_a.x * vec_b.x, vec_a.y * vec_b.y};
 }
 
-OSS_Vector operator*(OSS_Vector vec, float scalar)
+OSS_Vector operator*(const OSS_Vector& vec, float scalar)
 {
     return {vec.x * scalar, vec.y * scalar};
 }
-OSS_Vector operator*(float scalar, OSS_Vector vec)
+OSS_Vector operator*(float scalar, const OSS_Vector& vec)
 {
     return {vec.x * scalar, vec.y * scalar};
 }
@@ -90,4 +91,10 @@ OSS_Vector OSS_CalcRotation90Clockwise(OSS_Vector vec)
 void OSS_CalcRotation90Clockwise(OSS_Vector &vec)
 {
     vec = {vec.y, -vec.x};
+}
+
+OSS_Vector OSS_CalcLerp(OSS_Vector a, OSS_Vector b, float w)
+{
+    w = clamp(w, 0.0f, 1.0f);
+    return (a * (1.0f - w)) + (b * w);
 }

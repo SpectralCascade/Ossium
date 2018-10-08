@@ -8,19 +8,19 @@ struct OSS_Vector
 };
 
 /// Basic vector arithmetic
-OSS_Vector operator+(OSS_Vector vec_a, OSS_Vector vec_b);
+OSS_Vector operator+(const OSS_Vector& vec_a, const OSS_Vector& vec_b);
 
-void operator+=(OSS_Vector &vec_a, OSS_Vector vec_b);
+void operator+=(OSS_Vector &vec_a, const OSS_Vector& vec_b);
 
-OSS_Vector operator-(OSS_Vector vec_a, OSS_Vector vec_b);
+OSS_Vector operator-(const OSS_Vector& vec_a, const OSS_Vector& vec_b);
 
-void operator-=(OSS_Vector &vec_a, OSS_Vector vec_b);
+void operator-=(OSS_Vector &vec_a, const OSS_Vector& vec_b);
 
-OSS_Vector operator*(OSS_Vector vec_a, OSS_Vector vec_b);
+OSS_Vector operator*(const OSS_Vector& vec_a, const OSS_Vector& vec_b);
 
 /// Scalar multiplication
-OSS_Vector operator*(OSS_Vector vec, float scalar);
-OSS_Vector operator*(float scalar, OSS_Vector vec);
+OSS_Vector operator*(const OSS_Vector& vec, float scalar);
+OSS_Vector operator*(float scalar, const OSS_Vector& vec);
 
 /// Dot product
 float OSS_CalcDotProduct(OSS_Vector vec_a, OSS_Vector vec_b);
@@ -48,7 +48,9 @@ OSS_Vector OSS_CalcReflectionVector(OSS_Vector vec, OSS_Vector normal);
 
 /// Rotate a vector 90 degrees clockwise (anti-clockwise in SDL coordinate system)...
 OSS_Vector OSS_CalcRotation90Clockwise(OSS_Vector vec);
-
 void OSS_CalcRotation90Clockwise(OSS_Vector &vec);
+
+/// Calculate some point between two vectors (LERP - linear interpolation)
+OSS_Vector OSS_CalcLerp(OSS_Vector a, OSS_Vector b, float w);
 
 #endif // OSS_VECTOR_H
