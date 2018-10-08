@@ -37,6 +37,8 @@
 			<Add option="`sdl2-config --libs`" />
 		</Linker>
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/ossium/oss_basics.cpp" />
+		<Unit filename="src/ossium/oss_basics.h" />
 		<Unit filename="src/ossium/oss_config.cpp" />
 		<Unit filename="src/ossium/oss_config.h" />
 		<Unit filename="src/ossium/oss_font.cpp" />
@@ -46,6 +48,7 @@
 		<Unit filename="src/ossium/oss_primitives.cpp" />
 		<Unit filename="src/ossium/oss_primitives.h" />
 		<Unit filename="src/ossium/oss_resourcecontroller.h" />
+		<Unit filename="src/ossium/oss_rig.h" />
 		<Unit filename="src/ossium/oss_statesprite.cpp" />
 		<Unit filename="src/ossium/oss_statesprite.h" />
 		<Unit filename="src/ossium/oss_text.cpp" />
@@ -54,6 +57,8 @@
 		<Unit filename="src/ossium/oss_texture.h" />
 		<Unit filename="src/ossium/oss_time.cpp" />
 		<Unit filename="src/ossium/oss_time.h" />
+		<Unit filename="src/ossium/oss_transform.cpp" />
+		<Unit filename="src/ossium/oss_transform.h" />
 		<Unit filename="src/ossium/oss_vector.cpp" />
 		<Unit filename="src/ossium/oss_vector.h" />
 		<Unit filename="src/ossium/oss_window.cpp" />

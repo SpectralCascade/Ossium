@@ -28,12 +28,21 @@ struct OSS_Ray
     OSS_Vector u;
 };
 
+/// Ossium alternative to SDL_Rect; floating point instead of integers
 struct OSS_Rectangle
 {
     float x;
     float y;
-    float xmax;
-    float ymax;
+    float w;
+    float h;
+    inline float xmax()
+    {
+        return x + w;
+    };
+    inline float ymax()
+    {
+        return y + h;
+    };
 };
 
 struct OSS_Triangle

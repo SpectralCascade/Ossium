@@ -10,6 +10,7 @@
 #include "ossium/oss_font.h"
 #include "ossium/oss_text.h"
 #include "ossium/oss_vector.h"
+#include "ossium/oss_transform.h"
 #include "ossium/oss_primitives.h"
 #include "ossium/oss_statesprite.h"
 #include "ossium/oss_resourcecontroller.h"

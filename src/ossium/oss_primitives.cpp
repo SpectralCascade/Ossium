@@ -26,7 +26,7 @@ bool OSS_Intersect(OSS_Vector point, OSS_Ray ray)
 }
 bool OSS_Intersect(OSS_Vector point, OSS_Rectangle rect)
 {
-    return point.x >= rect.x && point.x <= rect.xmax && point.y >= rect.y && point.y <= rect.ymax;
+    return point.x >= rect.x && point.x <= rect.xmax() && point.y >= rect.y && point.y <= rect.ymax();
 }
 /*
 bool OSS_Intersect(OSS_Vector point, OSS_Triangle triangle);
