@@ -17,7 +17,7 @@ namespace ossium
     };
 
     /// Initialises SDL and other engine subsystems; returns InitError value. No error if >= 0
-    int Init();
+    int InitialiseEngine();
 
     /// Creates and returns a renderer
     SDL_Renderer* CreateRenderer(SDL_Window* window, bool vsync = false);

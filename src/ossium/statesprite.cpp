@@ -104,26 +104,7 @@ namespace ossium
             substateRect = {0, clipHeight * substate, stateTexture->getWidth(), clipHeight};
         }
     }
-    /*
-    void StateSprite::splitState(string& state, Uint16 segments, bool horizontal)
-    {
-        map<string, pair<Texture*, Uint16>>::iterator i = states.find(state);
-        if (i != states.end())
-        {
-            if (segments == 0)
-            {
-                segments = 1;
-            }
-            segments = segments | ((Uint16)horizontal * STATE_HORIZONTAL);
-            i->second.second = segments;
-            if (state == currentState)
-            {
-                /// Change state will update the current clip rect accordingly
-                changeState(state);
-            }
-        }
-    }
-    */
+
     string StateSprite::getCurrentState()
     {
         return currentState;

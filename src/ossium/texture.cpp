@@ -227,6 +227,15 @@ namespace ossium
         }
     }
 
+    void Texture::renderSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip)
+    {
+        #ifdef DEBUG
+        SDL_assert(texture != NULL);
+        SDL_assert(renderer != NULL);
+        #endif // DEBUG
+        SDL_RenderCopy(renderer, texture, clip, &dest);
+    }
+
     int Texture::getWidth()
     {
         return width;

@@ -21,7 +21,7 @@ using namespace ossium;
 int main(int argc, char* argv[])
 {
     bool quit = false;
-    if (Init() < 0)
+    if (InitialiseEngine() < 0)
     {
         printf("ERROR: Failed to initialise Ossium engine.\n");
     }

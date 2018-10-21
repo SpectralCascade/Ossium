@@ -34,14 +34,6 @@ namespace ossium
         /// Changes current substate clip segment
         void changeSubState(Uint16 substate, bool forceChange = false);
 
-        /*  DEPRECATED
-        /// Splits a state into an equally sized number of clip segments (substates),
-        /// either horizontally or vertically for basic spritesheet clipping support
-        /// Only use if you didn't bother setting segments when adding the state/you want to actively change
-        /// the segment number because this operation can be expensive
-        void splitState(string& state, Uint16 segments, bool horizontal = true);
-        */
-
         /// Returns the current state
         string getCurrentState();
 

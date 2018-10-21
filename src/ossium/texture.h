@@ -48,6 +48,7 @@ namespace ossium
 
         /// Even simpler render method
         void renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
+        void renderSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL);
 
         /// Get texture dimensions
         int getWidth();

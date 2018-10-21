@@ -1,6 +1,8 @@
 #ifndef PRIMITIVES_H
 #define PRIMITIVES_H
 
+#include <SDL2/SDL.h>
+
 #include "vector.h"
 
 namespace ossium
@@ -96,9 +98,10 @@ namespace ossium
     bool Intersect(Ray ray, LineSegment segment);
     bool Intersect(Ray ray, Rectangle rect);
     bool Intersect(Ray ray, Triangle triangle);
-
+*/
     /// Rectangle intersection tests, AABB only
     bool Intersect(Rectangle rectA, Rectangle rectB);
+/*
     bool Intersect(Rectangle rect, Circle circle);
     bool Intersect(Rectangle rect, Line line);
     bool Intersect(Rectangle rect, LineSegment segment);
@@ -113,6 +116,11 @@ namespace ossium
     bool Intersect(Triangle triangle, Ray ray);
     bool Intersect(Triangle triangle, Rectangle rect);
     */
+
+    /// SDL intersection tests
+    bool IntersectSDL(SDL_Rect rectA, SDL_Rect rectB);
+    bool IntersectSDL(SDL_Point point, SDL_Rect rect);
+
 }
 
 #endif // PRIMITIVES_H

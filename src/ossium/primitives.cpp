@@ -64,9 +64,13 @@ namespace ossium
     bool Intersect(Ray ray, LineSegment segment);
     bool Intersect(Ray ray, Rectangle rect);
     bool Intersect(Ray ray, Triangle triangle);
-
+*/
     /// Rectangle intersection tests, AABB only
-    bool Intersect(Rectangle rectA, Rectangle rectB);
+    bool Intersect(Rectangle rectA, Rectangle rectB)
+    {
+        return !((rectA.x > rectB.xmax() || rectA.xmax() < rectB.x) && (rectA.y > rectB.ymax() || rectA.ymax() < rectB.y));
+    }
+/*
     bool Intersect(Rectangle rect, Circle circle);
     bool Intersect(Rectangle rect, Line line);
     bool Intersect(Rectangle rect, LineSegment segment);
@@ -81,5 +85,15 @@ namespace ossium
     bool Intersect(Triangle triangle, Ray ray);
     bool Intersect(Triangle triangle, Rectangle rect);
     */
+
+    /// Intersection tests for basic SDL data types
+    bool IntersectSDL(SDL_Rect rectA, SDL_Rect rectB)
+    {
+        return !((rectA.x > rectB.x + rectB.w || rectA.x + rectA.w < rectB.x) && (rectA.y > rectB.y + rectB.h || rectA.y + rectA.h < rectB.y));
+    }
+    bool IntersectSDL(SDL_Point point, SDL_Rect rect)
+    {
+        return !(point.x > rect.x + rect.w || point.x < rect.x) && (point.y > rect.y + rect.h || point.y < rect.y);
+    }
 
 }

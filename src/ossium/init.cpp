@@ -7,7 +7,7 @@
 
 namespace ossium
 {
-    int Init()
+    int InitialiseEngine()
     {
         float processorSpeed = (float)SDL_GetPerformanceFrequency() / 1000000000;
         char* numCPUs = NULL;
