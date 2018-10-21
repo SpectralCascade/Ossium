@@ -45,6 +45,9 @@ namespace ossium
 
     void Renderer::enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer)
     {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
         if (renderCull)
         {
             // Check if the destination rect is inside or outside the renderer view
@@ -60,6 +63,9 @@ namespace ossium
 
     void Renderer::enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer, SDL_Point origin, float angle, SDL_RendererFlip flip)
     {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
         if (renderCull)
         {
             // Check if the destination rect is inside or outside the renderer view
@@ -75,6 +81,9 @@ namespace ossium
 
     void Renderer::enqueue(SDL_Point* point, int layer, SDL_Color colour)
     {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
         if (renderCull)
         {
             if (!IntersectSDL(*point, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
@@ -88,6 +97,9 @@ namespace ossium
 
     void Renderer::enqueue(Line* line, int layer, SDL_Color colour, SDL_RendererFlip flip)
     {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
         if (renderCull)
         {
             if (!Intersect(line->p, (Rectangle){0, 0, (float)renderWindow->getWidth(), (float)renderWindow->getHeight()}) && !Intersect(line->u, (Rectangle){0, 0, (float)renderWindow->getWidth(), (float)renderWindow->getHeight()}))
@@ -101,6 +113,9 @@ namespace ossium
 
     void Renderer::enqueue(SDL_Rect* rect, int layer, bool filled, SDL_Color colour)
     {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
         if (renderCull)
         {
             if (!IntersectSDL(*rect, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
@@ -129,7 +144,7 @@ namespace ossium
         if (layer < 0)
         {
             // Iterate through all layers
-            for (int i = 0; i < numLayersActive; i++)
+            for (int i = numLayersActive - 1; i >= 0; i--)
             {
                 if (textureLayers[i].empty())
                 {
@@ -173,7 +188,7 @@ namespace ossium
         #endif
         if (layer < 0)
         {
-            for (int i = 0; i < numLayersActive; i++)
+            for (int i = numLayersActive  -1; i >= 0; i--)
             {
                 if (textureExLayers[i].empty())
                 {
@@ -215,7 +230,7 @@ namespace ossium
         #endif
         if (layer < 0)
         {
-            for (int i = 0; i < numLayersActive; i++)
+            for (int i = numLayersActive - 1; i >= 0; i--)
             {
                 if (pointLayers[i].empty())
                 {
@@ -260,7 +275,7 @@ namespace ossium
         #endif
         if (layer < 0)
         {
-            for (int i = 0; i < numLayersActive; i++)
+            for (int i = numLayersActive - 1; i >= 0; i--)
             {
                 if (lineLayers[i].empty())
                 {
@@ -305,7 +320,7 @@ namespace ossium
         #endif
         if (layer < 0)
         {
-            for (int i = 0; i < numLayersActive; i++)
+            for (int i = numLayersActive - 1; i >= 0; i--)
             {
                 if (rectLayers[i].empty())
                 {
@@ -350,7 +365,7 @@ namespace ossium
         #endif
         if (layer < 0)
         {
-            for (int i = 0; i < numLayersActive; i++)
+            for (int i = numLayersActive - 1; i >= 0; i--)
             {
                 if (fillRectLayers[i].empty())
                 {
@@ -392,7 +407,8 @@ namespace ossium
     {
         if (layer < 0)
         {
-            for (int i = 0; i < numLayersActive; i++)
+            // Reverse iterate through layers so that they are rendered with layer 0 at the top
+            for (int i = numLayersActive - 1; i >= 0; i--)
             {
                 renderTextures(i);
                 renderFillRects(i);
