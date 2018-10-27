@@ -43,12 +43,12 @@ namespace ossium
 
     // ENQUEUING
 
-    void Renderer::enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer)
+    void Renderer::enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer, bool forceCull)
     {
         #ifdef DEBUG
         SDL_assert(layer >= 0);
         #endif // DEBUG
-        if (renderCull)
+        if (renderCull || forceCull)
         {
             // Check if the destination rect is inside or outside the renderer view
             if (!IntersectSDL(dest, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
@@ -61,12 +61,12 @@ namespace ossium
         textureLayers[layer].push((RenderInfoTexture){texture, dest, src});
     }
 
-    void Renderer::enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer, SDL_Point origin, float angle, SDL_RendererFlip flip)
+    void Renderer::enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer, SDL_Point origin, float angle, SDL_RendererFlip flip, bool forceCull)
     {
         #ifdef DEBUG
         SDL_assert(layer >= 0);
         #endif // DEBUG
-        if (renderCull)
+        if (renderCull || forceCull)
         {
             // Check if the destination rect is inside or outside the renderer view
             if (!IntersectSDL(dest, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
@@ -79,12 +79,12 @@ namespace ossium
         textureExLayers[layer].push((RenderInfoTextureEx){texture, dest, src, origin, angle, flip});
     }
 
-    void Renderer::enqueue(SDL_Point* point, int layer, SDL_Color colour)
+    void Renderer::enqueue(SDL_Point* point, int layer, SDL_Color colour, bool forceCull)
     {
         #ifdef DEBUG
         SDL_assert(layer >= 0);
         #endif // DEBUG
-        if (renderCull)
+        if (renderCull || forceCull)
         {
             if (!IntersectSDL(*point, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
             {
@@ -95,12 +95,12 @@ namespace ossium
         pointLayers[layer].push((RenderInfoPoint){*point, colour});
     }
 
-    void Renderer::enqueue(Line* line, int layer, SDL_Color colour, SDL_RendererFlip flip)
+    void Renderer::enqueue(Line* line, int layer, SDL_Color colour, SDL_RendererFlip flip, bool forceCull)
     {
         #ifdef DEBUG
         SDL_assert(layer >= 0);
         #endif // DEBUG
-        if (renderCull)
+        if (renderCull || forceCull)
         {
             if (!Intersect(line->p, (Rectangle){0, 0, (float)renderWindow->getWidth(), (float)renderWindow->getHeight()}) && !Intersect(line->u, (Rectangle){0, 0, (float)renderWindow->getWidth(), (float)renderWindow->getHeight()}))
             {
@@ -403,7 +403,7 @@ namespace ossium
         }
     }
 
-    void Renderer::renderAll(int layer)
+    void Renderer::renderAll(int layer, bool split)
     {
         if (layer < 0)
         {

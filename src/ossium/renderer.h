@@ -66,13 +66,13 @@ namespace ossium
         //
 
         // Adds a texture pointer to a queue corresponding to the layer. If the layer does not exist, throws an exception
-        void enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0);
-        void enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, SDL_Point origin = {0, 0}, float angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, bool forceCull = false);
+        void enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, SDL_Point origin = {0, 0}, float angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
 
         // These all add a point, line or rect to the respective layer queue. If the layer does not exist, throws an exception
-        void enqueue(SDL_Point* point, int layer = 0, SDL_Color colour = BLACK);
-        void enqueue(Line* line, int layer = 0, SDL_Color colour = BLACK, SDL_RendererFlip flip = SDL_FLIP_NONE);
-        void enqueue(SDL_Rect* rect, int layer = 0, bool filled = false, SDL_Color colour = BLACK);
+        void enqueue(SDL_Point* point, int layer = 0, SDL_Color colour = BLACK, bool forceCull = false);
+        void enqueue(Line* line, int layer = 0, SDL_Color colour = BLACK, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
+        void enqueue(SDL_Rect* rect, int layer = 0, bool filled = false, SDL_Color colour = BLACK, bool forceCull = false);
 
         //
         // RENDER METHODS
@@ -95,7 +95,9 @@ namespace ossium
         void renderRectsEx(int layer = -1, int xOffset = 0, int yOffset = 0, SDL_Point* origin = NULL, float angle = 0.0);
         */
         // Renders EVERYTHING on a specified layer, or all layers by default
-        void renderAll(int layer = -1);
+        // If the SPLIT argument is true, then ALL textures are rendered, followed by ALL fill rects, etc.
+        // regardless of their actual layering
+        void renderAll(int layer = -1, bool split = false);
 
         // Ditto but with options for x/y offsets and rotation
         // Note: not yet supported
@@ -113,6 +115,11 @@ namespace ossium
         //
 
         // Turns render culling on or off
+        // Culling is very crude at the moment - it simply performs brute-force intersect tests
+        // when render objects are enqueued
+        // Ideally, a spatial hash grid or a tree structure (e.g. quadtree) should be used so that only
+        // render objects in cells that intersect the renderer are enqueued in the first place
+        // This is only really here for convenience
         void setCulling(bool culling);
 
         // Returns the SDL renderer context associated with this renderer
