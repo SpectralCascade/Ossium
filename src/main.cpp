@@ -149,8 +149,11 @@ int main(int argc, char* argv[])
             {
                 chestSprite.renderSimple(mainRenderer, chestRect);
             }
-            testOne.renderSimple(mainRenderer, 0, 0, NULL);
-            testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
+            if (fontController.getResource("serif.ttf") != NULL && fontController.getResource("consolas.ttf") != NULL)
+            {
+                testOne.renderSimple(mainRenderer, 0, 0, NULL);
+                testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
+            }
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();
