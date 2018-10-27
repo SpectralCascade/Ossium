@@ -47,8 +47,9 @@ namespace ossium
         /// Overload for simplicity
         void render(Renderer* renderer, SDL_Rect dest, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-        /// Very simple alternative render method
+        /// Very simple alternative render methods
         void renderSimple(Renderer* renderer, int x, int y, int layer = 0);
+        void renderSimple(Renderer* renderer, SDL_Rect dest, int layer = 0);
 
     protected:
         /// Original addState method - this one does worry about bit masks, hence why it's protected

@@ -93,7 +93,7 @@ namespace ossium
     }
     bool IntersectSDL(SDL_Point point, SDL_Rect rect)
     {
-        return !(point.x > rect.x + rect.w || point.x < rect.x) && (point.y > rect.y + rect.h || point.y < rect.y);
+        return point.x >= rect.x && point.x <= rect.x + rect.w && point.y >= rect.y && point.y <= rect.y + rect.h;
     }
 
 }

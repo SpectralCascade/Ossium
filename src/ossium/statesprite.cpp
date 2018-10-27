@@ -131,4 +131,10 @@ namespace ossium
         renderer->enqueue(stateTexture, {x, y, substateRect.w, substateRect.h}, substateRect, layer);
     }
 
+    void StateSprite::renderSimple(Renderer* renderer, SDL_Rect dest, int layer)
+    {
+        renderer->enqueue(stateTexture, dest, substateRect, layer);
+    }
+
+
 }

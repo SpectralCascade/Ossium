@@ -44,7 +44,14 @@ int main(int argc, char* argv[])
         {
             if (!textureController.postLoadInit("test.png", mainRenderer))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'testing.png'!");
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'test.png'!");
+            }
+        }
+        if (textureController.loadResource("sprite_test.png"))
+        {
+            if (!textureController.postLoadInit("sprite_test.png", mainRenderer))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'sprite_test.png'!");
             }
         }
 
@@ -71,9 +78,13 @@ int main(int argc, char* argv[])
         testOne.setBox(true);
 
         /// State sprite and primitives for testing
-        Rectangle buttonRect = {0, 0, 640, 240};
+        SDL_Rect buttonRect = {0, 0, 640, 240};
         StateSprite buttonSprite;
         buttonSprite.addState("idle", textureController.getResource("test.png"), true, 2);
+
+        SDL_Rect chestRect = {320 - 64, 300, 128, 100};
+        StateSprite chestSprite;
+        chestSprite.addState("open", textureController.getResource("sprite_test.png"), false, 4);
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
@@ -84,6 +95,8 @@ int main(int argc, char* argv[])
         SDL_Event e;
 
         SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
+
+        bool openChest = false;
 
         timer.start();
         while (!quit)
@@ -102,8 +115,8 @@ int main(int argc, char* argv[])
                 {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    Vector vec = {(float)x, (float)y};
-                    if (Intersect(vec, buttonRect))
+                    SDL_Point pnt = {x, y};
+                    if (IntersectSDL(pnt, buttonRect))
                     {
                         buttonSprite.changeSubState(1);
                     }
@@ -111,12 +124,30 @@ int main(int argc, char* argv[])
                     {
                         buttonSprite.changeSubState(0);
                     }
+                    if (IntersectSDL(pnt, chestRect))
+                    {
+                        openChest = true;
+                    }
+                    else
+                    {
+                        openChest = false;
+                        chestSprite.changeSubState(0);
+                        timer.start();
+                    }
                 }
+            }
+            if (openChest)
+            {
+                chestSprite.changeSubState((int)((float)timer.getTicks() / 200.0f) % 4);
             }
             mainRenderer->renderClear();
             if (textureController.getResource("test.png") != NULL)
             {
                 buttonSprite.renderSimple(mainRenderer, (int)buttonRect.x, (int)buttonRect.y);
+            }
+            if (textureController.getResource("sprite_test.png") != NULL)
+            {
+                chestSprite.renderSimple(mainRenderer, chestRect);
             }
             testOne.renderSimple(mainRenderer, 0, 0, NULL);
             testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
