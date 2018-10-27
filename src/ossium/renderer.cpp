@@ -407,14 +407,25 @@ namespace ossium
     {
         if (layer < 0)
         {
-            // Reverse iterate through layers so that they are rendered with layer 0 at the top
-            for (int i = numLayersActive - 1; i >= 0; i--)
+            if (split)
             {
-                renderTextures(i);
-                renderFillRects(i);
-                renderRects(i);
-                renderLines(i);
-                renderPoints(i);
+                renderTextures(-1);
+                renderFillRects(-1);
+                renderRects(-1);
+                renderLines(-1);
+                renderPoints(-1);
+            }
+            else
+            {
+                // Reverse iterate through layers so that they are rendered with layer 0 at the top
+                for (int i = numLayersActive - 1; i >= 0; i--)
+                {
+                    renderTextures(i);
+                    renderFillRects(i);
+                    renderRects(i);
+                    renderLines(i);
+                    renderPoints(i);
+                }
             }
         }
         else
