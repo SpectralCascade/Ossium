@@ -8,6 +8,7 @@
 
 #include "texture.h"
 #include "resourcecontroller.h"
+#include "renderer.h"
 
 using namespace std;
 
@@ -40,14 +41,14 @@ namespace ossium
         /// Returns the current substate segment number
         Uint16 getCurrentSubstate();
 
-        /// Renders the current state
-        void render(SDL_Renderer* renderer, int x, int y, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        /// Sends the current state to the provided renderer
+        void render(Renderer* renderer, int x, int y, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Overload for simplicity
-        void render(SDL_Renderer* renderer, SDL_Rect dest, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(Renderer* renderer, SDL_Rect dest, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Very simple alternative render method
-        void renderSimple(SDL_Renderer* renderer, int x, int y);
+        void renderSimple(Renderer* renderer, int x, int y, int layer = 0);
 
     protected:
         /// Original addState method - this one does worry about bit masks, hence why it's protected

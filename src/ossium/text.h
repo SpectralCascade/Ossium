@@ -6,11 +6,16 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "font.h"
+#include "renderer.h"
 
 using namespace std;
 
 namespace ossium
 {
+
+    /// Forward declaration
+    class Renderer;
+
     enum TextRenderModes
     {
         RENDERTEXT_SOLID = 0,
@@ -24,21 +29,24 @@ namespace ossium
         Text();
         ~Text();
 
+        friend class Renderer;
+
         /// These two methods may be removed/replaced at some point, as Text is really an entity, not a resource
         bool load(string guid_path);
         bool init(string guid_path);
 
         /// Renders textData to a texture using a TrueType Font
-        bool textToTexture(SDL_Renderer* renderer, Font* fontToUse);
+        bool textToTexture(Renderer* renderer, Font* fontToUse);
 
-        /// Renders the texture in a similar way to Texture::render()
-        void render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        /// Send the text to a renderer instance to be rendered
+        void render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Simplified overload
-        void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-        /// Very simple render method
-        void renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
+        /// Very simple alternative render methods
+        void renderSimple(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, int layer = 0);
+        void renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer = 0);
 
         /// Sets some of the more general text style properties
         void setStyling(int textStyle = TTF_STYLE_NORMAL, int textOutline = 0, int textHinting = TTF_HINTING_NORMAL, SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF});
@@ -77,6 +85,16 @@ namespace ossium
         void setBox(bool enabled);
 
     private:
+        /// Renders the texture in a similar way to Texture::render()
+        void renderText(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+        /// Simplified overload
+        void renderText(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+        /// Very simple render methods
+        void renderTextSimple(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
+        void renderTextSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL);
+
         /// If true, render box behind text in the background colour
         bool box;
 

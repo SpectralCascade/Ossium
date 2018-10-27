@@ -4,11 +4,13 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "texture.h"
+#include "renderer.h"
 
 using namespace std;
 
 namespace ossium
 {
+
     Texture::Texture()
     {
         tempSurface = NULL;
@@ -62,7 +64,7 @@ namespace ossium
         return tempSurface != NULL;
     }
 
-    bool Texture::init(SDL_Renderer* renderer, Uint32 windowPixelFormat)
+    bool Texture::init(Renderer* renderer, Uint32 windowPixelFormat)
     {
         SDL_assert(renderer != NULL);
         freeTexture();
@@ -82,7 +84,7 @@ namespace ossium
             }
             else
             {
-                texture = SDL_CreateTextureFromSurface(renderer, formattedSurface);
+                texture = SDL_CreateTextureFromSurface(renderer->getRenderer(), formattedSurface);
                 if (texture == NULL)
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
@@ -103,7 +105,7 @@ namespace ossium
         }
         else
         {
-            texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+            texture = SDL_CreateTextureFromSurface(renderer->getRenderer(), tempSurface);
             if (texture == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
@@ -125,7 +127,7 @@ namespace ossium
     }
 
     #ifdef _SDL_TTF_H
-    bool Texture::createText(string text, SDL_Renderer* renderer, TTF_Font* font, SDL_Color color)
+    bool Texture::createText(string text, Renderer* renderer, TTF_Font* font, SDL_Color color)
     {
         freeTexture();
         SDL_Texture* newTexture = NULL;
@@ -133,7 +135,7 @@ namespace ossium
         textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
         if (textSurface == NULL)
         {
-            newTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+            newTexture = SDL_CreateTextureFromSurface(renderer->getRenderer(), textSurface);
             if (newTexture == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
@@ -149,6 +151,26 @@ namespace ossium
         return texture != NULL;
     }
     #endif // _SDL_TTF_H
+
+    void Texture::render(Renderer* renderer, int x, int y, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    {
+        render(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip, layer, angle, origin, flip);
+    }
+
+    void Texture::render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    {
+        renderer->enqueueEx(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer, angle, origin == NULL ? (SDL_Point){width / 2, height / 2} : *origin, flip);
+    }
+
+    void Texture::renderSimple(Renderer* renderer, int x, int y, SDL_Rect* clip, int layer)
+    {
+        renderSimple(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip, layer);
+    }
+
+    void Texture::renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer)
+    {
+        renderer->enqueue(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer);
+    }
 
     void Texture::setBlendMode(SDL_BlendMode blend)
     {
@@ -166,74 +188,6 @@ namespace ossium
     {
         SDL_assert(texture != NULL);
         SDL_SetTextureColorMod(texture, r, g, b);
-    }
-
-    void Texture::render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        if (clip != NULL)
-        {
-            if (dest.w == 0)
-            {
-                dest.w = clip->w;
-            }
-            if (dest.h == 0)
-            {
-                dest.h = clip->h;
-            }
-            SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
-        }
-        else
-        {
-            SDL_Rect src = {0, 0, width, height};
-            SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
-        }
-    }
-
-    void Texture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        SDL_Rect dest = {x, y, width, height};
-        if (clip != NULL)
-        {
-            dest.w = clip->w;
-            dest.h = clip->h;
-            SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
-        }
-        else
-        {
-            SDL_Rect src = {0, 0, width, height};
-            SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
-        }
-    }
-
-    void Texture::renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
-    {
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        SDL_Rect dest = {x, y, width, height};
-        if (clip != NULL)
-        {
-            dest.w = clip->w;
-            dest.h = clip->h;
-            SDL_RenderCopy(renderer, texture, clip, &dest);
-        }
-        else
-        {
-            SDL_Rect src = {0, 0, width, height};
-            SDL_RenderCopy(renderer, texture, &src, &dest);
-        }
-    }
-
-    void Texture::renderSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        #endif // DEBUG
-        SDL_RenderCopy(renderer, texture, clip, &dest);
     }
 
     int Texture::getWidth()
@@ -279,6 +233,78 @@ namespace ossium
             pitch = 0;
         }
         return success;
+    }
+
+    ///
+    /// PRIVATE RENDERING METHODS: Accessed exclusively by this and friend class Renderer
+    ///
+
+    void Texture::renderTexture(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    {
+        SDL_assert(texture != NULL);
+        SDL_assert(renderer != NULL);
+        if (clip != NULL)
+        {
+            if (dest.w == 0)
+            {
+                dest.w = clip->w;
+            }
+            if (dest.h == 0)
+            {
+                dest.h = clip->h;
+            }
+            SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
+        }
+        else
+        {
+            SDL_Rect src = {0, 0, width, height};
+            SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
+        }
+    }
+
+    void Texture::renderTexture(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    {
+        SDL_assert(texture != NULL);
+        SDL_assert(renderer != NULL);
+        SDL_Rect dest = {x, y, width, height};
+        if (clip != NULL)
+        {
+            dest.w = clip->w;
+            dest.h = clip->h;
+            SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
+        }
+        else
+        {
+            SDL_Rect src = {0, 0, width, height};
+            SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
+        }
+    }
+
+    void Texture::renderTextureSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
+    {
+        SDL_assert(texture != NULL);
+        SDL_assert(renderer != NULL);
+        SDL_Rect dest = {x, y, width, height};
+        if (clip != NULL)
+        {
+            dest.w = clip->w;
+            dest.h = clip->h;
+            SDL_RenderCopy(renderer, texture, clip, &dest);
+        }
+        else
+        {
+            SDL_Rect src = {0, 0, width, height};
+            SDL_RenderCopy(renderer, texture, &src, &dest);
+        }
+    }
+
+    void Texture::renderTextureSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip)
+    {
+        #ifdef DEBUG
+        SDL_assert(texture != NULL);
+        SDL_assert(renderer != NULL);
+        #endif // DEBUG
+        SDL_RenderCopy(renderer, texture, clip, &dest);
     }
 
 }

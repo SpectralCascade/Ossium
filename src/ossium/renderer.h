@@ -11,11 +11,15 @@
 #include "primitives.h"
 #include "texture.h"
 #include "window.h"
+#include "text.h"
 
 using namespace std;
 
 namespace ossium
 {
+
+    class Texture;
+    class Text;
 
     struct RenderInfoTexture
     {
@@ -27,6 +31,23 @@ namespace ossium
     struct RenderInfoTextureEx
     {
         Texture* texture;
+        SDL_Rect destRect;
+        SDL_Rect srcRect;
+        SDL_Point origin;
+        float angle;
+        SDL_RendererFlip flip;
+    };
+
+    struct RenderInfoText
+    {
+        Text* text;
+        SDL_Rect destRect;
+        SDL_Rect srcRect;
+    };
+
+    struct RenderInfoTextEx
+    {
+        Text* text;
         SDL_Rect destRect;
         SDL_Rect srcRect;
         SDL_Point origin;
@@ -67,7 +88,11 @@ namespace ossium
 
         // Adds a texture pointer to a queue corresponding to the layer. If the layer does not exist, throws an exception
         void enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, bool forceCull = false);
-        void enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, SDL_Point origin = {0, 0}, float angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
+        void enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, float angle = 0.0, SDL_Point origin = {0, 0}, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
+
+        // Ditto but for fancy Text
+        void enqueue(Text* text, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, bool forceCull = false);
+        void enqueueEx(Text* text, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, float angle = 0, SDL_Point origin = {0, 0}, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
 
         // These all add a point, line or rect to the respective layer queue. If the layer does not exist, throws an exception
         void enqueue(SDL_Point* point, int layer = 0, SDL_Color colour = BLACK, bool forceCull = false);
@@ -82,6 +107,10 @@ namespace ossium
         // Renders a specific layer of textures, or all layers by default
         void renderTextures(int layer = -1);
         void renderTexturesEx(int layer = -1);
+
+        // Ditto but for text
+        void renderTexts(int layer = -1);
+        void renderTextsEx(int layer = -1);
 
         // Renders a specific layer of points, lines and rects respectively, or all layers by default
         void renderPoints(int layer = -1);
@@ -160,6 +189,10 @@ namespace ossium
         // Dynamic array of layer queues for various textures, where layer 0 is the topmost layer (rendered last of all)
         queue<RenderInfoTexture>* textureLayers;
         queue<RenderInfoTextureEx>* textureExLayers;
+
+        // Ditto but for text
+        queue<RenderInfoText>* textLayers;
+        queue<RenderInfoTextEx>* textExLayers;
 
         // Dynamic arrays of layer queues for points, lines and rects
         queue<RenderInfoPoint>* pointLayers;

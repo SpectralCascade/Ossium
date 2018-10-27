@@ -5,6 +5,7 @@
 
 #include "texture.h"
 #include "statesprite.h"
+#include "renderer.h"
 
 namespace ossium
 {
@@ -115,19 +116,19 @@ namespace ossium
         return currentSubState;
     }
 
-    void StateSprite::render(SDL_Renderer* renderer, int x, int y, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void StateSprite::render(Renderer* renderer, int x, int y, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        stateTexture->render(renderer, x, y, &substateRect, angle, origin, flip);
+        renderer->enqueueEx(stateTexture, {x, y, substateRect.w, substateRect.h}, substateRect, layer, angle, *origin, flip);
     }
 
-    void StateSprite::render(SDL_Renderer* renderer, SDL_Rect dest, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void StateSprite::render(Renderer* renderer, SDL_Rect dest, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        stateTexture->render(renderer, dest, &substateRect, angle, origin, flip);
+        renderer->enqueueEx(stateTexture, dest, substateRect, layer, angle, *origin, flip);
     }
 
-    void StateSprite::renderSimple(SDL_Renderer* renderer, int x, int y)
+    void StateSprite::renderSimple(Renderer* renderer, int x, int y, int layer)
     {
-        stateTexture->renderSimple(renderer, x, y, &substateRect);
+        renderer->enqueue(stateTexture, {x, y, substateRect.w, substateRect.h}, substateRect, layer);
     }
 
 }

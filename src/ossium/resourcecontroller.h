@@ -5,6 +5,8 @@
 #include <map>
 #include <SDL2/SDL.h>
 
+#include "renderer.h"
+
 using namespace std;
 
 namespace ossium
@@ -62,7 +64,7 @@ namespace ossium
         };
 
         /// Overload for textures
-        bool postLoadInit(string guid_path, SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN)
+        bool postLoadInit(string guid_path, Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN)
         {
             SDL_assert(renderer != NULL);
             resourceType* resource = getResource(guid_path);

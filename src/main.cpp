@@ -14,6 +14,7 @@
 #include "ossium/primitives.h"
 #include "ossium/statesprite.h"
 #include "ossium/resourcecontroller.h"
+#include "ossium/renderer.h"
 
 using namespace std;
 using namespace ossium;
@@ -35,7 +36,7 @@ int main(int argc, char* argv[])
         Window mainWindow("Ossium Engine", 640, 480, settings.fullscreen);
 
         /// Create renderer
-        SDL_Renderer* mainRenderer = CreateRenderer(mainWindow.getWindow(), settings.vsync);
+        Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);//CreateRenderer(mainWindow.getWindow(), settings.vsync);
 
         /// Create texture manager
         ResourceController<Texture> textureController;
@@ -82,7 +83,7 @@ int main(int argc, char* argv[])
         float deltatime = 0.0;
         SDL_Event e;
 
-        SDL_SetRenderDrawBlendMode(mainRenderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 
         timer.start();
         while (!quit)
@@ -112,15 +113,16 @@ int main(int argc, char* argv[])
                     }
                 }
             }
-            SDL_RenderClear(mainRenderer);
+            mainRenderer->renderClear();
             if (textureController.getResource("test.png") != NULL)
             {
-                buttonSprite.render(mainRenderer, buttonRect.x, buttonRect.y);
+                buttonSprite.renderSimple(mainRenderer, (int)buttonRect.x, (int)buttonRect.y);
             }
             testOne.renderSimple(mainRenderer, 0, 0, NULL);
-            testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (120 * 3) - (testTwo.getHeight() / 2), NULL);
-            SDL_SetRenderDrawColor(mainRenderer, 0x00, 0x00, 0x00, 0xFF);
-            SDL_RenderPresent(mainRenderer);
+            testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
+            SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
+            mainRenderer->renderAll(-1);
+            mainRenderer->renderPresent();
         }
     }
     return 0;

@@ -5,14 +5,23 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "renderer.h"
+
 using namespace std;
 
 namespace ossium
 {
+
+    /// Forward declare Renderer
+    class Renderer;
+
     /// Wrapper class for SDL_Texture
     class Texture
     {
     public:
+        /// Renderer has access to the actual rendering methods
+        friend class Renderer;
+
         /// Appropriate constructor and destructor
         Texture();
         ~Texture();
@@ -25,12 +34,12 @@ namespace ossium
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate
         /// the texture's pixel data
-        bool init(SDL_Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+        bool init(Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
 
         #ifdef _SDL_TTF_H
         /// Creates a texture using a TrueType Font and a given string, returns success
-        /// TODO: Transfer and refactor this method to a new class dedicated to text rendering
-        bool createText(string text, SDL_Renderer* renderer, TTF_Font* font, SDL_Color color);
+        /// This method provides a simple alternative to using the Text class for basic text rendering
+        bool createText(string text, Renderer* renderer, TTF_Font* font, SDL_Color color);
         #endif // _SDL_TTF_H
 
         /// Set mod blending mode
@@ -41,14 +50,14 @@ namespace ossium
         void setColorMod(Uint8 r, Uint8 g, Uint8 b);
 
         /// Renders the texture to video memory; supports simple texture clipping
-        void render(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Simplified overload method
-        void render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Even simpler render method
-        void renderSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
-        void renderSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL);
+        void renderSimple(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, int layer = 0);
+        void renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, int layer = 0);
 
         /// Get texture dimensions
         int getWidth();
@@ -64,6 +73,12 @@ namespace ossium
         int getPitch();
 
     private:
+        /// Renderer access only methods for actual rendering
+        void renderTexture(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void renderTexture(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void renderTextureSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
+        void renderTextureSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL);
+
         /// Actual image as temporary SDL_Surface; converted to SDL_Texture by post-load initialisation method
         SDL_Surface* tempSurface;
 

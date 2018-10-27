@@ -115,9 +115,9 @@ namespace ossium
         void setInterpolation(bool lerp = true);
 
         /// Draws all the joints in the skeleton as circles in a given pose (NULL default to T-pose)
-        void drawJoints(SDL_Renderer* renderer, int x, int y, SDL_Color color);
+        void drawJoints(Renderer* renderer, int x, int y, SDL_Color color);
         /// Draws all the bones between joints as lines in a given pose (NULL default to T-Pose)
-        void drawBones(SDL_Renderer* renderer, int x, int y, SDL_Color color);
+        void drawBones(Renderer* renderer, int x, int y, SDL_Color color);
 
     private:
         /// Number of joints in skeleton

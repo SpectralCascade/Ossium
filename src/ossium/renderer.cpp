@@ -7,6 +7,7 @@
 #include "vector.h"
 #include "texture.h"
 #include "window.h"
+#include "text.h"
 #include "renderer.h"
 
 using namespace std;
@@ -15,10 +16,14 @@ namespace ossium
 {
     Renderer::Renderer(Window* window, int numLayers, bool culling, Uint32 flags, int driver)
     {
+        #ifdef DEBUG
         SDL_assert(window != NULL);
+        #endif // DEBUG
         renderer = SDL_CreateRenderer(window->getWindow(), driver, flags);
         textureLayers = new queue<RenderInfoTexture>[numLayers];
         textureExLayers = new queue<RenderInfoTextureEx>[numLayers];
+        textLayers = new queue<RenderInfoText>[numLayers];
+        textExLayers = new queue<RenderInfoTextEx>[numLayers];
         pointLayers = new queue<RenderInfoPoint>[numLayers];
         lineLayers = new queue<RenderInfoLine>[numLayers];
         rectLayers = new queue<RenderInfoRect>[numLayers];
@@ -35,6 +40,8 @@ namespace ossium
         renderer = NULL;
         delete[] textureLayers;
         delete[] textureExLayers;
+        delete[] textLayers;
+        delete[] textExLayers;
         delete[] pointLayers;
         delete[] lineLayers;
         delete[] rectLayers;
@@ -61,7 +68,7 @@ namespace ossium
         textureLayers[layer].push((RenderInfoTexture){texture, dest, src});
     }
 
-    void Renderer::enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer, SDL_Point origin, float angle, SDL_RendererFlip flip, bool forceCull)
+    void Renderer::enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src, int layer, float angle, SDL_Point origin, SDL_RendererFlip flip, bool forceCull)
     {
         #ifdef DEBUG
         SDL_assert(layer >= 0);
@@ -77,6 +84,41 @@ namespace ossium
             }
         }
         textureExLayers[layer].push((RenderInfoTextureEx){texture, dest, src, origin, angle, flip});
+    }
+
+    void Renderer::enqueue(Text* text, SDL_Rect dest, SDL_Rect src, int layer, bool forceCull)
+    {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
+        if (renderCull || forceCull)
+        {
+            // Check if the destination rect is inside or outside the renderer view
+            if (!IntersectSDL(dest, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
+            {
+                // Cull this object by simply not enqueuing it for rendering
+                numCulled++;
+                return;
+            }
+        }
+        textLayers[layer].push((RenderInfoText){text, dest, src});
+    }
+    void Renderer::enqueueEx(Text* text, SDL_Rect dest, SDL_Rect src, int layer, float angle, SDL_Point origin, SDL_RendererFlip flip, bool forceCull)
+    {
+        #ifdef DEBUG
+        SDL_assert(layer >= 0);
+        #endif // DEBUG
+        if (renderCull || forceCull)
+        {
+            // Check if the destination rect is inside or outside the renderer view
+            if (!IntersectSDL(dest, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
+            {
+                // Cull this object by simply not enqueuing it for rendering
+                numCulled++;
+                return;
+            }
+        }
+        textExLayers[layer].push((RenderInfoTextEx){text, dest, src, origin, angle, flip});
     }
 
     void Renderer::enqueue(SDL_Point* point, int layer, SDL_Color colour, bool forceCull)
@@ -111,12 +153,12 @@ namespace ossium
         lineLayers[layer].push((RenderInfoLine){*line, colour, flip});
     }
 
-    void Renderer::enqueue(SDL_Rect* rect, int layer, bool filled, SDL_Color colour)
+    void Renderer::enqueue(SDL_Rect* rect, int layer, bool filled, SDL_Color colour, bool forceCull)
     {
         #ifdef DEBUG
         SDL_assert(layer >= 0);
         #endif // DEBUG
-        if (renderCull)
+        if (renderCull || forceCull)
         {
             if (!IntersectSDL(*rect, {0, 0, renderWindow->getWidth(), renderWindow->getHeight()}))
             {
@@ -138,9 +180,6 @@ namespace ossium
 
     void Renderer::renderTextures(int layer)
     {
-        #ifdef DEBUG
-        SDL_assert((unsigned int)numLayersActive == textureLayers->size());
-        #endif
         if (layer < 0)
         {
             // Iterate through all layers
@@ -156,7 +195,7 @@ namespace ossium
                 {
                     RenderInfoTexture info = textureLayers[i].front();
                     textureLayers[i].pop();
-                    info.texture->renderSimple(renderer, info.destRect, &info.srcRect);
+                    info.texture->renderTextureSimple(renderer, info.destRect, &info.srcRect);
                 }
                 numRendered += rendered;
             }
@@ -175,7 +214,7 @@ namespace ossium
             {
                 RenderInfoTexture info = textureLayers[layer].front();
                 textureLayers[layer].pop();
-                info.texture->renderSimple(renderer, info.destRect, &info.srcRect);
+                info.texture->renderTextureSimple(renderer, info.destRect, &info.srcRect);
             }
             numRendered += rendered;
         }
@@ -183,9 +222,6 @@ namespace ossium
 
     void Renderer::renderTexturesEx(int layer)
     {
-        #ifdef DEBUG
-        SDL_assert((unsigned int)numLayersActive == textureExLayers->size());
-        #endif
         if (layer < 0)
         {
             for (int i = numLayersActive  -1; i >= 0; i--)
@@ -199,7 +235,7 @@ namespace ossium
                 {
                     RenderInfoTextureEx info = textureExLayers[i].front();
                     textureExLayers[i].pop();
-                    info.texture->render(renderer, info.destRect, &info.srcRect, info.angle, &info.origin, info.flip);
+                    info.texture->renderTexture(renderer, info.destRect, &info.srcRect, info.angle, &info.origin, info.flip);
                 }
                 numRendered += rendered;
             }
@@ -218,16 +254,93 @@ namespace ossium
             {
                 RenderInfoTextureEx info = textureExLayers[layer].front();
                 textureExLayers[layer].pop();
-                info.texture->render(renderer, info.destRect, &info.srcRect, info.angle, &info.origin, info.flip);
+                info.texture->renderTexture(renderer, info.destRect, &info.srcRect, info.angle, &info.origin, info.flip);
+            }
+        }
+    }
+
+    void Renderer::renderTexts(int layer)
+    {
+        if (layer < 0)
+        {
+            // Iterate through all layers
+            for (int i = numLayersActive - 1; i >= 0; i--)
+            {
+                if (textLayers[i].empty())
+                {
+                    continue;
+                }
+                // Iterate through queue
+                int rendered = textLayers[i].size();
+                for (int j = 0; j < rendered; j++)
+                {
+                    RenderInfoText info = textLayers[i].front();
+                    textLayers[i].pop();
+                    info.text->renderTextSimple(this, info.destRect, &info.srcRect);
+                }
+                numRendered += rendered;
+            }
+        }
+        else
+        {
+            #ifdef DEBUG
+            SDL_assert(layer < numLayersActive);
+            #endif // DEBUG
+            if (textLayers[layer].empty())
+            {
+                return;
+            }
+            int rendered = textLayers[layer].size();
+            for (int i = 0; i < rendered; i++)
+            {
+                RenderInfoText info = textLayers[layer].front();
+                textLayers[layer].pop();
+                info.text->renderTextSimple(this, info.destRect, &info.srcRect);
+            }
+            numRendered += rendered;
+        }
+    }
+    void Renderer::renderTextsEx(int layer)
+    {
+        if (layer < 0)
+        {
+            for (int i = numLayersActive  -1; i >= 0; i--)
+            {
+                if (textExLayers[i].empty())
+                {
+                    continue;
+                }
+                int rendered = textExLayers[i].size();
+                for (int j = 0; j < rendered; j++)
+                {
+                    RenderInfoTextEx info = textExLayers[i].front();
+                    textExLayers[i].pop();
+                    info.text->renderText(this, info.destRect, &info.srcRect, info.angle, &info.origin, info.flip);
+                }
+                numRendered += rendered;
+            }
+        }
+        else
+        {
+            #ifdef DEBUG
+            SDL_assert(layer < numLayersActive);
+            #endif // DEBUG
+            if (textExLayers[layer].empty())
+            {
+                return;
+            }
+            int rendered = textExLayers[layer].size();
+            for (int i = 0; i < rendered; i++)
+            {
+                RenderInfoTextEx info = textExLayers[layer].front();
+                textExLayers[layer].pop();
+                info.text->renderText(this, info.destRect, &info.srcRect, info.angle, &info.origin, info.flip);
             }
         }
     }
 
     void Renderer::renderPoints(int layer)
     {
-        #ifdef DEBUG
-        SDL_assert((unsigned int)numLayersActive == pointLayers->size());
-        #endif
         if (layer < 0)
         {
             for (int i = numLayersActive - 1; i >= 0; i--)
@@ -270,9 +383,6 @@ namespace ossium
 
     void Renderer::renderLines(int layer)
     {
-        #ifdef DEBUG
-        SDL_assert((unsigned int)numLayersActive == lineLayers->size());
-        #endif
         if (layer < 0)
         {
             for (int i = numLayersActive - 1; i >= 0; i--)
@@ -315,9 +425,6 @@ namespace ossium
 
     void Renderer::renderRects(int layer)
     {
-        #ifdef DEBUG
-        SDL_assert((unsigned int)numLayersActive == rectLayers->size());
-        #endif
         if (layer < 0)
         {
             for (int i = numLayersActive - 1; i >= 0; i--)
@@ -360,9 +467,6 @@ namespace ossium
 
     void Renderer::renderFillRects(int layer)
     {
-        #ifdef DEBUG
-        SDL_assert((unsigned int)numLayersActive == fillRectLayers->size());
-        #endif
         if (layer < 0)
         {
             for (int i = numLayersActive - 1; i >= 0; i--)
@@ -410,6 +514,7 @@ namespace ossium
             if (split)
             {
                 renderTextures(-1);
+                renderTexts(-1);
                 renderFillRects(-1);
                 renderRects(-1);
                 renderLines(-1);
@@ -421,6 +526,7 @@ namespace ossium
                 for (int i = numLayersActive - 1; i >= 0; i--)
                 {
                     renderTextures(i);
+                    renderTexts(i);
                     renderFillRects(i);
                     renderRects(i);
                     renderLines(i);
@@ -434,6 +540,7 @@ namespace ossium
             SDL_assert(layer < numLayersActive);
             #endif // DEBUG
             renderTextures(layer);
+            renderTexts(layer);
             renderFillRects(layer);
             renderRects(layer);
             renderLines(layer);
