@@ -164,6 +164,10 @@ namespace ossium
         int getNumRendered();
 
     private:
+        // Copying of renderer is not permitted
+        Renderer(const Renderer& thisCopy);
+        Renderer operator=(const Renderer& thisCopy);
+
         // SDL renderer context that deals with the actual rendering
         SDL_Renderer* renderer;
 

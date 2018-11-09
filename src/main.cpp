@@ -39,27 +39,32 @@ int main(int argc, char* argv[])
         Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);//CreateRenderer(mainWindow.getWindow(), settings.vsync);
 
         /// Create texture manager
-        ResourceController<Texture> textureController;
-        if (textureController.loadResource("test.png"))
+        ResourceController<Texture> textures;
+        if (textures.load("test.png"))
         {
-            if (!textureController.postLoadInit("test.png", mainRenderer))
+            if (!textures.initialise("test.png", mainRenderer))
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'test.png'!");
             }
         }
-        if (textureController.loadResource("sprite_test.png"))
+        if (textures.load("sprite_test.png"))
         {
-            if (!textureController.postLoadInit("sprite_test.png", mainRenderer))
+            if (!textures.initialise("sprite_test.png", mainRenderer))
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error during post-load initialisation of resource 'sprite_test.png'!");
             }
         }
 
         /// Create font manager
-        ResourceController<Font> fontController;
-        fontController.loadResource("consolas.ttf");
-        int fontSize = 56;
-        fontController.loadResource("serif.ttf", &fontSize);
+        ResourceController<Font> fonts;
+        /// Load font with a default selection of point sizes
+        int* fontPointSizes = new int[1];
+        fontPointSizes[0] = 0;
+        int* serifSize = new int[2];
+        serifSize[0] = 1;
+        serifSize[1] = 56;
+        fonts.load("serif.ttf", serifSize);
+        fonts.load("consolas.ttf", fontPointSizes);
         /// Test fonts
         Text testOne;
         Text testTwo;
@@ -70,21 +75,21 @@ int main(int argc, char* argv[])
         testOne.setText("Muhahahaha! FONTS!");
         testOne.setBackgroundColor({0x00, 0x00, 0x00, 110});
         testOne.setBoxPaddingWidth(20);
-        fontController.getResource("consolas.ttf");
+        fonts.find("consolas.ttf");
         testOne.setRenderMode(RENDERTEXT_BLEND);
-        testOne.textToTexture(mainRenderer, fontController.getResource("consolas.ttf"));
+        testOne.textToTexture(mainRenderer, fonts.find("consolas.ttf"));
         testTwo.setText("Fancy font :D");
-        testTwo.textToTexture(mainRenderer, fontController.getResource("serif.ttf"));
+        testTwo.textToTexture(mainRenderer, fonts.find("serif.ttf"));
         testOne.setBox(true);
 
         /// State sprite and primitives for testing
         SDL_Rect buttonRect = {0, 0, 640, 240};
         StateSprite buttonSprite;
-        buttonSprite.addState("idle", textureController.getResource("test.png"), true, 2);
+        buttonSprite.addState("idle", textures.find("test.png"), true, 2);
 
         SDL_Rect chestRect = {320 - 64, 300, 128, 100};
         StateSprite chestSprite;
-        chestSprite.addState("open", textureController.getResource("sprite_test.png"), false, 4);
+        chestSprite.addState("open", textures.find("sprite_test.png"), false, 4);
 
         /// Change pixel filtering setting ("0" = no filter, "1" = linear, "2" = bilinear [directX/direct3D only])
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, &settings.filtering);
@@ -141,15 +146,15 @@ int main(int argc, char* argv[])
                 chestSprite.changeSubState((int)((float)timer.getTicks() / 200.0f) % 4);
             }
             mainRenderer->renderClear();
-            if (textureController.getResource("test.png") != NULL)
+            if (textures.find("test.png") != NULL)
             {
                 buttonSprite.renderSimple(mainRenderer, (int)buttonRect.x, (int)buttonRect.y);
             }
-            if (textureController.getResource("sprite_test.png") != NULL)
+            if (textures.find("sprite_test.png") != NULL)
             {
                 chestSprite.renderSimple(mainRenderer, chestRect);
             }
-            if (fontController.getResource("serif.ttf") != NULL && fontController.getResource("consolas.ttf") != NULL)
+            if (fonts.find("serif.ttf") != NULL && fonts.find("consolas.ttf") != NULL)
             {
                 testOne.renderSimple(mainRenderer, 0, 0, NULL);
                 testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);

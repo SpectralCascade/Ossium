@@ -16,8 +16,12 @@ namespace ossium
     class ResourceController
     {
     public:
+        ResourceController<resourceType>()
+        {
+        };
+
         /// Loads a resource and adds it to the registry
-        bool loadResource(string guid_path, int* loadArgs = NULL)
+        bool load(string guid_path, int* loadArgs = NULL)
         {
             bool success = true;
             resourceType* resource = new resourceType();
@@ -46,9 +50,9 @@ namespace ossium
         };
 
         /// Post-load initialisation method for general resources
-        bool postLoadInit(string guid_path)
+        bool initialise(string guid_path)
         {
-            resourceType* resource = getResource(guid_path);
+            resourceType* resource = find(guid_path);
             if (resource != NULL)
             {
                 if (resource->init())
@@ -64,10 +68,10 @@ namespace ossium
         };
 
         /// Overload for textures
-        bool postLoadInit(string guid_path, Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN)
+        bool initialise(string guid_path, Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN)
         {
             SDL_assert(renderer != NULL);
-            resourceType* resource = getResource(guid_path);
+            resourceType* resource = find(guid_path);
             if (resource != NULL)
             {
                 if (resource->init(renderer, windowPixelFormat))
@@ -83,7 +87,7 @@ namespace ossium
         };
 
         /// Destroys a resource and removes it from the registry
-        void freeResource(string guid_path)
+        void free(string guid_path)
         {
             if (registry.find(guid_path) != registry.end())
             {
@@ -96,7 +100,7 @@ namespace ossium
         };
 
         /// Returns pointer to a resource, or NULL if the GUID doesn't exist in the registry
-        resourceType* getResource(string guid_path)
+        resourceType* find(string guid_path)
         {
             if (registry.find(guid_path) == registry.end())
             {
@@ -121,6 +125,10 @@ namespace ossium
         };
 
     private:
+        /// We definitely don't want to copy instances of this class, for obvious reasons
+        ResourceController<resourceType>(const ResourceController& thisCopy);
+        ResourceController operator=(const ResourceController& thisCopy);
+
         /// Lookup registry; key = guid_path, value = pointer to resource
         map<string, resourceType*> registry;
 

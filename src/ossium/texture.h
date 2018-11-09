@@ -22,7 +22,7 @@ namespace ossium
         /// Renderer has access to the actual rendering methods
         friend class Renderer;
 
-        /// Appropriate constructor and destructor
+        /// Appropriate constructor, copy constructors and destructor
         Texture();
         ~Texture();
 
@@ -73,6 +73,10 @@ namespace ossium
         int getPitch();
 
     private:
+        /// Copying is prohibited as it requires SDL function calls with an SDL_Renderer
+        Texture(const Texture& thisCopy);
+        Texture operator=(const Texture& thisCopy);
+
         /// Renderer access only methods for actual rendering
         void renderTexture(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
         void renderTexture(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);

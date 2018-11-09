@@ -101,6 +101,24 @@ namespace ossium
         paused = false;
     }
 
+    Timer::Timer(const Timer& thisCopy)
+    {
+        copy(thisCopy);
+    }
+    Timer Timer::operator=(const Timer& thisCopy)
+    {
+        copy(thisCopy);
+    }
+
+    void Timer::copy(const Timer& thisCopy)
+    {
+        if (thisCopy.clock != NULL)
+        {
+            clock = new Clock();
+            *clock = *thisCopy.clock;
+        }
+    }
+
     void Timer::start()
     {
         started = true;

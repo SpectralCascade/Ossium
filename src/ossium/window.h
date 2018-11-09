@@ -33,6 +33,10 @@ namespace ossium
         bool isFocus();
 
     private:
+        /// Prohibited copying of windows
+        Window(const Window& thisCopy);
+        Window operator=(const Window& thisCopy);
+
         /// Individual window instance
         SDL_Window* window;
 

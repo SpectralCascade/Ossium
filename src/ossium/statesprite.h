@@ -52,6 +52,10 @@ namespace ossium
         void renderSimple(Renderer* renderer, SDL_Rect dest, int layer = 0);
 
     protected:
+        /// Prohibited copying for safety
+        StateSprite(const StateSprite& thisCopy);
+        StateSprite operator=(const StateSprite& thisCopy);
+
         /// Original addState method - this one does worry about bit masks, hence why it's protected
         bool addState(string state, Texture* texture, Uint16 clipData = 1 | STATE_HORIZONTAL);
 

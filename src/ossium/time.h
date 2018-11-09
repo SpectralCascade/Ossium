@@ -58,6 +58,8 @@ namespace ossium
     public:
         /// Takes a clock instance to provide timing ticks - otherwise defaults to absolute time
         Timer(Clock* refClock = NULL);
+        Timer(const Timer& thisCopy);
+        Timer operator=(const Timer& thisCopy);
 
         /// Timer actions; all parameters are in milliseconds and generally correspond to time passed
         /// since some arbitrary clock began - if no clock object is used, utilise SDL_GetTicks()
@@ -74,6 +76,9 @@ namespace ossium
         bool isPaused();
 
     private:
+        /// Saves code duplication
+        void copy(const Timer& thisCopy);
+
         /// Reference clock
         Clock* clock;
 

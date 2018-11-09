@@ -85,6 +85,10 @@ namespace ossium
         void setBox(bool enabled);
 
     private:
+        /// Prohibited copying for safety
+        Text(const Text& thisCopy);
+        Text operator=(const Text& thisCopy);
+
         /// Renders the texture in a similar way to Texture::render()
         void renderText(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
