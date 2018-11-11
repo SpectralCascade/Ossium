@@ -59,6 +59,8 @@
 		<Unit filename="src/ossium/text.h" />
 		<Unit filename="src/ossium/texture.cpp" />
 		<Unit filename="src/ossium/texture.h" />
+		<Unit filename="src/ossium/texturepack.cpp" />
+		<Unit filename="src/ossium/texturepack.h" />
 		<Unit filename="src/ossium/time.cpp" />
 		<Unit filename="src/ossium/time.h" />
 		<Unit filename="src/ossium/transform.cpp" />

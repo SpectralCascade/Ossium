@@ -5,15 +5,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "renderer.h"
-
 using namespace std;
 
 namespace ossium
 {
 
-    /// Forward declare Renderer
+    /// Forward declare Renderer and TexturePack
     class Renderer;
+    class TexturePack;
 
     /// Wrapper class for SDL_Texture
     class Texture
@@ -21,6 +20,8 @@ namespace ossium
     public:
         /// Renderer has access to the actual rendering methods
         friend class Renderer;
+        /// TexturePack is allowed to use the SDL_Texture
+        friend class TexturePack;
 
         /// Appropriate constructor, copy constructors and destructor
         Texture();

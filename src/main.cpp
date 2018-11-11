@@ -6,6 +6,7 @@
 #include "ossium/init.h"
 #include "ossium/window.h"
 #include "ossium/texture.h"
+#include "ossium/texturepack.h"
 #include "ossium/time.h"
 #include "ossium/font.h"
 #include "ossium/text.h"
@@ -36,11 +37,11 @@ int main(int argc, char* argv[])
         Window mainWindow("Ossium Engine", 640, 480, settings.fullscreen);
 
         /// Create renderer
-        Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);//CreateRenderer(mainWindow.getWindow(), settings.vsync);
+        Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
 
         /// Create texture manager
         ResourceController<Texture> textures;
-        if (textures.load("test.png"))
+        /*if (textures.load("test.png"))
         {
             if (!textures.initialise("test.png", mainRenderer))
             {
@@ -96,18 +97,25 @@ int main(int argc, char* argv[])
 
         Timer timer;
         float prevtime = 0.0;
-        float deltatime = 0.0;
+        float deltatime = 0.0;*/
         SDL_Event e;
 
-        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
+        TexturePack spriteAtlas;
+        //spriteAtlas.import("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        spriteAtlas.import("pack_texture.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        //spriteAtlas.import("noice.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+
+        spriteAtlas.packImported(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+
+/*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 
         bool openChest = false;
 
-        timer.start();
+        timer.start();*/
         while (!quit)
         {
-            deltatime = (timer.getTicks() - prevtime) / 1000.0;
-            prevtime = timer.getTicks();
+/*            deltatime = (timer.getTicks() - prevtime) / 1000.0;
+            prevtime = timer.getTicks();*/
             while (SDL_PollEvent(&e) != 0)
             {
                 mainWindow.handle_events(e);
@@ -116,7 +124,7 @@ int main(int argc, char* argv[])
                     quit = true;
                     break;
                 }
-                if (e.type == SDL_MOUSEMOTION)
+/*                if (e.type == SDL_MOUSEMOTION)
                 {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
@@ -139,14 +147,14 @@ int main(int argc, char* argv[])
                         chestSprite.changeSubState(0);
                         timer.start();
                     }
-                }
+                }*/
             }
-            if (openChest)
+/*            if (openChest)
             {
                 chestSprite.changeSubState((int)((float)timer.getTicks() / 200.0f) % 4);
-            }
+            }*/
             mainRenderer->renderClear();
-            if (textures.find("test.png") != NULL)
+/*            if (textures.find("test.png") != NULL)
             {
                 buttonSprite.renderSimple(mainRenderer, (int)buttonRect.x, (int)buttonRect.y);
             }
@@ -158,7 +166,8 @@ int main(int argc, char* argv[])
             {
                 testOne.renderSimple(mainRenderer, 0, 0, NULL);
                 testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
-            }
+            }*/
+            spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 0, 0);
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();

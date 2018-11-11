@@ -9,9 +9,9 @@
 #include "colours.h"
 #include "vector.h"
 #include "primitives.h"
-#include "texture.h"
+//#include "texture.h"
 #include "window.h"
-#include "text.h"
+//#include "text.h"
 
 using namespace std;
 

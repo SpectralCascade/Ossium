@@ -66,6 +66,8 @@ namespace ossium
 
     bool Texture::init(Renderer* renderer, Uint32 windowPixelFormat)
     {
+        // pixel format stuff not working currently - disabling it
+        windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN;
         SDL_assert(renderer != NULL);
         freeTexture();
         if (tempSurface == NULL)
