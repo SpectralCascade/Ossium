@@ -35,7 +35,6 @@ namespace ossium
     {
         if (texture != NULL)
         {
-            unlockPixels();
             SDL_DestroyTexture(texture);
             texture = NULL;
         }
@@ -67,8 +66,10 @@ namespace ossium
     bool Texture::init(Renderer* renderer, Uint32 windowPixelFormat)
     {
         // pixel format stuff not working currently - disabling it
-        windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN;
+        //windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN;
+        #ifdef DEBUG
         SDL_assert(renderer != NULL);
+        #endif
         freeTexture();
         if (tempSurface == NULL)
         {
@@ -77,16 +78,14 @@ namespace ossium
         else if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
         {
             SDL_Surface* formattedSurface = NULL;
-            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, 0);
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
+            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, NULL);
             if (formattedSurface == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to format surface! SDL_Error: %s", SDL_GetError());
             }
             else
             {
-                texture = SDL_CreateTextureFromSurface(renderer->getRenderer(), formattedSurface);
+                texture = SDL_CreateTexture(renderer->getRenderer(), windowPixelFormat, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
                 if (texture == NULL)
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
@@ -117,13 +116,16 @@ namespace ossium
                 width = tempSurface->w;
                 height = tempSurface->h;
             }
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
         }
         if (texture != NULL)
         {
             /// Enable hardware-accelerated alpha blending by default
             setBlendMode(SDL_BLENDMODE_BLEND);
+        }
+        if (tempSurface != NULL)
+        {
+            SDL_FreeSurface(tempSurface);
+            tempSurface = NULL;
         }
         return texture != NULL;
     }
@@ -176,19 +178,25 @@ namespace ossium
 
     void Texture::setBlendMode(SDL_BlendMode blend)
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
+        #endif
         SDL_SetTextureBlendMode(texture, blend);
     }
 
     void Texture::setAlpha(Uint8 a)
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
+        #endif
         SDL_SetTextureAlphaMod(texture, a);
     }
 
     void Texture::setColorMod(Uint8 r, Uint8 g, Uint8 b)
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
+        #endif
         SDL_SetTextureColorMod(texture, r, g, b);
     }
 
@@ -204,29 +212,32 @@ namespace ossium
 
     bool Texture::lockPixels()
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
-        bool success = true;
+        #endif
         if (pixels != NULL)
         {
-            success = false;
+            return false;
         }
         else
         {
             if (SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
             {
-                success = false;
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Texture lock failure, %s", SDL_GetError());
+                return false;
             }
         }
-        return success;
+        return true;
     }
 
     bool Texture::unlockPixels()
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
-        bool success = true;
-        if (pixels != NULL)
+        #endif
+        if (pixels == NULL)
         {
-            success = false;
+            return false;
         }
         else
         {
@@ -234,17 +245,29 @@ namespace ossium
             pixels = NULL;
             pitch = 0;
         }
-        return success;
+        return true;
+    }
+
+    void* Texture::getPixels()
+    {
+        return pixels;
+    }
+
+    int Texture::getPitch()
+    {
+        return pitch;
     }
 
     ///
-    /// PRIVATE RENDERING METHODS: Accessed exclusively by this and friend class Renderer
+    /// PRIVATE RENDERING METHODS, utilised by friend class Renderer
     ///
 
     void Texture::renderTexture(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
         SDL_assert(renderer != NULL);
+        #endif
         if (clip != NULL)
         {
             if (dest.w == 0)
@@ -266,8 +289,10 @@ namespace ossium
 
     void Texture::renderTexture(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
         SDL_assert(renderer != NULL);
+        #endif
         SDL_Rect dest = {x, y, width, height};
         if (clip != NULL)
         {
@@ -284,8 +309,10 @@ namespace ossium
 
     void Texture::renderTextureSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
     {
+        #ifdef DEBUG
         SDL_assert(texture != NULL);
         SDL_assert(renderer != NULL);
+        #endif
         SDL_Rect dest = {x, y, width, height};
         if (clip != NULL)
         {

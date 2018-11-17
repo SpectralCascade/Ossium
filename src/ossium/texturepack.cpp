@@ -1,6 +1,7 @@
 #include <string.h>
 #include <vector>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "basics.h"
 #include "renderer.h"
@@ -175,7 +176,7 @@ namespace ossium
         SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
         SDL_SetRenderTarget(render, packedTexture.texture);
         // Marker rect is used to mark height and width of the current 'row' of textures
-        SDL_Rect markerRect = {0, 0, maxSize, maxSize};
+        SDL_Rect markerRect = {0, 0, 0, 0};
         SDL_RenderClear(render);
         int finalWidth = 0;
         int finalHeight = 0;
@@ -206,6 +207,7 @@ namespace ossium
         SDL_Rect targetRect = {0, 0, finalWidth, finalHeight};
         SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
+        packedTexture.freeTexture();
         packedTexture.texture = SDL_CreateTextureFromSurface(render, renderSurface);
         packedTexture.width = renderSurface->w;
         packedTexture.height = renderSurface->h;
@@ -217,9 +219,59 @@ namespace ossium
         return numAdded;
     }
 
-    // Todo: implement me
-    bool TexturePack::save(string path)
+    bool TexturePack::save(Renderer* renderer, Uint32 windowPixelFormat, string path)
     {
+        // Saves the texture pack as a PNG image with meta file containing clip information
+        if (packedTexture.texture != NULL)
+        {
+            // Setup target texture and surface
+            SDL_Renderer* render = renderer->getRenderer();
+            SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
+            SDL_Rect targetRect = {0, 0, packedTexture.getWidth(), packedTexture.getHeight()};
+            SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+            if (renderSurface == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create surface during TexturePack save process!");
+                return false;
+            }
+            SDL_Texture* renderTarget = SDL_CreateTexture(render, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, targetRect.w, targetRect.h);
+            if (renderTarget == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create render target texture during TexturePack save process!");
+                return false;
+            }
+            SDL_SetRenderTarget(render, renderTarget);
+
+            // Render to texture and read the pixels to an SDL_Surface
+            SDL_RenderClear(render);
+            SDL_RenderCopy(render, packedTexture.texture, &targetRect, &targetRect);
+            SDL_RenderPresent(render);
+            SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
+            // Free the original texture and reset the render target
+            SDL_DestroyTexture(renderTarget);
+            renderTarget = NULL;
+            SDL_SetRenderTarget(render, originalTarget);
+
+            // Actually save the image
+            IMG_SavePNG(renderSurface, (path + ".png").c_str());
+
+            // Free the surface
+            SDL_FreeSurface(renderSurface);
+            renderSurface = NULL;
+
+            // Now save the meta data
+            /*for (int i = 0, counti = importedData.empty() ? 0 : importedData.size(); i < counti; i++)
+            {
+                // Todo: save meta data
+            }*/
+
+            SDL_Log("Successfully saved TexturePack at '%s'.", path.c_str());
+            return true;
+        }
+        else
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Could not save TexturePack, source texture is NULL.");
+        }
         return false;
     }
 

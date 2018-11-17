@@ -101,11 +101,18 @@ int main(int argc, char* argv[])
         SDL_Event e;
 
         TexturePack spriteAtlas;
-        //spriteAtlas.import("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
-        spriteAtlas.import("pack_texture.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        Uint32 winPixelFormat = SDL_GetWindowPixelFormat(mainWindow.getWindow());
+
+        spriteAtlas.import("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        spriteAtlas.import("pack_texture.png", mainRenderer, winPixelFormat);
         //spriteAtlas.import("noice.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
 
-        spriteAtlas.packImported(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        spriteAtlas.packImported(mainRenderer, winPixelFormat);
+
+        if (!spriteAtlas.save(mainRenderer, winPixelFormat, "test_pack"))
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to save TexturePack at path '%s'!", "test_pack");
+        }
 
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 

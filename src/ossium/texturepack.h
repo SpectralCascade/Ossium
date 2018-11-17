@@ -63,7 +63,7 @@ namespace ossium
         int packImported(Renderer* renderer, Uint32 windowPixelFormat, bool smallestFirst = true, Uint16 maxSize = 4096);
 
         // Saves the texture and package data to a PNG format file
-        bool save(string path);
+        bool save(Renderer* renderer, Uint32 windowPixelFormat, string path);
 
         // Returns a reference to the packed texture
         Texture& getPackedTexture();
