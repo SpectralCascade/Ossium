@@ -51,7 +51,8 @@ namespace ossium
         }
         totalSectors = 0;
         fileSize = 0;
-
+        totalDataBytes = 0;
+        index = 0;
     }
 
     void Serialiser::OpenSector(string name, string filePath, bool mode)
@@ -151,6 +152,16 @@ namespace ossium
             SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Attempted to write to NULL file source! %d sectors open.",
                         openSectors.empty() ? 0 : (int)openSectors.size());
         }
+    }
+
+    void Serialiser::readInterface(SerialInterface &obj)
+    {
+        obj.SerialRead(this);
+    }
+
+    void Serialiser::writeInterface(SerialInterface &obj)
+    {
+        obj.SerialWrite(this);
     }
 
     unsigned int Serialiser::getTotalSectors()

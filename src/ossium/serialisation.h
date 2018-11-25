@@ -80,14 +80,8 @@ namespace ossium
         void writeString(string &data);
 
         // Read and write serial objects
-        void readInterface(SerialInterface &obj)
-        {
-            obj.SerialRead(this);
-        }
-        void writeInterface(SerialInterface &obj)
-        {
-            obj.SerialWrite(this);
-        }
+        void readInterface(SerialInterface &obj);
+        void writeInterface(SerialInterface &obj);
 
         // Returns number of sectors read/written so far
         unsigned int getTotalSectors();
