@@ -42,7 +42,7 @@ namespace ossium
             file = NULL;
             if (mode == WRITE)
             {
-                SDL_Log("Closed file with final output size of %d and %d sector(s). Wrote %d bytes of data.", fileSize, totalSectors, totalDataBytes);
+                SDL_Log("Closed file with final output size of %d bytes and %d sector(s). Wrote %d bytes of data.", fileSize, totalSectors, totalDataBytes);
             }
             else
             {
@@ -56,9 +56,10 @@ namespace ossium
 
     void Serialiser::OpenSector(string name, string filePath, bool mode)
     {
-        SDL_Log("Opening new sector '%s' in file '%s' with mode '%s'.", name.c_str(), filePath.c_str(), mode == WRITE ? "binary write" : "binary read");
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Opening new sector '%s' in file '%s' with mode '%s'.", name.c_str(), filePath.c_str(), mode == WRITE ? "binary write" : "binary read");
         if (file == NULL)
         {
+            SDL_Log("Opening file '%s' for %s.", filePath.c_str(), mode == WRITE ? "writing" : "reading");
             file = SDL_RWFromFile(filePath.c_str(), mode == WRITE ? "w+b" : "r+b");
             path = filePath;
             if (file == NULL)
@@ -97,7 +98,7 @@ namespace ossium
     {
         if (!openSectors.empty())
         {
-            SDL_Log("Finished %s a sector, %s %d bytes of data.", mode == READ ? "reading" : "writing", mode == READ ? "read" : "wrote", index);
+            SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Finished %s a sector, %s %d bytes of data.", mode == READ ? "reading" : "writing", mode == READ ? "read" : "wrote", index);
             totalDataBytes += index;
             fileSize += index;
             openSectors.pop();
