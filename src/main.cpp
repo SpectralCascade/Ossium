@@ -113,6 +113,11 @@ int main(int argc, char* argv[])
         {
             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to save TexturePack at path '%s'!", "test_pack");
         }
+        spriteAtlas.freeAll();
+
+        // Test loading
+        spriteAtlas.load("test_pack", NULL);
+        spriteAtlas.init(mainRenderer);
 
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 
@@ -174,7 +179,10 @@ int main(int argc, char* argv[])
                 testOne.renderSimple(mainRenderer, 0, 0, NULL);
                 testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
             }*/
-            spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 0, 0);
+            SDL_Rect clip = spriteAtlas.getClip("sprite_test.png");
+            spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 0, 0, &clip);
+            clip = spriteAtlas.getClip("pack_texture.png");
+            spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 256, 0, &clip);
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();

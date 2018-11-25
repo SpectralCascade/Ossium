@@ -68,6 +68,11 @@ namespace ossium
         // Returns a reference to the packed texture
         Texture& getPackedTexture();
 
+        // Returns a clip rect for a given texture
+        SDL_Rect getClip(string textureId);
+        // Overload returns a mipmap, if the texture has a generated mipmap
+        SDL_Rect getClip(string textureId, int mipmapLevel);
+
     private:
         // No copying of this permitted
         TexturePack(const TexturePack& thisCopy);

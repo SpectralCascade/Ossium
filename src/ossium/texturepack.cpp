@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "texture.h"
 #include "texturepack.h"
+#include "serialisation.h"
 
 using namespace std;
 
@@ -70,7 +71,26 @@ namespace ossium
     bool TexturePack::load(string path, int* args)
     {
         freePack();
-        return packedTexture.load(path, args);
+        // Load meta data first
+        Serialiser metaStream;
+        metaStream.OpenSector("Ossium TexturePack Meta Data", path + ".tpm", READ);
+        int packSize = 0;
+        metaStream.read(packSize);
+        SDL_Log("Read %d texture(s) in pack.", packSize);
+        for (int i = 0; i < packSize; i++)
+        {
+            packData.push_back((TextureData){"", (SDL_Rect){0, 0, 0, 0}, false});
+            metaStream.readString(packData[i].path);
+            metaStream.read(packData[i].mipmapped);
+            metaStream.read(packData[i].pureClip.x);
+            metaStream.read(packData[i].pureClip.y);
+            metaStream.read(packData[i].pureClip.w);
+            metaStream.read(packData[i].pureClip.h);
+        }
+        metaStream.CloseSector(READ);
+        metaStream.Close(READ);
+        // Now load the texture itself
+        return packedTexture.load(path + ".png", args);
     }
 
     bool TexturePack::init(Renderer* renderer, Uint32 windowPixelFormat)
@@ -132,6 +152,12 @@ namespace ossium
             mipmapped = true;
         }
         importedData.push_back((ImportedTextureData){path, src, mipmapped, importedTexture});
+        #ifdef DEBUG
+        SDL_Log("Imported texture '%s' into texture pack with src rect {%d, %d, %d, %d}.", path.c_str(),
+                importedData.back().pureClip.x, importedData.back().pureClip.y,
+                importedData.back().pureClip.w, importedData.back().pureClip.h
+        );
+        #endif // DEBUG
         return true;
     }
 
@@ -180,8 +206,11 @@ namespace ossium
         SDL_RenderClear(render);
         int finalWidth = 0;
         int finalHeight = 0;
+        packData.clear();
         for (int i = 0, counti = insertList.size(); i < counti; i++)
         {
+            int originX = markerRect.x;
+            int originY = markerRect.y;
             // Find a suitable spot
             if (markerRect.x > maxSize)
             {
@@ -200,6 +229,15 @@ namespace ossium
             SDL_RenderCopy(render, insertList[i].texture->texture, &src, &dest);
             finalWidth = finalWidth < markerRect.x ? markerRect.x : finalWidth;
             finalHeight = finalHeight < markerRect.y + markerRect.h ? markerRect.y + markerRect.h : finalHeight;
+            insertList[i].pureClip.x = originX;
+            insertList[i].pureClip.y = originY;
+            packData.push_back((TextureData){insertList[i].path, insertList[i].pureClip, insertList[i].mipmapped});
+            #ifdef DEBUG
+            SDL_Log("Packed imported texture '%s' with src rect {%d, %d, %d, %d}.", insertList[i].path.c_str(),
+                    packData.back().pureClip.x, packData.back().pureClip.y,
+                    packData.back().pureClip.w, packData.back().pureClip.h
+            );
+            #endif
             numAdded++;
         }
         SDL_RenderPresent(render);
@@ -260,12 +298,25 @@ namespace ossium
             renderSurface = NULL;
 
             // Now save the meta data
-            /*for (int i = 0, counti = importedData.empty() ? 0 : importedData.size(); i < counti; i++)
+            Serialiser metaStream;
+            metaStream.OpenSector("Ossium TexturePack Meta Data", path + ".tpm", WRITE);
+            int packSize = packData.empty() ? 0 : (int)packData.size();
+            SDL_Log("Saving %d texture(s) in pack.", packSize);
+            metaStream.write(packSize);
+            for (int i = 0; i < packSize; i++)
             {
-                // Todo: save meta data
-            }*/
+                metaStream.writeString(packData[i].path);
+                metaStream.write(packData[i].mipmapped);
+                metaStream.write(packData[i].pureClip.x);
+                metaStream.write(packData[i].pureClip.y);
+                metaStream.write(packData[i].pureClip.w);
+                metaStream.write(packData[i].pureClip.h);
+            }
+            metaStream.CloseSector(WRITE);
+            metaStream.Close(WRITE);
+            packSize = 0;
 
-            SDL_Log("Successfully saved TexturePack at '%s'.", path.c_str());
+            SDL_Log("Saved TexturePack at '%s'.", path.c_str());
             return true;
         }
         else
@@ -278,6 +329,24 @@ namespace ossium
     Texture& TexturePack::getPackedTexture()
     {
         return packedTexture;
+    }
+
+    SDL_Rect TexturePack::getClip(string textureId)
+    {
+        for (unsigned int i = 0, counti = packData.empty() ? 0 : packData.size(); i < counti; i++)
+        {
+            if (packData[i].path == textureId)
+            {
+                return packData[i].pureClip;
+            }
+        }
+        SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Could not locate texture '%s' in texture pack!", textureId.c_str());
+        return {0, 0, 1, 1};
+    }
+
+    SDL_Rect TexturePack::getClip(string textureId, int mipmapLevel)
+    {
+        return getMipMapClip(getClip(textureId), mipmapLevel);
     }
 
     bool TexturePack::compareImportedSmallestFirst(ImportedTextureData& i, ImportedTextureData& j)

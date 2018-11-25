@@ -53,6 +53,8 @@
 		<Unit filename="src/ossium/renderer.h" />
 		<Unit filename="src/ossium/resourcecontroller.h" />
 		<Unit filename="src/ossium/rig.h" />
+		<Unit filename="src/ossium/serialisation.cpp" />
+		<Unit filename="src/ossium/serialisation.h" />
 		<Unit filename="src/ossium/statesprite.cpp" />
 		<Unit filename="src/ossium/statesprite.h" />
 		<Unit filename="src/ossium/text.cpp" />
