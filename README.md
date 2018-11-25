@@ -3,6 +3,8 @@ Ossium is a bare-bones 2D game engine being built with C++ and SDL 2. The aim of
 
 # Features
 * Rendering with layer support
+* Serialisation support
+* Basic texture packer with mipmap generator
 * Resource controller for simple resource management
 * Basic vector maths functions and various intersection tests
 
