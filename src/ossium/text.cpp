@@ -4,9 +4,12 @@
 
 #include "text.h"
 #include "renderer.h"
+#include "ecs.h"
 
 namespace ossium
 {
+    REGISTER_COMPONENT(Text);
+
     Text::Text()
     {
         textData = "";

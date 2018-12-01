@@ -120,9 +120,15 @@ int main(int argc, char* argv[])
         spriteAtlas.load("test_pack", NULL);
         spriteAtlas.init(mainRenderer);
 
+        Font font;
+        int ptsizes[2] = {1, 24};
+        font.load("serif.ttf", &ptsizes[0]);
+        font.init("serif.ttf");
+
         Entity gameObject;
         gameObject.SetName("Test Entity");
         gameObject.AttachComponent<Texture>();
+        gameObject.AttachComponent<Text>();
 
         Texture* target = gameObject.GetComponent<Texture>();
         if (target != nullptr)
@@ -132,6 +138,13 @@ int main(int argc, char* argv[])
                 SDL_Log("Successfully attached texture and loaded an image!");
             }
             target->init(mainRenderer, winPixelFormat);
+        }
+        Text* targetText = gameObject.GetComponent<Text>();
+        if (targetText != nullptr)
+        {
+            targetText->setText("Testing Text Component");
+            targetText->setColor(CYAN);
+            targetText->textToTexture(mainRenderer, &font);
         }
 
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
@@ -202,6 +215,11 @@ int main(int argc, char* argv[])
             if (tex != nullptr)
             {
                 tex->renderSimple(mainRenderer, 0, 0);
+            }
+            Text* textComponent = gameObject.GetComponent<Text>();
+            if (textComponent != nullptr)
+            {
+                textComponent->renderSimple(mainRenderer, 0, 0);
             }
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
             mainRenderer->renderAll(-1);

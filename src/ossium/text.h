@@ -7,6 +7,7 @@
 
 #include "font.h"
 #include "renderer.h"
+#include "ecs.h"
 
 using namespace std;
 
@@ -23,9 +24,11 @@ namespace ossium
         RENDERTEXT_BLEND
     };
 
-    class Text
+    class Text : public Component
     {
     public:
+        DECLARE_COMPONENT;
+
         Text();
         ~Text();
 

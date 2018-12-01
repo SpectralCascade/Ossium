@@ -43,16 +43,16 @@ namespace ossium
 
     // Declares a component type
     // Add this to the end of any class you wish to register as a component
-    #define DECLARE_COMPONENT public: static ecs::ComponentRegistry ecs_entry
+    #define DECLARE_COMPONENT public: static ecs::ComponentRegistry __ecs_entry_
     // Adds the component type to the registry by static instantiation
     // Add this to the class definition file of a component that uses DECLARE_COMPONENT
-    #define REGISTER_COMPONENT(name) ecs::ComponentRegistry name::ecs_entry
+    #define REGISTER_COMPONENT(name) ecs::ComponentRegistry name::__ecs_entry_
 
     // Compile time constant return type
     template<class T>
     ComponentType getComponentTypeIdent()
     {
-        return T::ecs_entry.getIdent();
+        return T::__ecs_entry_.getIdent();
     }
 
     class Component;
