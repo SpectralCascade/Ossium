@@ -42,7 +42,8 @@
 		<Unit filename="src/ossium/colours.h" />
 		<Unit filename="src/ossium/config.cpp" />
 		<Unit filename="src/ossium/config.h" />
-		<Unit filename="src/ossium/entity.h" />
+		<Unit filename="src/ossium/ecs.cpp" />
+		<Unit filename="src/ossium/ecs.h" />
 		<Unit filename="src/ossium/font.cpp" />
 		<Unit filename="src/ossium/font.h" />
 		<Unit filename="src/ossium/init.cpp" />

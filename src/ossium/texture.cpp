@@ -5,11 +5,14 @@
 
 #include "texture.h"
 #include "renderer.h"
+#include "ecs.h"
 
 using namespace std;
 
 namespace ossium
 {
+
+    REGISTER_COMPONENT(Texture);
 
     Texture::Texture()
     {
@@ -78,7 +81,7 @@ namespace ossium
         else if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
         {
             SDL_Surface* formattedSurface = NULL;
-            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, NULL);
+            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, 0);
             if (formattedSurface == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to format surface! SDL_Error: %s", SDL_GetError());

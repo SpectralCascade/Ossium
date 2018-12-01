@@ -16,6 +16,7 @@
 #include "ossium/statesprite.h"
 #include "ossium/resourcecontroller.h"
 #include "ossium/renderer.h"
+#include "ossium/ecs.h"
 
 using namespace std;
 using namespace ossium;
@@ -103,7 +104,7 @@ int main(int argc, char* argv[])
         TexturePack spriteAtlas;
         Uint32 winPixelFormat = SDL_GetWindowPixelFormat(mainWindow.getWindow());
 
-        spriteAtlas.import("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        spriteAtlas.import("sprite_test.png", mainRenderer, winPixelFormat);
         spriteAtlas.import("pack_texture.png", mainRenderer, winPixelFormat);
         //spriteAtlas.import("noice.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
 
@@ -118,6 +119,20 @@ int main(int argc, char* argv[])
         // Test loading
         spriteAtlas.load("test_pack", NULL);
         spriteAtlas.init(mainRenderer);
+
+        Entity gameObject;
+        gameObject.SetName("Test Entity");
+        gameObject.AttachComponent<Texture>();
+
+        Texture* target = gameObject.GetComponent<Texture>();
+        if (target != nullptr)
+        {
+            if (target->load("test.png"))
+            {
+                SDL_Log("Successfully attached texture and loaded an image!");
+            }
+            target->init(mainRenderer, winPixelFormat);
+        }
 
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 
@@ -179,10 +194,15 @@ int main(int argc, char* argv[])
                 testOne.renderSimple(mainRenderer, 0, 0, NULL);
                 testTwo.renderSimple(mainRenderer, 320 - (testTwo.getWidth() / 2), (480 / 2) - (testTwo.getHeight() / 2), NULL, 0);
             }*/
-            SDL_Rect clip = spriteAtlas.getClip("sprite_test.png");
+            /*SDL_Rect clip = spriteAtlas.getClip("sprite_test.png");
             spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 0, 0, &clip);
             clip = spriteAtlas.getClip("pack_texture.png");
-            spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 256, 0, &clip);
+            spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 256, 0, &clip);*/
+            Texture* tex = gameObject.GetComponent<Texture>();
+            if (tex != nullptr)
+            {
+                tex->renderSimple(mainRenderer, 0, 0);
+            }
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();
