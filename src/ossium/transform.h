@@ -11,7 +11,7 @@ namespace ossium
     {
         Vector position;
         Vector direction;
-        float scale;
+        Vector scale;
     };
 
     /// Transform a vector by multiplying with a transform matrix

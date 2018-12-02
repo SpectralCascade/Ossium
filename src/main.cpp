@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         font.init("serif.ttf");
 
         Entity gameObject;
-        gameObject.SetName("Test Entity");
+        gameObject.name = "Test Entity";
         gameObject.AttachComponent<Texture>();
         gameObject.AttachComponent<Text>();
 

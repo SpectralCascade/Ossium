@@ -3,6 +3,7 @@
 
 namespace ossium
 {
+
     inline Vector operator*(const Vector& vec, const Transform& matrixTransform)
     {
         return (vec.x * matrixTransform.position) + (vec.y * matrixTransform.direction);

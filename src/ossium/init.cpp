@@ -1,3 +1,5 @@
+#include <string>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -5,44 +7,39 @@
 
 #include "init.h"
 
+using namespace std;
+
 namespace ossium
 {
     int InitialiseEngine()
     {
         float processorSpeed = (float)SDL_GetPerformanceFrequency() / 1000000000;
-        char* numCPUs = NULL;
+        string numCPUs = "";
         switch (SDL_GetCPUCount())
         {
         case 1:
-            numCPUs = new char[11];
             numCPUs = "Single-core";
             break;
         case 2:
-            numCPUs = new char[9];
             numCPUs = "Dual-core";
             break;
         case 4:
-            numCPUs = new char[9];
             numCPUs = "Quad-core";
             break;
         case 6:
-            numCPUs = new char[9];
             numCPUs = "Hexa-core";
             break;
         case 8:
-            numCPUs = new char[9];
             numCPUs = "Octa-core";
             break;
         case 10:
-            numCPUs = new char[9];
             numCPUs = "Deca-core";
             break;
         default:
-            numCPUs = new char[7];
             numCPUs = "Unknown";
             break;
         }
-        SDL_Log("%s | %s CPU at %f GHz | %d MB memory\n", SDL_GetPlatform(), numCPUs, processorSpeed, SDL_GetSystemRAM());
+        SDL_Log("%s | %s CPU at %f GHz | %d MB memory\n", SDL_GetPlatform(), numCPUs.c_str(), processorSpeed, SDL_GetSystemRAM());
 
         /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
         #ifdef DEBUG

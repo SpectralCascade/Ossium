@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef ECS_H
 #define ECS_H
 
@@ -5,6 +7,8 @@
 #include <string>
 #include <unordered_map>
 #include <SDL2/SDL.h>
+
+#include "transform.h"
 
 using namespace std;
 
@@ -15,24 +19,24 @@ namespace ossium
 
     namespace ecs
     {
-        // This is a compile-time construct designed to provide compile-time type identification
-        // as an efficient alternative to RTTI
+        /// This is a compile-time construct designed to provide compile-time type identification
+        /// as an efficient alternative to RTTI
         class ComponentRegistry
         {
         private:
             static ComponentType nextTypeIdent;
-            // The type identifier for this registered component
+            /// The type identifier for this registered component
             ComponentType typeIdent;
 
         public:
             ComponentRegistry()
             {
                 typeIdent = nextTypeIdent;
-                // Now increment nextTypeIdent for when we register another type
+                /// Now increment nextTypeIdent for when we register another type
                 nextTypeIdent++;
             }
 
-            // The type identifier never changes once set for a type, hence const
+            /// The type identifier never changes once set for a type, hence const
             const ComponentType getIdent()
             {
                 return typeIdent;
@@ -41,14 +45,14 @@ namespace ossium
         };
     }
 
-    // Declares a component type
-    // Add this to the end of any class you wish to register as a component
+    /// Declares a component type
+    /// Add this to the end of any class you wish to register as a component
     #define DECLARE_COMPONENT public: static ecs::ComponentRegistry __ecs_entry_
-    // Adds the component type to the registry by static instantiation
-    // Add this to the class definition file of a component that uses DECLARE_COMPONENT
+    /// Adds the component type to the registry by static instantiation
+    /// Add this to the class definition file of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(name) ecs::ComponentRegistry name::__ecs_entry_
 
-    // Compile time constant return type
+    /// Compile time constant return type
     template<class T>
     ComponentType getComponentTypeIdent()
     {
@@ -57,6 +61,9 @@ namespace ossium
 
     class Component;
 
+    /// Nothing should inherit from Entity.
+    /// I would use the 'final' keyword to ensure this
+    /// but Code::Blocks autocomplete stops working properly!
     class Entity
     {
     public:
@@ -69,6 +76,7 @@ namespace ossium
         {
             T* component = new T();
             component->entity = this;
+            component->OnCreate();
             auto itr = components.find(getComponentTypeIdent<T>());
             if (itr != components.end())
             {
@@ -89,6 +97,7 @@ namespace ossium
             auto itr = components.find(getComponentTypeIdent<T>());
             if (itr != components.end() && !itr->second.empty())
             {
+                itr->second[0]->OnDestroy();
                 delete itr->second[0];
                 itr->second[0] = nullptr;
                 itr->second.erase(itr->second.begin());
@@ -123,19 +132,24 @@ namespace ossium
             return none;
         }
 
-        /// Returns this entity's ID
-        int GetID();
+        template <class T>
+        bool HasComponent()
+        {
+            return GetComponent<T>() != nullptr;
+        }
 
-        /// Get/Set this entity's name
-        string GetName();
-        void SetName(string newName);
+        /// Returns this entity's ID
+        const int GetID();
+
+        /// Name of this entity (not necessarily unique)
+        string name;
+
+        /// Transform data for this entity
+        Transform transform;
 
     private:
         /// Hashtable of components attached to this entity by type
         unordered_map<ComponentType, vector<Component*>> components;
-
-        /// Name of this entity (not necessarily unique)
-        string name;
 
         /// The ID of this entity (unique)
         int id;
@@ -145,15 +159,33 @@ namespace ossium
 
     };
 
-    // Base class for all components
+    /// Base class for all components
     class Component
     {
     public:
         friend class Entity;
 
+        Component();
+        virtual ~Component();
+
     protected:
-        // Pointer to the entity that this component is attached to
+        /// Effectively replace the constructor and destructor
+        virtual void OnCreate();
+        virtual void OnDestroy();
+
+        /// Called when the parent entity is spawned
+        virtual void OnSpawn();
+
+        /// Each frame this method is called
+        virtual void Update();
+
+        /// Pointer to the entity that this component is attached to
         Entity* entity = nullptr;
+
+    private:
+        #ifdef DEBUG
+        bool onDestroyCalled;
+        #endif // DEBUG
 
     };
 

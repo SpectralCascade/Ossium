@@ -1,6 +1,7 @@
 #include <string>
 #include <SDL2/SDL.h>
 
+#include "transform.h"
 #include "ecs.h"
 
 namespace ossium
@@ -12,6 +13,7 @@ namespace ossium
     {
         id = nextId;
         nextId++;
+        transform = {{0, 0}, {0, 0}, {1, 1}};
     }
 
     Entity::~Entity()
@@ -22,6 +24,7 @@ namespace ossium
             {
                 if (itr->second[i] != nullptr)
                 {
+                    itr->second[i]->OnDestroy();
                     delete itr->second[i];
                     itr->second[i] = nullptr;
                 }
@@ -31,19 +34,42 @@ namespace ossium
         components.clear();
     }
 
-    int Entity::GetID()
+    const int Entity::GetID()
     {
         return id;
     }
 
-    string Entity::GetName()
+    void Component::OnCreate()
     {
-        return name;
     }
 
-    void Entity::SetName(string newName)
+    void Component::OnDestroy()
     {
-        name = newName;
+        #ifdef DEBUG
+        onDestroyCalled = true;
+        #endif // DEBUG
+    }
+
+    void Component::OnSpawn()
+    {
+    }
+
+    void Component::Update()
+    {
+    }
+
+    Component::Component()
+    {
+        #ifdef DEBUG
+        onDestroyCalled = false;
+        #endif // DEBUG
+    }
+
+    Component::~Component()
+    {
+        #ifdef DEBUG
+        SDL_assert(onDestroyCalled != false);
+        #endif // DEBUG
     }
 
     ComponentType ecs::ComponentRegistry::nextTypeIdent = 0;

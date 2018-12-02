@@ -108,6 +108,7 @@ namespace ossium
     Timer Timer::operator=(const Timer& thisCopy)
     {
         copy(thisCopy);
+        return *this;
     }
 
     void Timer::copy(const Timer& thisCopy)
