@@ -37,7 +37,7 @@ namespace ossium
             }
 
             /// The type identifier never changes once set for a type, hence const
-            const ComponentType getIdent()
+            const ComponentType getType()
             {
                 return typeIdent;
             }
@@ -45,29 +45,42 @@ namespace ossium
         };
     }
 
-    /// Declares a component type
+    /// Declares a component type and declares a virtual copy method
     /// Add this to the end of any class you wish to register as a component
-    #define DECLARE_COMPONENT public: static ecs::ComponentRegistry __ecs_entry_
-    /// Adds the component type to the registry by static instantiation
+    #define DECLARE_COMPONENT(TYPE) public: static ecs::ComponentRegistry __ecs_entry_; \
+                                                                                        \
+    TYPE* Clone()
+    /// Adds the component type to the registry by static instantiation and defines a virtual copy method
     /// Add this to the class definition file of a component that uses DECLARE_COMPONENT
-    #define REGISTER_COMPONENT(name) ecs::ComponentRegistry name::__ecs_entry_
+    #define REGISTER_COMPONENT(TYPE) ecs::ComponentRegistry TYPE::__ecs_entry_;         \
+                                                                                        \
+    TYPE* TYPE::Clone()                                                           \
+    {                                                                                   \
+        return new TYPE(*this);                                                         \
+    }
 
     /// Compile time constant return type
     template<class T>
-    ComponentType getComponentTypeIdent()
+    ComponentType getComponentType()
     {
-        return T::__ecs_entry_.getIdent();
+        return T::__ecs_entry_.getType();
     }
 
     class Component;
 
     /// Nothing should inherit from Entity.
     /// I would use the 'final' keyword to ensure this
-    /// but Code::Blocks autocomplete stops working properly!
+    /// but Code::Blocks autocomplete stops working properly
     class Entity
     {
     public:
         Entity();
+        /// Copying entities is extremely useful, but only if performing a deep copy!
+        Entity(const Entity& copySource);
+        Entity& operator=(Entity copySource);
+
+        void Swap(Entity& itemOne, Entity& itemTwo);
+
         ~Entity();
 
         /// Instantiates and attaches a component to this entity
@@ -77,7 +90,7 @@ namespace ossium
             T* component = new T();
             component->entity = this;
             component->OnCreate();
-            auto itr = components.find(getComponentTypeIdent<T>());
+            auto itr = components.find(getComponentType<T>());
             if (itr != components.end())
             {
                 itr->second.push_back(component);
@@ -86,7 +99,7 @@ namespace ossium
             {
                 vector<Component*> component_vector;
                 component_vector.push_back(component);
-                components.insert({getComponentTypeIdent<T>(), component_vector});
+                components.insert({getComponentType<T>(), component_vector});
             }
         }
 
@@ -94,7 +107,7 @@ namespace ossium
         template<class T>
         void RemoveComponent()
         {
-            auto itr = components.find(getComponentTypeIdent<T>());
+            auto itr = components.find(getComponentType<T>());
             if (itr != components.end() && !itr->second.empty())
             {
                 itr->second[0]->OnDestroy();
@@ -109,7 +122,7 @@ namespace ossium
         template <class T>
         T* GetComponent()
         {
-            auto itr = components.find(getComponentTypeIdent<T>());
+            auto itr = components.find(getComponentType<T>());
             if (itr != components.end() && !itr->second.empty())
             {
                 return reinterpret_cast<T*>(itr->second[0]);
@@ -122,10 +135,15 @@ namespace ossium
         template <class T>
         vector<T*> GetComponents()
         {
-            auto itr = components.find(getComponentTypeIdent<T>());
+            auto itr = components.find(getComponentType<T>());
             if (itr != components.end())
             {
-                return reinterpret_cast<vector<T*>>(itr->second);
+                vector<T*> retComponents;
+                for (auto i = itr->second.begin(); i != itr->second.end(); i++)
+                {
+                    retComponents.push_back(reinterpret_cast<T*>(*i));
+                }
+                return retComponents;
             }
             // Return an empty vector
             vector<T*> none;
@@ -165,8 +183,18 @@ namespace ossium
     public:
         friend class Entity;
 
+        /// Initialise entity pointer to null
         Component();
+
+        /// A cloning method is required for polymorphic copies, e.g. when copying an entity
+        /// we need to perform a deep copy of the components in a vector<Component*>, not the base Component instance
+        virtual Component* Clone() = 0;
+
+        /// Make sure derived classes are destroyed properly
         virtual ~Component();
+
+        /// Returns a reference to the entity this component is attached to
+        Entity& GetEntity();
 
     protected:
         /// Effectively replace the constructor and destructor
@@ -179,10 +207,15 @@ namespace ossium
         /// Each frame this method is called
         virtual void Update();
 
-        /// Pointer to the entity that this component is attached to
-        Entity* entity = nullptr;
-
     private:
+        /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
+        Component(const Component& copySource);
+        Component& operator=(const Component& copySource);
+
+        /// Pointer to the entity that this component is attached to
+        /// Should never be null, assuming
+        Entity* entity;
+
         #ifdef DEBUG
         bool onDestroyCalled;
         #endif // DEBUG

@@ -127,24 +127,25 @@ int main(int argc, char* argv[])
 
         Entity gameObject;
         gameObject.name = "Test Entity";
-        gameObject.AttachComponent<Texture>();
         gameObject.AttachComponent<Text>();
 
-        Texture* target = gameObject.GetComponent<Texture>();
-        if (target != nullptr)
-        {
-            if (target->load("test.png"))
-            {
-                SDL_Log("Successfully attached texture and loaded an image!");
-            }
-            target->init(mainRenderer, winPixelFormat);
-        }
         Text* targetText = gameObject.GetComponent<Text>();
         if (targetText != nullptr)
         {
             targetText->setText("Testing Text Component");
             targetText->setColor(CYAN);
             targetText->textToTexture(mainRenderer, &font);
+        }
+
+        /// Testing deep copy
+        Entity anotherGameObject = gameObject;
+        anotherGameObject.AttachComponent<Text>();
+        vector<Text*> compList = anotherGameObject.GetComponents<Text>();
+        if (!compList.empty() && compList.size() > 1)
+        {
+            compList[1]->setColor(RED);
+            compList[1]->setText("Another text component...");
+            compList[1]->textToTexture(mainRenderer, &font);
         }
 
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
@@ -211,15 +212,13 @@ int main(int argc, char* argv[])
             spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 0, 0, &clip);
             clip = spriteAtlas.getClip("pack_texture.png");
             spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 256, 0, &clip);*/
-            Texture* tex = gameObject.GetComponent<Texture>();
-            if (tex != nullptr)
+            vector<Text*> handyComponents = anotherGameObject.GetComponents<Text>();
+            if (!handyComponents.empty())
             {
-                tex->renderSimple(mainRenderer, 0, 0);
-            }
-            Text* textComponent = gameObject.GetComponent<Text>();
-            if (textComponent != nullptr)
-            {
-                textComponent->renderSimple(mainRenderer, 0, 0);
+                for (int i = 0, counti = handyComponents.size(); i < counti; i++)
+                {
+                    handyComponents[i]->renderSimple(mainRenderer, 0, i * 50);
+                }
             }
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
             mainRenderer->renderAll(-1);

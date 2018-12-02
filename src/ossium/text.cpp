@@ -1,4 +1,5 @@
 #include <string>
+#include <algorithm>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -33,6 +34,32 @@ namespace ossium
         box = false;
     }
 
+    Text::Text(const Text& copySource)
+    {
+        bgColor = copySource.bgColor;
+        box = copySource.box;
+        boxPadHeight = copySource.boxPadWidth;
+        boxPadWidth = copySource.boxPadWidth;
+        color = copySource.color;
+        font = copySource.font;
+        font_guid = copySource.font_guid;
+        height = copySource.height;
+        width = copySource.width;
+        hinting = copySource.hinting;
+        kerning = copySource.kerning;
+        outline = copySource.outline;
+        outlineHeight = copySource.outlineHeight;
+        outlineWidth = copySource.outlineWidth;
+        renderMode = copySource.renderMode;
+        style = copySource.style;
+        textData = copySource.textData;
+        update = copySource.update;
+        /// Next time a render or textToTexture() method is called, these texture(s) are created
+        texture = NULL;
+        outlineTexture = NULL;
+        /// No need to NULL the font, as the font is not managed by this class
+    }
+
     Text::~Text()
     {
         if (font != NULL)
@@ -51,17 +78,6 @@ namespace ossium
             SDL_DestroyTexture(outlineTexture);
             outlineTexture = NULL;
         }
-    }
-
-    /// PLACEHOLDERS!!! TODO: Implement these methods
-    bool Text::load(string guid_path)
-    {
-        return true;
-    }
-
-    bool Text::init(string guid_path)
-    {
-        return true;
     }
 
     bool Text::textToTexture(Renderer* renderer, Font* fontToUse)
@@ -178,6 +194,10 @@ namespace ossium
 
     void Text::render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        if (!texture)
+        {
+            textToTexture(renderer, font);
+        }
         renderer->enqueueEx(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer, angle, origin == NULL ? (SDL_Point){width / 2, height / 2} : *origin, flip);
     }
 
@@ -193,6 +213,10 @@ namespace ossium
 
     void Text::renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer)
     {
+        if (!texture)
+        {
+            textToTexture(renderer, font);
+        }
         renderer->enqueue(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer);
     }
 

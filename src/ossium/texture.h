@@ -17,7 +17,7 @@ namespace ossium
     class TexturePack;
 
     /// Wrapper class for SDL_Texture
-    class Texture : public Component
+    class Texture
     {
     public:
         /// Renderer has access to the actual rendering methods
@@ -100,7 +100,6 @@ namespace ossium
         void* pixels;
         int pitch;
 
-        DECLARE_COMPONENT;
     };
 
 }

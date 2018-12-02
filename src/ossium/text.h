@@ -27,16 +27,12 @@ namespace ossium
     class Text : public Component
     {
     public:
-        DECLARE_COMPONENT;
+        DECLARE_COMPONENT(Text);
 
         Text();
         ~Text();
 
         friend class Renderer;
-
-        /// These two methods may be removed/replaced at some point, as Text is really an entity, not a resource
-        bool load(string guid_path);
-        bool init(string guid_path);
 
         /// Renders textData to a texture using a TrueType Font
         bool textToTexture(Renderer* renderer, Font* fontToUse);
@@ -88,9 +84,9 @@ namespace ossium
         void setBox(bool enabled);
 
     private:
-        /// Prohibited copying for safety
-        Text(const Text& thisCopy);
-        Text operator=(const Text& thisCopy);
+        /// Prohibited copying for all but the Component Clone() method
+        Text(const Text& copySource);
+        Text operator=(Text copySource);
 
         /// Renders the texture in a similar way to Texture::render()
         void renderText(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);

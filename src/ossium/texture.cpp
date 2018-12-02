@@ -12,8 +12,6 @@ using namespace std;
 namespace ossium
 {
 
-    REGISTER_COMPONENT(Texture);
-
     Texture::Texture()
     {
         tempSurface = NULL;

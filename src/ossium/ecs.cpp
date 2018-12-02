@@ -1,4 +1,7 @@
 #include <string>
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
 #include <SDL2/SDL.h>
 
 #include "transform.h"
@@ -14,6 +17,42 @@ namespace ossium
         id = nextId;
         nextId++;
         transform = {{0, 0}, {0, 0}, {1, 1}};
+    }
+
+    Entity::Entity(const Entity& copySource)
+    {
+        /// Same name is fine
+        name = copySource.name;
+        transform = copySource.transform;
+        /// Set a unique ID for this copy
+        id = nextId;
+        nextId++;
+        /// Deep, virtual copy of components
+        for (auto i = copySource.components.begin(); i != copySource.components.end(); i++)
+        {
+            vector<Component*> copiedComponents;
+            for (auto itr = i->second.begin(); itr != i->second.end(); itr++)
+            {
+                Component* copyComponent = (*itr)->Clone();
+                copyComponent->entity = this;
+                copiedComponents.push_back(copyComponent);
+            }
+            components.insert({i->first, copiedComponents});
+        }
+    }
+
+    void Entity::Swap(Entity& itemOne, Entity& itemTwo)
+    {
+        using std::swap;
+        swap(itemOne.name, itemTwo.name);
+        swap(itemOne.transform, itemTwo.transform);
+        swap(itemOne.components, itemTwo.components);
+    }
+
+    Entity& Entity::operator=(Entity copySource)
+    {
+        Swap(*this, copySource);
+        return *this;
     }
 
     Entity::~Entity()
@@ -60,9 +99,22 @@ namespace ossium
 
     Component::Component()
     {
+        entity = nullptr;
         #ifdef DEBUG
         onDestroyCalled = false;
         #endif // DEBUG
+    }
+
+    Component::Component(const Component& copySource)
+    {
+        /// Don't copy anything - we only care about child class values
+        /// The entity reference should be constant once created
+    }
+
+    Component& Component::operator=(const Component& copySource)
+    {
+        /// Ditto
+        return *this;
     }
 
     Component::~Component()
