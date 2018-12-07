@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         font.init("serif.ttf");
 
         Entity gameObject;
-        gameObject.name = "Test Entity";
+        gameObject.SetName("Test Entity");
         gameObject.AttachComponent<Text>();
 
         Text* targetText = gameObject.GetComponent<Text>();
@@ -137,16 +137,16 @@ int main(int argc, char* argv[])
             targetText->textToTexture(mainRenderer, &font);
         }
 
-        /// Testing deep copy
-        Entity anotherGameObject = gameObject;
-        anotherGameObject.AttachComponent<Text>();
-        vector<Text*> compList = anotherGameObject.GetComponents<Text>();
+        gameObject.AttachComponent<Text>();
+        vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
             compList[1]->setColor(RED);
             compList[1]->setText("Another text component...");
             compList[1]->textToTexture(mainRenderer, &font);
         }
+
+        SDL_Log("Total entities: %d", Entity::GetTotalEntities());
 
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 
@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
             spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 0, 0, &clip);
             clip = spriteAtlas.getClip("pack_texture.png");
             spriteAtlas.getPackedTexture().renderSimple(mainRenderer, 256, 0, &clip);*/
-            vector<Text*> handyComponents = anotherGameObject.GetComponents<Text>();
+            vector<Text*> handyComponents = gameObject.GetComponents<Text>();
             if (!handyComponents.empty())
             {
                 for (int i = 0, counti = handyComponents.size(); i < counti; i++)

@@ -68,6 +68,7 @@
 		<Unit filename="src/ossium/time.h" />
 		<Unit filename="src/ossium/transform.cpp" />
 		<Unit filename="src/ossium/transform.h" />
+		<Unit filename="src/ossium/tree.h" />
 		<Unit filename="src/ossium/vector.cpp" />
 		<Unit filename="src/ossium/vector.h" />
 		<Unit filename="src/ossium/window.cpp" />

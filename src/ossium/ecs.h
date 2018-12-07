@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 
 #include "transform.h"
+#include "tree.h"
 
 using namespace std;
 
@@ -42,6 +43,11 @@ namespace ossium
                 return typeIdent;
             }
 
+            static Uint32 GetTotalTypes()
+            {
+                return (Uint32)nextTypeIdent;
+            }
+
         };
     }
 
@@ -54,7 +60,7 @@ namespace ossium
     /// Add this to the class definition file of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE) ecs::ComponentRegistry TYPE::__ecs_entry_;         \
                                                                                         \
-    TYPE* TYPE::Clone()                                                           \
+    TYPE* TYPE::Clone()                                                                 \
     {                                                                                   \
         return new TYPE(*this);                                                         \
     }
@@ -66,6 +72,12 @@ namespace ossium
         return T::__ecs_entry_.getType();
     }
 
+    /// Forward declarations
+    namespace ecs
+    {
+        class ECS_Controller;
+    }
+
     class Component;
 
     /// Nothing should inherit from Entity.
@@ -74,12 +86,14 @@ namespace ossium
     class Entity
     {
     public:
-        Entity();
-        /// Copying entities is extremely useful, but only if performing a deep copy!
-        Entity(const Entity& copySource);
-        Entity& operator=(Entity copySource);
+        friend class ecs::ECS_Controller;
 
-        void Swap(Entity& itemOne, Entity& itemTwo);
+        Entity();
+        /// Create this entity as a child of a parent entity
+        Entity(Entity* parent);
+
+        /// Defunct. Assignment no longer copies, so copy-and-swap no longer needed
+        //void Swap(Entity& itemOne, Entity& itemTwo);
 
         ~Entity();
 
@@ -156,24 +170,72 @@ namespace ossium
             return GetComponent<T>() != nullptr;
         }
 
+        /// Returns first instance of a given component in this entity's children
+        template<class T>
+        T* GetComponentInChildren()
+        {
+            for (unsigned int i = 0, counti = self->children.empty() ? 0 : self->children.size(); i < counti; i++)
+            {
+                T* component = self->children[i]->data->GetComponent<T>();
+                if (component != nullptr)
+                {
+                    return component;
+                }
+            }
+            return nullptr;
+        }
+
+        /// Returns ALL matching components in this entity's children
+        template<class T>
+        vector<T*> GetComponentsInChildren()
+        {
+            vector<T*> output;
+            for (unsigned int i = 0, counti = self->children.empty() ? 0 : self->children.size(); i < counti; i++)
+            {
+                vector<T*> data = self->children[i]->data->GetComponents<T>();
+                for (unsigned int j = 0, countj = self->children.empty() ? 0 : self->children.size(); j < countj; j++)
+                {
+                    output.push_back(data[j]);
+                }
+            }
+            return output;
+        }
+
+        string GetName();
+        void SetName(string name);
+
+        Entity* GetParent();
+
         /// Returns this entity's ID
         const int GetID();
-
-        /// Name of this entity (not necessarily unique)
-        string name;
 
         /// Transform data for this entity
         Transform transform;
 
+        /// This effectively replaces the copy constructor; entities can only be explicitly copied
+        Entity* Clone();
+
+        /// Returns pointer to first found instance of an entity
+        Entity* find(string name);
+        /// Ditto, but searches only for entities below the parent
+        Entity* find(string name, Entity* parent);
+
+        static unsigned int GetTotalEntities();
+
     private:
+        /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary
+        Entity(Entity& copySource);
+        Entity(const Entity& copySource);
+        Entity& operator=(const Entity& source);
+
         /// Hashtable of components attached to this entity by type
         unordered_map<ComponentType, vector<Component*>> components;
 
-        /// The ID of this entity (unique)
-        int id;
+        /// All entities refer to this single ECS controller at runtime
+        static ecs::ECS_Controller controller;
 
-        /// Incremental id
-        static int nextId;
+        /// Pointer to the node containing this entity
+        Node<Entity*>* self;
 
     };
 
@@ -182,16 +244,7 @@ namespace ossium
     {
     public:
         friend class Entity;
-
-        /// Initialise entity pointer to null
-        Component();
-
-        /// A cloning method is required for polymorphic copies, e.g. when copying an entity
-        /// we need to perform a deep copy of the components in a vector<Component*>, not the base Component instance
-        virtual Component* Clone() = 0;
-
-        /// Make sure derived classes are destroyed properly
-        virtual ~Component();
+        friend class ecs::ECS_Controller;
 
         /// Returns a reference to the entity this component is attached to
         Entity& GetEntity();
@@ -207,13 +260,24 @@ namespace ossium
         /// Each frame this method is called
         virtual void Update();
 
+        /// Initialise entity pointer to null
+        /// Protected - only friend class Entity can instantiate components
+        Component();
+
+        /// Make sure derived classes are destroyed properly
+        virtual ~Component();
+
     private:
+        /// A cloning method is required for polymorphic copies, e.g. when copying an entity
+        /// we need to perform a deep copy of different component types in a vector<Component*>
+        /// This is implemented automagically by the DECLARE_COMPONENT(TYPE) and REGISTER_COMPONENT(TYPE) macros
+        virtual Component* Clone() = 0;
+
         /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
         Component(const Component& copySource);
         Component& operator=(const Component& copySource);
 
         /// Pointer to the entity that this component is attached to
-        /// Should never be null, assuming
         Entity* entity;
 
         #ifdef DEBUG
@@ -221,6 +285,35 @@ namespace ossium
         #endif // DEBUG
 
     };
+
+    namespace ecs
+    {
+        /// Controls all entities and components at runtime
+        class ECS_Controller
+        {
+        public:
+            friend class ossium::Entity;
+
+            ECS_Controller();
+            ~ECS_Controller();
+
+            /// Removes ALL entities
+            void Clear();
+
+            /// Returns the total number of entities
+            unsigned int GetTotalEntities();
+
+        private:
+            /// Vector of pointers to ALL component instances, inside an array ordered by component type.
+            /// This is maintained because it's more efficient when updating or rendering lots of components
+            /// of a specific type each frame
+            vector<Component*>* components;
+
+            /// Entity tree hierarchy
+            Tree<Entity*> entityTree;
+
+        };
+    }
 
 }
 

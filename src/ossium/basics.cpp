@@ -28,4 +28,20 @@ namespace ossium
         return n;
     }
 
+    string ToString(float n)
+    {
+        stringstream strStream;
+        strStream.str("");
+        strStream << n;
+        return strStream.str();
+    }
+
+    string ToString(int n)
+    {
+        stringstream strStream;
+        strStream.str("");
+        strStream << n;
+        return strStream.str();
+    }
+
 }
