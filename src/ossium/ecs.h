@@ -246,8 +246,8 @@ namespace ossium
         friend class Entity;
         friend class ecs::ECS_Controller;
 
-        /// Returns a reference to the entity this component is attached to
-        Entity& GetEntity();
+        /// Returns a pointer to the entity this component is attached to
+        Entity* GetEntity();
 
     protected:
         /// Effectively replace the constructor and destructor
@@ -259,6 +259,9 @@ namespace ossium
 
         /// Each frame this method is called
         virtual void Update();
+
+        /// Pointer to the entity that this component is attached to
+        Entity* entity;
 
         /// Initialise entity pointer to null
         /// Protected - only friend class Entity can instantiate components
@@ -276,9 +279,6 @@ namespace ossium
         /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
         Component(const Component& copySource);
         Component& operator=(const Component& copySource);
-
-        /// Pointer to the entity that this component is attached to
-        Entity* entity;
 
         #ifdef DEBUG
         bool onDestroyCalled;

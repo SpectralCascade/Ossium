@@ -58,41 +58,6 @@ namespace ossium
         return entityCopy;
     }
 
-    /// Defunct. Use Clone() to make explicit copies instead
-    /*Entity::Entity(const Entity& copySource)
-    {
-        /// Add this copy to the tree
-        string name = copySource.self->name;
-        unsigned int treeSize = controller.entityTree.size();
-        if (treeSize > 0)
-        {
-            name = name + " (" + ToString(treeSize) + ")";
-        }
-        /// This copy gets added to the tree as a sibling to the original entity
-        controller.entityTree.add(name, *this, copySource.self->parent);
-        /// Set a unique ID for this copy
-        id = nextId;
-        nextId++;
-        /// Copy transform data
-        transform = copySource.transform;
-        /// Deep, virtual copy of components
-    }*/
-
-    /// Defunct - assignment operator no longer makes a copy
-    /*void Entity::Swap(Entity& itemOne, Entity& itemTwo)
-    {
-        using std::swap;
-        swap(itemOne.name, itemTwo.name);
-        swap(itemOne.transform, itemTwo.transform);
-        swap(itemOne.components, itemTwo.components);
-    }*/
-
-    /// Instead of copying, we simply return a reference to the source
-    /*Entity& Entity::operator=(Entity& source)
-    {
-        return (Entity&)source;
-    }*/
-
     Entity::~Entity()
     {
         /// Destroy all components
@@ -199,6 +164,11 @@ namespace ossium
         return *this;
     }
 
+    Entity* Component::GetEntity()
+    {
+        return entity;
+    }
+
     Component::~Component()
     {
         #ifdef DEBUG
@@ -211,7 +181,6 @@ namespace ossium
     ecs::ECS_Controller::ECS_Controller()
     {
         components = new vector<Component*>[ecs::ComponentRegistry::GetTotalTypes()];
-        entityTree.InitRoot(nullptr);
     }
 
     unsigned int ecs::ECS_Controller::GetTotalEntities()

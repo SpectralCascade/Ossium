@@ -43,16 +43,6 @@ namespace ossium
         {
             total = 0;
             nextId = 0;
-            root.parent = nullptr;
-            root.id = -1;
-            root.name = "";
-            flatTree.push_back(&root);
-        }
-
-        /// Initialises root data - useful if root data type is a pointer
-        void InitRoot(T data)
-        {
-            root.data = data;
         }
 
         ~Tree()
@@ -88,8 +78,7 @@ namespace ossium
             }
             else
             {
-                root.children.push_back(node);
-                node->parent = &root;
+                roots.push_back(node);
             }
             /// No need to add to flatTree array if it's to be recalulated; otherwise add to array
             if (!updateFlattened)
@@ -104,20 +93,22 @@ namespace ossium
         bool remove(Node<T>* node)
         {
             /// Never remove the root node
-            if (node == nullptr || node->name.length() == 0)
+            if (node == nullptr)
             {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Attempted to remove node that is already null.");
                 return false;
+            }
+            vector<Node<T>*> all = getAllBelow(node);
+            node->children.clear();
+            /// Delete all nodes below the source node
+            for (auto i = all.begin(); i != all.end(); i++)
+            {
+                delete *i;
+                *i = nullptr;
             }
             if (node->parent != nullptr)
             {
-                vector<Node<T>*> all = getAllBelow(node);
-                /// Delete all nodes below the source node
-                for (unsigned int i = 0, counti = all.empty() ? 0 : all.size(); i < counti; i++)
-                {
-                    delete all[i];
-                    all[i] = nullptr;
-                }
-                /// Remove the source node from the tree and delete it
+                /// Remove the source node from the tree and then we can safely delete it
                 for (auto i = node->parent->children.begin(); i != node->parent->children.end(); i++)
                 {
                     if (node->id == (*i)->id)
@@ -131,7 +122,24 @@ namespace ossium
                     }
                 }
             }
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "(!) Attempted to remove node with no parent.");
+            else
+            {
+                /// Remove the source node from the roots
+                for (auto i = roots.begin(); i != roots.end(); i++)
+                {
+                    if (node->id == (*i)->id)
+                    {
+                        roots.erase(i);
+                        delete node;
+                        node = nullptr;
+                        updateFlattened = true;
+                        total--;
+                        return true;
+                    }
+                }
+            }
+            /// If we reach this point, there's a problem! Will not delete the node because e.g. the node is in another tree
+            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "(!) Could not locate node[%d] in tree for removal.", node->id);
             return false;
         }
 
@@ -150,9 +158,8 @@ namespace ossium
         /// Removes all nodes from the tree, except for the root
         void clear()
         {
-            root.children.clear();
+            roots.clear();
             flatTree.clear();
-            flatTree.push_back(&root);
         }
 
         /// Recursive search; returns first matching node as a pointer from the source node downwards.
@@ -166,50 +173,81 @@ namespace ossium
             return recursiveFind(name, source);
         }
 
-        /// Uses root as the default source
-        inline Node<T>* find(const string& name)
+        /// Uses roots vector as the default source
+        Node<T>* find(const string& name)
         {
-            return recursiveFind(name, &root);
+            for (auto i = roots.begin(); i != roots.end(); i++)
+            {
+                #ifdef DEBUG
+                SDL_assert(*i != nullptr);
+                #endif // DEBUG
+                Node<T>* node = recursiveFind(name, *i);
+                if (node != nullptr)
+                {
+                    return node;
+                }
+            }
+            return nullptr;
         }
 
         /// Gets pointers to all nodes in the tree (below the source node) which have the specified name; pretty slow!
         void findAll(const string& name, Node<T>* source, vector<Node<T>*>& output)
         {
-            /// While we're iterating over everything we may as well rebuild the flatTree tree
+            /// While we're iterating over everything we may as well rebuild the flatTree
             flatTree.clear();
             flatTree.reserve(sizeof(Node<T>*) * (total + 1));
             recursiveFindAll(name, source, output);
             updateFlattened = false;
         }
 
-        /// Defaults to root as the source
+        /// Defaults to roots as the source
         vector<Node<T>*> findAll(const string& name)
         {
             vector<Node<T>*> nodes;
-            findAll(name, root, nodes);
+            /// While we're iterating over everything we may as well rebuild the flatTree
+            flatTree.clear();
+            flatTree.reserve(sizeof(Node<T>*) * total);
+
+            for (auto i = roots.begin(); i != roots.end(); i++)
+            {
+                recursiveFindAll(*i->name, *i, nodes);
+            }
+            updateFlattened = false;
             return nodes;
         }
 
-        /// Returns all nodes in the tree below a source node
-        vector<Node<T>*> getAllBelow(Node<T>* source)
+        /// Returns all nodes in the tree below a source node; includeSource adds the source node to the output vector
+        vector<Node<T>*> getAllBelow(Node<T>* source, bool includeSource = false)
         {
             vector<Node<T>*> all;
             if (source == nullptr)
             {
-                source = &root;
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Attempted to retrieve all below a null node.");
+                return all;
             }
-            /// Get all but not including the source node
-            for (unsigned int i = 0, counti = all.empty() ? 0 : all.size(); i < counti; i++)
+            if (includeSource)
             {
-                recursiveGetAll(all[i], all);
+                recursiveGetAll(source, all);
+            }
+            else
+            {
+                for (auto i = source->children.begin(); i != source->children.end(); i++)
+                {
+                    recursiveGetAll(source, all);
+                }
             }
             return all;
         }
 
         /// Gets all nodes in the tree except for the root node
-        inline vector<Node<T>*> getAll()
+        vector<Node<T>*> getAll()
         {
-            return getAllBelow(&root);
+            vector<Node<T>*> all;
+            for (auto i = roots.begin(); i != roots.end(); i++)
+            {
+                recursiveGetAll(*i, all);
+            }
+            return all;
         }
 
         /// Returns a reference to the flatTree version of the tree
@@ -219,8 +257,11 @@ namespace ossium
             {
                 flatTree.clear();
                 /// Preallocate memory for some performance gains. Use total + 1 as we include the root node.
-                flatTree.reserve(sizeof(Node<T>*) * (total + 1));
-                recursiveFlatten(&root);
+                flatTree.reserve(sizeof(Node<T>*) * total);
+                for (auto i = roots.begin(); i != roots.end(); i++)
+                {
+                    recursiveFlatten(*i);
+                }
                 updateFlattened = false;
             }
             return flatTree;
@@ -239,10 +280,10 @@ namespace ossium
         /// Next node id
         int nextId;
 
-        /// Root node
-        Node<T> root;
+        /// Root nodes of the tree
+        vector<Node<T>*> roots;
 
-        /// A 'flat' version of the tree with references to all nodes; the first element is always the root node
+        /// A 'flat' version of the tree with references to all nodes
         vector<Node<T>*> flatTree;
 
         /// Whether or not the tree should re-calculate the flatTree array next time GetFlattened() is called
