@@ -5,7 +5,6 @@
 
 #include "texture.h"
 #include "renderer.h"
-#include "ecs.h"
 
 using namespace std;
 

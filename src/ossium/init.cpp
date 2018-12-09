@@ -6,12 +6,13 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "init.h"
+#include "ecs.h"
 
 using namespace std;
 
 namespace ossium
 {
-    int InitialiseEngine()
+    int InitialiseOssium()
     {
         float processorSpeed = (float)SDL_GetPerformanceFrequency() / 1000000000;
         string numCPUs = "";
@@ -40,6 +41,9 @@ namespace ossium
             break;
         }
         SDL_Log("%s | %s CPU at %f GHz | %d MB memory\n", SDL_GetPlatform(), numCPUs.c_str(), processorSpeed, SDL_GetSystemRAM());
+
+        /// Initialise the ECS subsystem
+        ecs::InitECS();
 
         /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
         #ifdef DEBUG
@@ -86,6 +90,16 @@ namespace ossium
             }
         }
         return error;
+    }
+
+    void TerminateOssium()
+    {
+        Mix_CloseAudio();
+        TTF_Quit();
+        IMG_Quit();
+        ecs::DestroyECS();
+        SDL_Quit();
+        printf("Successfully terminated Ossium. Thanks for using the engine!");
     }
 
     SDL_Renderer* CreateRenderer(SDL_Window* window, bool vsync)

@@ -11,13 +11,13 @@
 namespace ossium
 {
 
-    ecs::ECS_Controller Entity::controller;
+    ecs::ECS_Controller* Entity::controller = nullptr;
 
     Entity::Entity()
     {
         transform = {{0, 0}, {0, 0}, {1, 1}};
         string name = "Entity";
-        self = controller.entityTree.add(name, this);
+        self = controller->entityTree.add(name, this);
         /// Set the name again, using the generated id
         name = "Entity[" + ToString(self->id) + "]";
         SetName(name);
@@ -29,7 +29,7 @@ namespace ossium
         {
             transform = parent->transform;
             string name = "Entity";
-            self = controller.entityTree.add(name, this, parent->self);
+            self = controller->entityTree.add(name, this, parent->self);
             name = "Entity[" + ToString(self->id) + "]";
             SetName(name);
         }
@@ -76,7 +76,7 @@ namespace ossium
         }
         components.clear();
         /// Cleanup all children
-        controller.entityTree.remove(self);
+        controller->entityTree.remove(self);
     }
 
     const int Entity::GetID()
@@ -110,19 +110,44 @@ namespace ossium
 
     Entity* Entity::find(string name)
     {
-        Node<Entity*>* node = controller.entityTree.find(name);
+        Node<Entity*>* node = controller->entityTree.find(name);
         return node != nullptr ? node->data : nullptr;
     }
 
     Entity* Entity::find(string name, Entity* parent)
     {
-        Node<Entity*>* node = controller.entityTree.find(name, parent->self);
+        Node<Entity*>* node = controller->entityTree.find(name, parent->self);
         return node != nullptr ? node->data : nullptr;
     }
 
-    unsigned int Entity::GetTotalEntities()
+    void ecs::ECS_Info::InitECS()
     {
-        return controller.GetTotalEntities();
+        if (Entity::controller == nullptr)
+        {
+            Entity::controller = new ecs::ECS_Controller();
+        }
+        else
+        {
+            SDL_Log("(!) Attempted to initialise ECS subsystem, but it is already initialised.");
+        }
+    }
+
+    void ecs::ECS_Info::DestroyECS()
+    {
+        if (Entity::controller != nullptr)
+        {
+            delete Entity::controller;
+            Entity::controller = nullptr;
+        }
+        else
+        {
+            printf("(!) Attempted to destroy ECS subsystem, but it is already destroyed.");
+        }
+    }
+
+    unsigned int ecs::ECS_Info::GetTotalEntities()
+    {
+        return Entity::controller->GetTotalEntities();
     }
 
     void Component::OnCreate()
@@ -181,6 +206,7 @@ namespace ossium
     ecs::ECS_Controller::ECS_Controller()
     {
         components = new vector<Component*>[ecs::ComponentRegistry::GetTotalTypes()];
+        SDL_Log("Initialised ECS subsystem with %d registered component types.", ecs::ComponentRegistry::GetTotalTypes());
     }
 
     unsigned int ecs::ECS_Controller::GetTotalEntities()
@@ -195,6 +221,16 @@ namespace ossium
             components[i].clear();
         }
         delete[] components;
+    }
+
+    void ecs::InitECS()
+    {
+        Entity::ecs_info.InitECS();
+    }
+
+    void ecs::DestroyECS()
+    {
+        Entity::ecs_info.DestroyECS();
     }
 
 }

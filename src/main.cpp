@@ -24,7 +24,7 @@ using namespace ossium;
 int main(int argc, char* argv[])
 {
     bool quit = false;
-    if (InitialiseEngine() < 0)
+    if (InitialiseOssium() < 0)
     {
         printf("ERROR: Failed to initialise Ossium engine.\n");
     }
@@ -146,8 +146,6 @@ int main(int argc, char* argv[])
             compList[1]->textToTexture(mainRenderer, &font);
         }
 
-        SDL_Log("Total entities: %d", Entity::GetTotalEntities());
-
 /*        SDL_SetRenderDrawBlendMode(mainRenderer->getRenderer(), SDL_BLENDMODE_BLEND);
 
         bool openChest = false;
@@ -225,5 +223,6 @@ int main(int argc, char* argv[])
             mainRenderer->renderPresent();
         }
     }
+    TerminateOssium();
     return 0;
 }

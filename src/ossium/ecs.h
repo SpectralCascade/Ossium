@@ -4,7 +4,7 @@
 #define ECS_H
 
 #include <vector>
-#include <string>
+#include <string.h>
 #include <unordered_map>
 #include <SDL2/SDL.h>
 
@@ -49,6 +49,18 @@ namespace ossium
             }
 
         };
+
+        /// This class is used as an internal class namespace for all intents and purposes
+        class ECS_Info
+        {
+        public:
+            /// Initialise and destroy the ECS subsystem
+            static void InitECS();
+            static void DestroyECS();
+            /// Get the total number of entity instances
+            static unsigned int GetTotalEntities();
+        };
+
     }
 
     /// Declares a component type and declares a virtual copy method
@@ -72,13 +84,38 @@ namespace ossium
         return T::__ecs_entry_.getType();
     }
 
-    /// Forward declarations
+    /// Forward declarations for the controller class
+    class Entity;
+    class Component;
+
     namespace ecs
     {
-        class ECS_Controller;
-    }
+        /// Controls all entities and components at runtime
+        class ECS_Controller
+        {
+        public:
+            friend class ossium::Entity;
 
-    class Component;
+            ECS_Controller();
+            ~ECS_Controller();
+
+            /// Removes ALL entities
+            void Clear();
+
+            /// Returns the total number of entities
+            unsigned int GetTotalEntities();
+
+        private:
+            /// Vector of pointers to ALL component instances, inside an array ordered by component type.
+            /// This is maintained because it's more efficient when updating or rendering lots of components
+            /// of a specific type each frame
+            vector<Component*>* components;
+
+            /// Entity tree hierarchy
+            Tree<Entity*> entityTree;
+
+        };
+    }
 
     /// Nothing should inherit from Entity.
     /// I would use the 'final' keyword to ensure this
@@ -87,6 +124,7 @@ namespace ossium
     {
     public:
         friend class ecs::ECS_Controller;
+        friend class ecs::ECS_Info;
 
         Entity();
         /// Create this entity as a child of a parent entity
@@ -115,6 +153,8 @@ namespace ossium
                 component_vector.push_back(component);
                 components.insert({getComponentType<T>(), component_vector});
             }
+            /// Add the component to the ECS controller
+            controller->components[getComponentType<T>()].push_back(component);
         }
 
         /// Destroys and removes first found instance of a component attached to this entity
@@ -122,13 +162,25 @@ namespace ossium
         void RemoveComponent()
         {
             auto itr = components.find(getComponentType<T>());
-            if (itr != components.end() && !itr->second.empty())
+            if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
+                vector<Component*>& ecs_components = controller->components[getComponentType<T>()];
+                /// First, remove the component pointer from the ECS_Controller
+                for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
+                {
+                    if (*i == itr->second[0])
+                    {
+                        ecs_components.erase(i);
+                        break;
+                    }
+                }
+                /// Now remove the component pointer from this entity's components hash and delete it
                 itr->second[0]->OnDestroy();
                 delete itr->second[0];
                 itr->second[0] = nullptr;
                 itr->second.erase(itr->second.begin());
             }
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Could not find any component of type[%d] attached to entity[%d] with name '%s'.", getComponentType<T>(), self->id, self->name.c_str());
         }
 
         /// Returns a pointer the first found instance of a component attached
@@ -220,7 +272,8 @@ namespace ossium
         /// Ditto, but searches only for entities below the parent
         Entity* find(string name, Entity* parent);
 
-        static unsigned int GetTotalEntities();
+        /// Public accessor class instance to static ECS_Controller
+        static ecs::ECS_Info ecs_info;
 
     private:
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary
@@ -232,7 +285,8 @@ namespace ossium
         unordered_map<ComponentType, vector<Component*>> components;
 
         /// All entities refer to this single ECS controller at runtime
-        static ecs::ECS_Controller controller;
+        /// Using a pointer as we only want to initialise it after all components have been registered
+        static ecs::ECS_Controller* controller;
 
         /// Pointer to the node containing this entity
         Node<Entity*>* self;
@@ -288,31 +342,11 @@ namespace ossium
 
     namespace ecs
     {
-        /// Controls all entities and components at runtime
-        class ECS_Controller
-        {
-        public:
-            friend class ossium::Entity;
+        /// Initialises the static ECS controller declared in the Entity class so that components may be registered
+        void InitECS();
 
-            ECS_Controller();
-            ~ECS_Controller();
-
-            /// Removes ALL entities
-            void Clear();
-
-            /// Returns the total number of entities
-            unsigned int GetTotalEntities();
-
-        private:
-            /// Vector of pointers to ALL component instances, inside an array ordered by component type.
-            /// This is maintained because it's more efficient when updating or rendering lots of components
-            /// of a specific type each frame
-            vector<Component*>* components;
-
-            /// Entity tree hierarchy
-            Tree<Entity*> entityTree;
-
-        };
+        /// Destroys the ECS controller
+        void DestroyECS();
     }
 
 }
