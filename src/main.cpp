@@ -101,6 +101,7 @@ int main(int argc, char* argv[])
         float deltatime = 0.0;*/
         SDL_Event e;
 
+        /*
         TexturePack spriteAtlas;
         Uint32 winPixelFormat = SDL_GetWindowPixelFormat(mainWindow.getWindow());
 
@@ -119,6 +120,7 @@ int main(int argc, char* argv[])
         // Test loading
         spriteAtlas.load("test_pack", NULL);
         spriteAtlas.init(mainRenderer);
+        */
 
         Font font;
         int ptsizes[2] = {1, 24};

@@ -206,7 +206,27 @@ namespace ossium
     ecs::ECS_Controller::ECS_Controller()
     {
         components = new vector<Component*>[ecs::ComponentRegistry::GetTotalTypes()];
-        SDL_Log("Initialised ECS subsystem with %d registered component types.", ecs::ComponentRegistry::GetTotalTypes());
+    }
+
+    void ecs::ECS_Controller::Clear()
+    {
+        /// Delete all entities
+        vector<Node<Entity*>*>& entities = entityTree.getFlatTree();
+        for (auto i = entities.begin(); i != entities.end(); i++)
+        {
+            if (*i != nullptr && (*i)->data != nullptr)
+            {
+                delete (*i)->data;
+                (*i)->data = nullptr;
+            }
+        }
+        /// Now we can safely remove all nodes from the tree and remove all components
+        entityTree.clear();
+        for (unsigned int i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
+        {
+            /// No need to delete components as they are deleted when their parent entity is destroyed
+            components[i].clear();
+        }
     }
 
     unsigned int ecs::ECS_Controller::GetTotalEntities()
@@ -226,6 +246,7 @@ namespace ossium
     void ecs::InitECS()
     {
         Entity::ecs_info.InitECS();
+        SDL_Log("Initialised ECS subsystem with %d registered component type(s).", ecs::ComponentRegistry::GetTotalTypes());
     }
 
     void ecs::DestroyECS()

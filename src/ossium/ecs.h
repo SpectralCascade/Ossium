@@ -99,7 +99,7 @@ namespace ossium
             ECS_Controller();
             ~ECS_Controller();
 
-            /// Removes ALL entities
+            /// Removes ALL entities and their components
             void Clear();
 
             /// Returns the total number of entities
