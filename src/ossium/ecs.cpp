@@ -150,6 +150,11 @@ namespace ossium
         return Entity::controller->GetTotalEntities();
     }
 
+    void ecs::ECS_Info::UpdateComponents()
+    {
+        Entity::controller->UpdateComponents();
+    }
+
     void Component::OnCreate()
     {
     }
@@ -206,6 +211,18 @@ namespace ossium
     ecs::ECS_Controller::ECS_Controller()
     {
         components = new vector<Component*>[ecs::ComponentRegistry::GetTotalTypes()];
+    }
+
+    void ecs::ECS_Controller::UpdateComponents()
+    {
+        for (unsigned int i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
+        {
+            for (auto j = components[i].begin(); j != components[i].end(); j++)
+            {
+                /// We shouldn't need to check if the component is null - if it is we have bigger problems!
+                (*j)->Update();
+            }
+        }
     }
 
     void ecs::ECS_Controller::Clear()

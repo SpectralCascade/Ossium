@@ -20,7 +20,7 @@ namespace ossium
 
     namespace ecs
     {
-        /// This is a compile-time construct designed to provide compile-time type identification
+        /// This is a class designed to provide custom type identification
         /// as an efficient alternative to RTTI
         class ComponentRegistry
         {
@@ -28,6 +28,9 @@ namespace ossium
             static ComponentType nextTypeIdent;
             /// The type identifier for this registered component
             ComponentType typeIdent;
+
+            /// Whether or not the registered component type implements the Update() method
+            bool update;
 
         public:
             ComponentRegistry()
@@ -59,6 +62,8 @@ namespace ossium
             static void DestroyECS();
             /// Get the total number of entity instances
             static unsigned int GetTotalEntities();
+            /// Update all components
+            static void UpdateComponents();
         };
 
     }
@@ -77,7 +82,7 @@ namespace ossium
         return new TYPE(*this);                                                         \
     }
 
-    /// Compile time constant return type
+    /// Constant return type id for a specified component type
     template<class T>
     ComponentType getComponentType()
     {
@@ -98,6 +103,9 @@ namespace ossium
 
             ECS_Controller();
             ~ECS_Controller();
+
+            /// Iterates through all components that implement the Update() method and calls it for each one
+            void UpdateComponents();
 
             /// Removes ALL entities and their components
             void Clear();
