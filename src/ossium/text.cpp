@@ -80,7 +80,7 @@ namespace ossium
         }
     }
 
-    bool Text::textToTexture(Renderer* renderer, Font* fontToUse)
+    bool Text::textToTexture(Renderer* renderer, Font* fontToUse, int pointSize)
     {
         if (update)
         {
@@ -96,7 +96,7 @@ namespace ossium
                 return false;
             }
         }
-        TTF_Font* actualFont = fontToUse->getFont();
+        TTF_Font* actualFont = fontToUse->getFont(pointSize);
         if (actualFont == NULL)
         {
             return false;

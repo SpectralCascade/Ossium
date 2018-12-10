@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
         SDL_Event e;
 
         Font font;
-        int ptsizes[2] = {1, 24};
+        int ptsizes[5] = {4, 24, 28, 48, 56};
         font.load("serif.ttf", &ptsizes[0]);
         font.init("serif.ttf");
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
         {
             compList[1]->setColor(RED);
             compList[1]->setText("Another text component...");
-            compList[1]->textToTexture(mainRenderer, &font);
+            compList[1]->textToTexture(mainRenderer, &font, 56);
         }
 
         while (!quit)
