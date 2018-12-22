@@ -10,9 +10,10 @@ namespace ossium
 {
     /// Clamps a number to maxima/minima
     float clamp(float& n, float min, float max);
-
-    /// Ditto but for integers
     int clamp(int& n, int min, int max);
+
+    /// Wraps an integer number within a given range
+    int wrap(int n, int change, int min, int max);
 
     /// Converts numerical values to strings using stringstream
     string ToString(float n);

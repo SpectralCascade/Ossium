@@ -28,6 +28,28 @@ namespace ossium
         return n;
     }
 
+    int wrap(int n, int change, int min, int max)
+    {
+        int wrapped = n + change;
+        if (change > max - min)
+        {
+            wrapped = n + (change % (max - min));
+        }
+        else if (change < min - max)
+        {
+            wrapped = n + (change % (max - min));
+        }
+        if (wrapped > max)
+        {
+            wrapped = min + (wrapped - max);
+        }
+        else if (wrapped < min)
+        {
+            wrapped = max - (min - wrapped);
+        }
+        return wrapped;
+    }
+
     string ToString(float n)
     {
         stringstream strStream;
