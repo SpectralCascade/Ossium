@@ -63,7 +63,8 @@ namespace ossium
                 {                                                                                               \
                     total_passed_test_asserts++;                                                                \
                 }                                                                                               \
-                SDL_Log("[%s] Test condition '" #TEST_CONDITION "'.", assert_result ? "PASSED" : "!FAILED!" )
+                SDL_Log("[%s] Test condition '" #TEST_CONDITION "'.", assert_result ? "PASSED" : "!FAILED!" );  \
+                SDL_assert(assert_result);
 
         /// When you have finished running all unit tests, use this evaluation macro to log the final results,
         /// pause program execution if any tests failed, and reset the overall unit test results
@@ -138,7 +139,11 @@ namespace ossium
 
                 buffer_strings->push_front("testoverwrite");
 
-                TEST_ASSERT(buffer_strings->peek_back() == "testoverwrite");
+                TEST_ASSERT(buffer_strings->peek_back() == "test1");
+                TEST_ASSERT(buffer_strings->peek_front() == "testoverwrite");
+
+                delete buffer_strings;
+                buffer_strings = nullptr;
 
             }
 

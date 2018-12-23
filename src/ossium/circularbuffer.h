@@ -28,7 +28,7 @@ namespace ossium
             buffer = new T[max_size];
             count = 0;
             front = 0;
-            back = 1;
+            back = 0;
         }
 
         CircularBuffer(const CircularBuffer& src)
@@ -37,7 +37,7 @@ namespace ossium
             buffer = new T[max_size];
             count = 0;
             front = 0;
-            back = 1;
+            back = 0;
             for (unsigned int i = 0; i < max_size; i++)
             {
                 buffer[i] = src.buffer[i];
@@ -67,17 +67,45 @@ namespace ossium
         /// Pushes (adds) data to the back of the buffer
         void push_back(const T& data)
         {
+            if (count != 0)
+            {
+                back = wrap(back, 1, 0, max_size - 1);
+                if (back == front)
+                {
+                    front = wrap(front, 1, 0, max_size - 1);
+                }
+                else
+                {
+                    count++;
+                }
+            }
+            else
+            {
+                count++;
+            }
             buffer[back] = data;
-            back = wrap(back, 1, 0, max_size - 1);
-            count = clamp(count + 1, 0, maxSize());
         }
 
         /// Pushes (adds) data to the front of the buffer
         void push_front(const T& data)
         {
+            if (count != 0)
+            {
+                front = wrap(front, -1, 0, max_size - 1);
+                if (back == front)
+                {
+                    back = wrap(back, -1, 0, max_size - 1);
+                }
+                else
+                {
+                    count++;
+                }
+            }
+            else
+            {
+                count++;
+            }
             buffer[front] = data;
-            front = wrap(front, -1, 0, max_size - 1);
-            count = clamp(count + 1, 0, maxSize());
         }
 
         /// Pops (removes) data from the back of the buffer
@@ -87,52 +115,46 @@ namespace ossium
             if (count <= 0)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Cannot pop_back from an empty circular buffer!");
-                #ifdef DEBUG
-                SDL_assert(back != front);
-                #endif // DEBUG
                 /// Return whatever junk value remains rather than throw an exception
                 return buffer[back];
             }
             count--;
-            if (back == 0)
+            int origin_back = back;
+            back = wrap(back, -1, 0, max_size - 1);
+            if (front == back)
             {
-                back = max_size - 1;
-                return buffer[0];
+                front = wrap(front, -1, 0, max_size - 1);
             }
-            back--;
-            return buffer[back];
+            return buffer[origin_back];
         }
 
         T pop_front()
         {
             /// We don't want to wrap around if there are no items left in the buffer
-            if (back == front)
+            if (count <= 0)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Cannot pop_front from an empty circular buffer!");
-                #ifdef DEBUG
-                SDL_assert(back != front);
-                #endif // DEBUG
                 /// Return whatever junk value rather than throw an exception
                 return buffer[front];
             }
             count--;
-            front++;
-            if (front >= max_size)
+            int origin_front = front;
+            front = wrap(front, 1, 0, max_size - 1);
+            if (back == front)
             {
-                front = 0;
-                return buffer[max_size - 1];
+                back = wrap(back, 1, 0, max_size - 1);
             }
-            return buffer[front];
+            return buffer[origin_front];
         }
 
         /// Returns a reference to the front and back of the buffer respectively
         const T& peek_back()
         {
-            return buffer[wrap(back, -1, 0, max_size)];
+            return buffer[back];
         }
         const T& peek_front()
         {
-            return buffer[wrap(front, 1, 0, max_size)];
+            return buffer[front];
         }
 
         /// Returns the length of the buffer
