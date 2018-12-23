@@ -4,6 +4,7 @@
 #include <string>
 
 #include "circularbuffer.h"
+#include "tree.h"
 
 namespace ossium
 {
@@ -150,6 +151,31 @@ namespace ossium
         private:
             CircularBuffer<int>* buffer_ints;
             CircularBuffer<string>* buffer_strings;
+
+        };
+
+        class TreeTests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                int_tree = new Tree<int>();
+                for (int i = 0; i < 50; i++)
+                {
+                    int_tree->add("TestNode_" + ToString(i), i * 2);
+                }
+                vector<Node<int>*> flat_tree = int_tree->getFlatTree();
+                for (int i = 0; i < 5; i++)
+                {
+                    int_tree->add("TestNode_" + ToString(i + 49), i * 100, flat_tree[49 % (i + 2)]);
+                    TEST_ASSERT(int_tree->find("TestNode_" + ToString(i + 49))->data == i * 100);
+                }
+                delete int_tree;
+                int_tree = nullptr;
+            }
+
+        private:
+            Tree<int>* int_tree;
 
         };
 
