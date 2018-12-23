@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
     {
         #ifdef UNIT_TESTS
         TEST_RUN(CircularBufferTests);
+        TEST_RUN(BasicUtilsTests);
         TEST_EVALUATE();
         return 0;
         #endif // UNIT_TESTS

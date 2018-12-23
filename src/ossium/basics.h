@@ -9,8 +9,8 @@ using namespace std;
 namespace ossium
 {
     /// Clamps a number to maxima/minima
-    float clamp(float& n, float min, float max);
-    int clamp(int& n, int min, int max);
+    float clamp(float n, float min, float max);
+    int clamp(int n, int min, int max);
 
     /// Wraps an integer number within a given range
     int wrap(int n, int change, int min, int max);

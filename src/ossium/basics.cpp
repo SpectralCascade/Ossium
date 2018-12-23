@@ -2,7 +2,7 @@
 
 namespace ossium
 {
-    float clamp(float& n, float min, float max)
+    float clamp(float n, float min, float max)
     {
         if (n < min)
         {
@@ -15,7 +15,7 @@ namespace ossium
         return n;
     }
 
-    int clamp(int& n, int min, int max)
+    int clamp(int n, int min, int max)
     {
         if (n < min)
         {
@@ -33,19 +33,19 @@ namespace ossium
         int wrapped = n + change;
         if (change > max - min)
         {
-            wrapped = n + (change % (max - min));
+            wrapped = n + (change % ((max - min) + 1));
         }
         else if (change < min - max)
         {
-            wrapped = n + (change % (max - min));
+            wrapped = n + (change % ((max - min) + 1));
         }
         if (wrapped > max)
         {
-            wrapped = min + (wrapped - max);
+            wrapped = min + (wrapped - (max + 1));
         }
         else if (wrapped < min)
         {
-            wrapped = max - (min - wrapped);
+            wrapped = max - ((min - 1) - wrapped);
         }
         return wrapped;
     }

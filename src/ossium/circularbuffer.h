@@ -69,7 +69,7 @@ namespace ossium
         {
             buffer[back] = data;
             back = wrap(back, 1, 0, max_size - 1);
-            count++;
+            count = clamp(count + 1, 0, maxSize());
         }
 
         /// Pushes (adds) data to the front of the buffer
@@ -77,7 +77,7 @@ namespace ossium
         {
             buffer[front] = data;
             front = wrap(front, -1, 0, max_size - 1);
-            count++;
+            count = clamp(count + 1, 0, maxSize());
         }
 
         /// Pops (removes) data from the back of the buffer
