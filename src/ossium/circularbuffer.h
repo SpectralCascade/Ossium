@@ -2,6 +2,7 @@
 #define CIRCULARBUFFER_H
 
 #include <algorithm>
+#include <SDL2/SDL.h>
 
 #include "basics.h"
 
@@ -99,7 +100,7 @@ namespace ossium
                 return buffer[0];
             }
             back--;
-            return buffer[back + 1];
+            return buffer[back];
         }
 
         T pop_front()
@@ -121,17 +122,17 @@ namespace ossium
                 front = 0;
                 return buffer[max_size - 1];
             }
-            return buffer[front - 1];
+            return buffer[front];
         }
 
         /// Returns a reference to the front and back of the buffer respectively
         const T& peek_back()
         {
-            return buffer[back];
+            return buffer[wrap(back, -1, 0, max_size)];
         }
         const T& peek_front()
         {
-            return buffer[front];
+            return buffer[wrap(front, 1, 0, max_size)];
         }
 
         /// Returns the length of the buffer

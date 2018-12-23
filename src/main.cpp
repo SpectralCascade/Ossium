@@ -17,9 +17,13 @@
 #include "ossium/resourcecontroller.h"
 #include "ossium/renderer.h"
 #include "ossium/ecs.h"
+#include "ossium/testmodules.h"
 
 using namespace std;
 using namespace ossium;
+using namespace ossium::test;
+
+#define UNIT_TESTS
 
 int main(int argc, char* argv[])
 {
@@ -30,6 +34,11 @@ int main(int argc, char* argv[])
     }
     else
     {
+        #ifdef UNIT_TESTS
+        TEST_RUN(CircularBufferTests);
+        TEST_EVALUATE();
+        return 0;
+        #endif // UNIT_TESTS
         /// Load configuration settings
         Config settings;
         LoadConfig(&settings);
