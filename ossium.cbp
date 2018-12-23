@@ -39,6 +39,7 @@
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/ossium/basics.cpp" />
 		<Unit filename="src/ossium/basics.h" />
+		<Unit filename="src/ossium/circularbuffer.h" />
 		<Unit filename="src/ossium/colours.h" />
 		<Unit filename="src/ossium/config.cpp" />
 		<Unit filename="src/ossium/config.h" />
@@ -46,6 +47,7 @@
 		<Unit filename="src/ossium/ecs.h" />
 		<Unit filename="src/ossium/font.cpp" />
 		<Unit filename="src/ossium/font.h" />
+		<Unit filename="src/ossium/fsm.h" />
 		<Unit filename="src/ossium/init.cpp" />
 		<Unit filename="src/ossium/init.h" />
 		<Unit filename="src/ossium/primitives.cpp" />
