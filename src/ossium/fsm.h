@@ -21,40 +21,63 @@ namespace ossium
         virtual void ExecuteState(T* entity) = 0;
         virtual void ExitState(T* entity) = 0;
 
+        virtual ~StateInterface()
+        {
+        }
+
         string name;
 
     };
 
-    /// This is a mix-in, rather than a true base class or interface
+    /// This is a mix-in, rather than a true base class or interface - CRTP is best
     template<class Derived>
     class StateMachine
     {
     public:
         StateMachine()
         {
-            history = nullptr;
+            history = new CircularBuffer<StateInterface<Derived>*>(50);
+            default_state = nullptr;
         }
 
-        /// This doesn't need to be virtual, as this is a mix-in class
+        /// This shouldn't need to be virtual, as this is a mix-in class - not a true base
         ~StateMachine()
         {
             delete history;
             history = nullptr;
+            delete default_state;
+            default_state = nullptr;
+            for (auto i = states.begin(); i != states.end(); i++)
+            {
+                delete *i;
+                *i = nullptr;
+            }
             states.clear();
         }
 
-        void SwitchState(StateInterface<Derived>* nextState)
+        /// Sets the default state; this does not change the current state or trigger any state transition logic
+        template<class StateType>
+        void SetDefaultState(string name = "Default State")
         {
-            #ifdef DEBUG
-            SDL_assert(nextState != nullptr);
-            #endif // DEBUG
-            history->peek_back()->ExitState(DerivedMachine());
-            history->push_back(nextState);
-            nextState->EnterState(DerivedMachine());
+            if (default_state != nullptr)
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Default state is being set with name '%s', yet it is already set.", name.c_str());
+                delete default_state;
+                default_state = nullptr;
+            }
+            default_state = static_cast<StateInterface<Derived>*>(new StateType());
+            default_state->name = name;
         }
 
-        void SwitchState(string name)
+        /// Switches to first state found with a matching name
+        void SwitchState(string name = "Default State")
         {
+            /// First check if the name matches the default state name
+            if (default_state != nullptr && name == default_state->name)
+            {
+                SwitchState(default_state);
+                return;
+            }
             for (auto i = states.begin(); i != states.end(); i++)
             {
                 if ((*i)->name == name)
@@ -67,9 +90,21 @@ namespace ossium
         }
 
         /// Adds a state to the state machine; typically, this should be used on construction or loading of 'Derived'
-        void AddState(StateInterface<Derived>* newState)
+        template<class StateType>
+        void AddState(string name)
         {
+            StateInterface<Derived>* newState = static_cast<StateInterface<Derived>*>(new StateType());
+            newState->name = name;
             states.push_back(newState);
+        }
+
+        StateInterface<Derived>* CurrentState()
+        {
+            if (history->size() > 0)
+            {
+                return history->peek_back();
+            }
+            return default_state;
         }
 
         /// Returns true and changes state if there is a previous state available,
@@ -88,6 +123,16 @@ namespace ossium
         }
 
     private:
+        void SwitchState(StateInterface<Derived>* nextState)
+        {
+            if (history->size() > 0)
+            {
+                history->peek_back()->ExitState(DerivedMachine());
+            }
+            history->push_back(nextState);
+            nextState->EnterState(DerivedMachine());
+        }
+
         Derived* DerivedMachine()
         {
             return static_cast<Derived*>(this);
@@ -96,8 +141,11 @@ namespace ossium
         /// All available states in this state machine
         vector<StateInterface<Derived>*> states;
 
-        /// History of the state machine, as a circular stack
+        /// History of the state machine, as a circular stack. The back-most state is the current state
         CircularBuffer<StateInterface<Derived>*>* history;
+
+        /// The default state of the state machine; when no other states are available, the FSM defaults to this one
+        StateInterface<Derived>* default_state;
 
     };
 

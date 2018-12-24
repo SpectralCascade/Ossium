@@ -60,6 +60,7 @@
 		<Unit filename="src/ossium/serialisation.h" />
 		<Unit filename="src/ossium/statesprite.cpp" />
 		<Unit filename="src/ossium/statesprite.h" />
+		<Unit filename="src/ossium/testmodules.cpp" />
 		<Unit filename="src/ossium/testmodules.h" />
 		<Unit filename="src/ossium/text.cpp" />
 		<Unit filename="src/ossium/text.h" />
