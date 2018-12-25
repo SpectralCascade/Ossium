@@ -180,23 +180,23 @@ namespace ossium
 
         };
 
-        class FSM_TestEntity : public StateMachine<FSM_TestEntity>
+        class FSM_TestMachine : public StateMachine<FSM_TestMachine>
         {
         };
 
-        class FSM_TestState : public StateInterface<FSM_TestEntity>
+        class FSM_TestState : public StateInterface<FSM_TestMachine>
         {
-            void EnterState(FSM_TestEntity* ent)
+            void EnterState(FSM_TestMachine* machine = nullptr)
             {
                 SDL_Log("EnterState() called on state '%s'.", name.c_str());
             }
 
-            void ExecuteState(FSM_TestEntity* ent)
+            void ExecuteState(FSM_TestMachine* machine = nullptr)
             {
                 SDL_Log("ExecuteState() called on state '%s'.", name.c_str());
             }
 
-            void ExitState(FSM_TestEntity* ent)
+            void ExitState(FSM_TestMachine* machine = nullptr)
             {
                 SDL_Log("ExitState() called on state '%s'.", name.c_str());
             }
@@ -208,18 +208,20 @@ namespace ossium
         public:
             void RunTest()
             {
-                test_obj.SetDefaultState<FSM_TestState>("DefaultTest");
                 test_obj.AddState<FSM_TestState>("State 1");
-                test_obj.SwitchState("DefaultTest");
-                TEST_ASSERT(test_obj.CurrentState()->name == "DefaultTest");
-                test_obj.CurrentState()->ExecuteState(nullptr);
+                test_obj.AddState<FSM_TestState>("Default State");
+                test_obj.SwitchState("Default State");
+                test_obj.UpdateFSM();
+                TEST_ASSERT(test_obj.CurrentState()->name == "Default State");
                 test_obj.SwitchState("State 1");
+                test_obj.SetPreState<FSM_TestState>();
+                test_obj.SetPostState<FSM_TestState>();
+                test_obj.UpdateFSM();
                 TEST_ASSERT(test_obj.CurrentState()->name == "State 1");
-                test_obj.CurrentState()->ExecuteState(nullptr);
             }
 
         private:
-            FSM_TestEntity test_obj;
+            FSM_TestMachine test_obj;
 
         };
 

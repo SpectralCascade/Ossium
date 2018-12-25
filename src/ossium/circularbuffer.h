@@ -147,6 +147,20 @@ namespace ossium
             return buffer[origin_front];
         }
 
+        /// Drops the back to the index argument (relative to the front), and recalculates the size
+        /// Useful for stack-style management. Returns false if index out of range. If index < 0, clears the buffer
+        bool drop_back_to(int index)
+        {
+            if (index < count && index >= 0)
+            {
+                count = index + 1;
+                back = wrap(front, index, 0, max_size - 1);
+                return true;
+            }
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "CircularBuffer drop_back index out of range, cannot drop back.");
+            return false;
+        }
+
         /// Returns a reference to the front and back of the buffer respectively
         const T& peek_back()
         {
@@ -169,13 +183,20 @@ namespace ossium
             return count;
         }
 
-        /// Returns a reference to whatever data resides at the specified index; this data cannot be changed however
+        /// Returns a constant reference to whatever data resides at the specified index
+        /// This is based on relative distance from front to back (i.e. index 0 == front)
         const T& operator[](int index)
         {
             #ifdef DEBUG
             SDL_assert(index < max_size);
+            SDL_assert(index >= 0);
             #endif // DEBUG
-            return buffer[index];
+            if (count == 0 || front + index > count)
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to access undefined data. Returning back as default.");
+                return buffer[back];
+            }
+            return buffer[front + wrap(front, index, 0, max_size)];
         }
 
     private:
