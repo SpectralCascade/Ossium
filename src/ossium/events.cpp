@@ -12,8 +12,10 @@ namespace ossium
 
     int Event::nextId = 0;
 
-    Event::Event(string setCategory)
+    Event::Event(int originId, string setCategory, float delay)
     {
+        delayTime = delay;
+        origin = originId;
         category = setCategory;
         id = nextId;
         nextId++;
@@ -26,9 +28,10 @@ namespace ossium
 
     variant<int, float, bool, string> Event::GetValue(string key)
     {
-        if (data.find(key) != data.end())
+        auto value = data.find(key);
+        if (value != data.end())
         {
-            return data[key];
+            return *value;
         }
         SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Data key for Event[id: %d, cat: %s] does not exist!", id, category.c_str());
         return 0;
@@ -42,6 +45,11 @@ namespace ossium
     const int& Event::getId()
     {
         return id;
+    }
+
+    const int& Event::getOriginId()
+    {
+        return origin;
     }
 
 }
