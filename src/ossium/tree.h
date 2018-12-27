@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <SDL2/SDL.h>
 
 #include "basics.h"
@@ -217,6 +218,23 @@ namespace ossium
             return nodes;
         }
 
+        /// A version of findAll() that matches multiple names; more efficient as it only walks the tree once,
+        /// but can match more than a single name
+        vector<Node<T>*> findAll(unordered_map<string, bool> names)
+        {
+            vector<Node<T>*> nodes;
+            flatTree.clear();
+            flatTree.reserve(sizeof(Node<T>*) * total);
+
+            for (auto i = roots.begin(); i != roots.end(); i++)
+            {
+                recursiveFindAll(names, *i, nodes);
+            }
+
+            updateFlattened = false;
+            return nodes;
+        }
+
         /// Returns all nodes in the tree below a source node; includeSource adds the source node to the output vector
         vector<Node<T>*> getAllBelow(Node<T>* source, bool includeSource = false)
         {
@@ -241,6 +259,7 @@ namespace ossium
         }
 
         /// Gets all nodes in the tree except for the root node
+        /// It's preferable to use getFlatTree() instead of this method, as this does not cache
         vector<Node<T>*> getAll()
         {
             vector<Node<T>*> all;
@@ -258,7 +277,7 @@ namespace ossium
             {
                 flatTree.clear();
                 /// Preallocate memory for some performance gains. Use total + 1 as we include the root node.
-                flatTree.reserve(sizeof(Node<T>*) * total);
+                flatTree.reserve(total);
                 for (auto i = roots.begin(); i != roots.end(); i++)
                 {
                     recursiveFlatten(*i);
@@ -321,7 +340,10 @@ namespace ossium
         void recursiveFindAll(const string& name, Node<T>* parent, vector<Node<T>*>& output)
         {
             /// We can recalculate the flatTree tree while we're here
-            flatTree.push_back(parent);
+            if (updateFlattened)
+            {
+                flatTree.push_back(parent);
+            }
             if (parent->name == name)
             {
                 output.push_back(parent);
@@ -329,6 +351,22 @@ namespace ossium
             for (auto i = parent->children.begin(); i != parent->children.end(); i++)
             {
                 recursiveFindAll(name, *i, output);
+            }
+        }
+
+        void recursiveFindAll(const unordered_map<string, bool>& names, Node<T>* parent, vector<Node<T>*>& output)
+        {
+            if (updateFlattened)
+            {
+                flatTree.push_back(parent);
+            }
+            if (names.find(parent->name) != names.end())
+            {
+                output.push_back(parent);
+            }
+            for (auto i = parent->children.begin(); i != parent->children.end(); i++)
+            {
+                recursiveFindAll(names, *i, output);
             }
         }
 
