@@ -20,4 +20,7 @@ All these components are listed on the [main SDL 2 webpage](https://www.libsdl.o
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on 64-bit (arm) Linux
 with the GNU GCC mingw compiler. The engine is easily portable to Windows or Mac (you may need to change SDL 2 includes by removing the initial "SDL2/" for Windows builds).
+
+Before building, please make sure you are compiling with C++17 enabled as the project makes use of some of those features.
+
 Check out Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL; if you don't know how to setup SDL 2 to build Ossium, check out the first tutorial.
