@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <string>
 
 #include <SDL2/SDL.h>
@@ -53,7 +54,7 @@ namespace ossium
         int error = 0;
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, SDL_GetError());
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL error during initialisation: %s", SDL_GetError());
             error = INIT_ERROR_SDL;
         }
         else
@@ -61,14 +62,14 @@ namespace ossium
             int imgFlags = IMG_INIT_PNG;
             if (!(IMG_Init(imgFlags) & imgFlags))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, IMG_GetError());
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Image error during initialisation: %s", IMG_GetError());
                 error = INIT_ERROR_IMG;
             }
             else
             {
                 if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, Mix_GetError());
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Mixer error during initialisation: %s", Mix_GetError());
                     error = INIT_ERROR_MIXER;
                 }
                 else

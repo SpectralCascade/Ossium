@@ -197,7 +197,7 @@ namespace ossium
         {
             /// While we're iterating over everything we may as well rebuild the flatTree
             flatTree.clear();
-            flatTree.reserve(sizeof(Node<T>*) * (total + 1));
+            flatTree.reserve(total);
             recursiveFindAll(name, source, output);
             updateFlattened = false;
         }
@@ -208,7 +208,7 @@ namespace ossium
             vector<Node<T>*> nodes;
             /// While we're iterating over everything we may as well rebuild the flatTree
             flatTree.clear();
-            flatTree.reserve(sizeof(Node<T>*) * total);
+            flatTree.reserve(total);
 
             for (auto i = roots.begin(); i != roots.end(); i++)
             {
@@ -220,11 +220,11 @@ namespace ossium
 
         /// A version of findAll() that matches multiple names; more efficient as it only walks the tree once,
         /// but can match more than a single name
-        vector<Node<T>*> findAll(unordered_map<string, bool> names)
+        vector<Node<T>*> findAll(const vector<string>& names)
         {
             vector<Node<T>*> nodes;
             flatTree.clear();
-            flatTree.reserve(sizeof(Node<T>*) * total);
+            flatTree.reserve(total);
 
             for (auto i = roots.begin(); i != roots.end(); i++)
             {
@@ -354,15 +354,19 @@ namespace ossium
             }
         }
 
-        void recursiveFindAll(const unordered_map<string, bool>& names, Node<T>* parent, vector<Node<T>*>& output)
+        void recursiveFindAll(const vector<string>& names, Node<T>* parent, vector<Node<T>*>& output)
         {
             if (updateFlattened)
             {
                 flatTree.push_back(parent);
             }
-            if (names.find(parent->name) != names.end())
+            for (auto i = names.begin(); i != names.end(); i++)
             {
-                output.push_back(parent);
+                if (*i == parent->name)
+                {
+                    output.push_back(parent);
+                    break;
+                }
             }
             for (auto i = parent->children.begin(); i != parent->children.end(); i++)
             {

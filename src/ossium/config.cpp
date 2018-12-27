@@ -29,7 +29,8 @@ namespace ossium
             /// Create a new config file if it doesn't exist or cannot be found
             SDL_Log("Could not open 'ossium.cfg'");
             SDL_Log("Creating new configuration file 'ossium.cfg'...");
-            if (SaveConfig({CONFIG_DEFAULT_FULLSCREEN, CONFIG_DEFAULT_VSYNC, CONFIG_DEFAULT_FILTERING, CONFIG_DEFAULT_MVOLUME}))
+            Config newConfig;
+            if (SaveConfig(newConfig))
             {
                 configFile.open("ossium.cfg");
                 if (!configFile.is_open())

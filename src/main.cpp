@@ -28,20 +28,20 @@ using namespace ossium::test;
 int main(int argc, char* argv[])
 {
     bool quit = false;
+    #ifdef UNIT_TESTS
+    TEST_RUN(CircularBufferTests);
+    TEST_RUN(BasicUtilsTests);
+    TEST_RUN(TreeTests);
+    TEST_RUN(FSM_Tests);
+    TEST_EVALUATE();
+    return 0;
+    #endif // UNIT_TESTS
     if (InitialiseOssium() < 0)
     {
         printf("ERROR: Failed to initialise Ossium engine.\n");
     }
     else
     {
-        #ifdef UNIT_TESTS
-        TEST_RUN(CircularBufferTests);
-        TEST_RUN(BasicUtilsTests);
-        TEST_RUN(TreeTests);
-        TEST_RUN(FSM_Tests);
-        TEST_EVALUATE();
-        return 0;
-        #endif // UNIT_TESTS
         /// Load configuration settings
         Config settings;
         LoadConfig(&settings);

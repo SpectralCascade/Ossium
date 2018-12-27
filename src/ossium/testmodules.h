@@ -2,10 +2,15 @@
 #define TESTMODULES_H
 
 #include <string>
+#include <unordered_map>
 
 #include "circularbuffer.h"
 #include "tree.h"
 #include "fsm.h"
+
+#define UNIT_TESTS
+
+using namespace std;
 
 namespace ossium
 {
@@ -80,6 +85,8 @@ namespace ossium
                 UnitTest::total_test_modules = 0;                                                                   \
                 UnitTest::total_test_asserts = 0;                                                                   \
                 UnitTest::total_passed_test_asserts = 0
+
+        #ifdef UNIT_TESTS
 
         class BasicUtilsTests : public UnitTest
         {
@@ -171,6 +178,15 @@ namespace ossium
                     int_tree->add("TestNode_" + ToString(i + 49), i * 100, flat_tree[49 % (i + 2)]);
                     TEST_ASSERT(int_tree->find("TestNode_" + ToString(i + 49))->data == i * 100);
                 }
+                vector<string> test_strings;
+
+                test_strings.push_back("TestNode_50");
+                test_strings.push_back("TestNode_52");
+                test_strings.push_back("TestNode_18");
+
+                TEST_ASSERT(!int_tree->findAll(test_strings).empty());
+                TEST_ASSERT(int_tree->findAll(test_strings).size() == 3);
+
                 delete int_tree;
                 int_tree = nullptr;
             }
@@ -224,6 +240,8 @@ namespace ossium
             FSM_TestMachine test_obj;
 
         };
+
+        #endif // UNIT_TESTS
 
     }
 
