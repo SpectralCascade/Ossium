@@ -12,6 +12,7 @@ Ossium is a bare-bones 2D game engine being built with C++ and SDL 2. The aim of
 
 # Pre-requisites
 All these components are listed on the [main SDL 2 webpage](https://www.libsdl.org/download-2.0.php) and the [SDL 2 projects page](https://www.libsdl.org/projects).
+* A compiler with the C++17 standard (e.g. GCC 8.1.0)
 * SDL 2.0.8 (or greater)
 * SDL_Image
 * SDL_Mixer
@@ -19,7 +20,7 @@ All these components are listed on the [main SDL 2 webpage](https://www.libsdl.o
 
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on 64-bit (arm) Linux
-with the GNU GCC mingw compiler. The engine is easily portable to Windows or Mac (you may need to change SDL 2 includes by removing the initial "SDL2/" for Windows builds).
+with the GNU GCC mingw-64 compiler. The engine is easily portable to Windows or Mac (you may need to change SDL 2 includes by removing the initial "SDL2/" for Windows builds).
 
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
 
