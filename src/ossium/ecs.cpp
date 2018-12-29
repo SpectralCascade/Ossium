@@ -9,6 +9,8 @@
 #include "transform.h"
 #include "ecs.h"
 
+using namespace std;
+
 namespace ossium
 {
 
@@ -19,6 +21,7 @@ namespace ossium
         transform = {{0, 0}, {0, 0}, {1, 1}};
         string name = "Entity";
         self = controller->entityTree.add(name, this);
+        controller->entities[self->id] = self;
         /// Set the name again, using the generated id
         name = "Entity[" + ToString(self->id) + "]";
         SetName(name);
@@ -31,6 +34,7 @@ namespace ossium
             transform = parent->transform;
             string name = "Entity";
             self = controller->entityTree.add(name, this, parent->self);
+            controller->entities[self->id] = self;
             name = "Entity[" + ToString(self->id) + "]";
             SetName(name);
         }
@@ -78,6 +82,7 @@ namespace ossium
         components.clear();
         /// Cleanup all children
         controller->entityTree.remove(self);
+        controller->entities.erase(self->id);
     }
 
     const int Entity::GetID()

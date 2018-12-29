@@ -122,6 +122,9 @@ namespace ossium
             /// Entity tree hierarchy
             Tree<Entity*> entityTree;
 
+            /// Hash table of entity nodes by id
+            unordered_map<int, Node<Entity*>*> entities;
+
         };
     }
 
