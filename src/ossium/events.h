@@ -15,41 +15,34 @@ using namespace std;
 namespace ossium
 {
 
-    /// Forward declarations
-    class EventHandler;
+    /// Forward declaration
     class EventController;
 
-    /// Generic event wrapper
+    /// Generic event object
     class Event
     {
     public:
         friend class EventController;
 
-        Event(){};
-
-        /// Constructor takes the event category and the id of the entity that triggered the event
-        /// You can pass in a custom clock for delaying events in different time lines e.g. game time instead of real time
-        /// If null, any delay applied defaults to real time
-        Event(EventHandler* _origin, string _category, Clock* delay_clock = nullptr);
+        /// Initialiser takes the event category and the id of the entity that triggered the event
+        void Init(string _category);
 
         /// Sets the value of data associated with a specified key
         /// e.g. AddKeyField("ChangePlayerHealth", -30);
-        void AddKeyField(string key, variant<int, float, bool, string> value = "");
+        void AddKeyField(string key, variant<string, int, float, bool> value = (string)"");
 
-        /// Returns the value associated with a given key; defaults to 0 if value not found
-        /// and logs an assertion error
-        variant<int, float, bool, string> GetValue(string key);
+        /// Returns pointer to the value associated with a given key; returns null if no such key exists!
+        variant<string, int, float, bool>* GetValue(string key);
 
         /// Returns a reference to this event's category type
         const string& getCategory();
 
-        /// Returns a reference to this event's id
-        const int& getId();
+        friend bool operator<(const Event& first, const Event& second);
 
-        /// Returns pointer to the object that triggered this event
-        const EventHandler* getOrigin();
+        /// For sorting when this event is queued
+        bool operator<(const Event& other);
 
-    private:
+    protected:
         /// No need for copy constructors as we are not dealing with pointers,
         /// thus it's safe to copy events using the default copy constructor and assignment operator
         /// I've tried to keep the class fairly lightweight so that it copies easily
@@ -60,47 +53,58 @@ namespace ossium
         /// When this event should be broadcast or dispatched, measured in milliseconds relative to eventClock
         Uint32 sendTime;
 
-        /// Hash table of key-value data
-        map<string, variant<int, float, bool, string>> data;
+        /// Table of key-value arguments
+        map<string, variant<string, int, float, bool>> data;
 
-        /// Pointer to the entity that triggered this event
-        EventHandler* origin;
-
-        /// A clock used specifically for this event
-        /// This enables events to be used in different time lines e.g. game time (so events don't fire when paused)
-        /// but also real time (so UI events can be delayed in real time)
-        Clock* eventClock;
-
-        /// Unique identifier for this event
-        int id;
-        static int nextId;
     };
 
     /// An interface class for handling generic game events
     class EventHandler
     {
     public:
-        virtual void HandleEvent(Event& event) = 0;
+        virtual void HandleEvent(Event event) = 0;
 
-        void BroadcastEvent(Event& event, float delay = 0);
+        /// delay == 0 results in immediate event handling, otherwise event is queued
+        void BroadcastEvent(Event event, Uint32 delay = 0);
 
-        void DispatchEvent(Event& event, EventHandler* target, float delay = 0);
+        /// delay == 0 results in immediate event handling, otherwise event is queued
+        void DispatchEvent(Event event, EventHandler* target, Uint32 delay = 0);
 
+        /// Register or un-register interest in a specific category of events
         void SubscribeEvent(string category);
         void UnsubscribeEvent(string category);
 
-    private:
-        static EventController controller;
+        /// The event controller itself
+        static EventController _event_controller;
 
     };
 
-    /// Wrapper for targeted events
-    struct EventMessage
+    /// An event intended to be sent directly to a specific event handler
+    class EventMessage : public Event
     {
-        EventMessage(EventHandler* _target, Event& _event);
-        EventMessage(){};
+        friend class EventController;
+
+        /// Initialise pointer to null
+        EventMessage();
+
+        /// Target event handler
         EventHandler* target;
-        Event event;
+    };
+
+    struct EventCategoryInfo
+    {
+        /// Queue of events to be dispatched to a specified event handler
+        set<EventMessage> dispatch_queue;
+
+        /// Queue of events to be broadcast in this category
+        set<Event> broadcast_queue;
+
+        /// The handlers subscribed to this category
+        vector<EventHandler*> subscribers;
+
+        /// The clock used to compute event delay times for this category
+        Clock* category_clock = nullptr;
+
     };
 
     class EventController
@@ -109,31 +113,28 @@ namespace ossium
         EventController(){};
         ~EventController();
 
-        /// Broadcasts an event if delay time = 0, otherwise adds to the queue for broadcasting later
-        void Broadcast(Event& event, float delay = 0);
+        /// Broadcasts an event. If delay == 0, immediately broadcasts. Otherwise queues the event.
+        void Broadcast(Event event, Uint32 delay = 0);
+        /// Dispatches an event directly to a specified event handler; delay applies in the same way as Broadcast()
+        void Dispatch(Event event, EventHandler* target, Uint32 delay = 0);
 
-        /// Dispatches an event directly to a specified event handler; immediately if delay = 0, otherwise adds to queue
-        void Dispatch(Event& event, EventHandler* target, float delay = 0);
-
-        /// Updates events that are delayed and dispatches them if their delay time is complete
+        /// Updates events that are delayed and broadcasts/dispatches them if their delay time is complete
         /// Also updates the default delay clock
         void Update(float deltaTime);
 
-        /// Sub/unsub interested entities (specifically, a component inheriting from EventHandler) to a particular category of events.
+        /// Sub/unsub interested EventHandlers to a particular category of events.
         void Subscribe(EventHandler* listener, const string& category);
         void Unsubscribe(EventHandler* listener, const string& category);
+
+        /// Sets the clock for a specified category
+        void SetCategoryClock(string category, Clock* clock);
 
     private:
         EventController(const EventController& src);
         EventController& operator=(const EventController& src);
 
-        /// Set of events waiting to be dispatched to specific listeners
-        vector<EventMessage> dispatch_queue;
-        /// Set of events waiting to be broadcast by category
-        vector<Event> broadcast_queue;
-
-        /// Registry of subscribed event handlers by event category
-        unordered_map<string, vector<EventHandler*>> event_registry;
+        /// Registry of queued events and event subscribers, by category
+        unordered_map<string, EventCategoryInfo> registry;
 
         /// Default real time clock used when calculating delay
         Clock events_clock;

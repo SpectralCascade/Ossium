@@ -11,6 +11,7 @@ namespace ossium
     Clock::Clock(Uint32 startTimeMS)
     {
         initialTime = startTimeMS;
+        scale = 1.0f;
     }
 
     void Clock::update(float deltaTimeSeconds)

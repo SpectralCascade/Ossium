@@ -10,31 +10,28 @@ using namespace std;
 namespace ossium
 {
 
-    int Event::nextId = 0;
+    ///
+    /// Event
+    ///
 
-    Event::Event(EventHandler* _origin, string _category, Clock* delay_clock)
+    void Event::Init(string _category)
     {
-        eventClock = delay_clock;
-        origin = _origin;
         category = _category;
-        id = nextId;
-        nextId++;
     }
 
-    void Event::AddKeyField(string key, variant<int, float, bool, string> value)
+    void Event::AddKeyField(string key, variant<string, int, float, bool> value)
     {
         data[key] = value;
     }
 
-    variant<int, float, bool, string> Event::GetValue(string key)
+    variant<string, int, float, bool>* Event::GetValue(string key)
     {
         auto value = data.find(key);
         if (value != data.end())
         {
-            return data[key];
+            return &data[key];
         }
-        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Data key for Event[id: %d, cat: %s] does not exist!", id, category.c_str());
-        return 0;
+        return nullptr;
     }
 
     const string& Event::getCategory()
@@ -42,134 +39,151 @@ namespace ossium
         return category;
     }
 
-    const int& Event::getId()
+    bool operator<(const Event& first, const Event& second)
     {
-        return id;
+        return first.sendTime < second.sendTime;
     }
 
-    const EventHandler* Event::getOrigin()
+    bool Event::operator<(const Event& other)
     {
-        return origin;
+        return sendTime < other.sendTime;
     }
 
-    EventMessage::EventMessage(EventHandler* _target, Event& _event)
+    ///
+    /// EventMessage
+    ///
+
+    EventMessage::EventMessage()
     {
-        target = _target;
-        event = _event;
+        target = nullptr;
     }
 
-    void EventHandler::BroadcastEvent(Event& event, float delay)
+    ///
+    /// EventHandler
+    ///
+
+    void EventHandler::BroadcastEvent(Event event, Uint32 delay)
     {
-        controller.Broadcast(event, delay);
+        _event_controller.Broadcast(event, delay);
     }
 
-    void EventHandler::DispatchEvent(Event& event, EventHandler* target, float delay)
+    void EventHandler::DispatchEvent(Event event, EventHandler* target, Uint32 delay)
     {
-        controller.Dispatch(event, target, delay);
+        _event_controller.Dispatch(event, target, delay);
     }
 
     void EventHandler::SubscribeEvent(string category)
     {
-        controller.Subscribe(this, category);
+        _event_controller.Subscribe(this, category);
     }
 
     void EventHandler::UnsubscribeEvent(string category)
     {
-        controller.Unsubscribe(this, category);
+        _event_controller.Unsubscribe(this, category);
     }
 
-    EventController EventHandler::controller;
+    EventController EventHandler::_event_controller;
+
+    ///
+    /// EventController
+    ///
 
     EventController::~EventController()
     {
-        event_registry.clear();
-        dispatch_queue.clear();
-        broadcast_queue.clear();
+        registry.clear();
     }
 
-    void EventController::Broadcast(Event& event, float delay)
+    void EventController::Broadcast(Event event, Uint32 delay)
     {
-        if (delay <= 0)
+        EventCategoryInfo& info = registry[event.getCategory()];
+        if (delay == 0)
         {
-            /// Broadcast event immediately
-            auto i = event_registry.find(event.getCategory());
-            if (i != event_registry.end())
+            /// Broadcast event immediately to all subscribers
+            for (auto i = info.subscribers.begin(); i != info.subscribers.end(); i++)
             {
-                for (auto itr = (*i).second.begin(); itr != (*i).second.end(); itr++)
-                {
-                    (*itr)->HandleEvent(event);
-                }
+                (*i)->HandleEvent(event);
             }
         }
         else
         {
             /// Put the event in the broadcast queue
-            if (event.eventClock == nullptr)
+            if (info.category_clock == nullptr)
             {
-                /// Use default clock if none is provided
-                event.eventClock = &events_clock;
+                /// Use the default clock if none is provided
+                info.category_clock = &events_clock;
             }
-            event.sendTime = ((float)event.eventClock->getTime() / 1000.0f) + delay;
-            broadcast_queue.push_back(event);
+            event.sendTime = info.category_clock->getTime() + delay;
+            info.broadcast_queue.insert(event);
         }
     }
 
-    void EventController::Dispatch(Event& event, EventHandler* target, float delay)
+    void EventController::Dispatch(Event event, EventHandler* target, Uint32 delay)
     {
-        if (delay <= 0)
+        if (delay == 0)
         {
             /// Dispatch event immediately
             target->HandleEvent(event);
         }
         else
         {
+            EventCategoryInfo& info = registry[event.getCategory()];
             /// Put the event in the dispatch queue
-            if (event.eventClock == nullptr)
+            if (info.category_clock == nullptr)
             {
                 /// Use default clock if none is provided
-                event.eventClock = &events_clock;
+                info.category_clock = &events_clock;
             }
-            event.sendTime = ((float)event.eventClock->getTime() / 1000.0f) + delay;
-            EventMessage message(target, event);
-            dispatch_queue.push_back(message);
+            EventMessage message;
+            message.data = event.data;
+            message.category = event.category;
+            message.sendTime = info.category_clock->getTime() + delay;
+            message.target = target;
+            info.dispatch_queue.insert(message);
         }
     }
 
     void EventController::Update(float deltaTime)
     {
         events_clock.update(deltaTime);
-        Uint32 currentTime = events_clock.getTime();
-        while (!dispatch_queue.empty() && (*(dispatch_queue.begin())).event.sendTime <= currentTime)
+        for (auto info = registry.begin(); info != registry.end(); info++)
         {
-            (*(dispatch_queue.begin())).target->HandleEvent((*(dispatch_queue.begin())).event);
-            dispatch_queue.erase(dispatch_queue.begin());
-        }
-        while (!broadcast_queue.empty() && (*(broadcast_queue.begin())).sendTime <= currentTime)
-        {
-            if (event_registry.find((*(broadcast_queue.begin())).getCategory()) != event_registry.end())
+            for (auto i = (*info).second.dispatch_queue.begin(); i != (*info).second.dispatch_queue.end() && (*i).sendTime < (*info).second.category_clock->getTime(); i++)
             {
-                auto itr = event_registry.find((*(broadcast_queue.begin())).getCategory());
-                if (itr != event_registry.end())
+                (*i).target->HandleEvent(*i);
+                (*info).second.dispatch_queue.erase(i);
+            }
+            for (auto i = (*info).second.broadcast_queue.begin(); i != (*info).second.broadcast_queue.end() && (*i).sendTime < (*info).second.category_clock->getTime(); i++)
+            {
+                for (auto j = (*info).second.subscribers.begin(); j != (*info).second.subscribers.end(); j++)
                 {
-                    vector<EventHandler*> handlers = (*itr).second;
-                    for (auto i = handlers.begin(); i != handlers.end(); i++)
-                    {
-                        (*i)->HandleEvent((*(broadcast_queue.begin())));
-                    }
+                    (*j)->HandleEvent(*i);
                 }
-                broadcast_queue.erase(broadcast_queue.begin());
+                (*info).second.broadcast_queue.erase(i);
             }
         }
     }
 
     void EventController::Subscribe(EventHandler* listener, const string& category)
     {
-        event_registry[category].push_back(listener);
+        registry[category].subscribers.push_back(listener);
     }
 
     void EventController::Unsubscribe(EventHandler* listener, const string& category)
     {
-        event_registry.erase(category);
+        EventCategoryInfo& info = registry[category];
+        for (auto i = info.subscribers.begin(); i != info.subscribers.end(); i++)
+        {
+            if (*i == listener)
+            {
+                info.subscribers.erase(i);
+                return;
+            }
+        }
+    }
+
+    void EventController::SetCategoryClock(string category, Clock* category_clock)
+    {
+        registry[category].category_clock = category_clock;
     }
 
 }

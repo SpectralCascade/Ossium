@@ -7,6 +7,7 @@
 #include "circularbuffer.h"
 #include "tree.h"
 #include "fsm.h"
+#include "events.h"
 
 #define UNIT_TESTS
 
@@ -196,8 +197,45 @@ namespace ossium
 
         };
 
-        class FSM_TestMachine : public StateMachine<FSM_TestMachine>
+        class FSM_TestMachine;
+
+        class FSM_TestState;
+
+        class FSM_TestMachine : public StateMachine<FSM_TestMachine>, public EventHandler
         {
+        public:
+            void HandleEvent(Event event)
+            {
+                if (event.getCategory() == "state change")
+                {
+                    try
+                    {
+                        SDL_Log("State change event! Health is set to %d", get<int>(*(event.GetValue("Health"))));
+                        AddState<FSM_TestState>("meh");
+                        SwitchState("meh");
+                    }
+                    catch (bad_variant_access&)
+                    {
+                        SDL_Log("VARIANT EXPLOSION");
+                    }
+                }
+                else
+                {
+                    if (event.GetValue("Name") != nullptr)
+                    {
+                        try
+                        {
+                            string f = get<string>(*(event.GetValue("Name")));
+                            SDL_Log("Hello from event '%s'!", f.c_str());
+                        }
+                        catch (bad_variant_access&)
+                        {
+                            SDL_Log("VARIANT EXPLOSION");
+                        }
+                    }
+                }
+                SDL_Log("HANDLED EVENT in category '%s'.", event.getCategory().c_str());
+            }
         };
 
         class FSM_TestState : public StateInterface<FSM_TestMachine>
@@ -234,6 +272,40 @@ namespace ossium
                 test_obj.SetPostState<FSM_TestState>();
                 test_obj.UpdateFSM();
                 TEST_ASSERT(test_obj.CurrentState()->name == "State 1");
+            }
+
+        private:
+            FSM_TestMachine test_obj;
+
+        };
+
+        class EventSystemTests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                test_obj.AddState<FSM_TestState>();
+                test_obj.SwitchState();
+                test_obj.UpdateFSM();
+
+                Event myevent;
+                myevent.Init("Bob events");
+                myevent.AddKeyField("Name", (string)"bob event");
+                myevent.AddKeyField("Health", 100);
+
+                test_obj.DispatchEvent(myevent, &test_obj);
+
+                myevent.Init("state change");
+
+                test_obj.SubscribeEvent("state change");
+                test_obj.BroadcastEvent(myevent, 500);
+                Uint32 lastTime = SDL_GetTicks();
+                while (test_obj.CurrentState()->name == "Default State")
+                {
+                    float delta = (float)(SDL_GetTicks() - lastTime) / 1000.0f;
+                    EventHandler::_event_controller.Update(delta);
+                    lastTime = SDL_GetTicks();
+                }
             }
 
         private:

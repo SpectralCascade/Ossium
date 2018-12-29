@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
         TEST_RUN(BasicUtilsTests);
         TEST_RUN(TreeTests);
         TEST_RUN(FSM_Tests);
+        TEST_RUN(EventSystemTests);
         TEST_EVALUATE();
         return 0;
         #endif // UNIT_TESTS
