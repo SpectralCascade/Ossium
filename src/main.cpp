@@ -17,13 +17,12 @@
 #include "ossium/resourcecontroller.h"
 #include "ossium/renderer.h"
 #include "ossium/ecs.h"
+#include "ossium/csvdata.h"
 #include "ossium/testmodules.h"
 
 using namespace std;
 using namespace ossium;
 using namespace ossium::test;
-
-#define UNIT_TESTS
 
 int main(int argc, char* argv[])
 {
@@ -40,6 +39,7 @@ int main(int argc, char* argv[])
         TEST_RUN(TreeTests);
         TEST_RUN(FSM_Tests);
         TEST_RUN(EventSystemTests);
+        TEST_RUN(CSV_Tests);
         TEST_EVALUATE();
         return 0;
         #endif // UNIT_TESTS

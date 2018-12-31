@@ -8,6 +8,7 @@
 #include "tree.h"
 #include "fsm.h"
 #include "events.h"
+#include "csvdata.h"
 
 #define UNIT_TESTS
 
@@ -298,7 +299,7 @@ namespace ossium
                 myevent.Init("state change");
 
                 test_obj.SubscribeEvent("state change");
-                test_obj.BroadcastEvent(myevent, 500);
+                test_obj.BroadcastEvent(myevent);
                 Uint32 lastTime = SDL_GetTicks();
                 while (test_obj.CurrentState()->name == "Default State")
                 {
@@ -310,6 +311,25 @@ namespace ossium
 
         private:
             FSM_TestMachine test_obj;
+
+        };
+
+        class CSV_Tests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                CSV csv;
+                csv.Import("test.csv", false);
+                TEST_ASSERT(csv.GetCell(0, 0) == "Test 1");
+                TEST_ASSERT(csv.GetCell(0, 2) == "Test 3");
+                TEST_ASSERT(csv.GetCell(1, 1) == "3");
+                TEST_ASSERT(csv.GetCell(2, 1) == "41.3");
+                TEST_ASSERT(csv.GetCell(2, 2) == "0.4");
+                TEST_ASSERT(csv.GetCell(3, 2) == "105");
+                TEST_ASSERT(csv.GetCell(5, 2) == "");
+                TEST_ASSERT(csv.GetCell(6, 2) == "43");
+            }
 
         };
 
