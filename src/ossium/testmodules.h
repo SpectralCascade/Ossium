@@ -322,6 +322,7 @@ namespace ossium
                 CSV csv;
                 csv.Import("test.csv", false);
                 TEST_ASSERT(csv.GetCell(0, 0) == "Test 1");
+                TEST_ASSERT(csv.GetCell(0, 1) == "Test 2");
                 TEST_ASSERT(csv.GetCell(0, 2) == "Test 3");
                 TEST_ASSERT(csv.GetCell(1, 1) == "3");
                 TEST_ASSERT(csv.GetCell(2, 1) == "41.3");
@@ -329,6 +330,11 @@ namespace ossium
                 TEST_ASSERT(csv.GetCell(3, 2) == "105");
                 TEST_ASSERT(csv.GetCell(5, 2) == "");
                 TEST_ASSERT(csv.GetCell(6, 2) == "43");
+
+                csv.Data()[0][1] = "TESTING OUTPUT";
+                csv.Export("test_output.csv");
+                csv.Import("test_output.csv");
+                TEST_ASSERT(csv.GetCell(0, 1) == "TESTING OUTPUT");
             }
 
         };

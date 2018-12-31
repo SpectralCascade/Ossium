@@ -17,7 +17,7 @@ namespace ossium
         /// Import a CSV file; set quoted to false if importing a csv file that doesn't wrap each cell in "" characters
         void Import(string path, bool quoted = true);
         /// Export data to a CSV file
-        void Export(string path);
+        void Export(string path, bool quoted = true);
 
         /// Returns a copy of the data contained in a single cell (zero based index)
         string GetCell(unsigned int row, unsigned int column);

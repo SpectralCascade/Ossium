@@ -92,8 +92,31 @@ namespace ossium
         }
     }
 
-    void CSV::Export(string path)
+    void CSV::Export(string path, bool quoted)
     {
+        ofstream file(path.c_str());
+        for (auto i = data.begin(); i != data.end(); i++)
+        {
+            string line;
+            for (unsigned int cell = 0, counti = (*i).empty() ? 0 : (*i).size(); cell < counti; cell++)
+            {
+                if (quoted)
+                {
+                    line = line + '"';
+                    line = line + (*i)[cell];
+                    line = line + '"';
+                }
+                else
+                {
+                    line = line + (*i)[cell];
+                }
+                if (cell != (*i).size() - 1)
+                {
+                    line = line + ',';
+                }
+            }
+            file << line << endl;
+        }
     }
 
     string CSV::GetCell(unsigned int row, unsigned int column)
