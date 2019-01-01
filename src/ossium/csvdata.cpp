@@ -3,6 +3,7 @@
 #include <vector>
 #include <SDL2/SDL.h>
 
+#include "basics.h"
 #include "csvdata.h"
 
 using namespace std;
@@ -69,7 +70,10 @@ namespace ossium
                         {
                             if (cell.length() > 2)
                             {
-                                cell = cell.substr(1, cell.length() - 2);
+                                if (cell[0] == '"')
+                                {
+                                    cell = cell.substr(1, cell.length() - 2);
+                                }
                             }
                             else
                             {
@@ -100,7 +104,7 @@ namespace ossium
             string line;
             for (unsigned int cell = 0, counti = (*i).empty() ? 0 : (*i).size(); cell < counti; cell++)
             {
-                if (quoted)
+                if (quoted && !IsNumber((*i)[cell]))
                 {
                     line = line + '"';
                     line = line + (*i)[cell];

@@ -19,6 +19,20 @@ namespace ossium
     string ToString(float n);
     string ToString(int n);
 
+    /// Removes spaces from either end of an input string and returns a new string
+    string strip(string data);
+
+    /// Determine whether a stripped ASCII string is an integer
+    bool IsInt(const string& data);
+    /// Determine whether a stripped ASCII string is a float
+    bool IsFloat(const string& data);
+    /// Convenient method to check whether a string is numerical at all
+    bool IsNumber(const string& data);
+
+    /// Convert a string to int or float using stringstream
+    int ToInt(const string& data);
+    float ToFloat(const string& data);
+
 }
 
 #endif // BASICS_H

@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "events.h"
+#include "basics.h"
 
 using namespace std;
 
@@ -19,12 +20,47 @@ namespace ossium
         category = _category;
     }
 
-    void Event::AddKeyField(string key, variant<string, int, float, bool> value)
+    void Event::Init(CSV& event_data)
+    {
+        for (auto i = event_data.Data().begin(); i != event_data.Data().end(); i++)
+        {
+            if ((*i).empty() || (*i).size() < 2)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to parse event key-value field.");
+                continue;
+            }
+            if ((*i)[0][0] == '%')
+            {
+                if ((*i)[0] == "%category%")
+                {
+                    category = (*i)[1];
+                }
+            }
+            else
+            {
+                /// Add the key-value pair to the event
+                if (IsInt((*i)[1]))
+                {
+                    AddKeyField((*i)[0], ToInt((*i)[1]));
+                }
+                else if (IsFloat((*i)[1]))
+                {
+                    AddKeyField((*i)[0], ToFloat((*i)[1]));
+                }
+                else
+                {
+                    AddKeyField((*i)[0], (*i)[1]);
+                }
+            }
+        }
+    }
+
+    void Event::AddKeyField(string key, variant<string, int, float> value)
     {
         data[key] = value;
     }
 
-    variant<string, int, float, bool>* Event::GetValue(string key)
+    variant<string, int, float>* Event::GetValue(string key)
     {
         auto value = data.find(key);
         if (value != data.end())

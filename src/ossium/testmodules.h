@@ -118,6 +118,30 @@ namespace ossium
                 TEST_ASSERT(clamp(3, 0, 10) == 3);
                 TEST_ASSERT(clamp(-1, 0, 10) == 0);
                 TEST_ASSERT(clamp(11, 0, 10) == 10);
+
+                SDL_Log("String functions.");
+
+                TEST_ASSERT(strip(" testing ") == "testing");
+                TEST_ASSERT(strip(" t        ") == "t");
+                TEST_ASSERT(strip("  test again") == "test again");
+                TEST_ASSERT(strip("test    ") == "test");
+
+                SDL_Log("Type conversion tests.");
+
+                TEST_ASSERT(IsInt("1234"));
+                TEST_ASSERT(IsFloat("142.04"));
+                TEST_ASSERT(!IsInt("234.53"));
+                TEST_ASSERT(!IsInt("words"));
+                TEST_ASSERT(IsInt("-412"));
+                TEST_ASSERT(!IsFloat("more words"));
+                TEST_ASSERT(IsFloat("-142.0"));
+                TEST_ASSERT(IsFloat("1.7102e20"));
+                TEST_ASSERT(!IsFloat("1e"));
+                TEST_ASSERT(IsFloat("-1.2523e14"));
+
+                TEST_ASSERT(ToInt("1532") == 1532);
+                TEST_ASSERT(ToFloat("15.25") == 15.25f);
+                TEST_ASSERT(ToFloat("-21.9232") == -21.9232f);
             }
 
         };
@@ -335,6 +359,13 @@ namespace ossium
                 csv.Export("test_output.csv");
                 csv.Import("test_output.csv");
                 TEST_ASSERT(csv.GetCell(0, 1) == "TESTING OUTPUT");
+
+                csv.Import("event_test.csv", true);
+                TEST_ASSERT(csv.GetCell(2, 0) == "Name");
+                Event myevent;
+                myevent.Init(csv);
+                TEST_ASSERT(myevent.getCategory() == "npc_talk_question_rhetorical");
+                TEST_ASSERT(get<string>(*(myevent.GetValue("Name"))) == "Bob");
             }
 
         };

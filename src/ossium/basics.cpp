@@ -1,4 +1,8 @@
+#include <SDL2/SDL.h>
+
 #include "basics.h"
+
+using namespace std;
 
 namespace ossium
 {
@@ -64,6 +68,110 @@ namespace ossium
         strStream.str("");
         strStream << n;
         return strStream.str();
+    }
+
+    string strip(string data)
+    {
+        for (int i = 0, counti = data.length(); i < counti; i++)
+        {
+            if (data[i] != ' ')
+            {
+                data = data.substr(i, counti - i);
+                break;
+            }
+        }
+        for (int i = data.length(); i > 0; i--)
+        {
+            if (data[i - 1] != ' ')
+            {
+                data = data.substr(0, i);
+                break;
+            }
+        }
+        return data;
+    }
+
+    bool IsInt(const string& data)
+    {
+        bool isi = false;
+        for (int i = 0, counti = data.length(); i < counti; i++)
+        {
+            if (data[i] > 47 && data[i] < 58)
+            {
+                isi = true;
+            }
+            else if (i == 0 && data[i] == '-')
+            {
+                continue;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return isi;
+    }
+
+    bool IsFloat(const string& data)
+    {
+        bool isf = false;
+        bool singlepoint = false;
+        bool exponent = false;
+        for (int i = 0, counti = data.length(); i < counti; i++)
+        {
+            if (data[i] > 47 && data[i] < 58)
+            {
+                isf = true;
+            }
+            else if (data[i] == '.' && !singlepoint)
+            {
+                singlepoint = true;
+            }
+            else if (data[i] == '-')
+            {
+                continue;
+            }
+            else if (data[i] == 'e' && isf && !exponent && i < counti - 1)
+            {
+                exponent = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return isf;
+    }
+
+    bool IsNumber(const string& data)
+    {
+        return IsInt(data) || IsFloat(data);
+    }
+
+    int ToInt(const string& data)
+    {
+        stringstream str;
+        str.str("");
+        str.str(data);
+        int value = 0;
+        if (!(str >> value))
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
+        }
+        return value;
+    }
+
+    float ToFloat(const string& data)
+    {
+        stringstream str;
+        str.str("");
+        str.str(data);
+        float value = 0;
+        if (!(str >> value))
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
+        }
+        return value;
     }
 
 }

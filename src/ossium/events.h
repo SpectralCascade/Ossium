@@ -9,6 +9,7 @@
 #include <variant>
 
 #include "time.h"
+#include "csvdata.h"
 
 using namespace std;
 
@@ -24,15 +25,17 @@ namespace ossium
     public:
         friend class EventController;
 
-        /// Initialiser takes the event category and the id of the entity that triggered the event
+        /// Initialiser takes the event category
         void Init(string _category);
+        /// Overload takes preloaded CSV data
+        void Init(CSV& event_data);
 
         /// Sets the value of data associated with a specified key
         /// e.g. AddKeyField("ChangePlayerHealth", -30);
-        void AddKeyField(string key, variant<string, int, float, bool> value = (string)"");
+        void AddKeyField(string key, variant<string, int, float> value = (string)"");
 
         /// Returns pointer to the value associated with a given key; returns null if no such key exists!
-        variant<string, int, float, bool>* GetValue(string key);
+        variant<string, int, float>* GetValue(string key);
 
         /// Returns a reference to this event's category type
         const string& getCategory();
@@ -54,7 +57,7 @@ namespace ossium
         Uint32 sendTime;
 
         /// Table of key-value arguments
-        map<string, variant<string, int, float, bool>> data;
+        map<string, variant<string, int, float>> data;
 
     };
 
