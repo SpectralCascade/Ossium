@@ -36,12 +36,18 @@ namespace ossium
         /// Returns the 'absolute' time that the clock began in milliseconds
         Uint32 getInitialTime();
 
+        /// Returns the relative time difference between update() calls
+        float getDeltaTime();
+
     private:
         /// Initial, 'absolute' time at which the clock began
         Uint32 initialTime;
 
         /// Relative time passed since clock began in milliseconds
         Uint32 time;
+
+        /// Last value of time
+        Uint32 previousTime;
 
         /// Scale factor to stretch/compress clock by
         float scale;

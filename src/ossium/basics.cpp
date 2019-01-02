@@ -1,4 +1,6 @@
+#include <cstdarg>
 #include <SDL2/SDL.h>
+#include <cstdio>
 
 #include "basics.h"
 

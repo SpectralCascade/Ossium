@@ -11,6 +11,8 @@ namespace ossium
     Clock::Clock(Uint32 startTimeMS)
     {
         initialTime = startTimeMS;
+        time = 0;
+        previousTime = 0;
         scale = 1.0f;
     }
 
@@ -18,6 +20,7 @@ namespace ossium
     {
         if (!paused)
         {
+            previousTime = time;
             Uint32 changeInTime = 0;
             if (scale < 0.0f)
             {
@@ -62,6 +65,7 @@ namespace ossium
     void Clock::stepFrames(int frames, float framePeriod)
     {
         float deltaTime = (float)frames * framePeriod * 1000.0f;
+        previousTime = time;
         if (deltaTime < 0)
         {
             if ((Uint32)(-deltaTime) > time)
@@ -87,6 +91,11 @@ namespace ossium
     Uint32 Clock::getInitialTime()
     {
         return initialTime;
+    }
+
+    float Clock::getDeltaTime()
+    {
+        return ((float)time - (float)previousTime) / 1000.0f;
     }
 
     ///

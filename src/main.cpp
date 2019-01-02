@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <string.h>
+#include <sstream>
 #include <SDL2/SDL.h>
 
 #include "ossium/config.h"
@@ -18,6 +19,7 @@
 #include "ossium/renderer.h"
 #include "ossium/ecs.h"
 #include "ossium/csvdata.h"
+#include "ossium/delta.h"
 #include "ossium/testmodules.h"
 
 using namespace std;
@@ -72,7 +74,7 @@ int main(int argc, char* argv[])
         Text* targetText = gameObject.GetComponent<Text>();
         if (targetText != nullptr)
         {
-            targetText->setText("Testing Text Component");
+            targetText->setText("FPS: 0");
             targetText->setColor(CYAN);
             targetText->textToTexture(mainRenderer, &font);
         }
@@ -82,12 +84,18 @@ int main(int argc, char* argv[])
         if (!compList.empty() && compList.size() > 1)
         {
             compList[1]->setColor(RED);
-            compList[1]->setText("Another text component...");
+            compList[1]->setText("Text Component Test");
             compList[1]->textToTexture(mainRenderer, &font, 56);
         }
 
+        Timer fpsTimer;
+        fpsTimer.start();
+        int countedFrames = 0;
+        global::delta.init();
         while (!quit)
         {
+            global::delta.update();
+            countedFrames++;
             while (SDL_PollEvent(&e) != 0)
             {
                 mainWindow.handle_events(e);
@@ -109,6 +117,12 @@ int main(int argc, char* argv[])
                 for (int i = 0, counti = handyComponents.size(); i < counti; i++)
                 {
                     handyComponents[i]->renderSimple(mainRenderer, 0, i * 50);
+                }
+                if (fpsTimer.getTicks() > 250)
+                {
+                    handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.getTicks() / 250.f))));
+                    countedFrames = 0;
+                    fpsTimer.start();
                 }
             }
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);

@@ -45,6 +45,8 @@
 		<Unit filename="src/ossium/config.h" />
 		<Unit filename="src/ossium/csvdata.cpp" />
 		<Unit filename="src/ossium/csvdata.h" />
+		<Unit filename="src/ossium/delta.cpp" />
+		<Unit filename="src/ossium/delta.h" />
 		<Unit filename="src/ossium/ecs.cpp" />
 		<Unit filename="src/ossium/ecs.h" />
 		<Unit filename="src/ossium/events.cpp" />
