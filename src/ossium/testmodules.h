@@ -10,7 +10,7 @@
 #include "events.h"
 #include "csvdata.h"
 
-#define UNIT_TESTS
+//#define UNIT_TESTS
 
 using namespace std;
 

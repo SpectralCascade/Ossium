@@ -54,6 +54,8 @@ int main(int argc, char* argv[])
         /// Create renderer
         Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
 
+        mainWindow.setAspectRatio(400, 220);
+
         /// Create texture manager
         ResourceController<Texture> textures;
         SDL_Event e;
