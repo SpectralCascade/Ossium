@@ -49,12 +49,12 @@ int main(int argc, char* argv[])
         LoadConfig(&settings);
 
         /// Create the window
-        Window mainWindow("Ossium Engine", 640, 480, settings.fullscreen);
+        Window mainWindow("Ossium Engine", 640, 480, settings.fullscreen, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
         /// Create renderer
         Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
 
-        mainWindow.setAspectRatio(400, 220);
+        mainWindow.setAspectRatio(16, 9);
 
         /// Create texture manager
         ResourceController<Texture> textures;
@@ -112,6 +112,10 @@ int main(int argc, char* argv[])
                 }
             }
             SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
+            SDL_Rect viewrect = mainWindow.getViewportRect();
+            viewrect.x = 0;
+            viewrect.y = 0;
+            mainRenderer->enqueue(&viewrect, 0, false, WHITE);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();
         }

@@ -21,11 +21,15 @@ namespace ossium
         SDL_Window* getWindow();
         int getWidth();
         int getHeight();
+        int getAspectWidth();
+        int getAspectHeight();
+        SDL_Rect getViewportRect();
         void setWidth(int newWidth);
         void setHeight(int newHeight);
         void setFullScreen();
         void setWindowed();
-        void setBorder(SDL_bool bordered);
+        void setBordered();
+        void setBorderless();
         /// Attempts to set the window's renderer viewport dimensions to the input target width and height in pixels
         /// If the window is bigger in both width and height than the target dimension arguments, the viewport will remain
         /// at the target dimensions and remaining space in the window will be filled with black bars on all sides.
@@ -33,7 +37,7 @@ namespace ossium
         /// if the window dimensions do not match the target aspect, or else the viewport will be cropped on the left and right side
         /// when the window dimensions do not match the target aspect.
         /// If fixed == true, the viewport matches the argument dimensions if window dimensions >= argument dimensions
-        void setAspectRatio(int aspect_w, int aspect_h, bool fixed = false, bool letterbox = true);
+        void setAspectRatio(int aspect_w, int aspect_h, bool fixed = false);
 
         /// Updates the renderer viewport dimensions according to the current aspect
         void updateViewport();
@@ -66,6 +70,8 @@ namespace ossium
         bool fixed_aspect;
         /// Whether to use black bars or simply crop the left and right edges of the renderer to fit the target aspect
         bool letterbox_bars;
+        /// The viewport rect, set when the viewport updates
+        SDL_Rect viewportRect;
 
         /// Active flags
         bool minimized;

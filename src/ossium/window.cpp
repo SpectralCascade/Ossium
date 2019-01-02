@@ -53,8 +53,15 @@ namespace ossium
 
     void Window::handle_events(SDL_Event &event)
     {
-        switch (event.type)
+        switch (event.window.event)
         {
+            case SDL_WINDOWEVENT_SIZE_CHANGED:
+            {
+                width = event.window.data1;
+                height = event.window.data2;
+                updateViewport();
+                break;
+            }
             case SDL_WINDOWEVENT_MINIMIZED:
             {
                 minimized = true;
@@ -75,12 +82,6 @@ namespace ossium
                 focus = false;
                 break;
             }
-            case SDL_WINDOWEVENT_RESIZED:
-            {
-                SDL_GetWindowSize(window, &width, &height);
-                updateViewport();
-                break;
-            }
         }
     }
 
@@ -99,6 +100,21 @@ namespace ossium
     {
         SDL_GetWindowSize(window, &width, &height);
         return height;
+    }
+
+    int Window::getAspectWidth()
+    {
+        return aspect_width;
+    }
+
+    int Window::getAspectHeight()
+    {
+        return aspect_height;
+    }
+
+    SDL_Rect Window::getViewportRect()
+    {
+        return viewportRect;
     }
 
     void Window::setWidth(int newWidth)
@@ -127,23 +143,21 @@ namespace ossium
         fullscreen = false;
     }
 
-    void Window::setBorder(SDL_bool bordered)
+    void Window::setBordered()
     {
-        SDL_SetWindowBordered(window, bordered);
-        if (bordered == SDL_TRUE)
-        {
-            border = true;
-        }
-        else
-        {
-            border = false;
-        }
+        SDL_SetWindowBordered(window, SDL_TRUE);
+        border = true;
     }
 
-    void Window::setAspectRatio(int aspect_w, int aspect_h, bool fixed, bool letterbox)
+    void Window::setBorderless()
+    {
+        SDL_SetWindowBordered(window, SDL_FALSE);
+        border = false;
+    }
+
+    void Window::setAspectRatio(int aspect_w, int aspect_h, bool fixed)
     {
         fixed_aspect = fixed;
-        letterbox_bars = letterbox;
         if (aspect_w < 1)
         {
             aspect_w = 1;
@@ -177,36 +191,24 @@ namespace ossium
         {
             percent_width = (float)width / (float)aspect_width;
             percent_height = (float)height / (float)aspect_height;
-            SDL_Log("Percent dim: %f, %f | WIN DIM: %d, %d", percent_width, percent_height, width, height);
         }
-        if (letterbox_bars)
+        /// Get the smallest percent and use that to scale dimensions
+        float smallest_percent;
+        if (percent_width < percent_height)
         {
-            /// Get the smallest percent and use that to scale dimensions
-            float smallest_percent;
-            if (percent_width < percent_height)
-            {
-                smallest_percent = percent_width;
-            }
-            else
-            {
-                smallest_percent = percent_height;
-            }
-            if (fixed_aspect)
-            {
-                smallest_percent = clamp(smallest_percent, 0.0f, 1.0f);
-            }
-            viewRect.h = (int)(smallest_percent * (!fullscreen ? (float)aspect_height : (float)display_height));
-            viewRect.w = (int)(smallest_percent * (!fullscreen ? (float)aspect_width : (float)display_width));
+            smallest_percent = percent_width;
         }
         else
         {
-            if (fixed_aspect)
-            {
-                percent_height = clamp(percent_height, 0.0f, 1.0f);
-            }
-            viewRect.h = (int)(percent_height * (float)aspect_height);
-            viewRect.w = (int)(percent_height * (float)aspect_width);
+            smallest_percent = percent_height;
         }
+        if (fixed_aspect)
+        {
+            smallest_percent = clamp(smallest_percent, 0.0f, 1.0f);
+        }
+        viewRect.h = (int)(smallest_percent * (!fullscreen ? (float)aspect_height : (float)display_height));
+        viewRect.w = (int)(smallest_percent * (!fullscreen ? (float)aspect_width : (float)display_width));
+        /// Calculate viewport anchor position
         int deltaw = (width - viewRect.w);
         int deltah = (height - viewRect.h);
         if (deltaw > 0)
@@ -225,8 +227,8 @@ namespace ossium
         {
             viewRect.y = 0;
         }
-        SDL_Log("Viewport rect: x: %d, y: %d, w: %d, h: %d", viewRect.x, viewRect.y, viewRect.w, viewRect.h);
         SDL_RenderSetViewport(renderer, &viewRect);
+        viewportRect = viewRect;
     }
 
     bool Window::isMinimized()

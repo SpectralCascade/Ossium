@@ -546,6 +546,8 @@ namespace ossium
             renderLines(layer);
             renderPoints(layer);
         }
+        /// Set background draw colour to black
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     }
 
     void Renderer::renderPresent()
