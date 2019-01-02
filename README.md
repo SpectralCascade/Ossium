@@ -20,7 +20,7 @@ All these components are listed on the [main SDL 2 webpage](https://www.libsdl.o
 * SDL_TTF
 
 # Additional notes
-I'm developing this project using Code::Blocks 17.12 on 64-bit (arm) Linux (and sometimes on Windows 7 64-bit with mingw-64)
+I'm developing this project using Code::Blocks 17.12 on 64-bit (arm) Linux (and sometimes on Windows 7 64-bit with MinGW-64)
 with the GNU GCC/G++ compiler. The engine is easily portable to Windows or Mac (you may need to change SDL 2 includes by find and replace of initial `<SDL2/SDL` to `<SDL` for Windows builds).
 
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
