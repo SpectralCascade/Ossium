@@ -4,7 +4,8 @@
 #include "window.h"
 
 namespace ossium
-    {
+{
+
     Window::Window(const char* title, int w, int h, bool fullscrn, Uint32 flags)
     {
         window = NULL;
@@ -15,6 +16,8 @@ namespace ossium
         fixed_aspect = false;
         width = w;
         height = h;
+        aspect_width = 0;
+        aspect_height = 0;
 
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
         if (window == NULL)

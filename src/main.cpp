@@ -1,30 +1,24 @@
 #include <cstdio>
 #include <string.h>
-#include <sstream>
 #include <SDL2/SDL.h>
 
 #include "ossium/config.h"
 #include "ossium/init.h"
 #include "ossium/window.h"
-#include "ossium/texture.h"
-#include "ossium/texturepack.h"
 #include "ossium/time.h"
 #include "ossium/font.h"
 #include "ossium/text.h"
-#include "ossium/vector.h"
-#include "ossium/transform.h"
-#include "ossium/primitives.h"
-#include "ossium/statesprite.h"
-#include "ossium/resourcecontroller.h"
 #include "ossium/renderer.h"
 #include "ossium/ecs.h"
-#include "ossium/csvdata.h"
 #include "ossium/delta.h"
+
+#ifdef UNIT_TESTS
 #include "ossium/testmodules.h"
+using namespace ossium::test;
+#endif // UNIT_TESTS
 
 using namespace std;
 using namespace ossium;
-using namespace ossium::test;
 
 int main(int argc, char* argv[])
 {
@@ -51,21 +45,18 @@ int main(int argc, char* argv[])
         LoadConfig(&settings);
 
         /// Create the window
-        Window mainWindow("Ossium Engine", 640, 480, settings.fullscreen, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        Window mainWindow("Ossium Engine", 1024, 768, settings.fullscreen, SDL_WINDOW_SHOWN);
 
         /// Create renderer
         Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
-
         mainWindow.setAspectRatio(16, 9);
 
-        /// Create texture manager
-        ResourceController<Texture> textures;
         SDL_Event e;
 
         Font font;
-        int ptsizes[5] = {4, 24, 28, 48, 56};
-        font.load("serif.ttf", &ptsizes[0]);
-        font.init("serif.ttf");
+        int ptsizes[3] = {2, 24, 48};
+        font.load("Orkney Regular.ttf", &ptsizes[0]);
+        font.init("Orkney Regular.ttf");
 
         Entity gameObject;
         gameObject.SetName("Test Entity");
@@ -85,7 +76,7 @@ int main(int argc, char* argv[])
         {
             compList[1]->setColor(RED);
             compList[1]->setText("Text Component Test");
-            compList[1]->textToTexture(mainRenderer, &font, 56);
+            compList[1]->textToTexture(mainRenderer, &font, 48);
         }
 
         Timer fpsTimer;
@@ -99,7 +90,7 @@ int main(int argc, char* argv[])
             while (SDL_PollEvent(&e) != 0)
             {
                 mainWindow.handle_events(e);
-                if (e.type == SDL_QUIT)
+                if (e.type == SDL_QUIT || (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE))
                 {
                     quit = true;
                     break;

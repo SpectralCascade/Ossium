@@ -20,6 +20,25 @@ namespace ossium
         SDL_assert(window != NULL);
         #endif // DEBUG
         renderer = SDL_CreateRenderer(window->getWindow(), driver, flags);
+        if (renderer == NULL)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer! SDL_Error: %s", SDL_GetError());
+            int n_drivers = SDL_GetNumRenderDrivers();
+            SDL_RendererInfo driver_data;
+            string drivers_available;
+            for (int i = 0; i < n_drivers; i++)
+            {
+                SDL_GetRenderDriverInfo(i, &driver_data);
+                drivers_available = drivers_available + driver_data.name + ", ";
+            }
+            SDL_Log("Available render drivers are: %s", drivers_available.c_str());
+            SDL_Log("Falling back to software renderer by default.");
+            renderer = SDL_CreateRenderer(window->getWindow(), driver, SDL_RENDERER_SOFTWARE);
+            if (renderer == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Fallback software renderer could not be created! SDL_Error: %s", SDL_GetError());
+            }
+        }
         textureLayers = new queue<RenderInfoTexture>[numLayers];
         textureExLayers = new queue<RenderInfoTextureEx>[numLayers];
         textLayers = new queue<RenderInfoText>[numLayers];

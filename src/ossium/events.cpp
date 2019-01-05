@@ -1,5 +1,4 @@
 #include <unordered_map>
-#include <variant>
 #include <string>
 #include <SDL2/SDL.h>
 
