@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include <string>
 #include <SDL2/SDL.h>
+#include <variant>
 
 #include "events.h"
 #include "basics.h"

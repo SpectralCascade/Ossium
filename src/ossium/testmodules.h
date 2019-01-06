@@ -9,8 +9,7 @@
 #include "fsm.h"
 #include "events.h"
 #include "csvdata.h"
-
-//#define UNIT_TESTS
+#include "basics.h"
 
 using namespace std;
 
@@ -87,8 +86,6 @@ namespace ossium
                 UnitTest::total_test_modules = 0;                                                                   \
                 UnitTest::total_test_asserts = 0;                                                                   \
                 UnitTest::total_passed_test_asserts = 0
-
-        #ifdef UNIT_TESTS
 
         class BasicUtilsTests : public UnitTest
         {
@@ -369,8 +366,6 @@ namespace ossium
             }
 
         };
-
-        #endif // UNIT_TESTS
 
     }
 

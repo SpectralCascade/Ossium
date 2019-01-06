@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <map>
 #include <vector>
+#include <variant>
 
 #include "time.h"
 #include "csvdata.h"
