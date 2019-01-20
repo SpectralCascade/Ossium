@@ -1,6 +1,8 @@
 #ifndef DELTA_H
 #define DELTA_H
 
+#include "config.h"
+
 namespace ossium
 {
 
@@ -16,12 +18,17 @@ namespace ossium
         void update();
 
         /// Initialises previousTicks to current ticks
-        void init();
+        void init(Config& config);
+
+        /// Resets the previous ticks variable to current time
+        void reset();
 
     private:
         Uint32 previousTicks;
 
         float deltaTime;
+
+        float fpscap;
 
     };
 

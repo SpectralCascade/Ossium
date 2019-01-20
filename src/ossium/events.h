@@ -32,6 +32,7 @@ namespace ossium
 
         /// Sets the value of data associated with a specified key
         /// e.g. AddKeyField("ChangePlayerHealth", -30);
+        /// If the key already exists, this method overwrites the current value
         void AddKeyField(string key, variant<string, int, float> value = (string)"");
 
         /// Returns pointer to the value associated with a given key; returns null if no such key exists!

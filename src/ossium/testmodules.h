@@ -15,6 +15,7 @@ using namespace std;
 
 namespace ossium
 {
+#ifdef UNIT_TESTS
 
     namespace test
     {
@@ -368,7 +369,7 @@ namespace ossium
         };
 
     }
-
+#endif
 }
 
 #endif // TESTMODULES_H

@@ -2,7 +2,7 @@
 
 namespace ossium
 {
-
+#ifdef UNIT_TESTS
     namespace test
     {
 
@@ -20,5 +20,5 @@ namespace ossium
         bool UnitTest::assert_result = true;
 
     }
-
+#endif
 }

@@ -7,6 +7,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "init.h"
+#include "delta.h"
 #include "ecs.h"
 
 using namespace std;
@@ -100,7 +101,7 @@ namespace ossium
         IMG_Quit();
         ecs::DestroyECS();
         SDL_Quit();
-        printf("Successfully terminated Ossium. Thanks for using the engine!");
+        printf("INFO: Successfully terminated Ossium.");
     }
 
     SDL_Renderer* CreateRenderer(SDL_Window* window, bool vsync)

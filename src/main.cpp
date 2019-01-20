@@ -82,11 +82,12 @@ int main(int argc, char* argv[])
         Timer fpsTimer;
         fpsTimer.start();
         int countedFrames = 0;
-        global::delta.init();
+
+        /// Initialise the global delta time and FPS controller
+        global::delta.init(settings);
+
         while (!quit)
         {
-            global::delta.update();
-            countedFrames++;
             while (SDL_PollEvent(&e) != 0)
             {
                 mainWindow.handle_events(e);
@@ -111,7 +112,7 @@ int main(int argc, char* argv[])
                 }
                 if (fpsTimer.getTicks() > 250)
                 {
-                    handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.getTicks() / 250.f))));
+                    handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.getTicks() / 1000.0f))));
                     countedFrames = 0;
                     fpsTimer.start();
                 }
@@ -123,6 +124,9 @@ int main(int argc, char* argv[])
             mainRenderer->enqueue(&viewrect, 0, false, WHITE);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();
+
+            countedFrames++;
+            global::delta.update();
         }
     }
     TerminateOssium();

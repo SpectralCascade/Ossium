@@ -49,7 +49,7 @@ namespace ossium
         {
             /// Read config file
             string ignoredata;
-            configFile >> ignoredata >> config->fullscreen >> ignoredata >> config->vsync >> ignoredata >> config->filtering >> ignoredata >> config->mastervolume;
+            configFile >> ignoredata >> config->fullscreen >> ignoredata >> config->vsync >> ignoredata >> config->fpscap >> ignoredata >> config->filtering >> ignoredata >> config->mastervolume;
             configFile.close();
         }
         return success;
@@ -64,8 +64,9 @@ namespace ossium
         {
             newConfigFile << "Fullscreen: " << config.fullscreen << endl;
             newConfigFile << "V-Sync: " << config.vsync << endl;
+            newConfigFile << "FPS-Cap: " << config.fpscap << endl;
             newConfigFile << "Anti-Aliasing: " << config.filtering << endl;
-            newConfigFile << "Master Volume: " << config.mastervolume << endl;
+            newConfigFile << "Master-Volume: " << config.mastervolume << endl;
             newConfigFile.close();
         }
         else
