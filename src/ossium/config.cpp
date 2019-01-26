@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "config.h"
 

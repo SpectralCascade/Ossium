@@ -1,7 +1,7 @@
 #include <map>
 #include <utility>
 #include <string>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "texture.h"
 #include "statesprite.h"

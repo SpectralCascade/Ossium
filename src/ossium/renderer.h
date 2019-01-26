@@ -4,7 +4,7 @@
 #include <vector>
 #include <queue>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "colours.h"
 #include "vector.h"

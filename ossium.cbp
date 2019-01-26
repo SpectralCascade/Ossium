@@ -55,7 +55,10 @@
 		<Unit filename="src/ossium/fsm.h" />
 		<Unit filename="src/ossium/init.cpp" />
 		<Unit filename="src/ossium/init.h" />
+		<Unit filename="src/ossium/input.cpp" />
 		<Unit filename="src/ossium/input.h" />
+		<Unit filename="src/ossium/keyboard.cpp" />
+		<Unit filename="src/ossium/keyboard.h" />
 		<Unit filename="src/ossium/primitives.cpp" />
 		<Unit filename="src/ossium/primitives.h" />
 		<Unit filename="src/ossium/renderer.cpp" />

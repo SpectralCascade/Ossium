@@ -1,7 +1,7 @@
 #ifndef PRIMITIVES_H
 #define PRIMITIVES_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "vector.h"
 

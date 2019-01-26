@@ -2,7 +2,7 @@
 #define CIRCULARBUFFER_H
 
 #include <algorithm>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "basics.h"
 

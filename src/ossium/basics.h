@@ -33,6 +33,8 @@ namespace ossium
     int ToInt(const string& data);
     float ToFloat(const string& data);
 
+#define STRINGIFY(CODE) "CODE"
+
 }
 
 #endif // BASICS_H

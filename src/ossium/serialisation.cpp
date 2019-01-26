@@ -1,6 +1,6 @@
 #include <stack>
 #include <string.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "vector.h"
 #include "serialisation.h"

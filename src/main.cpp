@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <string.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "ossium/config.h"
 #include "ossium/init.h"
@@ -11,6 +11,7 @@
 #include "ossium/renderer.h"
 #include "ossium/ecs.h"
 #include "ossium/delta.h"
+#include "ossium/keyboard.h"
 
 #ifdef UNIT_TESTS
 #include "ossium/testmodules.h"

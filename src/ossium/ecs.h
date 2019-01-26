@@ -6,7 +6,7 @@
 #include <vector>
 #include <string.h>
 #include <unordered_map>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "transform.h"
 #include "tree.h"
@@ -74,7 +74,7 @@ namespace ossium
                                                                                         \
     TYPE* Clone()
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method
-    /// Add this to the class definition file of a component that uses DECLARE_COMPONENT
+    /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE) ecs::ComponentRegistry TYPE::__ecs_entry_;         \
                                                                                         \
     TYPE* TYPE::Clone()                                                                 \

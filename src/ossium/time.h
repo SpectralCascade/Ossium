@@ -1,7 +1,7 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace ossium
 {

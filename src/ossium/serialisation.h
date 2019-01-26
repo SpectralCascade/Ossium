@@ -3,7 +3,7 @@
 
 #include <string>
 #include <stack>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "vector.h"
 
