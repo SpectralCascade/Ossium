@@ -190,6 +190,7 @@ int main(int argc, char* argv[])
                 input.HandleEvent(e);
             }
 
+            /// Demo dynamic key binding
             if (update_binding)
             {
                 /// Rebind the key
