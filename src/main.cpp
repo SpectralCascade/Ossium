@@ -12,6 +12,7 @@
 #include "ossium/ecs.h"
 #include "ossium/delta.h"
 #include "ossium/keyboard.h"
+#include "ossium/mouse.h"
 
 #ifdef UNIT_TESTS
 #include "ossium/testmodules.h"
@@ -22,6 +23,30 @@ using namespace std;
 using namespace ossium;
 
 Text* targetText = nullptr;
+Text* mainText = nullptr;
+int posx = 0;
+int posy = 0;
+
+void MouseScrollAction(const MouseInput& data)
+{
+    posx -= data.x * 8;
+    posy -= data.y * 8;
+}
+
+void MouseClickAction(const MouseInput& data)
+{
+    if (mainText != nullptr)
+    {
+        if (data.state == MOUSE_PRESSED && data.button == SDL_BUTTON_LEFT)
+        {
+            mainText->setColor(colour::GREEN);
+        }
+        else
+        {
+            mainText->setColor(colour::RED);
+        }
+    }
+}
 
 void KeyAction(const KeyboardInput& data)
 {
@@ -99,6 +124,7 @@ int main(int argc, char* argv[])
             compList[1]->setColor(colour::RED);
             compList[1]->setText("Text Component Test");
             compList[1]->textToTexture(mainRenderer, &font, 48);
+            mainText = compList[1];
         }
 
         ///
@@ -108,8 +134,15 @@ int main(int argc, char* argv[])
         InputContext mainContext;
         KeyboardHandler* keyboard = mainContext.AddHandler<KeyboardHandler>();
 
-        keyboard->AddAction("green_text", *KeyAction);
-        keyboard->Bind("green_text", SDLK_SPACE);
+        keyboard->AddAction("yellow_text", *KeyAction);
+        keyboard->Bind("yellow_text", SDLK_SPACE);
+
+        MouseHandler* mouse = mainContext.AddHandler<MouseHandler>();
+
+        mouse->AddAction("mouseclick", *MouseClickAction);
+        mouse->AddAction("scroll", *MouseScrollAction);
+        mouse->Bind("mouseclick", MOUSE_BUTTON);
+        mouse->Bind("scroll", MOUSE_WHEEL);
 
         Input input;
 
@@ -128,6 +161,7 @@ int main(int argc, char* argv[])
 
         while (!quit)
         {
+            /// Input handling phase
             while (SDL_PollEvent(&e) != 0)
             {
                 mainWindow.handle_events(e);
@@ -139,7 +173,7 @@ int main(int argc, char* argv[])
                 input.HandleEvent(e);
             }
 
-            /// Update phase
+            /// Logic update phase
             Entity::ecs_info.UpdateComponents();
 
             /// Rendering phase
@@ -149,7 +183,7 @@ int main(int argc, char* argv[])
             {
                 for (int i = 0, counti = handyComponents.size(); i < counti; i++)
                 {
-                    handyComponents[i]->renderSimple(mainRenderer, 0, i * 50);
+                    handyComponents[i]->renderSimple(mainRenderer, posx, (i * 50) + posy);
                 }
                 if (fpsTimer.getTicks() > 250)
                 {
@@ -166,6 +200,7 @@ int main(int argc, char* argv[])
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();
 
+            /// Update timer and FPS count
             countedFrames++;
             global::delta.update();
         }

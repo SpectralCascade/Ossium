@@ -139,6 +139,19 @@ namespace ossium
         }
 
     protected:
+        /// Call the action associated with an input; returns true if successful
+        bool CallAction(const InputData& data, const InputIdent& ident)
+        {
+            auto actionItr = _input_map.find(ident);
+            if (actionItr != _input_map.end())
+            {
+                /// Call the action and pass in the input data
+                (*actionItr).second(data);
+                return true;
+            }
+            return false;
+        }
+
         /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_bindings is changed
         unordered_map<InputIdent, InputAction> _input_map;
 

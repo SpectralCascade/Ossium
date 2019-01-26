@@ -35,7 +35,7 @@ namespace ossium
         friend class Renderer;
 
         /// Renders textData to a texture using a TrueType Font
-        bool textToTexture(Renderer* renderer, Font* fontToUse, int pointSize = 24);
+        bool textToTexture(Renderer* renderer, Font* fontToUse, int pointSize = 0);
 
         /// Send the text to a renderer instance to be rendered
         void render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -119,6 +119,9 @@ namespace ossium
 
         /// Pointer to font
         Font* font;
+
+        /// Cached point size of the font
+        int cachedPointSize;
 
         /// GUID of font to use:
         string font_guid;

@@ -32,6 +32,7 @@ namespace ossium
         boxPadHeight = 2;
         kerning = true;
         box = false;
+        cachedPointSize = 24;
     }
 
     Text::Text(const Text& copySource)
@@ -54,6 +55,7 @@ namespace ossium
         style = copySource.style;
         textData = copySource.textData;
         update = copySource.update;
+        cachedPointSize = copySource.cachedPointSize;
         /// Next time a render or textToTexture() method is called, these texture(s) are created
         texture = NULL;
         outlineTexture = NULL;
@@ -95,6 +97,14 @@ namespace ossium
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Cannot render text with NULL font resource!");
                 return false;
             }
+        }
+        if (pointSize <= 0)
+        {
+            pointSize = cachedPointSize;
+        }
+        else
+        {
+            cachedPointSize = pointSize;
         }
         TTF_Font* actualFont = fontToUse->getFont(pointSize);
         if (actualFont == NULL)
