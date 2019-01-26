@@ -35,12 +35,17 @@ h2 {
   background-color: #202020;
 }
 
-header {
+code {
+  color: white;
+  background-color: black;
+}
+
+footer, section, header {
   background-color: #202020;
   border: 1px solid gray;
 }
 
-.wrapper {
+.boxed_area, .wrapper {
   background-color: #202020;
   border: 1px solid gray;
 }
