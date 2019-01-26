@@ -94,6 +94,26 @@ namespace ossium
             _action_bindings[name] = action;
         }
 
+        /// Adds an action that is not bound to an identifier
+        void AddBindlessAction(InputAction action)
+        {
+            /// No duplicates checks, but why would you add multiple identical actions?!
+            _any_actions.push_back(action);
+        }
+
+        /// Removes a bindless action
+        void RemoveBindlessAction(InputAction action)
+        {
+            for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
+            {
+                if (*i == action)
+                {
+                    _any_actions.erase(i);
+                    return;
+                }
+            }
+        }
+
         /// Binds an action to a specified input condition
         void Bind(string action, InputIdent condition)
         {
@@ -109,7 +129,7 @@ namespace ossium
                 if (old_bind != _input_bindings.end())
                 {
                     auto old_input = _input_map.find((*old_bind).second);
-                    if (old_input == _input_map.end())
+                    if (old_input != _input_map.end())
                     {
                         _input_map.erase(old_input);
                     }
@@ -142,6 +162,11 @@ namespace ossium
         /// Call the action associated with an input; returns true if successful
         bool CallAction(const InputData& data, const InputIdent& ident)
         {
+            /// Call all actions that accept any old data, regardless of identifier first
+            for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
+            {
+                (*i)(data);
+            }
             auto actionItr = _input_map.find(ident);
             if (actionItr != _input_map.end())
             {
@@ -151,6 +176,12 @@ namespace ossium
             }
             return false;
         }
+
+        /// Bindless actions - these actions or not bound to any particular identifier
+        /// When there are no corresponding actions for an input which is of the relevant type,
+        /// these actions will be called. Useful for things like custom control bindings in a game,
+        /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code
+        vector<InputAction> _any_actions;
 
         /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_bindings is changed
         unordered_map<InputIdent, InputAction> _input_map;

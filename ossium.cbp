@@ -59,6 +59,8 @@
 		<Unit filename="src/ossium/input.h" />
 		<Unit filename="src/ossium/keyboard.cpp" />
 		<Unit filename="src/ossium/keyboard.h" />
+		<Unit filename="src/ossium/mouse.cpp" />
+		<Unit filename="src/ossium/mouse.h" />
 		<Unit filename="src/ossium/primitives.cpp" />
 		<Unit filename="src/ossium/primitives.h" />
 		<Unit filename="src/ossium/renderer.cpp" />

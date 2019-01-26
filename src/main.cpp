@@ -26,6 +26,9 @@ Text* targetText = nullptr;
 Text* mainText = nullptr;
 int posx = 0;
 int posy = 0;
+bool check_for_key = false;
+bool update_binding = false;
+SDL_Keycode currentKey = SDLK_SPACE;
 
 void MouseScrollAction(const MouseInput& data)
 {
@@ -37,14 +40,24 @@ void MouseClickAction(const MouseInput& data)
 {
     if (mainText != nullptr)
     {
-        if (data.state == MOUSE_PRESSED && data.button == SDL_BUTTON_LEFT)
+        if (data.state == MOUSE_RELEASED && data.button == SDL_BUTTON_LEFT)
         {
             mainText->setColor(colour::GREEN);
+            mainText->setText("Press any key to bind it to the FPS text");
+            check_for_key = true;
         }
-        else
-        {
-            mainText->setColor(colour::RED);
-        }
+    }
+}
+
+void GetKey(const KeyboardInput& data)
+{
+    if (check_for_key)
+    {
+        currentKey = data.key;
+        mainText->setColor(colour::RED);
+        mainText->setText("Current FPS key is " + (string)SDL_GetKeyName(currentKey));
+        check_for_key = false;
+        update_binding = true;
     }
 }
 
@@ -55,10 +68,13 @@ void KeyAction(const KeyboardInput& data)
         if (data.state == KEY_DOWN)
         {
             targetText->setColor(colour::YELLOW);
+            targetText->setBox(true);
+            targetText->setBackgroundColor(colour::RED);
         }
         else
         {
             targetText->setColor(colour::CYAN);
+            targetText->setBox(false);
         }
     }
 }
@@ -101,7 +117,7 @@ int main(int argc, char* argv[])
         ///
 
         Font font;
-        int ptsizes[3] = {2, 24, 48};
+        int ptsizes[3] = {2, 24, 36};
         font.load("Orkney Regular.ttf", &ptsizes[0]);
         font.init("Orkney Regular.ttf");
 
@@ -122,8 +138,8 @@ int main(int argc, char* argv[])
         if (!compList.empty() && compList.size() > 1)
         {
             compList[1]->setColor(colour::RED);
-            compList[1]->setText("Text Component Test");
-            compList[1]->textToTexture(mainRenderer, &font, 48);
+            compList[1]->setText("Current FPS key is " + (string)SDL_GetKeyName(currentKey));
+            compList[1]->textToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
         }
 
@@ -136,6 +152,7 @@ int main(int argc, char* argv[])
 
         keyboard->AddAction("yellow_text", *KeyAction);
         keyboard->Bind("yellow_text", SDLK_SPACE);
+        keyboard->AddBindlessAction(*GetKey);
 
         MouseHandler* mouse = mainContext.AddHandler<MouseHandler>();
 
@@ -171,6 +188,13 @@ int main(int argc, char* argv[])
                     break;
                 }
                 input.HandleEvent(e);
+            }
+
+            if (update_binding)
+            {
+                /// Rebind the key
+                keyboard->Bind("yellow_text", currentKey);
+                update_binding = false;
             }
 
             /// Logic update phase
