@@ -13,7 +13,7 @@ p {
 }
 
 a {
-  color: blue;
+  color: #0090ff;
 }
 
 ul {
@@ -25,14 +25,19 @@ li {
 }
 
 h1 {
-  color: LightGray;
+  color: white;
   background-color: #202020;
   border: 2px solid #606060;
 }
 
 h2 {
-  color: LightGray;
+  color: white;
   background-color: #202020;
+}
+
+header {
+  background-color: #202020;
+  border: 1px solid gray;
 }
 
 .wrapper {
