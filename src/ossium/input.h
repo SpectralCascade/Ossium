@@ -170,18 +170,20 @@ namespace ossium
 
         /// Instantiates a new input handler and adds it to the list.
         template<class T>
-        void AddHandler()
+        T* AddHandler()
         {
             auto itr = inputs.find(getInputHandlerType<T>());
             if (itr == inputs.end())
             {
                 BaseInputHandler* handler = reinterpret_cast<BaseInputHandler*>(new T());
                 inputs[getInputHandlerType<T>()] = handler;
+                return reinterpret_cast<T*>(handler);
             }
             else
             {
                 SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to add an input handler to a context, but the context already has an input handler of type [%d].", getInputHandlerType<T>());
             }
+            return nullptr;
         }
 
         /// Returns the specified handler

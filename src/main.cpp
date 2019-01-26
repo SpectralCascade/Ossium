@@ -71,6 +71,10 @@ int main(int argc, char* argv[])
 
         SDL_Event e;
 
+        ///
+        /// ECS and text rendering demo
+        ///
+
         Font font;
         int ptsizes[3] = {2, 24, 48};
         font.load("Orkney Regular.ttf", &ptsizes[0]);
@@ -97,9 +101,12 @@ int main(int argc, char* argv[])
             compList[1]->textToTexture(mainRenderer, &font, 48);
         }
 
+        ///
+        /// Input handling demo
+        ///
+
         InputContext mainContext;
-        mainContext.AddHandler<KeyboardHandler>();
-        KeyboardHandler* keyboard = mainContext.GetHandler<KeyboardHandler>();
+        KeyboardHandler* keyboard = mainContext.AddHandler<KeyboardHandler>();
 
         keyboard->AddAction("green_text", *KeyAction);
         keyboard->Bind("green_text", SDLK_SPACE);
@@ -107,6 +114,10 @@ int main(int argc, char* argv[])
         Input input;
 
         input.AddContext("main", &mainContext);
+
+        ///
+        /// Init timing stuff before we start the main loop
+        ///
 
         Timer fpsTimer;
         fpsTimer.start();
