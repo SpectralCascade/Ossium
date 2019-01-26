@@ -10,6 +10,10 @@ namespace ossium
 
     }
 
+    Input::Input()
+    {
+    }
+
     Input::~Input()
     {
         Clear();

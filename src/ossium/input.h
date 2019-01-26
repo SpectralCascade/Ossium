@@ -5,7 +5,7 @@
 #include <vector>
 #include <SDL.h>
 
-#include "vector.h"
+#include "helpermacros.h"
 
 using namespace std;
 
@@ -63,10 +63,7 @@ namespace ossium
     class BaseInputHandler
     {
     public:
-        virtual bool HandleInput(const SDL_Event& raw)
-        {
-            return false;
-        }
+        virtual bool HandleInput(const SDL_Event& raw) = 0;
         virtual ~BaseInputHandler()
         {
         }
@@ -183,7 +180,7 @@ namespace ossium
             {
                 SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to add an input handler to a context, but the context already has an input handler of type [%d].", getInputHandlerType<T>());
             }
-            return nullptr;
+            return GetHandler<T>();
         }
 
         /// Returns the specified handler
@@ -250,11 +247,14 @@ namespace ossium
         /// When true, the input system will pass input data to this context
         bool active;
 
+        NOCOPY(InputContext);
+
     };
 
     class Input
     {
     public:
+        Input();
         ~Input();
 
         /// Adds an input context; ideally do this just once when starting ossium
@@ -276,6 +276,8 @@ namespace ossium
     private:
         /// All contexts by name
         unordered_map<string, InputContext*> contexts;
+
+        NOCOPY(Input);
 
     };
 
