@@ -95,9 +95,9 @@ namespace ossium
         void enqueueEx(Text* text, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, float angle = 0, SDL_Point origin = {0, 0}, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
 
         // These all add a point, line or rect to the respective layer queue. If the layer does not exist, throws an exception
-        void enqueue(SDL_Point* point, int layer = 0, SDL_Color colour = BLACK, bool forceCull = false);
-        void enqueue(Line* line, int layer = 0, SDL_Color colour = BLACK, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
-        void enqueue(SDL_Rect* rect, int layer = 0, bool filled = false, SDL_Color colour = BLACK, bool forceCull = false);
+        void enqueue(SDL_Point* point, int layer = 0, SDL_Color colour = colour::BLACK, bool forceCull = false);
+        void enqueue(Line* line, int layer = 0, SDL_Color colour = colour::BLACK, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
+        void enqueue(SDL_Rect* rect, int layer = 0, bool filled = false, SDL_Color colour = colour::BLACK, bool forceCull = false);
 
         //
         // RENDER METHODS

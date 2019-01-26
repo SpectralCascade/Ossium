@@ -63,8 +63,13 @@ namespace ossium
     class BaseInputHandler
     {
     public:
-        virtual bool HandleInput(const SDL_Event& raw) = 0;
-        virtual ~BaseInputHandler(){};
+        virtual bool HandleInput(const SDL_Event& raw)
+        {
+            return false;
+        }
+        virtual ~BaseInputHandler()
+        {
+        }
 
     };
 
@@ -75,7 +80,7 @@ namespace ossium
     {
     public:
         /// Function pointer for actions based on this input data
-        typedef (*InputAction)(const InputData& data);
+        typedef void (*InputAction)(const InputData& data);
 
         virtual ~InputHandler()
         {
@@ -106,18 +111,18 @@ namespace ossium
                 auto old_bind = _input_bindings.find(action);
                 if (old_bind != _input_bindings.end())
                 {
-                    auto old_input = _input_map.find(*old_bind);
+                    auto old_input = _input_map.find((*old_bind).second);
                     if (old_input == _input_map.end())
                     {
                         _input_map.erase(old_input);
                     }
                 }
                 _input_bindings[action] = condition;
-                _input_map[condition] = (*itr);
+                _input_map[condition] = (*itr).second;
             }
         }
 
-        InputIdent* GetActionBind(string action)
+        const InputIdent* GetActionBind(string action)
         {
             auto itr = _action_bindings.find(action);
             if (itr != _action_bindings.end())
@@ -154,15 +159,24 @@ namespace ossium
     class InputContext
     {
     public:
+        InputContext()
+        {
+            active = true;
+        }
+        ~InputContext()
+        {
+            Clear();
+        }
+
         /// Instantiates a new input handler and adds it to the list.
         template<class T>
         void AddHandler()
         {
             auto itr = inputs.find(getInputHandlerType<T>());
-            if ((*itr) == inputs.end())
+            if (itr == inputs.end())
             {
-                BaseInputHandler handler = reinterpret_cast<BaseInputHandler*>(new T());
-                inputs[getInputHandlerType<T>()] = &handler;
+                BaseInputHandler* handler = reinterpret_cast<BaseInputHandler*>(new T());
+                inputs[getInputHandlerType<T>()] = handler;
             }
             else
             {
@@ -175,29 +189,30 @@ namespace ossium
         T* GetHandler()
         {
             auto itr = inputs.find(getInputHandlerType<T>());
-            if ((*itr) == inputs.end())
+            if (itr == inputs.end())
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get input handler of type [%d] from a context, but it has not been added to the context!");
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get input handler of type [%d] from a context, but it has not been added to the context!", getInputHandlerType<T>());
                 return nullptr;
             }
-            return reinterpret_cast<T*>(*itr);
+            return reinterpret_cast<T*>((*itr).second);
         }
 
         /// Pass an input event to all the handlers
-        void HandleInput(const SDL_Event& raw)
+        bool HandleInput(const SDL_Event& raw)
         {
             if (!active)
             {
-                return;
+                return false;
             }
             for (auto i = inputs.begin(); i != inputs.end(); i++)
             {
                 /// Once handled, we can early-out and not bother passing the event to other handlers
                 if ((*i).second->HandleInput(raw))
                 {
-                    break;
+                    return true;
                 }
             }
+            return false;
         }
 
         /// Is this context currently active?
@@ -238,14 +253,27 @@ namespace ossium
     class Input
     {
     public:
-        void AddContext(InputContext* context);
+        ~Input();
+
+        /// Adds an input context; ideally do this just once when starting ossium
+        void AddContext(string name, InputContext* context);
+
+        /// Removes a specified input context
+        void RemoveContext(string name);
 
         /// This polls all input events and passes them to the currently active input contexts
         void Update();
 
+        /// Passes a single event to all contexts. Useful if you don't exclusively use InputHandlers to handle SDL events
+        /// Returns true if the event was handled
+        bool HandleEvent(const SDL_Event& raw);
+
+        /// Removes all input contexts
+        void Clear();
+
     private:
-        /// List of all contexts
-        vector<InputContext> contexts;
+        /// All contexts by name
+        unordered_map<string, InputContext*> contexts;
 
     };
 

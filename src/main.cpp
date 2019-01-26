@@ -21,6 +21,23 @@ using namespace ossium::test;
 using namespace std;
 using namespace ossium;
 
+Text* targetText = nullptr;
+
+void KeyAction(const KeyboardInput& data)
+{
+    if (targetText != nullptr)
+    {
+        if (data.state == KEY_DOWN)
+        {
+            targetText->setColor(colour::YELLOW);
+        }
+        else
+        {
+            targetText->setColor(colour::CYAN);
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     bool quit = false;
@@ -63,11 +80,11 @@ int main(int argc, char* argv[])
         gameObject.SetName("Test Entity");
         gameObject.AttachComponent<Text>();
 
-        Text* targetText = gameObject.GetComponent<Text>();
+        targetText = gameObject.GetComponent<Text>();
         if (targetText != nullptr)
         {
             targetText->setText("FPS: 0");
-            targetText->setColor(CYAN);
+            targetText->setColor(colour::CYAN);
             targetText->textToTexture(mainRenderer, &font);
         }
 
@@ -75,10 +92,21 @@ int main(int argc, char* argv[])
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
-            compList[1]->setColor(RED);
+            compList[1]->setColor(colour::RED);
             compList[1]->setText("Text Component Test");
             compList[1]->textToTexture(mainRenderer, &font, 48);
         }
+
+        InputContext mainContext;
+        mainContext.AddHandler<KeyboardHandler>();
+        KeyboardHandler* keyboard = mainContext.GetHandler<KeyboardHandler>();
+
+        keyboard->AddAction("green_text", *KeyAction);
+        keyboard->Bind("green_text", SDLK_SPACE);
+
+        Input input;
+
+        input.AddContext("main", &mainContext);
 
         Timer fpsTimer;
         fpsTimer.start();
@@ -97,6 +125,7 @@ int main(int argc, char* argv[])
                     quit = true;
                     break;
                 }
+                input.HandleEvent(e);
             }
 
             /// Update phase
@@ -122,7 +151,7 @@ int main(int argc, char* argv[])
             SDL_Rect viewrect = mainWindow.getViewportRect();
             viewrect.x = 0;
             viewrect.y = 0;
-            mainRenderer->enqueue(&viewrect, 0, false, WHITE);
+            mainRenderer->enqueue(&viewrect, 0, false, colour::WHITE);
             mainRenderer->renderAll(-1);
             mainRenderer->renderPresent();
 
