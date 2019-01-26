@@ -9,7 +9,15 @@ body {
 
 p {
   color: white;
-  background-color: #0064c0;
+  background-color: #202020;
+}
+
+a {
+  color: blue;
+}
+
+ul {
+  background-color: #202020;
 }
 
 li {
@@ -18,14 +26,16 @@ li {
 
 h1 {
   color: LightGray;
-  background-color: black;
+  background-color: #202020;
+  border: 2px solid #606060;
 }
 
 h2 {
   color: LightGray;
-  background-color: black;
+  background-color: #202020;
 }
 
 .wrapper {
-  background-color: black;
+  background-color: #202020;
+  border: 1px solid gray;
 }
