@@ -1,0 +1,9 @@
+
+*.o
+*.dll
+*.exe
+ossium.cfg
+ossium.depend
+ossium.layout
+bin/Debug/Orkney Regular.ttf
+test_output.csv
