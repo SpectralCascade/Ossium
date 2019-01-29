@@ -36,6 +36,7 @@
 			<Add option="-lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net" />
 		</Linker>
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/ossium/audio.h" />
 		<Unit filename="src/ossium/basics.cpp" />
 		<Unit filename="src/ossium/basics.h" />
 		<Unit filename="src/ossium/circularbuffer.h" />

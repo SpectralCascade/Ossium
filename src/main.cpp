@@ -40,7 +40,7 @@ void MouseClickAction(const MouseInput& data)
 {
     if (mainText != nullptr)
     {
-        if (data.state == MOUSE_RELEASED && data.button == SDL_BUTTON_LEFT)
+        if (data.state == MOUSE_RELEASED)
         {
             mainText->setColor(colour::GREEN);
             mainText->setText("Press any key to bind it to the FPS text");
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
 
         mouse->AddAction("mouseclick", *MouseClickAction);
         mouse->AddAction("scroll", *MouseScrollAction);
-        mouse->Bind("mouseclick", MOUSE_BUTTON);
+        mouse->Bind("mouseclick", MOUSE_BUTTON_LEFT);
         mouse->Bind("scroll", MOUSE_WHEEL);
 
         Input input;

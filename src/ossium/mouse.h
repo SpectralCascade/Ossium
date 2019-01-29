@@ -11,7 +11,10 @@ namespace ossium
     {
         MOUSE_UNKNOWN = 0,
         MOUSE_MOTION,
-        MOUSE_BUTTON,
+        MOUSE_BUTTON_LEFT,
+        MOUSE_BUTTON_RIGHT,
+        MOUSE_BUTTON_MIDDLE,
+        MOUSE_BUTTON_OTHER,
         MOUSE_WHEEL
     };
 
