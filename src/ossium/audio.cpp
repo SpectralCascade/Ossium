@@ -80,6 +80,11 @@ namespace ossium
     namespace AudioInternals
     {
 
+        void OnAnyChannelFinished(int id)
+        {
+            ChannelController::_Instance().ChannelFinished(id);
+        }
+
         ChannelController::ChannelController()
         {
             numChannels = 0;
@@ -104,6 +109,7 @@ namespace ossium
                 channels.push_back(nullptr);
             }
             numChannels = num_channels;
+            Mix_ChannelFinished(*OnAnyChannelFinished);
         }
 
         int ChannelController::ReserveChannel(AudioSource* callback)
@@ -138,11 +144,12 @@ namespace ossium
             }
             else
             {
+                Mix_HaltChannel(id);
                 channels[id] = nullptr;
             }
         }
 
-        void ChannelController::OnAnyChannelFinished(int id)
+        void ChannelController::ChannelFinished(int id)
         {
             if (id < numChannels)
             {

@@ -171,14 +171,14 @@ int main(int argc, char* argv[])
         ///
 
         AudioClip sound;
+        AudioSource source;
         if (!sound.load("test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
         }
         else
         {
-            AudioSource source;
-            source.Play(&sound, 1.0f, -1);
+            source.Play(&sound, 1.0f, 0);
         }
 
         ///
