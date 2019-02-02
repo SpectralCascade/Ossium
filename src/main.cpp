@@ -30,11 +30,15 @@ int posy = 0;
 bool check_for_key = false;
 bool update_binding = false;
 SDL_Keycode currentKey = SDLK_SPACE;
+float volume = 1.0f;
+bool volume_change = false;
 
 void MouseScrollAction(const MouseInput& data)
 {
     posx -= data.x * 8;
     posy -= data.y * 8;
+    volume += data.y * 0.01f;
+    volume_change = true;
 }
 
 void MouseClickAction(const MouseInput& data)
@@ -178,7 +182,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            source.Play(&sound, 1.0f, 0);
+            source.Play(&sound, 1.0f, -1);
         }
 
         ///
@@ -204,6 +208,12 @@ int main(int argc, char* argv[])
                     break;
                 }
                 input.HandleEvent(e);
+            }
+
+            if (volume_change)
+            {
+                source.SetVolume(volume);
+                volume_change = false;
             }
 
             /// Demo dynamic key binding

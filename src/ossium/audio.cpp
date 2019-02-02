@@ -91,10 +91,19 @@ namespace ossium
             counter = 0;
         }
 
+        ChannelController::~ChannelController()
+        {
+            /// Don't call Clear() as that calls an SDL_Mixer function, and SDL_Mixer is probably all cleaned up already
+            /// as this is a singleton
+            channels.clear();
+            numChannels = 0;
+            counter = 0;
+        }
+
         void ChannelController::Clear()
         {
-            Mix_AllocateChannels(0);
             channels.clear();
+            Mix_AllocateChannels(0);
             numChannels = 0;
             counter = 0;
         }
@@ -144,14 +153,14 @@ namespace ossium
             }
             else
             {
-                Mix_HaltChannel(id);
+                /// Frees the channel, but does not halt any playback on the channel
                 channels[id] = nullptr;
             }
         }
 
         void ChannelController::ChannelFinished(int id)
         {
-            if (id < numChannels)
+            if (id < numChannels && !channels.empty())
             {
                 if (channels[id] != nullptr)
                 {
@@ -174,7 +183,6 @@ namespace ossium
     AudioSource::AudioSource()
     {
         channel_id = -1;
-        linked_channel = nullptr;
     }
 
     AudioSource::~AudioSource()
@@ -182,6 +190,8 @@ namespace ossium
         if (channel_id >= 0)
         {
             _channelController.FreeChannel(channel_id);
+            /// Halt the channel now we've freed it because something is probably playing
+            Mix_HaltChannel(channel_id);
             channel_id = -1;
         }
     }
@@ -198,16 +208,23 @@ namespace ossium
         Mix_PlayChannel(channel_id, sample->GetChunk(), repeats);
     }
 
+    bool AudioSource::IsPlaying()
+    {
+        return channel_id >= 0;
+    }
+
     void AudioSource::OnVolumeChanged()
     {
         if (channel_id >= 0)
         {
+            /// This is okay because it's not set as an SDL_Mixer callback
             Mix_Volume(channel_id, (int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
         }
     }
 
     void AudioSource::OnPlayFinished()
     {
+        /// AudioSource is responsible for freeing the channel as it reserved it in the first place
         _channelController.FreeChannel(channel_id);
         channel_id = -1;
     }
