@@ -36,6 +36,7 @@
 			<Add option="-lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net" />
 		</Linker>
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/ossium/audio.cpp" />
 		<Unit filename="src/ossium/audio.h" />
 		<Unit filename="src/ossium/basics.cpp" />
 		<Unit filename="src/ossium/basics.h" />
@@ -54,6 +55,7 @@
 		<Unit filename="src/ossium/font.cpp" />
 		<Unit filename="src/ossium/font.h" />
 		<Unit filename="src/ossium/fsm.h" />
+		<Unit filename="src/ossium/helpermacros.h" />
 		<Unit filename="src/ossium/init.cpp" />
 		<Unit filename="src/ossium/init.h" />
 		<Unit filename="src/ossium/input.cpp" />
