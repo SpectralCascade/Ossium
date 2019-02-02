@@ -32,6 +32,7 @@ bool update_binding = false;
 SDL_Keycode currentKey = SDLK_SPACE;
 float volume = 1.0f;
 bool volume_change = false;
+Sint16 panning = 0;
 
 void MouseScrollAction(const MouseInput& data)
 {
@@ -39,6 +40,7 @@ void MouseScrollAction(const MouseInput& data)
     posy -= data.y * 8;
     volume += data.y * 0.02f;
     volume_change = true;
+    panning -= data.y * 6;
 }
 
 void MouseClickAction(const MouseInput& data)
@@ -183,9 +185,7 @@ int main(int argc, char* argv[])
         source.Link(&sfx);
         /// The sfx bus goes into the master bus
         sfx.Link(&master);
-        /// Now we can configure the volumes of the individual buses and they'll combine because they're in the same signal chain
-        sfx.SetVolume(0.5f);
-        master.SetVolume(0.7f);
+        sfx.SetVolume(0.3f);
         if (!sound.load("test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
 
             if (volume_change)
             {
-                source.SetVolume(volume);
+                source.SetPanning(panning);
                 volume_change = false;
             }
 

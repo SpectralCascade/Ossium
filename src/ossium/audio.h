@@ -15,55 +15,54 @@ using namespace std;
 namespace ossium
 {
 
-    /// Mix-in class for doing stuff with volume. Requires Derived to implement OnVolumeChanged()
+    /// Mix-in class for doing stuff with volume and stereo panning. Requires Derived to implement OnVolumeChanged()
     ///
     /// !!! TODO !!!
     ///
     /// Actually implement correct dB -> percentage and vice-versa conversions. Atm it's all just a direct mapping of ranges
     ///
     template<class Derived>
-    class VolumeControl
+    class AudioChannel
     {
     public:
         /// Initialise values
-        VolumeControl()
+        AudioChannel()
         {
             volume = 1.0f;
             targetVolume = 1.0;
+            panningAngle = 0;
         }
 
-        /*/// Sets the volume level of the audio stream in decibels, where 0 = max volume, -80.0f = silent
-        /// Values are clamped between -80dB and 0dB
-        void SetLevel(float dB = 0.0f);
-        {
-            derived()->OnVolumeChanged();
-        }
-        /// Returns the volume level of the audio stream in decibels, where 0 = max volume, -80.0f = silent
-        float GetLevel();*/
-
-        /// Sets the linear volume level of the audio stream as a normalised value between 0 and 1.
+        /// Sets the volume level of the audio stream as a normalised value between 0 and 1.
         /// Any values outside of the 0 - 1 range are clamped
-        void SetVolume(float percent = 1.0f)
+        void SetVolume(float vol)
         {
-            volume = clamp(percent, 0.0f, 1.0f);
+            volume = clamp(vol, 0.0f, 1.0f);
             derived()->OnVolumeChanged();
         }
-        /// This method is very similar to SetLevel(), which is on a logarithmic decibel scale but this method is normalised between 0 and 1.
-        /// Any values outside of the 0 - 1 range are clamped
-        void SetVolumeLogarithmic(float percent = 1.0f)
-        {
-            volume = clamp(percent, 0.0f, 1.0f);
-            derived()->OnVolumeChanged();
-        }
-        /// Returns the linear volume level of the audio stream as a normalised value between 0 and 1.
+        /// Returns the volume level of the audio stream as a normalised value between 0 and 1.
         float GetVolume()
         {
             return volume;
         }
-        /// This method is very similar to GetLevel(), which is on a logarithmic decibel scale but this method is normalised between 0 and 1.
-        float GetVolumeLogarithmic()
+
+        /// Sets stereo panning by direction. Note: this wraps around, so -90 is the same as 270 (left), etc.
+        void SetPanning(Sint16 angle)
         {
-            return volume;
+            panningAngle = wrap(0, angle, 0, 360);
+            derived()->OnVolumeChanged();
+        }
+        /// Returns the panning angle
+        Sint16 GetPanning()
+        {
+            return panningAngle;
+        }
+
+        void SetStereoVolume(float vol, Sint16 angle)
+        {
+            volume = clamp(vol, 0.0f, 1.0f);
+            panningAngle = wrap(0, angle, 0, 360);
+            derived()->OnVolumeChanged();
         }
 
 /*        /// Fades to a specified target volume given a change in time. Fade time is 1 second by default
@@ -92,6 +91,9 @@ namespace ossium
     private:
         /// Normalised linear volume level
         float volume;
+
+        /// The angle at which the audio is panned. 0 = centre, 90 = right, 180 = behind, 270 = left
+        Sint16 panningAngle;
 
         /// The current target volume level
         float targetVolume;
@@ -145,10 +147,10 @@ namespace ossium
     }
 
     /// This represents an audio bus like those you'd get on a mixing desk, with multiple inputs and a single output
-    class AudioBus : public VolumeControl<AudioBus>
+    class AudioBus : public AudioChannel<AudioBus>
     {
     public:
-        friend class VolumeControl<AudioBus>;
+        friend class AudioChannel<AudioBus>;
         friend class AudioSource;
 
         /// Initialise stuff
@@ -175,8 +177,14 @@ namespace ossium
         /// Returns the final output volume of the root audio signal by recursion
         float GetFinalVolume();
 
+        /// Returns the final stereo panning angle of the root audio signal by recursion
+        Sint16 GetFinalPanning();
+
     private:
-        /// When the volume changes, iterate over all the inputs and call their OnVolumeChanged() methods
+        /// Whether or not volume and panning set by this bus should be ignored
+        bool bypass;
+
+        /// When the volume changes, iterate over all the input signals and call their OnVolumeChanged() methods
         void OnVolumeChanged();
 
         /// The next bus in the signal chain that this bus is linked to; if null, this bus is the end of a signal chain
@@ -218,7 +226,7 @@ namespace ossium
     /// Represents a generic audio source
     /// Not an audio bus by itself as it has no inputs, but it is a type of audio signal
     /// which may be fed into audio buses
-    class AudioSource : public VolumeControl<AudioSource>
+    class AudioSource : public AudioChannel<AudioSource>
     {
     public:
         friend class AudioBus;
@@ -233,8 +241,12 @@ namespace ossium
         /// Unlinks this audio source from the linked audio bus, if any
         void Unlink();
 
-        /// Plays the specified audio clip; repeats specifies the number of times to repeat, where values < 0 = infinity
-        void Play(AudioClip* sample, float vol = 1.0f, int repeats = 0);
+        /// Plays the specified audio clip; vol specifies volume between 0 and 1, where values < 0 keeps the current volume of the source
+        /// repeats specifies the number of times to repeat, where values < 0 = infinity
+        void Play(AudioClip* sample, Sint16 panning, float vol = -1.0f, int repeats = 0);
+
+        /// Simplified overload
+        void Play(AudioClip* sample, float vol = -1.0f, int repeats = 0);
 
         /// Whether or not this audio source is currently playing anything
         bool IsPlaying();
@@ -244,6 +256,9 @@ namespace ossium
 
         /// Returns the true output volume of this audio source, with all linked bus volume levels applied
         float GetFinalVolume();
+
+        /// Returns the true stereo panning of this audio source, with all linked bus panning angles applied
+        Sint16 GetFinalPanning();
 
         /// When any volume value changes in the signal chain, this sets the true output volume of this source
         void OnVolumeChanged();

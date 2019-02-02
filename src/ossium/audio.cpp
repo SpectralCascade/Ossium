@@ -156,6 +156,7 @@ namespace ossium
     AudioBus::AudioBus()
     {
         linkedBus = nullptr;
+        bypass = false;
     }
 
     void AudioBus::SetName(string setName)
@@ -203,6 +204,15 @@ namespace ossium
         return this->GetVolume();
     }
 
+    Sint16 AudioBus::GetFinalPanning()
+    {
+        if (IsLinked())
+        {
+            return this->GetPanning() + linkedBus->GetFinalPanning();
+        }
+        return this->GetPanning();
+    }
+
     void AudioBus::OnVolumeChanged()
     {
         /// Iterate over all input signals and change their volumes accordingly
@@ -232,6 +242,8 @@ namespace ossium
             _channelController.FreeChannel(channel_id);
             /// Halt the channel now we've freed it because something is probably playing
             Mix_HaltChannel(channel_id);
+            Mix_SetPosition(channel_id, 0, 0);
+            Mix_Volume(channel_id, 128);
             channel_id = -1;
         }
     }
@@ -252,7 +264,7 @@ namespace ossium
         }
     }
 
-    void AudioSource::Play(AudioClip* sample, float vol, int repeats)
+    void AudioSource::Play(AudioClip* sample, Sint16 panning, float vol, int repeats)
     {
         if (channel_id >= 0)
         {
@@ -260,8 +272,20 @@ namespace ossium
             Mix_HaltChannel(channel_id);
         }
         channel_id = _channelController.ReserveChannel(this);
-        SetVolume(vol);
+        if (vol < 0.0f)
+        {
+            SetStereoVolume(GetVolume(), panning);
+        }
+        else
+        {
+            SetStereoVolume(vol, panning);
+        }
         Mix_PlayChannel(channel_id, sample->GetChunk(), repeats);
+    }
+
+    void AudioSource::Play(AudioClip* sample, float vol, int repeats)
+    {
+        Play(sample, GetPanning(), vol, repeats);
     }
 
     bool AudioSource::IsPlaying()
@@ -283,12 +307,22 @@ namespace ossium
         return this->GetVolume();
     }
 
+    Sint16 AudioSource::GetFinalPanning()
+    {
+        if (IsLinked())
+        {
+            return this->GetPanning() + linkedBus->GetFinalPanning();
+        }
+        return this->GetPanning();
+    }
+
     void AudioSource::OnVolumeChanged()
     {
         if (channel_id >= 0)
         {
             /// This is okay because it's not set as an SDL_Mixer callback
             Mix_Volume(channel_id, (int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+            Mix_SetPosition(channel_id, clamp(GetFinalPanning(), 0, 360), 0);
         }
     }
 
@@ -296,6 +330,10 @@ namespace ossium
     {
         /// AudioSource is responsible for freeing the channel as it reserved it in the first place
         _channelController.FreeChannel(channel_id);
+        /// Unregister panning effect
+        Mix_SetPosition(channel_id, 0, 0);
+        /// Reset volume to default
+        Mix_Volume(channel_id, 128);
         channel_id = -1;
     }
 
