@@ -203,7 +203,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            source.Play(&sound, 0.2f, -1);
+            source.Play(&sound, 0.1f, -1);
         }
 
         ///
