@@ -9,6 +9,7 @@
 #include "init.h"
 #include "delta.h"
 #include "ecs.h"
+#include "audio.h"
 
 using namespace std;
 
@@ -75,8 +76,9 @@ namespace ossium
                 }
                 else
                 {
-                    /// Change this number of channels later as necessary
-                    Mix_AllocateChannels(16);
+                    /// Initialise the audio channel subsystem
+                    AudioInternals::ChannelController::_Instance().Init(50);
+
                     #ifdef _SDL_TTF_H
                     if (TTF_Init() == -1)
                     {

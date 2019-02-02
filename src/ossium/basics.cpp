@@ -57,6 +57,12 @@ namespace ossium
         return wrapped;
     }
 
+    float mapRange(float value, float min, float max, float min_new, float max_new)
+    {
+        float fraction = clamp(value, min, max) / (max - min);
+        return min_new + (fraction * (max_new - min_new));
+    }
+
     string ToString(float n)
     {
         stringstream strStream;

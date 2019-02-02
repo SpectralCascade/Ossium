@@ -11,6 +11,10 @@ namespace ossium
             TYPE(const TYPE& src);          \
             TYPE operator=(const TYPE& src)
 
+    /// Turns a code snippet into a string
+    #define STRINGIFY(CODE) "CODE"
+
+
 }
 
 #endif // HELPERMACROS_H

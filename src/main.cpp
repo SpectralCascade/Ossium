@@ -13,6 +13,7 @@
 #include "ossium/delta.h"
 #include "ossium/keyboard.h"
 #include "ossium/mouse.h"
+#include "ossium/audio.h"
 
 #ifdef UNIT_TESTS
 #include "ossium/testmodules.h"
@@ -164,6 +165,21 @@ int main(int argc, char* argv[])
         Input input;
 
         input.AddContext("main", &mainContext);
+
+        ///
+        /// Audio demo
+        ///
+
+        AudioClip sound;
+        if (!sound.load("test_audio.wav"))
+        {
+            SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
+        }
+        else
+        {
+            AudioSource source;
+            source.Play(&sound, 1.0f, -1);
+        }
 
         ///
         /// Init timing stuff before we start the main loop

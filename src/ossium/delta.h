@@ -17,10 +17,10 @@ namespace ossium
         /// Updates values in the class each time it is called
         void update();
 
-        /// Initialises previousTicks to current ticks
+        /// Applies FPS capping configuration and initialises previousTicks to current ticks
         void init(Config& config);
 
-        /// Resets the previous ticks variable to current time
+        /// Resets previousTicks to current ticks
         void reset();
 
     private:
