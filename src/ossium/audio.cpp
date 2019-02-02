@@ -51,29 +51,6 @@ namespace ossium
     }
 
     ///
-    /// Audio Channel
-    ///
-
-    void AudioChannel::SetName(string setName)
-    {
-        name = setName;
-    }
-
-    string AudioChannel::GetName()
-    {
-        return name;
-    }
-
-    void AudioChannel::OnVolumeChanged()
-    {
-        /// Iterate over inputs and change their volumes accordingly
-        for (auto i = inputs.begin(); i != inputs.end(); i++)
-        {
-            (*i)->derived()->OnVolumeChanged();
-        }
-    }
-
-    ///
     /// ChannelController
     ///
 
@@ -173,6 +150,69 @@ namespace ossium
     }
 
     ///
+    /// AudioBus
+    ///
+
+    AudioBus::AudioBus()
+    {
+        linkedBus = nullptr;
+    }
+
+    void AudioBus::SetName(string setName)
+    {
+        name = setName;
+    }
+
+    string AudioBus::GetName()
+    {
+        return name;
+    }
+
+    void AudioBus::Link(AudioBus* bus)
+    {
+        Unlink();
+        bus->input_buses.insert(this);
+        linkedBus = bus;
+    }
+
+    void AudioBus::Unlink()
+    {
+        if (linkedBus != nullptr)
+        {
+            linkedBus->input_buses.erase(this);
+            linkedBus = nullptr;
+        }
+    }
+
+    AudioBus* AudioBus::GetLinkedBus()
+    {
+        return linkedBus;
+    }
+
+    bool AudioBus::IsLinked()
+    {
+        return linkedBus != nullptr;
+    }
+
+    float AudioBus::GetFinalVolume()
+    {
+        if (IsLinked())
+        {
+            return this->GetVolume() * linkedBus->GetFinalVolume();
+        }
+        return this->GetVolume();
+    }
+
+    void AudioBus::OnVolumeChanged()
+    {
+        /// Iterate over all input signals and change their volumes accordingly
+        for (auto i = input_signals.begin(); i != input_signals.end(); i++)
+        {
+            (*i)->OnVolumeChanged();
+        }
+    }
+
+    ///
     /// AudioSource
     ///
 
@@ -196,6 +236,22 @@ namespace ossium
         }
     }
 
+    void AudioSource::Link(AudioBus* bus)
+    {
+        Unlink();
+        bus->input_signals.insert(this);
+        linkedBus = bus;
+    }
+
+    void AudioSource::Unlink()
+    {
+        if (linkedBus != nullptr)
+        {
+            linkedBus->input_signals.erase(this);
+            linkedBus = nullptr;
+        }
+    }
+
     void AudioSource::Play(AudioClip* sample, float vol, int repeats)
     {
         if (channel_id >= 0)
@@ -211,6 +267,20 @@ namespace ossium
     bool AudioSource::IsPlaying()
     {
         return channel_id >= 0;
+    }
+
+    bool AudioSource::IsLinked()
+    {
+        return linkedBus != nullptr;
+    }
+
+    float AudioSource::GetFinalVolume()
+    {
+        if (IsLinked())
+        {
+            return this->GetVolume() * linkedBus->GetFinalVolume();
+        }
+        return this->GetVolume();
     }
 
     void AudioSource::OnVolumeChanged()

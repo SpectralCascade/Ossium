@@ -28,8 +28,8 @@ namespace ossium
         /// Initialise values
         VolumeControl()
         {
-            volume = 0.0f;
-            targetVolume = 0.0;
+            volume = 1.0f;
+            targetVolume = 1.0;
         }
 
         /*/// Sets the volume level of the audio stream in decibels, where 0 = max volume, -80.0f = silent
@@ -98,122 +98,6 @@ namespace ossium
 
     };
 
-    /// Forward declaration
-    template<class Derived>
-    class AudioBus;
-
-    /// This represents an individual audio signal with volume control
-    template<class Derived>
-    class AudioSignal : public VolumeControl<Derived>
-    {
-    public:
-        AudioSignal()
-        {
-            linkedBus = nullptr;
-        }
-
-        /// Links this bus to an audio bus. Cannot link to more than 1 input bus;
-        /// Unlinks current bus if already linked to an input bus and connects to the new one instead
-        void Link(AudioBus<Derived>* bus)
-        {
-            Unlink();
-            bus->inputs.insert(this);
-            linkedBus = bus;
-        }
-
-        /// Unlinks this output bus from the linked audio bus, if any
-        void Unlink()
-        {
-            if (linkedBus != nullptr)
-            {
-                linkedBus->remove(this);
-                linkedBus = nullptr;
-            }
-        }
-
-        /// Returns the audio bus this signal is linked to, or null if not linked
-        AudioBus<Derived*> GetLinkedBus()
-        {
-            return linkedBus;
-        }
-
-        /// Convenience method for checking if this audio signal is linked to an audio bus or not
-        bool IsLinked()
-        {
-            return linkedBus != nullptr;
-        }
-
-        /// Returns the final output volume of the root audio signal by recursion
-        float GetFinalVolume()
-        {
-            if (IsLinked())
-            {
-                return this->GetVolume() * linkedBus->GetFinalVolume();
-            }
-            return this->GetVolume();
-        }
-
-    private:
-        /// The bus this signal is linked to; if null, this signal is the end of a signal chain
-        AudioBus<Derived>* linkedBus;
-
-    };
-
-    /// In addition to outputting a single audio signal, the AudioBus can take in multiple input signals and control their volume levels
-    template<class Derived>
-    class AudioBus : public AudioSignal<Derived>
-    {
-    public:
-        friend class AudioSignal<Derived>;
-
-    protected:
-        /// The set of audio signals coming into this audio bus
-        set<AudioSignal<Derived>*> inputs;
-
-    };
-
-    /// Represents a mixing channel with multiple inputs and a single output
-    /// Not to be confused with SDL_Mixer's representation of channels.
-    /// You can think of this class as representing a channel on a mixing desk, with multiple inputs but a single output
-    class AudioChannel : public AudioBus<AudioChannel>
-    {
-    public:
-        /// Sets the name of this audio channel
-        void SetName(string setName);
-        /// Returns the name of this audio channel
-        string GetName();
-
-    protected:
-        /// The name given to this audio channel, e.g. "SFX"
-        string name;
-
-        /// Sets the output level of the entire audio channel (all inputs)
-        void OnVolumeChanged();
-
-    };
-
-    /// Wrapper class for Mix_Chunk, representing an audio sample resource
-    class AudioClip
-    {
-    public:
-        AudioClip();
-        ~AudioClip();
-
-        void free();
-
-        bool load(string guid_path, int* loadArgs = nullptr);
-        bool init();
-
-        /// Returns the audio chunk
-        Mix_Chunk* GetChunk();
-
-    private:
-        NOCOPY(AudioClip);
-
-        /// The actual audio file in memory
-        Mix_Chunk* audioChunk;
-
-    };
 
     /// Forward declaration
     class AudioSource;
@@ -260,16 +144,94 @@ namespace ossium
 
     }
 
-    /// Represents a generic audio source
-    /// Not an audio bus by itself as it has no inputs, but it is a type of audio signal
-    class AudioSource : public AudioSignal<AudioSource>
+    /// This represents an audio bus like those you'd get on a mixing desk, with multiple inputs and a single output
+    class AudioBus : public VolumeControl<AudioBus>
     {
     public:
-        friend class AudioChannel;
+        friend class VolumeControl<AudioBus>;
+        friend class AudioSource;
+
+        /// Initialise stuff
+        AudioBus();
+
+        /// Sets the name of this audio channel
+        void SetName(string setName);
+        /// Returns the name of this audio channel
+        string GetName();
+
+        /// Links this bus to an audio bus. Cannot link to more than 1 input bus;
+        /// Unlinks current bus if already linked to an input bus and connects to the new one instead
+        void Link(AudioBus* bus);
+
+        /// Unlinks this output bus from the linked audio bus, if any
+        void Unlink();
+
+        /// Returns the audio bus this signal is linked to, or null if not linked
+        AudioBus* GetLinkedBus();
+
+        /// Convenience method for checking if this audio signal is linked to an audio bus or not
+        bool IsLinked();
+
+        /// Returns the final output volume of the root audio signal by recursion
+        float GetFinalVolume();
+
+    private:
+        /// When the volume changes, iterate over all the inputs and call their OnVolumeChanged() methods
+        void OnVolumeChanged();
+
+        /// The next bus in the signal chain that this bus is linked to; if null, this bus is the end of a signal chain
+        AudioBus* linkedBus;
+
+        /// The set of input buses coming into this audio bus
+        set<AudioBus*> input_buses;
+        /// The set of input signals coming into this bus
+        set<AudioSource*> input_signals;
+
+        /// Name of this audio bus
+        string name;
+
+    };
+
+    /// Wrapper class for Mix_Chunk, representing an audio sample resource
+    class AudioClip
+    {
+    public:
+        AudioClip();
+        ~AudioClip();
+
+        void free();
+
+        bool load(string guid_path, int* loadArgs = nullptr);
+        bool init();
+
+        /// Returns the audio chunk
+        Mix_Chunk* GetChunk();
+
+    private:
+        NOCOPY(AudioClip);
+
+        /// The actual audio file in memory
+        Mix_Chunk* audioChunk;
+
+    };
+
+    /// Represents a generic audio source
+    /// Not an audio bus by itself as it has no inputs, but it is a type of audio signal
+    /// which may be fed into audio buses
+    class AudioSource : public VolumeControl<AudioSource>
+    {
+    public:
+        friend class AudioBus;
         friend class AudioInternals::ChannelController;
 
         AudioSource();
         ~AudioSource();
+
+        /// Links this source to an audio output bus
+        void Link(AudioBus* bus);
+
+        /// Unlinks this audio source from the linked audio bus, if any
+        void Unlink();
 
         /// Plays the specified audio clip; repeats specifies the number of times to repeat, where values < 0 = infinity
         void Play(AudioClip* sample, float vol = 1.0f, int repeats = 0);
@@ -277,12 +239,22 @@ namespace ossium
         /// Whether or not this audio source is currently playing anything
         bool IsPlaying();
 
+        /// Whether or not this audio source is linked to an output bus
+        bool IsLinked();
+
+        /// Returns the true output volume of this audio source, with all linked bus volume levels applied
+        float GetFinalVolume();
+
+        /// When any volume value changes in the signal chain, this sets the true output volume of this source
         void OnVolumeChanged();
 
     protected:
         void OnPlayFinished();
 
     private:
+        /// The linked audio output bus; if not linked, this is set to null
+        AudioBus* linkedBus;
+
         /// The SDL_Mixer channel currently reserved for this audio source. If < 0, the audio source is not playing anything
         int channel_id;
 

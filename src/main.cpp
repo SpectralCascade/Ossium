@@ -37,7 +37,7 @@ void MouseScrollAction(const MouseInput& data)
 {
     posx -= data.x * 8;
     posy -= data.y * 8;
-    volume += data.y * 0.01f;
+    volume += data.y * 0.02f;
     volume_change = true;
 }
 
@@ -176,6 +176,16 @@ int main(int argc, char* argv[])
 
         AudioClip sound;
         AudioSource source;
+        AudioBus sfx;
+        AudioBus master;
+
+        /// Source goes into sfx bus
+        source.Link(&sfx);
+        /// The sfx bus goes into the master bus
+        sfx.Link(&master);
+        /// Now we can configure the volumes of the individual buses and they'll combine because they're in the same signal chain
+        sfx.SetVolume(0.5f);
+        master.SetVolume(0.7f);
         if (!sound.load("test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
