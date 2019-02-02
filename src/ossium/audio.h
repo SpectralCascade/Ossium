@@ -65,16 +65,48 @@ namespace ossium
             derived()->OnVolumeChanged();
         }
 
-/*        /// Fades to a specified target volume given a change in time. Fade time is 1 second by default
-        void Fade(float targetVolumePercent, float seconds = 1.0f);
+        /// Fades to a specified target volume given a change in time. Fade time is 1 second by default
+        void Fade(float targetVolumePercent, float deltaTime, float seconds = 1.0f)
+        {
+            targetVolume = targetVolumePercent;
+            bool increase = volume < targetVolume;
+            if (volume != targetVolume)
+            {
+                float change = deltaTime * (1.0f / seconds);
+                if (increase)
+                {
+                    volume += change;
+                    if (volume > targetVolume)
+                    {
+                        volume = targetVolume;
+                    }
+                    SetVolume(volume);
+                }
+                else
+                {
+                    volume -= change;
+                    if (volume < targetVolume)
+                    {
+                        volume = targetVolume;
+                    }
+                    SetVolume(volume);
+                }
+            }
+        }
 
         /// Fade in to maximum volume
-        void FadeIn(float seconds);
+        void FadeIn(float deltaTime, float seconds = 1.0f)
+        {
+            Fade(1.0f, deltaTime, seconds);
+        }
         /// Fade out to silence
-        void FadeOut(float seconds);
+        void FadeOut(float deltaTime, float seconds = 1.0f)
+        {
+            Fade(0.0f, deltaTime, seconds);
+        }
 
         /// Is the audio stream fading?
-        bool IsFading();*/
+        bool IsFading();
 
         /// Returns the target volume. If the audio isn't fading this should be the same as volume
         float GetTargetVolume()

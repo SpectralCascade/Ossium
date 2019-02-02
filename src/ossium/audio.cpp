@@ -215,7 +215,11 @@ namespace ossium
 
     void AudioBus::OnVolumeChanged()
     {
-        /// Iterate over all input signals and change their volumes accordingly
+        /// Iterate over all input buses and signals and change their volumes accordingly
+        for (auto i = input_buses.begin(); i != input_buses.end(); i++)
+        {
+            (*i)->OnVolumeChanged();
+        }
         for (auto i = input_signals.begin(); i != input_signals.end(); i++)
         {
             (*i)->OnVolumeChanged();

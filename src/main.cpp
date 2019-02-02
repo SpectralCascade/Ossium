@@ -185,9 +185,6 @@ int main(int argc, char* argv[])
         source.Link(&sfx);
         /// The sfx bus goes into the master bus
         sfx.Link(&master);
-        sfx.SetVolume(0.3f);
-        master.SetPanning(90);
-        sfx.SetPanning(-45);
         if (!sound.load("test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
@@ -227,6 +224,8 @@ int main(int argc, char* argv[])
                 source.SetPanning(panning);
                 volume_change = false;
             }
+
+            master.FadeOut(global::delta.time(), 3.0f);
 
             /// Demo dynamic key binding
             if (update_binding)
