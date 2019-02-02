@@ -62,7 +62,6 @@ namespace ossium
         /// The only instance of the derived class
         static Derived singleInstance;
 
-    protected:
         Singleton(){};
 
     private:

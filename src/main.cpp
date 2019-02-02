@@ -29,10 +29,11 @@ int posx = 0;
 int posy = 0;
 bool check_for_key = false;
 bool update_binding = false;
-SDL_Keycode currentKey = SDLK_SPACE;
+SDL_Keycode currentKey = SDLK_m;
 float volume = 1.0f;
 bool volume_change = false;
 Sint16 panning = 0;
+AudioBus master;
 
 void MouseScrollAction(const MouseInput& data)
 {
@@ -50,7 +51,7 @@ void MouseClickAction(const MouseInput& data)
         if (data.state == MOUSE_RELEASED)
         {
             mainText->setColor(colour::GREEN);
-            mainText->setText("Press any key to bind it to the FPS text");
+            mainText->setText("Press any key to bind to action TOGGLE AUDIO");
             check_for_key = true;
         }
     }
@@ -62,7 +63,7 @@ void GetKey(const KeyboardInput& data)
     {
         currentKey = data.key;
         mainText->setColor(colour::RED);
-        mainText->setText("Current FPS key is " + (string)SDL_GetKeyName(currentKey));
+        mainText->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
         check_for_key = false;
         update_binding = true;
     }
@@ -74,14 +75,20 @@ void KeyAction(const KeyboardInput& data)
     {
         if (data.state == KEY_DOWN)
         {
-            targetText->setColor(colour::YELLOW);
-            targetText->setBox(true);
-            targetText->setBackgroundColor(colour::RED);
+            targetText->setBackgroundColor(colour::YELLOW);
         }
-        else
+        else if (data.state == KEY_UP)
         {
-            targetText->setColor(colour::CYAN);
-            targetText->setBox(false);
+            if (!master.IsMuted())
+            {
+                targetText->setBackgroundColor(colour::RED);
+                master.Mute();
+            }
+            else
+            {
+                master.Unmute();
+                targetText->setBackgroundColor(colour::GREEN);
+            }
         }
     }
 }
@@ -136,7 +143,9 @@ int main(int argc, char* argv[])
         if (targetText != nullptr)
         {
             targetText->setText("FPS: 0");
-            targetText->setColor(colour::CYAN);
+            targetText->setColor(colour::BLACK);
+            targetText->setBox(true);
+            targetText->setBackgroundColor(colour::GREEN);
             targetText->textToTexture(mainRenderer, &font);
         }
 
@@ -145,7 +154,7 @@ int main(int argc, char* argv[])
         if (!compList.empty() && compList.size() > 1)
         {
             compList[1]->setColor(colour::RED);
-            compList[1]->setText("Current FPS key is " + (string)SDL_GetKeyName(currentKey));
+            compList[1]->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             compList[1]->textToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
         }
@@ -157,8 +166,8 @@ int main(int argc, char* argv[])
         InputContext mainContext;
         KeyboardHandler* keyboard = mainContext.AddHandler<KeyboardHandler>();
 
-        keyboard->AddAction("yellow_text", *KeyAction);
-        keyboard->Bind("yellow_text", SDLK_SPACE);
+        keyboard->AddAction("TOGGLE MUTE", *KeyAction);
+        keyboard->Bind("TOGGLE MUTE", SDLK_m);
         keyboard->AddBindlessAction(*GetKey);
 
         MouseHandler* mouse = mainContext.AddHandler<MouseHandler>();
@@ -179,12 +188,12 @@ int main(int argc, char* argv[])
         AudioClip sound;
         AudioSource source;
         AudioBus sfx;
-        AudioBus master;
 
         /// Source goes into sfx bus
         source.Link(&sfx);
         /// The sfx bus goes into the master bus
         sfx.Link(&master);
+        sfx.SetVolume(0);
         if (!sound.load("test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
@@ -225,13 +234,13 @@ int main(int argc, char* argv[])
                 volume_change = false;
             }
 
-            master.FadeOut(global::delta.time(), 3.0f);
+            sfx.FadeIn(global::delta.time(), 3.0f);
 
             /// Demo dynamic key binding
             if (update_binding)
             {
                 /// Rebind the key
-                keyboard->Bind("yellow_text", currentKey);
+                keyboard->Bind("TOGGLE MUTE", currentKey);
                 update_binding = false;
             }
 

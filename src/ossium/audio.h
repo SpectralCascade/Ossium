@@ -190,7 +190,7 @@ namespace ossium
 
         /// Sets the name of this audio channel
         void SetName(string setName);
-        /// Returns the name of this audio channel
+        /// Returns the name of this audio bus
         string GetName();
 
         /// Links this bus to an audio bus. Cannot link to more than 1 input bus;
@@ -212,9 +212,25 @@ namespace ossium
         /// Returns the final stereo panning angle of the root audio signal by recursion
         Sint16 GetFinalPanning();
 
+        /// Turn bypass mode on or off
+        void SetBypassMode(bool bypass_channel);
+
+        /// Is bypass mode on?
+        bool IsBypassed();
+
+        /// Is this bus muted?
+        bool IsMuted();
+
+        /// If the audio bus is muted, all inputs will also be muted
+        void Mute();
+        void Unmute();
+
     private:
         /// Whether or not volume and panning set by this bus should be ignored
         bool bypass;
+
+        /// Whether or not this bus is muted
+        bool muted;
 
         /// When the volume changes, iterate over all the input signals and call their OnVolumeChanged() methods
         void OnVolumeChanged();
@@ -280,6 +296,12 @@ namespace ossium
         /// Simplified overload
         void Play(AudioClip* sample, float vol = -1.0f, int repeats = 0);
 
+        /// Pauses this audio source if it is currently playing
+        void Pause();
+
+        /// Resumes playing the audio source if anything is currently paused
+        void Resume();
+
         /// Whether or not this audio source is currently playing anything
         bool IsPlaying();
 
@@ -302,6 +324,9 @@ namespace ossium
         /// The linked audio output bus; if not linked, this is set to null
         AudioBus* linkedBus;
 
+        /// Whether or not this audio source is paused
+        bool paused;
+
         /// The SDL_Mixer channel currently reserved for this audio source. If < 0, the audio source is not playing anything
         int channel_id;
 
@@ -312,52 +337,61 @@ namespace ossium
         static AudioInternals::ChannelController& _channelController;
 
     };
-/*
+
     namespace AudioInternals
     {
 
+        /// Callback when the music is finished
+        void MusicFinished();
+
         /// Wrapper class for Mix_Music, which streams a single audio clip from disk rather than loading the whole clip into memory
         /// There can only be a single audio stream as there can only be one Mix_Music instance
-        /// Audio played via AudioStream can potentially be higher quality than AudioClip
-        class AudioStream : public VolumeControl<AudioStream>, Singleton<AudioStream>
+        /// Audio played via AudioStream can potentially be higher quality than AudioClip, hence it's probably best used for music and the like
+        /// Inherits from AudioBus so that it may be used in the mixer, rather than AudioSource which is designed to work with SDL_Mixer channels
+        class AudioStream : public AudioBus, public Singleton<AudioStream>
         {
         public:
             AudioStream();
             ~AudioStream();
 
+            /// Resets started and paused to false
+            void Init();
+
             /// Frees the audio stream
             void Free();
 
-            /// Streams audio from a specified file path. Returns false if an error occurs. Otherwise caches the file path and starts playing
-            /// Loops specifies the number of times to play the stream where -1 = infinity, 0 = never, 1 = once, 2 = twice and so on
-            /// ms specifies the fade time in milliseconds. When ms = 0 there is no fade in
-            bool Play(string path, int loops = 1, int ms = 0);
-            /// Resumes the stream that is paused, or starts streaming from the cached audio file path. Returns false on failure
-            /// Loops specifies the number of times to play the stream where -1 = infinity, 0 = never, 1 = once, 2 = twice and so on
-            /// ms specifies the fade time in milliseconds. When ms = 0 there is no fade in
-            bool Play(int loops = 1, int ms = 0);
+            /// Loads an audio file from disk; returns false on error
+            bool Load(string path);
 
-            /// Pauses the audio stream if it is playing
+            /// Plays the currently loaded audio file
+            void Play(Sint16 panning, float vol = -1.0f, int repeats = 0);
+
+            /// Simplified overload
+            void Play(float vol = -1.0f, int repeats = 0);
+
+            /// Loads an audio file and then immediately starts playing
+            void Play(string path, float vol = -1.0f, int repeats = 0);
+
+            /// Pauses the stream if it is currently playing
             void Pause();
-            /// Resumes the audio stream if it is paused
+
+            /// Resumes playing the audio stream if anything is currently paused
             void Resume();
+
+            /// Whether or not this audio stream is started
+            bool IsStarted();
+
+            /// Whether or not this audio stream is currently paused
+            bool IsPaused();
 
             /// Stops streaming audio
             void Stop();
 
-            /// Mutes the audio stream; this does not change the cached volume level
-            void Mute();
-            /// Unmutes the audio stream; this does not change the cached volume level
-            void Unmute();
-
             /// It's not advised to use this, but if you need more SDL_Mixer features you can directly access the stream
-            Mix_Music* _GetStream();
+            Mix_Music* GetStream();
 
             /// Returns the cached path of the last or current file of the stream. Returns empty string if no file has been loaded successfully
             string GetPath();
-
-            /// Updates any volume fading
-            void Update();
 
         private:
             /// The Mix_Music instance
@@ -369,25 +403,24 @@ namespace ossium
             /// Whether the audio stream is paused
             bool paused;
 
-            /// Whether the audio stream is started or stopped
+            /// Whether the audio stream is started or not
             bool started;
-
-            /// Whether or not the audio stream is muted
-            bool muted;
-
-            /// AudioStream has it's own delta instance so that the stream can be updated as many times as you want
-            Delta delta;
 
         };
 
     }
 
     /// Convenient global reference for accessing the AudioStream singleton
-    AudioInternals::AudioStream& SoundStream = AudioInternals::AudioStream::_Instance();
+    namespace global
+    {
+
+        extern AudioInternals::AudioStream& SoundStream;
+
+    }
 
     /// Used to control volume levels and other effects on all audio channels, including the single AudioStream instance
     /// for which there is a dedicated static channel. This is the core of the audio system.
-    class AudioMixer
+    /*class AudioMixer
     {
     public:
         AudioMixer();
@@ -395,8 +428,8 @@ namespace ossium
 
     private:
 
-    };
-*/
+    };*/
+
 }
 
 #endif // AUDIO_H

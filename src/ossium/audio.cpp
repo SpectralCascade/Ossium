@@ -157,6 +157,7 @@ namespace ossium
     {
         linkedBus = nullptr;
         bypass = false;
+        muted = false;
     }
 
     void AudioBus::SetName(string setName)
@@ -197,8 +198,17 @@ namespace ossium
 
     float AudioBus::GetFinalVolume()
     {
+        if (muted)
+        {
+            return 0;
+        }
         if (IsLinked())
         {
+            if (bypass)
+            {
+                /// Bypass the settings in this bus
+                return linkedBus->GetFinalVolume();
+            }
             return this->GetVolume() * linkedBus->GetFinalVolume();
         }
         return this->GetVolume();
@@ -208,9 +218,52 @@ namespace ossium
     {
         if (IsLinked())
         {
+            if (bypass)
+            {
+                /// Bypass the settings in this bus
+                return linkedBus->GetFinalPanning();
+            }
             return this->GetPanning() + linkedBus->GetFinalPanning();
         }
         return this->GetPanning();
+    }
+
+    void AudioBus::SetBypassMode(bool bypass_channel)
+    {
+        if (bypass_channel != bypass)
+        {
+            bypass = bypass_channel;
+            /// Trigger a recalculation of volume level
+            OnVolumeChanged();
+        }
+    }
+
+    bool AudioBus::IsBypassed()
+    {
+        return bypass;
+    }
+
+    bool AudioBus::IsMuted()
+    {
+        return muted;
+    }
+
+    void AudioBus::Mute()
+    {
+        if (!muted)
+        {
+            muted = true;
+            OnVolumeChanged();
+        }
+    }
+
+    void AudioBus::Unmute()
+    {
+        if (muted)
+        {
+            muted = false;
+            OnVolumeChanged();
+        }
     }
 
     void AudioBus::OnVolumeChanged()
@@ -236,6 +289,7 @@ namespace ossium
 
     AudioSource::AudioSource()
     {
+        linkedBus = nullptr;
         channel_id = -1;
     }
 
@@ -341,12 +395,17 @@ namespace ossium
         channel_id = -1;
     }
 
-/*    ///
+    ///
     /// AudioStream
     ///
 
     namespace AudioInternals
     {
+
+        void MusicFinished()
+        {
+            global::SoundStream.Init();
+        }
 
         AudioStream::AudioStream()
         {
@@ -360,45 +419,62 @@ namespace ossium
             Free();
         }
 
+        void AudioStream::Init()
+        {
+            paused = false;
+            started = false;
+        }
+
         void AudioStream::Free()
         {
-            if (started)
-            {
-                Stop();
-            }
+            Stop();
             if (stream != NULL)
             {
                 Mix_FreeMusic(stream);
+                stream = NULL;
             }
         }
 
-        bool AudioStream::Play(string path, int loops, int ms)
+        bool AudioStream::Load(string path)
         {
             Free();
             stream = Mix_LoadMUS(path.c_str());
             if (stream != NULL)
             {
-                paused = false;
-                started = true;
-                Mix_PlayMusic(stream, loops);
                 cachedPath = path;
                 return true;
             }
             return false;
         }
 
-        bool AudioStream::Play(int loops, int ms)
+        void AudioStream::Play(float vol, int repeats)
         {
-            if (started && stream != NULL)
+            Stop();
+            if (stream != NULL)
             {
-                Resume();
+                Mix_PlayMusic(stream, repeats + 1);
+                started = true;
             }
             else if (cachedPath != "")
             {
                 /// Attempt to use the cached path
-                Play(cachedPath, loops, ms);
+                if (Load(cachedPath))
+                {
+                    SetVolume(vol);
+                    Mix_VolumeMusic(mapRange(GetVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                    Mix_PlayMusic(stream, repeats + 1);
+                    started = true;
+                }
             }
-            return false;
+        }
+
+        void AudioStream::Play(string path, float vol, int repeats)
+        {
+            if (Load(path))
+            {
+                cachedPath = path;
+                Play(vol, repeats);
+            }
         }
 
         void AudioStream::Pause()
@@ -419,16 +495,27 @@ namespace ossium
             }
         }
 
-        void AudioStream::Stop()
+        bool AudioStream::IsPaused()
         {
-            if (started)
-            {
-                paused = false;
-                started = false;
-            }
+            return paused;
         }
 
-        Mix_Music* AudioStream::_GetStream()
+        bool AudioStream::IsStarted()
+        {
+            return started;
+        }
+
+        void AudioStream::Stop()
+        {
+            if (started && Mix_PlayingMusic())
+            {
+                Mix_HaltMusic();
+            }
+            paused = false;
+            started = false;
+        }
+
+        Mix_Music* AudioStream::GetStream()
         {
             return stream;
         }
@@ -439,5 +526,12 @@ namespace ossium
         }
 
     }
-*/
+
+    namespace global
+    {
+
+        AudioInternals::AudioStream& SoundStream = AudioInternals::AudioStream::_Instance();
+
+    }
+
 }

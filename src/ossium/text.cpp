@@ -319,7 +319,7 @@ namespace ossium
     void Text::setBackgroundColor(SDL_Color textBackgroundColor)
     {
         bgColor = textBackgroundColor;
-        if (renderMode == RENDERTEXT_SHADED || outline > 0)
+        if (renderMode == RENDERTEXT_SHADED || box || outline > 0)
         {
             update = true;
         }
