@@ -198,7 +198,7 @@ namespace ossium
 
     float AudioBus::GetFinalVolume()
     {
-        if (muted)
+        if (!bypass && muted)
         {
             return 0;
         }
