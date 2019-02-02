@@ -80,7 +80,7 @@ namespace ossium
                     {
                         volume = targetVolume;
                     }
-                    SetVolume(volume);
+                    derived()->OnVolumeChanged();
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace ossium
                     {
                         volume = targetVolume;
                     }
-                    SetVolume(volume);
+                    derived()->OnVolumeChanged();
                 }
             }
         }
@@ -363,14 +363,11 @@ namespace ossium
             /// Loads an audio file from disk; returns false on error
             bool Load(string path);
 
-            /// Plays the currently loaded audio file
-            void Play(Sint16 panning, float vol = -1.0f, int repeats = 0);
-
-            /// Simplified overload
-            void Play(float vol = -1.0f, int repeats = 0);
+            /// Plays loaded audio as many times as specified by the loops argument, or forever if loops = -1
+            void Play(float vol = -1.0f, int loops = 1);
 
             /// Loads an audio file and then immediately starts playing
-            void Play(string path, float vol = -1.0f, int repeats = 0);
+            void Play(string path, float vol = -1.0f, int loops = 1);
 
             /// Pauses the stream if it is currently playing
             void Pause();

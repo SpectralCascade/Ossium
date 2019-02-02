@@ -437,6 +437,10 @@ namespace ossium
 
         bool AudioStream::Load(string path)
         {
+            if (!started)
+            {
+                Mix_HookMusicFinished(*MusicFinished);
+            }
             Free();
             stream = Mix_LoadMUS(path.c_str());
             if (stream != NULL)
@@ -447,12 +451,12 @@ namespace ossium
             return false;
         }
 
-        void AudioStream::Play(float vol, int repeats)
+        void AudioStream::Play(float vol, int loops)
         {
             Stop();
             if (stream != NULL)
             {
-                Mix_PlayMusic(stream, repeats + 1);
+                Mix_PlayMusic(stream, loops);
                 started = true;
             }
             else if (cachedPath != "")
@@ -462,18 +466,18 @@ namespace ossium
                 {
                     SetVolume(vol);
                     Mix_VolumeMusic(mapRange(GetVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
-                    Mix_PlayMusic(stream, repeats + 1);
+                    Mix_PlayMusic(stream, loops);
                     started = true;
                 }
             }
         }
 
-        void AudioStream::Play(string path, float vol, int repeats)
+        void AudioStream::Play(string path, float vol, int loops)
         {
             if (Load(path))
             {
                 cachedPath = path;
-                Play(vol, repeats);
+                Play(vol, loops);
             }
         }
 

@@ -189,6 +189,9 @@ int main(int argc, char* argv[])
         AudioSource source;
         AudioBus sfx;
 
+        global::SoundStream.Link(&master);
+        global::SoundStream.Play("test_stream.wav", 0.5f, -1);
+
         /// Source goes into sfx bus
         source.Link(&sfx);
         /// The sfx bus goes into the master bus
@@ -200,7 +203,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            source.Play(&sound, 1.0f, -1);
+            source.Play(&sound, 0.2f, -1);
         }
 
         ///
