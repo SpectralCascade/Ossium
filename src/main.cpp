@@ -186,6 +186,8 @@ int main(int argc, char* argv[])
         /// The sfx bus goes into the master bus
         sfx.Link(&master);
         sfx.SetVolume(0.3f);
+        master.SetPanning(90);
+        sfx.SetPanning(-45);
         if (!sound.load("test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());

@@ -322,7 +322,7 @@ namespace ossium
         {
             /// This is okay because it's not set as an SDL_Mixer callback
             Mix_Volume(channel_id, (int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
-            Mix_SetPosition(channel_id, clamp(GetFinalPanning(), 0, 360), 0);
+            Mix_SetPosition(channel_id, wrap(0, GetFinalPanning(), 0, 360), 0);
         }
     }
 
