@@ -29,3 +29,5 @@ with the GNU GCC/G++ compiler. The engine is easily portable to Linux or Mac (yo
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
 
 Check out Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL; if you don't know how to setup SDL 2 to build Ossium, check out the first tutorial.
+
+P.S. if you make anything cool with Ossium, I'd love to hear about it!
