@@ -17,33 +17,8 @@ namespace ossium
 {
     int InitialiseOssium()
     {
-        float processorSpeed = (float)SDL_GetPerformanceFrequency() / 1000000000;
         string numCPUs = "";
-        switch (SDL_GetCPUCount())
-        {
-        case 1:
-            numCPUs = "Single-core";
-            break;
-        case 2:
-            numCPUs = "Dual-core";
-            break;
-        case 4:
-            numCPUs = "Quad-core";
-            break;
-        case 6:
-            numCPUs = "Hexa-core";
-            break;
-        case 8:
-            numCPUs = "Octa-core";
-            break;
-        case 10:
-            numCPUs = "Deca-core";
-            break;
-        default:
-            numCPUs = "Unknown";
-            break;
-        }
-        SDL_Log("%s | %s CPU at %f GHz | %d MB memory\n", SDL_GetPlatform(), numCPUs.c_str(), processorSpeed, SDL_GetSystemRAM());
+        SDL_Log("%s | %d core CPU | %d MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
 
         /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
         #ifdef DEBUG
@@ -100,22 +75,6 @@ namespace ossium
         IMG_Quit();
         SDL_Quit();
         printf("INFO: Successfully terminated Ossium.");
-    }
-
-    SDL_Renderer* CreateRenderer(SDL_Window* window, bool vsync)
-    {
-        if (window == NULL)
-        {
-            return NULL;
-        }
-        if (vsync)
-        {
-            return SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        }
-        else
-        {
-            return SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        }
     }
 
 }

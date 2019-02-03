@@ -22,6 +22,7 @@ using namespace ossium::test;
 
 using namespace std;
 using namespace ossium;
+using namespace ossium::global;
 
 Text* targetText = nullptr;
 Text* mainText = nullptr;
@@ -127,8 +128,6 @@ int main(int argc, char* argv[])
         /// Create an EntityComponentSystem
         EntityComponentSystem entitySystem;
 
-        SDL_Event e;
-
         ///
         /// ECS and text rendering demo
         ///
@@ -184,6 +183,8 @@ int main(int argc, char* argv[])
 
         input.AddContext("main", &mainContext);
 
+        SDL_Event e;
+
         ///
         /// Audio demo
         ///
@@ -192,8 +193,8 @@ int main(int argc, char* argv[])
         AudioSource source;
         AudioBus sfx;
 
-        global::SoundStream.Link(&master);
-        global::SoundStream.Play("test_stream.wav", 0.5f, -1);
+        SoundStream.Link(&master);
+        SoundStream.Play("test_stream.wav", 0.5f, -1);
 
         /// Source goes into sfx bus
         source.Link(&sfx);
@@ -217,10 +218,8 @@ int main(int argc, char* argv[])
         fpsTimer.start();
         int countedFrames = 0;
 
-        bool fadedir = false;
-
         /// Initialise the global delta time and FPS controller
-        global::delta.init(settings);
+        delta.init(settings);
 
         while (!quit)
         {
@@ -236,22 +235,14 @@ int main(int argc, char* argv[])
                 input.HandleEvent(e);
             }
 
+            /// Logic update phase
             if (volume_change)
             {
                 source.SetPanning(panning);
                 volume_change = false;
             }
 
-            sfx.FadeIn(global::delta.time(), 3.0f);
-            if (fadedir)
-            {
-                global::SoundStream.Fade(1.0f, global::delta.time(), 0.25f);
-            }
-            else
-            {
-                global::SoundStream.Fade(0.5f, global::delta.time(), 0.25f);
-            }
-
+            sfx.FadeIn(delta.time(), 3.0f);
             /// Demo dynamic key binding
             if (update_binding)
             {
@@ -260,7 +251,6 @@ int main(int argc, char* argv[])
                 update_binding = false;
             }
 
-            /// Logic update phase
             entitySystem.UpdateComponents();
 
             /// Rendering phase
@@ -274,7 +264,6 @@ int main(int argc, char* argv[])
                 }
                 if (fpsTimer.getTicks() > 250)
                 {
-                    fadedir = !fadedir;
                     handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.getTicks() / 1000.0f))));
                     countedFrames = 0;
                     fpsTimer.start();
@@ -290,7 +279,7 @@ int main(int argc, char* argv[])
 
             /// Update timer and FPS count
             countedFrames++;
-            global::delta.update();
+            delta.update();
         }
     }
     TerminateOssium();

@@ -97,10 +97,10 @@ namespace ossium
 
     struct EventCategoryInfo
     {
-        /// Queue of events to be dispatched to a specified event handler
+        /// Events to be dispatched to a specified event handler
         set<EventMessage> dispatch_queue;
 
-        /// Queue of events to be broadcast in this category
+        /// Events to be broadcast in this category
         set<Event> broadcast_queue;
 
         /// The handlers subscribed to this category
