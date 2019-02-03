@@ -59,7 +59,7 @@ void MouseClickAction(const MouseInput& data)
 
 void GetKey(const KeyboardInput& data)
 {
-    if (check_for_key)
+    if (check_for_key && data.state == KEY_UP)
     {
         currentKey = data.key;
         mainText->setColor(colour::RED);
@@ -214,6 +214,8 @@ int main(int argc, char* argv[])
         fpsTimer.start();
         int countedFrames = 0;
 
+        bool fadedir = false;
+
         /// Initialise the global delta time and FPS controller
         global::delta.init(settings);
 
@@ -238,6 +240,14 @@ int main(int argc, char* argv[])
             }
 
             sfx.FadeIn(global::delta.time(), 3.0f);
+            if (fadedir)
+            {
+                global::SoundStream.Fade(1.0f, global::delta.time(), 0.25f);
+            }
+            else
+            {
+                global::SoundStream.Fade(0.5f, global::delta.time(), 0.25f);
+            }
 
             /// Demo dynamic key binding
             if (update_binding)
@@ -261,6 +271,7 @@ int main(int argc, char* argv[])
                 }
                 if (fpsTimer.getTicks() > 250)
                 {
+                    fadedir = !fadedir;
                     handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.getTicks() / 1000.0f))));
                     countedFrames = 0;
                     fpsTimer.start();

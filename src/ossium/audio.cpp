@@ -158,6 +158,7 @@ namespace ossium
         linkedBus = nullptr;
         bypass = false;
         muted = false;
+        input_stream = nullptr;
     }
 
     void AudioBus::SetName(string setName)
@@ -276,6 +277,10 @@ namespace ossium
         for (auto i = input_signals.begin(); i != input_signals.end(); i++)
         {
             (*i)->OnVolumeChanged();
+        }
+        if (input_stream != nullptr)
+        {
+            input_stream->OnVolumeChanged();
         }
     }
 
@@ -551,17 +556,23 @@ namespace ossium
 
         void AudioStream::Link(AudioBus* bus)
         {
-            AudioSource::Link(bus);
+            Unlink();
+            bus->input_stream = this;
+            linkedBus = bus;
         }
 
         void AudioStream::Unlink()
         {
-            AudioSource::Unlink();
+            if (IsLinked())
+            {
+                linkedBus->input_stream = nullptr;
+                linkedBus = nullptr;
+            }
         }
 
         bool AudioStream::IsLinked()
         {
-            return AudioSource::IsLinked();
+            return linkedBus != nullptr;
         }
 
         Mix_Music* AudioStream::GetStream()
@@ -572,6 +583,20 @@ namespace ossium
         string AudioStream::GetPath()
         {
             return cachedPath;
+        }
+
+        const Sint16 AudioStream::GetFinalPanning()
+        {
+            return 0;
+        }
+
+        float AudioStream::GetFinalVolume()
+        {
+            if (IsLinked())
+            {
+                return GetVolume() * linkedBus->GetFinalVolume();
+            }
+            return GetVolume();
         }
 
         void AudioStream::OnVolumeChanged()

@@ -176,6 +176,9 @@ namespace ossium
 
         };
 
+        /// Forward declaration
+        class AudioStream;
+
     }
 
     /// This represents an audio bus like those you'd get on a mixing desk, with multiple inputs and a single output
@@ -184,6 +187,7 @@ namespace ossium
     public:
         friend class AudioChannel<AudioBus>;
         friend class AudioSource;
+        friend class AudioInternals::AudioStream;
 
         /// Initialise stuff
         AudioBus();
@@ -242,6 +246,9 @@ namespace ossium
         set<AudioBus*> input_buses;
         /// The set of input signals coming into this bus
         set<AudioSource*> input_signals;
+
+        /// The audio stream coming into this bus; usually null unless the AudioStream has been linked
+        AudioInternals::AudioStream* input_stream;
 
         /// Name of this audio bus
         string name;
@@ -351,7 +358,7 @@ namespace ossium
         /// There can only be a single audio stream as there can only be one Mix_Music instance
         /// Audio played via AudioStream can potentially be higher quality than AudioClip, hence it's probably best used for music and the like
         /// Inherits from AudioBus so that it may be used in the mixer, rather than AudioSource which is designed to work with SDL_Mixer channels
-        class AudioStream : private AudioSource, public Singleton<AudioStream>
+        class AudioStream : public AudioChannel<AudioStream>, public Singleton<AudioStream>
         {
         public:
             AudioStream();
@@ -402,6 +409,12 @@ namespace ossium
             /// Returns the cached path of the last or current file of the stream. Returns empty string if no file has been loaded successfully
             string GetPath();
 
+            /// Always returns 0 as the audio stream is not designed for panning
+            const Sint16 GetFinalPanning();
+
+            /// Returns the true volume of the audio stream when all the linked bus volume levels have been applied
+            float GetFinalVolume();
+
             /// When the volume changes, applies the true volume level
             void OnVolumeChanged();
 
@@ -409,11 +422,17 @@ namespace ossium
             /// The Mix_Music instance
             Mix_Music* stream;
 
+            /// The audio bus this stream is linked to, if at all
+            AudioBus* linkedBus;
+
             /// The file path is cached
             string cachedPath;
 
             /// Whether the audio stream is started or not
             bool started;
+
+            /// Whether the audio stream is paused or not
+            bool paused;
 
         };
 
