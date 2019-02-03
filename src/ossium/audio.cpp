@@ -339,6 +339,11 @@ namespace ossium
             SetStereoVolume(vol, panning);
         }
         Mix_PlayChannel(channel_id, sample->GetChunk(), repeats);
+        if (Mix_Paused(channel_id))
+        {
+            Mix_Resume(channel_id);
+        }
+        paused = false;
     }
 
     void AudioSource::Play(AudioClip* sample, float vol, int repeats)
@@ -349,6 +354,29 @@ namespace ossium
     bool AudioSource::IsPlaying()
     {
         return channel_id >= 0;
+    }
+
+    void AudioSource::Pause()
+    {
+        if (IsPlaying())
+        {
+            Mix_Pause(channel_id);
+            paused = true;
+        }
+    }
+
+    void AudioSource::Resume()
+    {
+        if (IsPaused() && IsPlaying())
+        {
+            Mix_Resume(channel_id);
+            paused = false;
+        }
+    }
+
+    bool AudioSource::IsPaused()
+    {
+        return paused;
     }
 
     bool AudioSource::IsLinked()
@@ -521,6 +549,21 @@ namespace ossium
             started = false;
         }
 
+        void AudioStream::Link(AudioBus* bus)
+        {
+            AudioSource::Link(bus);
+        }
+
+        void AudioStream::Unlink()
+        {
+            AudioSource::Unlink();
+        }
+
+        bool AudioStream::IsLinked()
+        {
+            return AudioSource::IsLinked();
+        }
+
         Mix_Music* AudioStream::GetStream()
         {
             return stream;
@@ -529,6 +572,11 @@ namespace ossium
         string AudioStream::GetPath()
         {
             return cachedPath;
+        }
+
+        void AudioStream::OnVolumeChanged()
+        {
+            Mix_VolumeMusic((int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
         }
 
     }

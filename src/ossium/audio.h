@@ -33,14 +33,14 @@ namespace ossium
             panningAngle = 0;
         }
 
-        /// Sets the volume level of the audio stream as a normalised value between 0 and 1.
+        /// Sets the volume level of the audio channel as a normalised value between 0 and 1.
         /// Any values outside of the 0 - 1 range are clamped
         void SetVolume(float vol)
         {
             volume = clamp(vol, 0.0f, 1.0f);
             derived()->OnVolumeChanged();
         }
-        /// Returns the volume level of the audio stream as a normalised value between 0 and 1.
+        /// Returns the volume level of the audio channel as a normalised value between 0 and 1.
         float GetVolume()
         {
             return volume;
@@ -117,7 +117,7 @@ namespace ossium
         /// CRTP convenience method
         Derived* derived()
         {
-            return reinterpret_cast<Derived*>(this);
+            return static_cast<Derived*>(this);
         }
 
     private:
@@ -226,14 +226,14 @@ namespace ossium
         void Unmute();
 
     private:
+        /// When the volume changes, iterate over all the input signals and call their OnVolumeChanged() methods
+        void OnVolumeChanged();
+
         /// Whether or not volume and panning set by this bus should be ignored
         bool bypass;
 
         /// Whether or not this bus is muted
         bool muted;
-
-        /// When the volume changes, iterate over all the input signals and call their OnVolumeChanged() methods
-        void OnVolumeChanged();
 
         /// The next bus in the signal chain that this bus is linked to; if null, this bus is the end of a signal chain
         AudioBus* linkedBus;
@@ -281,7 +281,7 @@ namespace ossium
         friend class AudioInternals::ChannelController;
 
         AudioSource();
-        ~AudioSource();
+        virtual ~AudioSource();
 
         /// Links this source to an audio output bus
         void Link(AudioBus* bus);
@@ -299,6 +299,9 @@ namespace ossium
         /// Pauses this audio source if it is currently playing
         void Pause();
 
+        /// Returns true if the audio source has been paused
+        bool IsPaused();
+
         /// Resumes playing the audio source if anything is currently paused
         void Resume();
 
@@ -315,18 +318,18 @@ namespace ossium
         Sint16 GetFinalPanning();
 
         /// When any volume value changes in the signal chain, this sets the true output volume of this source
-        void OnVolumeChanged();
+        virtual void OnVolumeChanged();
 
     protected:
         void OnPlayFinished();
 
-    private:
-        /// The linked audio output bus; if not linked, this is set to null
-        AudioBus* linkedBus;
-
         /// Whether or not this audio source is paused
         bool paused;
 
+        /// The linked audio output bus; if not linked, this is set to null
+        AudioBus* linkedBus;
+
+    private:
         /// The SDL_Mixer channel currently reserved for this audio source. If < 0, the audio source is not playing anything
         int channel_id;
 
@@ -348,11 +351,11 @@ namespace ossium
         /// There can only be a single audio stream as there can only be one Mix_Music instance
         /// Audio played via AudioStream can potentially be higher quality than AudioClip, hence it's probably best used for music and the like
         /// Inherits from AudioBus so that it may be used in the mixer, rather than AudioSource which is designed to work with SDL_Mixer channels
-        class AudioStream : public AudioBus, public Singleton<AudioStream>
+        class AudioStream : private AudioSource, public Singleton<AudioStream>
         {
         public:
             AudioStream();
-            ~AudioStream();
+            virtual ~AudioStream();
 
             /// Resets started and paused to false
             void Init();
@@ -384,11 +387,23 @@ namespace ossium
             /// Stops streaming audio
             void Stop();
 
+            /// Links this stream to an audio output bus
+            void Link(AudioBus* bus);
+
+            /// Unlinks this stream from the linked audio bus, if any
+            void Unlink();
+
+            /// Whether or not this audio stream is linked to an audio bus
+            bool IsLinked();
+
             /// It's not advised to use this, but if you need more SDL_Mixer features you can directly access the stream
             Mix_Music* GetStream();
 
             /// Returns the cached path of the last or current file of the stream. Returns empty string if no file has been loaded successfully
             string GetPath();
+
+            /// When the volume changes, applies the true volume level
+            void OnVolumeChanged();
 
         private:
             /// The Mix_Music instance
@@ -396,9 +411,6 @@ namespace ossium
 
             /// The file path is cached
             string cachedPath;
-
-            /// Whether the audio stream is paused
-            bool paused;
 
             /// Whether the audio stream is started or not
             bool started;
