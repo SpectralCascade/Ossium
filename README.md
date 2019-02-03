@@ -15,7 +15,7 @@ Ossium is a bare-bones 2D game engine being built with C++ and SDL 2. The aim of
 * Straightforward CSV file import/export
 
 # Pre-requisites
-All these components are listed on the [main SDL 2 webpage](https://www.libsdl.org/download-2.0.php) and the [SDL 2 projects page](https://www.libsdl.org/projects).
+All SDL libraries are listed on the [main SDL 2 webpage](https://www.libsdl.org/download-2.0.php) and the [SDL 2 projects page](https://www.libsdl.org/projects).
 * A compiler with the C++17 standard (e.g. GCC 8.1.0)
 * SDL 2.0.8 (or greater)
 * SDL_Image
