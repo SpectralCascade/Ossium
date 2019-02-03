@@ -14,40 +14,29 @@ using namespace std;
 namespace ossium
 {
 
-    ecs::ECS_Controller* Entity::controller = nullptr;
-
-    Entity::Entity()
+    Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
     {
-        transform = {{0, 0}, {0, 0}, {1, 1}};
+        controller = entity_system;
         string name = "Entity";
-        self = controller->entityTree.add(name, this);
+        if (parent != nullptr)
+        {
+            transform = parent->transform;
+            self = controller->entityTree.add(name, this, parent->self);
+        }
+        else
+        {
+            transform = {{0, 0}, {0, 0}, {1, 1}};
+            self = controller->entityTree.add(name, this);
+        }
         controller->entities[self->id] = self;
         /// Set the name again, using the generated id
         name = "Entity[" + ToString(self->id) + "]";
         SetName(name);
     }
 
-    Entity::Entity(Entity* parent)
-    {
-        if (parent != nullptr)
-        {
-            transform = parent->transform;
-            string name = "Entity";
-            self = controller->entityTree.add(name, this, parent->self);
-            controller->entities[self->id] = self;
-            name = "Entity[" + ToString(self->id) + "]";
-            SetName(name);
-        }
-        else
-        {
-            /// Use default constructor instead
-            Entity();
-        }
-    }
-
     Entity* Entity::Clone()
     {
-        Entity* entityCopy = new Entity(self->parent->data);
+        Entity* entityCopy = new Entity(controller, self->parent->data);
         entityCopy->self->name = self->name + " (copy)";
         for (auto i = components.begin(); i != components.end(); i++)
         {
@@ -80,7 +69,7 @@ namespace ossium
             itr->second.clear();
         }
         components.clear();
-        /// Cleanup all children
+        /// Clean up all children
         controller->entityTree.remove(self);
         controller->entities.erase(self->id);
     }
@@ -124,41 +113,6 @@ namespace ossium
     {
         Node<Entity*>* node = controller->entityTree.find(name, parent->self);
         return node != nullptr ? node->data : nullptr;
-    }
-
-    void ecs::ECS_Info::InitECS()
-    {
-        if (Entity::controller == nullptr)
-        {
-            Entity::controller = new ecs::ECS_Controller();
-        }
-        else
-        {
-            SDL_Log("(!) Attempted to initialise ECS subsystem, but it is already initialised.");
-        }
-    }
-
-    void ecs::ECS_Info::DestroyECS()
-    {
-        if (Entity::controller != nullptr)
-        {
-            delete Entity::controller;
-            Entity::controller = nullptr;
-        }
-        else
-        {
-            printf("(!) Attempted to destroy ECS subsystem, but it is already destroyed.");
-        }
-    }
-
-    unsigned int ecs::ECS_Info::GetTotalEntities()
-    {
-        return Entity::controller->GetTotalEntities();
-    }
-
-    void ecs::ECS_Info::UpdateComponents()
-    {
-        Entity::controller->UpdateComponents();
     }
 
     void Component::OnCreate()
@@ -214,12 +168,12 @@ namespace ossium
 
     ComponentType ecs::ComponentRegistry::nextTypeIdent = 0;
 
-    ecs::ECS_Controller::ECS_Controller()
+    EntityComponentSystem::EntityComponentSystem()
     {
         components = new vector<Component*>[ecs::ComponentRegistry::GetTotalTypes()];
     }
 
-    void ecs::ECS_Controller::UpdateComponents()
+    void EntityComponentSystem::UpdateComponents()
     {
         for (unsigned int i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
         {
@@ -231,7 +185,7 @@ namespace ossium
         }
     }
 
-    void ecs::ECS_Controller::Clear()
+    void EntityComponentSystem::Clear()
     {
         /// Delete all entities
         vector<Node<Entity*>*>& entities = entityTree.getFlatTree();
@@ -252,29 +206,18 @@ namespace ossium
         }
     }
 
-    unsigned int ecs::ECS_Controller::GetTotalEntities()
+    unsigned int EntityComponentSystem::GetTotalEntities()
     {
         return entityTree.size();
     }
 
-    ecs::ECS_Controller::~ECS_Controller()
+    EntityComponentSystem::~EntityComponentSystem()
     {
         for (Uint32 i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
         {
             components[i].clear();
         }
         delete[] components;
-    }
-
-    void ecs::InitECS()
-    {
-        Entity::ecs_info.InitECS();
-        SDL_Log("Initialised ECS subsystem with %d registered component type(s).", ecs::ComponentRegistry::GetTotalTypes());
-    }
-
-    void ecs::DestroyECS()
-    {
-        Entity::ecs_info.DestroyECS();
     }
 
 }

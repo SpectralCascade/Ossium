@@ -16,11 +16,6 @@ namespace ossium
 {
 
     /// Mix-in class for doing stuff with volume and stereo panning. Requires Derived to implement OnVolumeChanged()
-    ///
-    /// !!! TODO !!!
-    ///
-    /// Actually implement correct dB -> percentage and vice-versa conversions. Atm it's all just a direct mapping of ranges
-    ///
     template<class Derived>
     class AudioChannel
     {

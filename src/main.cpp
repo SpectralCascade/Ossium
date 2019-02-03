@@ -124,6 +124,9 @@ int main(int argc, char* argv[])
         Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
         mainWindow.setAspectRatio(16, 9);
 
+        /// Create an EntityComponentSystem
+        EntityComponentSystem entitySystem;
+
         SDL_Event e;
 
         ///
@@ -135,7 +138,7 @@ int main(int argc, char* argv[])
         font.load("Orkney Regular.ttf", &ptsizes[0]);
         font.init("Orkney Regular.ttf");
 
-        Entity gameObject;
+        Entity gameObject(&entitySystem);
         gameObject.SetName("Test Entity");
         gameObject.AttachComponent<Text>();
 
@@ -258,7 +261,7 @@ int main(int argc, char* argv[])
             }
 
             /// Logic update phase
-            Entity::ecs_info.UpdateComponents();
+            entitySystem.UpdateComponents();
 
             /// Rendering phase
             mainRenderer->renderClear();

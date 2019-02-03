@@ -21,7 +21,7 @@ namespace ossium
     namespace ecs
     {
         /// This is a class designed to provide custom type identification
-        /// as an efficient alternative to RTTI
+        /// as an efficient alternative to RTTI.
         class ComponentRegistry
         {
         private:
@@ -53,19 +53,6 @@ namespace ossium
 
         };
 
-        /// This class is used as an internal class namespace for all intents and purposes
-        class ECS_Info
-        {
-        public:
-            /// Initialise and destroy the ECS subsystem
-            static void InitECS();
-            static void DestroyECS();
-            /// Get the total number of entity instances
-            static unsigned int GetTotalEntities();
-            /// Update all components
-            static void UpdateComponents();
-        };
-
     }
 
     /// Declares a component type and declares a virtual copy method
@@ -93,57 +80,44 @@ namespace ossium
     class Entity;
     class Component;
 
-    namespace ecs
-    {
-        /// Controls all entities and components at runtime
-        class ECS_Controller
-        {
-        public:
-            friend class ossium::Entity;
-
-            ECS_Controller();
-            ~ECS_Controller();
-
-            /// Iterates through all components that implement the Update() method and calls it for each one
-            void UpdateComponents();
-
-            /// Removes ALL entities and their components
-            void Clear();
-
-            /// Returns the total number of entities
-            unsigned int GetTotalEntities();
-
-        private:
-            /// Vector of pointers to ALL component instances, inside an array ordered by component type.
-            /// This is maintained because it's more efficient when updating or rendering lots of components
-            /// of a specific type each frame
-            vector<Component*>* components;
-
-            /// Entity tree hierarchy
-            Tree<Entity*> entityTree;
-
-            /// Hash table of entity nodes by id
-            unordered_map<int, Node<Entity*>*> entities;
-
-        };
-    }
-
-    /// Nothing should inherit from Entity.
-    /// I would use the 'final' keyword to ensure this
-    /// but Code::Blocks autocomplete stops working properly
-    class Entity
+    /// Controls all entities and components at runtime
+    class EntityComponentSystem
     {
     public:
-        friend class ecs::ECS_Controller;
-        friend class ecs::ECS_Info;
+        friend class ossium::Entity;
 
-        Entity();
-        /// Create this entity as a child of a parent entity
-        Entity(Entity* parent);
+        EntityComponentSystem();
+        ~EntityComponentSystem();
 
-        /// Defunct. Assignment no longer copies, so copy-and-swap no longer needed
-        //void Swap(Entity& itemOne, Entity& itemTwo);
+        /// Iterates through all components that implement the Update() method and calls it for each one
+        void UpdateComponents();
 
+        /// Removes ALL entities and their components
+        void Clear();
+
+        /// Returns the total number of entities
+        unsigned int GetTotalEntities();
+
+    private:
+        /// Vector of pointers to ALL component instances, inside an array ordered by component type.
+        /// This is maintained because it's more efficient when updating or rendering lots of components
+        /// of a specific type each frame
+        vector<Component*>* components;
+
+        /// Entity tree hierarchy
+        Tree<Entity*> entityTree;
+
+        /// Hash table of entity nodes by id
+        unordered_map<int, Node<Entity*>*> entities;
+
+    };
+
+    class Entity final
+    {
+    public:
+        friend class EntityComponentSystem;
+
+        Entity(EntityComponentSystem* entity_system, Entity* parent = nullptr);
         ~Entity();
 
         /// Instantiates and attaches a component to this entity
@@ -176,7 +150,7 @@ namespace ossium
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
                 vector<Component*>& ecs_components = controller->components[getComponentType<T>()];
-                /// First, remove the component pointer from the ECS_Controller
+                /// First, remove the component pointer from the EntityComponentSystem
                 for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
                 {
                     if (*i == itr->second[0])
@@ -283,9 +257,6 @@ namespace ossium
         /// Ditto, but searches only for entities below the parent
         Entity* find(string name, Entity* parent);
 
-        /// Public accessor class instance to static ECS_Controller
-        static ecs::ECS_Info ecs_info;
-
     private:
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary
         Entity(Entity& copySource);
@@ -295,9 +266,8 @@ namespace ossium
         /// Hashtable of components attached to this entity by type
         unordered_map<ComponentType, vector<Component*>> components;
 
-        /// All entities refer to this single ECS controller at runtime
-        /// Using a pointer as we only want to initialise it after all components have been registered
-        static ecs::ECS_Controller* controller;
+        /// Pointer to the system this entity exists in
+        EntityComponentSystem* controller;
 
         /// Pointer to the node containing this entity
         Node<Entity*>* self;
@@ -309,7 +279,7 @@ namespace ossium
     {
     public:
         friend class Entity;
-        friend class ecs::ECS_Controller;
+        friend class EntityComponentSystem;
 
         /// Returns a pointer to the entity this component is attached to
         Entity* GetEntity();
@@ -350,15 +320,6 @@ namespace ossium
         #endif // DEBUG
 
     };
-
-    namespace ecs
-    {
-        /// Initialises the static ECS controller declared in the Entity class so that components may be registered
-        void InitECS();
-
-        /// Destroys the ECS controller
-        void DestroyECS();
-    }
 
 }
 

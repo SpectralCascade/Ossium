@@ -45,9 +45,6 @@ namespace ossium
         }
         SDL_Log("%s | %s CPU at %f GHz | %d MB memory\n", SDL_GetPlatform(), numCPUs.c_str(), processorSpeed, SDL_GetSystemRAM());
 
-        /// Initialise the ECS subsystem
-        ecs::InitECS();
-
         /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
         #ifdef DEBUG
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
@@ -101,7 +98,6 @@ namespace ossium
         Mix_CloseAudio();
         TTF_Quit();
         IMG_Quit();
-        ecs::DestroyECS();
         SDL_Quit();
         printf("INFO: Successfully terminated Ossium.");
     }
