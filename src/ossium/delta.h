@@ -32,7 +32,7 @@ namespace ossium
 
     };
 
-    namespace global
+    inline namespace global
     {
 
         static Delta delta;

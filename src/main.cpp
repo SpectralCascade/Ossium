@@ -22,7 +22,6 @@ using namespace ossium::test;
 
 using namespace std;
 using namespace ossium;
-using namespace ossium::global;
 
 Text* targetText = nullptr;
 Text* mainText = nullptr;
