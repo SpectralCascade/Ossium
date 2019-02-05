@@ -2,7 +2,7 @@
 
 #include "delta.h"
 
-namespace ossium
+namespace Ossium
 {
 
     Delta::Delta()

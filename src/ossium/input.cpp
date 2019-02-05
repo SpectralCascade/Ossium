@@ -1,65 +1,70 @@
 #include "input.h"
 
-namespace ossium
+namespace Ossium
 {
 
-    namespace inputsys
+    inline namespace input
     {
 
-        InputHandlerType HandlerRegistry::nextTypeIdent = 0;
+        namespace internals
+        {
 
-    }
+            InputHandlerType HandlerRegistry::nextTypeIdent = 0;
 
-    Input::Input()
-    {
-    }
+        }
 
-    Input::~Input()
-    {
-        Clear();
-    }
+        InputController::InputController()
+        {
+        }
 
-    void Input::Update()
-    {
-        SDL_Event current;
-        while (SDL_PollEvent(&current) != 0)
+        InputController::~InputController()
+        {
+            Clear();
+        }
+
+        void InputController::Update()
+        {
+            SDL_Event current;
+            while (SDL_PollEvent(&current) != 0)
+            {
+                for (auto i = contexts.begin(); i != contexts.end(); i++)
+                {
+                    (*i).second->HandleInput(current);
+                }
+            }
+        }
+
+        void InputController::AddContext(string name, InputContext* context)
+        {
+            contexts[name] = context;
+        }
+
+        void InputController::RemoveContext(string name)
+        {
+            auto itr = contexts.find(name);
+            if (itr != contexts.end())
+            {
+                contexts.erase(itr);
+            }
+        }
+
+        bool InputController::HandleEvent(const SDL_Event& raw)
         {
             for (auto i = contexts.begin(); i != contexts.end(); i++)
             {
-                (*i).second->HandleInput(current);
+                if ((*i).second->HandleInput(raw))
+                {
+                    return true;
+                }
             }
+            return false;
         }
-    }
 
-    void Input::AddContext(string name, InputContext* context)
-    {
-        contexts[name] = context;
-    }
-
-    void Input::RemoveContext(string name)
-    {
-        auto itr = contexts.find(name);
-        if (itr != contexts.end())
+        void InputController::Clear()
         {
-            contexts.erase(itr);
+            contexts.clear();
         }
-    }
 
-    bool Input::HandleEvent(const SDL_Event& raw)
-    {
-        for (auto i = contexts.begin(); i != contexts.end(); i++)
-        {
-            if ((*i).second->HandleInput(raw))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void Input::Clear()
-    {
-        contexts.clear();
     }
 
 }

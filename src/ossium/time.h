@@ -3,7 +3,7 @@
 
 #include <SDL.h>
 
-namespace ossium
+namespace Ossium
 {
     /// A special clock that measures relative time passed
     class Clock

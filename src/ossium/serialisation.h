@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     const bool READ = 0;

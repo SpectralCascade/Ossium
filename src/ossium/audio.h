@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     inline namespace audio

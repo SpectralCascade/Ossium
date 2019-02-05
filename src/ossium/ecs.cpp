@@ -11,7 +11,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)

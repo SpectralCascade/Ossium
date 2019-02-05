@@ -1,13 +1,19 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-namespace ossium
+namespace Ossium
 {
-    struct Vector
+
+    inline namespace structs
     {
-        float x;
-        float y;
-    };
+
+        struct Vector
+        {
+            float x;
+            float y;
+        };
+
+    }
 
     /// Basic vector arithmetic
     Vector operator+(const Vector& vec_a, const Vector& vec_b);

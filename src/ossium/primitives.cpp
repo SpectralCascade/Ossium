@@ -1,7 +1,7 @@
 #include "primitives.h"
 #include "vector.h"
 
-namespace ossium
+namespace Ossium
 {
     /// Point intersection tests
     bool Intersect(Vector point, Circle circle)

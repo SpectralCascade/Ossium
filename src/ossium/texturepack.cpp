@@ -11,7 +11,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     SDL_Rect getMipMapClip(SDL_Rect src, int level, Uint16 minSize)

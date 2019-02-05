@@ -7,7 +7,7 @@
 #include "renderer.h"
 #include "ecs.h"
 
-namespace ossium
+namespace Ossium
 {
     REGISTER_COMPONENT(Text);
 

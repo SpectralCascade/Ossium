@@ -3,7 +3,7 @@
 
 #include "vector.h"
 
-namespace ossium
+namespace Ossium
 {
     /// 2x2 matrix with additional scaling component indicating position and orientation
     /// Each vector represents a column in the matrix, for ease of use

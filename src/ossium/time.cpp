@@ -2,7 +2,7 @@
 
 #include "time.h"
 
-namespace ossium
+namespace Ossium
 {
     ///
     /// Clock definitions

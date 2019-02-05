@@ -1,7 +1,7 @@
 #include "vector.h"
 #include "transform.h"
 
-namespace ossium
+namespace Ossium
 {
 
     inline Vector operator*(const Vector& vec, const Transform& matrixTransform)

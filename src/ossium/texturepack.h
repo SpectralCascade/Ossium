@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     // Data about an individual texture in the TexturePack

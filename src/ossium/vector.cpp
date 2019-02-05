@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
     Vector operator+(const Vector& vec_a, const Vector& vec_b)
     {

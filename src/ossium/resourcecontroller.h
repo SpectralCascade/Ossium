@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
     /// Standalone resource controller template class
     template <class resourceType>

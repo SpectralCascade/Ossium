@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     typedef Uint32 ComponentType;
@@ -84,7 +84,7 @@ namespace ossium
     class EntityComponentSystem
     {
     public:
-        friend class ossium::Entity;
+        friend class Ossium::Entity;
 
         EntityComponentSystem();
         ~EntityComponentSystem();

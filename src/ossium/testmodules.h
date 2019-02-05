@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 #ifdef UNIT_TESTS
 

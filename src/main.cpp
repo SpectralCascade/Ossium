@@ -2,26 +2,26 @@
 #include <string.h>
 #include <SDL.h>
 
-#include "ossium/config.h"
-#include "ossium/init.h"
-#include "ossium/window.h"
-#include "ossium/time.h"
-#include "ossium/font.h"
-#include "ossium/text.h"
-#include "ossium/renderer.h"
-#include "ossium/ecs.h"
-#include "ossium/delta.h"
-#include "ossium/keyboard.h"
-#include "ossium/mouse.h"
-#include "ossium/audio.h"
+#include "Ossium/config.h"
+#include "Ossium/init.h"
+#include "Ossium/window.h"
+#include "Ossium/time.h"
+#include "Ossium/font.h"
+#include "Ossium/text.h"
+#include "Ossium/renderer.h"
+#include "Ossium/ecs.h"
+#include "Ossium/delta.h"
+#include "Ossium/keyboard.h"
+#include "Ossium/mouse.h"
+#include "Ossium/audio.h"
 
 #ifdef UNIT_TESTS
-#include "ossium/testmodules.h"
-using namespace ossium::test;
+#include "Ossium/testmodules.h"
+using namespace Ossium::test;
 #endif // UNIT_TESTS
 
 using namespace std;
-using namespace ossium;
+using namespace Ossium;
 
 Text* targetText = nullptr;
 Text* mainText = nullptr;
@@ -178,9 +178,9 @@ int main(int argc, char* argv[])
         mouse->Bind("mouseclick", MOUSE_BUTTON_LEFT);
         mouse->Bind("scroll", MOUSE_WHEEL);
 
-        Input input;
+        InputController mainInput;
 
-        input.AddContext("main", &mainContext);
+        mainInput.AddContext("main", &mainContext);
 
         SDL_Event e;
 
@@ -231,7 +231,7 @@ int main(int argc, char* argv[])
                     quit = true;
                     break;
                 }
-                input.HandleEvent(e);
+                mainInput.HandleEvent(e);
             }
 
             /// Logic update phase

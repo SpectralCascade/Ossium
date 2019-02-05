@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
     /// Bit masks for flag that decides whether a state texture is split along x or y axis
     /// For use with Uint16 variables, so 15 bits are freely available

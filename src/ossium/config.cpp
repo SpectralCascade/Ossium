@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
     bool LoadConfig(Config* config)
     {
@@ -21,27 +21,27 @@ namespace ossium
         }
 
         /// Attempt to open file
-        ifstream configFile("ossium.cfg");
+        ifstream configFile("Ossium.cfg");
 
         /// Check if file did not open
         if (!configFile.is_open())
         {
             /// Create a new config file if it doesn't exist or cannot be found
-            SDL_Log("Could not open 'ossium.cfg'");
-            SDL_Log("Creating new configuration file 'ossium.cfg'...");
+            SDL_Log("Could not open 'Ossium.cfg'");
+            SDL_Log("Creating new configuration file 'Ossium.cfg'...");
             Config newConfig;
             if (SaveConfig(newConfig))
             {
-                configFile.open("ossium.cfg");
+                configFile.open("Ossium.cfg");
                 if (!configFile.is_open())
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not open configuration file 'ossium.cfg'!");
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not open configuration file 'Ossium.cfg'!");
                     success = false;
                 }
             }
             else
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create configuration file 'ossium.cfg'!");
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create configuration file 'Ossium.cfg'!");
                 success = false;
             }
         }
@@ -58,7 +58,7 @@ namespace ossium
     bool SaveConfig(Config config)
     {
         bool success = true;
-        ofstream newConfigFile("ossium.cfg");
+        ofstream newConfigFile("Ossium.cfg");
         /// Output settings to file
         if (newConfigFile.is_open())
         {

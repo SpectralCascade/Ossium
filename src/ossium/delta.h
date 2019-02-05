@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-namespace ossium
+namespace Ossium
 {
 
     class Delta

@@ -7,11 +7,14 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     /// Forward declare Renderer and TexturePack
-    class Renderer;
+    inline namespace graphics
+    {
+        class Renderer;
+    }
     class TexturePack;
 
     /// Wrapper class for SDL_Texture
@@ -19,7 +22,7 @@ namespace ossium
     {
     public:
         /// Renderer has access to the actual rendering methods
-        friend class Renderer;
+        friend class graphics::Renderer;
         /// TexturePack is allowed to use the SDL_Texture
         friend class TexturePack;
 

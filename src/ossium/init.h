@@ -3,7 +3,7 @@
 
 #include <SDL.h>
 
-namespace ossium
+namespace Ossium
 {
     /// Initialisation error types
     enum InitError

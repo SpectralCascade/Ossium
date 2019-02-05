@@ -1,7 +1,7 @@
 #ifndef HELPERMACROS_H
 #define HELPERMACROS_H
 
-namespace ossium
+namespace Ossium
 {
 
     /// Convenience macro for declaring private copy and assignment constructors

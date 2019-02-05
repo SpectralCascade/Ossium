@@ -3,7 +3,7 @@
 #include "basics.h"
 #include "window.h"
 
-namespace ossium
+namespace Ossium
 {
 
     Window::Window(const char* title, int w, int h, bool fullscrn, Uint32 flags)

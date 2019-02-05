@@ -7,7 +7,7 @@
 #include "statesprite.h"
 #include "renderer.h"
 
-namespace ossium
+namespace Ossium
 {
     StateSprite::StateSprite()
     {

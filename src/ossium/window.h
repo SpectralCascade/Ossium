@@ -4,7 +4,7 @@
 #include <string>
 #include <SDL.h>
 
-namespace ossium
+namespace Ossium
 {
     /// Wrapper class for SDL_Window
     class Window

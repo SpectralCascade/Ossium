@@ -11,11 +11,14 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     /// Forward declaration
-    class Renderer;
+    inline namespace graphics
+    {
+        class Renderer;
+    }
 
     enum TextRenderModes
     {
@@ -32,7 +35,7 @@ namespace ossium
         Text();
         ~Text();
 
-        friend class Renderer;
+        friend class graphics::Renderer;
 
         /// Renders textData to a texture using a TrueType Font
         bool textToTexture(Renderer* renderer, Font* fontToUse, int pointSize = 0);

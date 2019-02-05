@@ -6,7 +6,7 @@
 
 #include "basics.h"
 
-namespace ossium
+namespace Ossium
 {
 
     template<class T>

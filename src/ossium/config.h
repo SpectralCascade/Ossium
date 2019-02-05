@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-namespace ossium
+namespace Ossium
 {
     const bool CONFIG_DEFAULT_FULLSCREEN = false;
     const bool CONFIG_DEFAULT_VSYNC = true;

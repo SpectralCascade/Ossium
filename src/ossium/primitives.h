@@ -5,56 +5,62 @@
 
 #include "vector.h"
 
-namespace ossium
+namespace Ossium
 {
-    struct Circle
-    {
-        float x;
-        float y;
-        float r;
-    };
 
-    struct Line
+    inline namespace structs
     {
-        Vector p;
-        Vector u;
-    };
 
-    struct LineSegment
-    {
-        Vector a;
-        Vector b;
-    };
-
-    struct Ray
-    {
-        Vector p;
-        Vector u;
-    };
-
-    /// Ossium alternative to SDL_Rect; floating point instead of integers
-    struct Rectangle
-    {
-        float x;
-        float y;
-        float w;
-        float h;
-        inline float xmax()
+        struct Circle
         {
-            return x + w;
+            float x;
+            float y;
+            float r;
         };
-        inline float ymax()
-        {
-            return y + h;
-        };
-    };
 
-    struct Triangle
-    {
-        Vector a;
-        Vector b;
-        Vector c;
-    };
+        struct Line
+        {
+            Vector p;
+            Vector u;
+        };
+
+        struct LineSegment
+        {
+            Vector a;
+            Vector b;
+        };
+
+        struct Ray
+        {
+            Vector p;
+            Vector u;
+        };
+
+        /// Ossium alternative to SDL_Rect; floating point instead of integers
+        struct Rectangle
+        {
+            float x;
+            float y;
+            float w;
+            float h;
+            inline float xmax()
+            {
+                return x + w;
+            };
+            inline float ymax()
+            {
+                return y + h;
+            };
+        };
+
+        struct Triangle
+        {
+            Vector a;
+            Vector b;
+            Vector c;
+        };
+
+    }
 
     /// Now for the fun part... intersection tests
     /// There is some duplication here, but it should make auto-complete nicer

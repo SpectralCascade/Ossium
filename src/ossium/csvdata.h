@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
 
     class CSV

@@ -9,7 +9,7 @@
 #include "circularbuffer.h"
 #include "ecs.h"
 
-namespace ossium
+namespace Ossium
 {
 
     /// The state interface enables states to be controlled by any class with a state machine

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace ossium
+namespace Ossium
 {
     float clamp(float n, float min, float max)
     {
