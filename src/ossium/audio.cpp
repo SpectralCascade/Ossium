@@ -493,7 +493,7 @@ namespace Ossium
                 if (stream != NULL)
                 {
                     SetVolume(vol);
-                    Mix_VolumeMusic(mapRange(GetVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                    Mix_VolumeMusic(mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
                     Mix_PlayMusic(stream, loops);
                     started = true;
                 }
@@ -503,7 +503,7 @@ namespace Ossium
                     if (Load(cachedPath))
                     {
                         SetVolume(vol);
-                        Mix_VolumeMusic(mapRange(GetVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                        Mix_VolumeMusic(mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
                         Mix_PlayMusic(stream, loops);
                         started = true;
                     }

@@ -14,6 +14,14 @@ namespace Ossium
     /// Turns a code snippet into a string
     #define STRINGIFY(CODE) "CODE"
 
+    #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)                       \
+            if (!(CONDITION))                                           \
+            {                                                           \
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, FAIL_MESSAGE);    \
+                SDL_assert(false);                                      \
+            }                                                           \
+            SDL_assert(true)
+
 
 }
 
