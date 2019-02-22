@@ -275,12 +275,16 @@ int main(int argc, char* argv[])
                     fpsTimer.start();
                 }
             }
-            SDL_SetRenderDrawColor(mainRenderer.GetRendererSDL(), 0xFF, 0xFF, 0xFF, 0xFF);
+            mainRenderer.RenderPresent(true);
+
+            mainRenderer.SetDrawColour(colours::RED);
             SDL_Rect viewrect = mainWindow.getViewportRect();
             viewrect.x = 0;
             viewrect.y = 0;
             SDL_RenderDrawRect(mainRenderer.GetRendererSDL(), &viewrect);
-            mainRenderer.RenderPresent(false);
+
+            mainRenderer.SetDrawColour(colours::BLACK);
+            SDL_RenderPresent(mainRenderer.GetRendererSDL());
 
             /// Update timer and FPS count
             countedFrames++;

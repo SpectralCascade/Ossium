@@ -60,8 +60,10 @@ namespace Ossium
             /// Renders all registered and enqueued graphics in the current frame.
             /// Note that enqueued graphics are rendered last in each layer,
             /// so they appear on top of registered graphics if they overlap in the same layer.
-            /// Set clearFirst to false if you don't want to clear the video buffer before drawing stuff
-            void RenderPresent(bool clearFirst = true);
+            /// Set manualMode to true if you don't want to automatically clear the video buffer before drawing stuff
+            /// and/or you wish to draw stuff after calling RenderPresent(). Note you will have to manually call
+            /// SDL_RenderClear() and SDL_RenderPresent!
+            void RenderPresent(bool manualMode = false);
 
             /// Sets the rendering colour for drawn points, lines and rects
             void SetDrawColour(SDL_Color colour);

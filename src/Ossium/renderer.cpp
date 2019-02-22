@@ -101,9 +101,9 @@ namespace Ossium
             queuedGraphics[layer].push(graphic);
         }
 
-        void Renderer::RenderPresent(bool clearFirst)
+        void Renderer::RenderPresent(bool manualMode)
         {
-            if (clearFirst)
+            if (!manualMode)
             {
                 SDL_RenderClear(renderer);
             }
@@ -126,9 +126,12 @@ namespace Ossium
             numRenderedPrevious = numRendered;
             numRendered = 0;
             #endif // DEBUG
-            /// Doing this ensures the background is always black
-            SetDrawColour(colours::BLACK);
-            SDL_RenderPresent(renderer);
+            if (!manualMode)
+            {
+                /// Doing this ensures the background is always black
+                SetDrawColour(colours::BLACK);
+                SDL_RenderPresent(renderer);
+            }
         }
 
         void Renderer::SetDrawColour(SDL_Color colour)
