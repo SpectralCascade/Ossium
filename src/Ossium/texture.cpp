@@ -1,5 +1,4 @@
 #include <memory>
-#include <mem.h>
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>

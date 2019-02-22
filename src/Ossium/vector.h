@@ -54,7 +54,7 @@ namespace Ossium
             /// Gets the rotation of this vector in radians
             inline float RotationRad()
             {
-                return SDL_atan2f(x, y);
+                return SDL_atan2(x, y);
             }
             /// Gets the rotation of this vector in degrees
             inline float Rotation()
