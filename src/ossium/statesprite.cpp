@@ -6,7 +6,7 @@
 #include "texture.h"
 #include "statesprite.h"
 #include "renderer.h"
-
+/*
 namespace Ossium
 {
     StateSprite::StateSprite()
@@ -88,21 +88,21 @@ namespace Ossium
         currentSubState = substate;
         if (!horizontalFlag)
         {
-            int clipWidth = (stateTexture->getWidth() / (int)totalCurrentSegments);
+            int clipWidth = (stateTexture->GetWidth() / (int)totalCurrentSegments);
             if (clipWidth < 1)
             {
                 clipWidth = 1;
             }
-            substateRect = {clipWidth * substate, 0, clipWidth, stateTexture->getHeight()};
+            substateRect = {clipWidth * substate, 0, clipWidth, stateTexture->GetHeight()};
         }
         else
         {
-            int clipHeight = (stateTexture->getHeight() / (int)totalCurrentSegments);
+            int clipHeight = (stateTexture->GetHeight() / (int)totalCurrentSegments);
             if (clipHeight < 1)
             {
                 clipHeight = 1;
             }
-            substateRect = {0, clipHeight * substate, stateTexture->getWidth(), clipHeight};
+            substateRect = {0, clipHeight * substate, stateTexture->GetWidth(), clipHeight};
         }
     }
 
@@ -116,25 +116,11 @@ namespace Ossium
         return currentSubState;
     }
 
-    void StateSprite::render(Renderer* renderer, int x, int y, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void StateSprite::Render(Renderer& renderer)
     {
-        renderer->enqueueEx(stateTexture, {x, y, substateRect.w, substateRect.h}, substateRect, layer, angle, *origin, flip);
-    }
-
-    void StateSprite::render(Renderer* renderer, SDL_Rect dest, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        renderer->enqueueEx(stateTexture, dest, substateRect, layer, angle, *origin, flip);
-    }
-
-    void StateSprite::renderSimple(Renderer* renderer, int x, int y, int layer)
-    {
-        renderer->enqueue(stateTexture, {x, y, substateRect.w, substateRect.h}, substateRect, layer);
-    }
-
-    void StateSprite::renderSimple(Renderer* renderer, SDL_Rect dest, int layer)
-    {
-        renderer->enqueue(stateTexture, dest, substateRect, layer);
+        stateTexture->Render(renderer);
     }
 
 
 }
+*/

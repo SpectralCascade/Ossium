@@ -10,7 +10,7 @@
 #include "serialisation.h"
 
 using namespace std;
-
+/*
 namespace Ossium
 {
 
@@ -92,7 +92,7 @@ namespace Ossium
         return packedTexture.load(path + ".png", args);
     }
 
-    bool TexturePack::init(Renderer* renderer, Uint32 windowPixelFormat)
+    bool TexturePack::init(Renderer& renderer, Uint32 windowPixelFormat)
     {
         return packedTexture.init(renderer, windowPixelFormat);
     }
@@ -111,15 +111,15 @@ namespace Ossium
         if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
         {
             SDL_Texture* mipmappedTexture = NULL;
-            SDL_Renderer* targetRenderer = renderer->getRenderer();
-            mipmappedTexture = SDL_CreateTexture(targetRenderer, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, (src.w / 2) * 3, src.h);
+            SDL_Renderer* tarGetRendererSDL = renderer.GetRendererSDL();
+            mipmappedTexture = SDL_CreateTexture(tarGetRendererSDL, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, (src.w / 2) * 3, src.h);
             // Cache original renderer target
-            SDL_Texture* originalTarget = SDL_GetRenderTarget(targetRenderer);
+            SDL_Texture* originalTarget = SDL_GetRenderTarget(tarGetRendererSDL);
             // Configure the renderer so it renders to the mipmapped texture
-            SDL_SetRenderTarget(targetRenderer, mipmappedTexture);
-            SDL_RenderClear(targetRenderer);
+            SDL_SetRenderTarget(tarGetRendererSDL, mipmappedTexture);
+            SDL_RenderClear(tarGetRendererSDL);
             // Render the imported texture to the mipmapped texture
-            SDL_RenderCopy(targetRenderer, importedTexture->texture, NULL, &src);
+            SDL_RenderCopy(tarGetRendererSDL, importedTexture->texture, NULL, &src);
             // Now obtain mipmap levels and render the mipmap to texture
             SDL_Rect previousClip = {0, 0, 0, 0};
             int level = 0;
@@ -130,15 +130,15 @@ namespace Ossium
                 {
                     break;
                 }
-                SDL_RenderCopy(targetRenderer, importedTexture->texture, &src, &mipmapClip);
+                SDL_RenderCopy(tarGetRendererSDL, importedTexture->texture, &src, &mipmapClip);
                 level++;
                 previousClip = mipmapClip;
             }
-            SDL_RenderPresent(targetRenderer);
+            SDL_RenderPresent(tarGetRendererSDL);
             SDL_Rect targetRect = {0, 0, (src.w / 2) * 3, src.h};
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-            SDL_RenderReadPixels(targetRenderer, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
-            mipmappedTexture = SDL_CreateTextureFromSurface(targetRenderer, renderSurface);
+            SDL_RenderReadPixels(tarGetRendererSDL, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
+            mipmappedTexture = SDL_CreateTextureFromSurface(tarGetRendererSDL, renderSurface);
             // Free the original imported texture and replace with mipmapped version
             SDL_DestroyTexture(importedTexture->texture);
             importedTexture->texture = mipmappedTexture;
@@ -147,14 +147,14 @@ namespace Ossium
 
             SDL_FreeSurface(renderSurface);
             // Reset the render target of the renderer
-            SDL_SetRenderTarget(targetRenderer, originalTarget);
+            SDL_SetRenderTarget(tarGetRendererSDL, originalTarget);
             mipmapped = true;
         }
         importedData.push_back((ImportedTextureData){path, src, mipmapped, importedTexture});
         return true;
     }
 
-    int TexturePack::packImported(Renderer* renderer, Uint32 windowPixelFormat, bool smallestFirst, Uint16 maxSize)
+    int TexturePack::packImported(Renderer& renderer, Uint32 windowPixelFormat, bool smallestFirst, Uint16 maxSize)
     {
         // Free current pack texture and it's meta data
         freePack();
@@ -187,7 +187,7 @@ namespace Ossium
         }
         // Once all the textures are sorted, we can start rendering them to the packedTexture
         int numAdded = 0;
-        SDL_Renderer* render = renderer->getRenderer();
+        SDL_Renderer* render = renderer.GetRendererSDL();
         // Max size is used for dimensions for time being, but any leftover space will be removed
         packedTexture.texture = SDL_CreateTexture(render, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, maxSize, maxSize);
         packedTexture.width = maxSize;
@@ -244,13 +244,13 @@ namespace Ossium
         return numAdded;
     }
 
-    bool TexturePack::save(Renderer* renderer, Uint32 windowPixelFormat, string path)
+    bool TexturePack::save(Renderer& renderer, Uint32 windowPixelFormat, string path)
     {
         // Saves the texture pack as a PNG image with meta file containing clip information
         if (packedTexture.texture != NULL)
         {
             // Setup target texture and surface
-            SDL_Renderer* render = renderer->getRenderer();
+            SDL_Renderer* render = renderer.GetRendererSDL();
             SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
             SDL_Rect targetRect = {0, 0, packedTexture.getWidth(), packedTexture.getHeight()};
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
@@ -346,3 +346,4 @@ namespace Ossium
     }
 
 }
+*/

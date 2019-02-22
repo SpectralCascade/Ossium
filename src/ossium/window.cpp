@@ -188,7 +188,7 @@ namespace Ossium
         if (fullscreen)
         {
             percent_width = (float)display_width / (float)aspect_width;
-            percent_height = (float)display_height / (float)aspect_height ;
+            percent_height = (float)display_height / (float)aspect_height;
         }
         else
         {

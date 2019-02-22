@@ -1,35 +1,160 @@
+#include <cmath>
+
 #include "primitives.h"
-#include "vector.h"
 
 namespace Ossium
 {
-    /// Point intersection tests
-    bool Intersect(Vector point, Circle circle)
+
+    inline namespace structs
     {
-        return CalcMagnitudeSquared(point - (Vector){circle.x, circle.y}) <= circle.r * circle.r;
+
+        /// Note: Everything does integer truncation when rendering. Should rounding be used instead?
+
+        ///
+        /// Point
+        ///
+
+        Point::Point()
+        {
+        }
+
+        Point::Point(const Vector& vec)
+        {
+            x = vec.x;
+            y = vec.y;
+        }
+
+        void Point::Draw(Renderer& renderer)
+        {
+            SDL_RenderDrawPoint(renderer.GetRendererSDL(), x, y);
+        }
+
+        void Point::Draw(Renderer& renderer, SDL_Color colour)
+        {
+            renderer.SetDrawColour(colour);
+            Draw(renderer);
+        }
+
+        Point Point::Lerp(Point p, float w)
+        {
+            return static_cast<Point>(Vector::Lerp(static_cast<Vector>(p), w));
+        }
+
+        float Point::DistanceSquared(Point p)
+        {
+            return Vector::DistanceSquared(static_cast<Vector>(p));
+        }
+
+        float Point::Distance(Point p)
+        {
+            return Vector::Distance(static_cast<Vector>(p));
+        }
+
+        bool Point::Intersects(Circle circle)
+        {
+            return DistanceSquared((Vector){circle.x, circle.y}) <= circle.r * circle.r;
+        }
+        bool Point::Intersects(InfiniteLine infiniteLine)
+        {
+            /// Treat this as a point on the line and check if it has the same Y-intercept
+            float m = (infiniteLine.u.y / infiniteLine.u.x);
+            return (y - (m * x)) == (infiniteLine.p.y - (m * infiniteLine.p.x));
+        }
+        bool Point::Intersects(Line line)
+        {
+            /// Similar to above, but within a limited range
+            InfiniteLine infLine = {line.a, (Vector)line.b};
+            return Intersects(infLine) &&
+             line.a.DistanceSquared(*this) <= line.a.DistanceSquared(line.b);
+        }
+        bool Point::Intersects(Ray ray)
+        {
+            /// Same as infinite line but we also check if the point is on the correct side
+            InfiniteLine line = {ray.p, static_cast<Point>(ray.u)};
+            return Intersects(line) && ray.u.Dot(*this) > 0.0;
+        }
+        bool Point::Intersects(Rect rect)
+        {
+            return x >= rect.x && x <= rect.xmax() && y >= rect.y && y <= rect.ymax();
+        }
+
+        ///
+        /// Line
+        ///
+
+        void Line::Draw(Renderer& renderer)
+        {
+            SDL_RenderDrawLine(renderer.GetRendererSDL(), a.x, a.y, b.x, b.y);
+        }
+
+        void Line::Draw(Renderer& renderer, SDL_Color colour)
+        {
+            renderer.SetDrawColour(colour);
+            Draw(renderer);
+        }
+
+        void Rect::DrawFilled(Renderer& renderer)
+        {
+            SDL_Rect rect = SDL();
+            SDL_RenderFillRect(renderer.GetRendererSDL(), &rect);
+        }
+
+        void Rect::DrawFilled(Renderer& renderer, SDL_Color colour)
+        {
+            renderer.SetDrawColour(colour);
+            DrawFilled(renderer);
+        }
+
+        void Rect::Draw(Renderer& renderer)
+        {
+            SDL_Rect rect = SDL();
+            SDL_RenderDrawRect(renderer.GetRendererSDL(), &rect);
+        }
+
+        void Rect::Draw(Renderer& renderer, SDL_Color colour)
+        {
+            renderer.SetDrawColour(colour);
+            Draw(renderer);
+        }
+
+        SDL_Rect Rect::SDL()
+        {
+            return (SDL_Rect){(int)round(x), (int)round(y), (int)round(w), (int)round(h)};
+        }
+
+        void Polygon::DrawFilled(Renderer& renderer)
+        {
+            /// TODO: this
+        }
+
+        void Polygon::DrawFilled(Renderer& renderer, SDL_Color colour)
+        {
+            renderer.SetDrawColour(colour);
+            DrawFilled(renderer);
+        }
+
+        void Polygon::Draw(Renderer& renderer, SDL_Color colour)
+        {
+            renderer.SetDrawColour(colour);
+            Draw(renderer);
+        }
+
+        void Polygon::Draw(Renderer& renderer)
+        {
+            if (!vertices.empty())
+            {
+                Point previousPoint = vertices[0];
+                for (unsigned int i = 1, counti = vertices.size(); i < counti; i++)
+                {
+                    SDL_RenderDrawLine(renderer.GetRendererSDL(), (int)previousPoint.x, (int)previousPoint.y, (int)vertices[i].x, (int)vertices[i].y);
+                    previousPoint = vertices[i];
+                }
+                SDL_RenderDrawLine(renderer.GetRendererSDL(), (int)previousPoint.x, (int)previousPoint.y, (int)vertices[0].x, (int)vertices[0].y);
+            }
+        }
+
     }
-    bool Intersect(Vector point, Line line)
-    {
-        /// Treat the given point as if a point on the line,
-        /// and check if it has the same Y-intercept as the point we know is definitely on the line
-        float m = (line.u.y / line.u.x);
-        return (point.y - (m * point.x)) == (line.p.y - (m * line.p.x));
-    }
-    bool Intersect(Vector point, LineSegment segment)
-    {
-        /// Similar to above, but within a limited range
-        return Intersect(point, (Line){segment.a, segment.b}) &&
-         CalcDistanceSquared(segment.a, point) <= CalcDistanceSquared(segment.a, segment.b);
-    }
-    bool Intersect(Vector point, Ray ray)
-    {
-        /// Same again, but this time we just check if the point is on the correct side
-        return Intersect(point, (Line){ray.p, ray.u}) && CalcDotProduct(ray.u, point) > 0.0;
-    }
-    bool Intersect(Vector point, Rectangle rect)
-    {
-        return point.x >= rect.x && point.x <= rect.xmax() && point.y >= rect.y && point.y <= rect.ymax();
-    }
+
     /*
     bool Intersect(Vector point, Triangle triangle);
 
@@ -66,7 +191,7 @@ namespace Ossium
     bool Intersect(Ray ray, Triangle triangle);
 */
     /// Rectangle intersection tests, AABB only
-    bool Intersect(Rectangle rectA, Rectangle rectB)
+    bool Intersect(Rect rectA, Rect rectB)
     {
         return !((rectA.x > rectB.xmax() || rectA.xmax() < rectB.x) && (rectA.y > rectB.ymax() || rectA.ymax() < rectB.y));
     }

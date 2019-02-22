@@ -8,26 +8,15 @@
 #include "font.h"
 #include "renderer.h"
 #include "ecs.h"
+#include "primitives.h"
+#include "texture.h"
 
 using namespace std;
 
 namespace Ossium
 {
 
-    /// Forward declaration
-    inline namespace graphics
-    {
-        class Renderer;
-    }
-
-    enum TextRenderModes
-    {
-        RENDERTEXT_SOLID = 0,
-        RENDERTEXT_SHADED,
-        RENDERTEXT_BLEND
-    };
-
-    class Text : public Component
+    class Text : public Texture
     {
     public:
         DECLARE_COMPONENT(Text);
@@ -38,17 +27,10 @@ namespace Ossium
         friend class graphics::Renderer;
 
         /// Renders textData to a texture using a TrueType Font
-        bool textToTexture(Renderer* renderer, Font* fontToUse, int pointSize = 0);
+        bool textToTexture(Renderer& renderer, Font* fontToUse, int pointSize = 0);
 
-        /// Send the text to a renderer instance to be rendered
-        void render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-
-        /// Simplified overload
-        void render(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-
-        /// Very simple alternative render methods
-        void renderSimple(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, int layer = 0);
-        void renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer = 0);
+        /// Graphic override
+        void Render(Renderer& renderer);
 
         /// Sets some of the more general text style properties
         void setStyling(int textStyle = TTF_STYLE_NORMAL, int textOutline = 0, int textHinting = TTF_HINTING_NORMAL, SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF});
@@ -88,18 +70,7 @@ namespace Ossium
 
     private:
         /// Prohibited copying for all but the Component Clone() method
-        Text(const Text& copySource);
-        Text operator=(Text copySource);
-
-        /// Renders the texture in a similar way to Texture::render()
-        void renderText(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-
-        /// Simplified overload
-        void renderText(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-
-        /// Very simple render methods
-        void renderTextSimple(Renderer* renderer, int x, int y, SDL_Rect* clip = NULL);
-        void renderTextSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip = NULL);
+        NOCOPY(Text);
 
         /// If true, render box behind text in the background colour
         bool box;
@@ -114,11 +85,8 @@ namespace Ossium
         /// The text string
         string textData;
 
-        /// The texture the text uses
-        SDL_Texture* texture;
-
-        /// The outline texture for the text
-        SDL_Texture* outlineTexture;
+        /// The image that is used to generate the text
+        Image image;
 
         /// Pointer to font
         Font* font;
@@ -134,14 +102,6 @@ namespace Ossium
 
         /// Background colour for outlines or shaded rendering box
         SDL_Color bgColor;
-
-        /// Text texture dimensions
-        int width;
-        int height;
-
-        /// Outline texture dimensions
-        int outlineWidth;
-        int outlineHeight;
 
         /// Text outline thickness in pixels
         int outline;

@@ -14,6 +14,7 @@
 #include "Ossium/keyboard.h"
 #include "Ossium/mouse.h"
 #include "Ossium/audio.h"
+#include "Ossium/colours.h"
 
 #ifdef UNIT_TESTS
 #include "Ossium/testmodules.h"
@@ -50,7 +51,7 @@ void MouseClickAction(const MouseInput& data)
     {
         if (data.state == MOUSE_RELEASED)
         {
-            mainText->setColor(colour::GREEN);
+            mainText->setColor(colours::GREEN);
             mainText->setText("Press any key to bind to action TOGGLE AUDIO");
             check_for_key = true;
         }
@@ -62,7 +63,7 @@ void GetKey(const KeyboardInput& data)
     if (check_for_key && data.state == KEY_UP)
     {
         currentKey = data.key;
-        mainText->setColor(colour::RED);
+        mainText->setColor(colours::RED);
         mainText->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
         check_for_key = false;
         update_binding = true;
@@ -75,19 +76,19 @@ void KeyAction(const KeyboardInput& data)
     {
         if (data.state == KEY_DOWN)
         {
-            targetText->setBackgroundColor(colour::YELLOW);
+            targetText->setBackgroundColor(colours::YELLOW);
         }
         else if (data.state == KEY_UP)
         {
             if (!master.IsMuted())
             {
-                targetText->setBackgroundColor(colour::RED);
+                targetText->setBackgroundColor(colours::RED);
                 master.Mute();
             }
             else
             {
                 master.Unmute();
-                targetText->setBackgroundColor(colour::GREEN);
+                targetText->setBackgroundColor(colours::GREEN);
             }
         }
     }
@@ -121,7 +122,7 @@ int main(int argc, char* argv[])
         Window mainWindow("Ossium Engine", 1024, 768, settings.fullscreen, SDL_WINDOW_SHOWN);
 
         /// Create renderer
-        Renderer* mainRenderer = new Renderer(&mainWindow, 5, true, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
+        Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
         mainWindow.setAspectRatio(16, 9);
 
         /// Create an EntityComponentSystem
@@ -141,23 +142,27 @@ int main(int argc, char* argv[])
         gameObject.AttachComponent<Text>();
 
         targetText = gameObject.GetComponent<Text>();
+        SDL_Log("Text type is %d, texture type is %d.", getComponentType<Text>(), getComponentType<Texture>());
         if (targetText != nullptr)
         {
             targetText->setText("FPS: 0");
-            targetText->setColor(colour::BLACK);
-            targetText->setBox(true);
-            targetText->setBackgroundColor(colour::GREEN);
+            targetText->setColor(colours::BLUE);
+            //targetText->setBox(true);
+            targetText->setOutline(1);
+            targetText->setBackgroundColor(colours::GREEN);
             targetText->textToTexture(mainRenderer, &font);
+            mainRenderer.Register(targetText);
         }
 
         gameObject.AttachComponent<Text>();
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
-            compList[1]->setColor(colour::RED);
+            compList[1]->setColor(colours::RED);
             compList[1]->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             compList[1]->textToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
+            mainRenderer.Register(compList[1]);
         }
 
         ///
@@ -253,13 +258,15 @@ int main(int argc, char* argv[])
             entitySystem.UpdateComponents();
 
             /// Rendering phase
-            mainRenderer->renderClear();
+            SDL_RenderClear(mainRenderer.GetRendererSDL());
+
             vector<Text*> handyComponents = gameObject.GetComponents<Text>();
             if (!handyComponents.empty())
             {
                 for (int i = 0, counti = handyComponents.size(); i < counti; i++)
                 {
-                    handyComponents[i]->renderSimple(mainRenderer, posx, (i * 50) + posy);
+                    handyComponents[i]->position.x = (handyComponents[i]->getWidth() / 2) + posx;
+                    handyComponents[i]->position.y = (handyComponents[i]->getHeight() / 2) + (i * 50) + posy;
                 }
                 if (fpsTimer.getTicks() > 250)
                 {
@@ -268,13 +275,12 @@ int main(int argc, char* argv[])
                     fpsTimer.start();
                 }
             }
-            SDL_SetRenderDrawColor(mainRenderer->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
+            SDL_SetRenderDrawColor(mainRenderer.GetRendererSDL(), 0xFF, 0xFF, 0xFF, 0xFF);
             SDL_Rect viewrect = mainWindow.getViewportRect();
             viewrect.x = 0;
             viewrect.y = 0;
-            mainRenderer->enqueue(&viewrect, 0, false, colour::WHITE);
-            mainRenderer->renderAll(-1);
-            mainRenderer->renderPresent();
+            SDL_RenderDrawRect(mainRenderer.GetRendererSDL(), &viewrect);
+            mainRenderer.RenderPresent(false);
 
             /// Update timer and FPS count
             countedFrames++;

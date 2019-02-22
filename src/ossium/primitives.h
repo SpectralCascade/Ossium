@@ -2,14 +2,28 @@
 #define PRIMITIVES_H
 
 #include <SDL.h>
+#include <vector>
 
 #include "vector.h"
+#include "renderer.h"
+
+using namespace std;
 
 namespace Ossium
 {
 
     inline namespace structs
     {
+
+        /// Forward declarations
+        struct Circle;
+        struct Point;
+        struct Line;
+        struct Ray;
+        struct InfiniteLine;
+        struct Triangle;
+        struct Polygon;
+        struct Rect;
 
         struct Circle
         {
@@ -18,60 +32,122 @@ namespace Ossium
             float r;
         };
 
-        struct Line
+        struct Point : public Vector
         {
-            Vector p;
-            Vector u;
-        };
+            Point();
+            Point(const Vector& vec);
 
-        struct LineSegment
-        {
-            Vector a;
-            Vector b;
+            void Draw(Renderer& renderer);
+            void Draw(Renderer& renderer, SDL_Color colour);
+
+            /// Calculates a point on a line (where this is the start and p is the end of the line). A.K.A. linear interpolation
+            Point Lerp(Point p, float w);
+
+            /// Calculates the squared distance to another point
+            float DistanceSquared(Point p);
+
+            /// Calculate the distance to another point
+            float Distance(Point p);
+
+            /// Whether or not this point is intersecting a circle
+            bool Intersects(Circle circle);
+            /// Whether or not this point is intersecting an infinite line
+            bool Intersects(InfiniteLine infiniteLine);
+            /// Whether or not this point is intersecting a line
+            bool Intersects(Line line);
+            /// Whether or not this point is intersecting a ray
+            bool Intersects(Ray ray);
+            /// Whether or not this point is intersecting a rect
+            bool Intersects(Rect rect);
+
         };
 
         struct Ray
         {
-            Vector p;
+            Point p;
             Vector u;
         };
 
-        /// Ossium alternative to SDL_Rect; floating point instead of integers
-        struct Rectangle
+        struct InfiniteLine : public Ray
+        {
+        };
+
+        struct Line
+        {
+            Point a;
+            Point b;
+
+            void Draw(Renderer& renderer);
+            void Draw(Renderer& renderer, SDL_Color colour);
+
+        };
+
+        /// Floating point rectangle; if you want an integer based rectangle, use SDL_Rect instead
+        struct Rect
         {
             float x;
             float y;
             float w;
             float h;
-            inline float xmax()
+
+            void Draw(Renderer& renderer);
+            void Draw(Renderer& renderer, SDL_Color colour);
+
+            void DrawFilled(Renderer& renderer);
+            void DrawFilled(Renderer& renderer, SDL_Color colour);
+
+            inline int xmax()
             {
                 return x + w;
             };
-            inline float ymax()
+            inline int ymax()
             {
                 return y + h;
             };
+
+            /// Returns the  SDL_Rect equivalent of this rect for convenience
+            SDL_Rect SDL();
+
         };
 
         struct Triangle
         {
-            Vector a;
-            Vector b;
-            Vector c;
+            Point a;
+            Point b;
+            Point c;
+
+            void Draw(Renderer& renderer);
+            void Draw(Renderer& renderer, SDL_Color colour);
+
+            void DrawFilled(Renderer& renderer);
+            void DrawFilled(Renderer& renderer, SDL_Color colour);
+
+        };
+
+        /// Represents a general shape
+        struct Polygon
+        {
+            /// Renders the edges of the polygon
+            void Draw(Renderer& renderer);
+
+            /// Renders the polygon in a solid colour
+            void DrawFilled(Renderer& renderer);
+
+            void Draw(Renderer& renderer, SDL_Color colour);
+            void DrawFilled(Renderer& renderer, SDL_Color colour);
+
+            /// The vertices of the polygon
+            vector<Point> vertices;
+
         };
 
     }
 
-    /// Now for the fun part... intersection tests
-    /// There is some duplication here, but it should make auto-complete nicer
-    /// Point intersection tests
-    bool Intersect(Vector point, Circle circle);
-    bool Intersect(Vector point, Line line);
-    bool Intersect(Vector point, LineSegment segment);
-    bool Intersect(Vector point, Ray ray);
-    bool Intersect(Vector point, Rectangle rect);
     /*
-    bool Intersect(Vector point, Triangle triangle);
+     *    TODO: put these intersection tests inside their respective structs/classes and actually implement them!
+     */
+    /*
+    bool Intersect(Point point, Triangle triangle);
 
     /// Circle intersection tests
     bool Intersect(Circle circleA, Circle circleB);
@@ -106,7 +182,7 @@ namespace Ossium
     bool Intersect(Ray ray, Triangle triangle);
 */
     /// Rectangle intersection tests, AABB only
-    bool Intersect(Rectangle rectA, Rectangle rectB);
+    bool Intersect(Rect rectA, Rect rectB);
 /*
     bool Intersect(Rectangle rect, Circle circle);
     bool Intersect(Rectangle rect, Line line);
@@ -122,10 +198,6 @@ namespace Ossium
     bool Intersect(Triangle triangle, Ray ray);
     bool Intersect(Triangle triangle, Rectangle rect);
     */
-
-    /// SDL intersection tests
-    bool IntersectSDL(SDL_Rect rectA, SDL_Rect rectB);
-    bool IntersectSDL(SDL_Point point, SDL_Rect rect);
 
 }
 

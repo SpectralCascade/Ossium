@@ -69,7 +69,7 @@ namespace Ossium
         {
             TTF_Font* tempFont = NULL;
             /// Pointsizes[0] specifies the amount of pointSizes[]
-            for (int i = 1; i < pointSizes[0] + 1; i++)
+            for (int i = 1; i < (pointSizes[0] + 1); i++)
             {
                 tempFont = TTF_OpenFont(guid_path.c_str(), pointSizes[i]);
                 if (tempFont == NULL)

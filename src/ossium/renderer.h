@@ -3,214 +3,113 @@
 
 #include <vector>
 #include <queue>
+#include <unordered_set>
+#include <unordered_map>
 
 #include <SDL.h>
 
 #include "colours.h"
-#include "vector.h"
-#include "primitives.h"
-//#include "texture.h"
-#include "window.h"
-//#include "text.h"
+#include "helpermacros.h"
 
 using namespace std;
 
 namespace Ossium
 {
 
-    class Texture;
-    class Text;
+    class Window;
 
     inline namespace graphics
     {
 
-        namespace internals
+        /// Forward declaration
+        class Renderer;
+
+        /// Anything that can be rendered should inherit from this interface and implement the Render method
+        class Graphic
         {
+        public:
+            friend class Renderer;
 
-            struct RenderInfoTexture
-            {
-                Texture* texture;
-                SDL_Rect destRect;
-                SDL_Rect srcRect;
-            };
+        protected:
+            virtual void Render(Renderer& renderer) = 0;
 
-            struct RenderInfoTextureEx
-            {
-                Texture* texture;
-                SDL_Rect destRect;
-                SDL_Rect srcRect;
-                SDL_Point origin;
-                float angle;
-                SDL_RendererFlip flip;
-            };
-
-            struct RenderInfoText
-            {
-                Text* text;
-                SDL_Rect destRect;
-                SDL_Rect srcRect;
-            };
-
-            struct RenderInfoTextEx
-            {
-                Text* text;
-                SDL_Rect destRect;
-                SDL_Rect srcRect;
-                SDL_Point origin;
-                float angle;
-                SDL_RendererFlip flip;
-            };
-
-            struct RenderInfoPoint
-            {
-                SDL_Point p;
-                SDL_Color colour;
-            };
-
-            struct RenderInfoLine
-            {
-                Line line;
-                SDL_Color colour;
-                SDL_RendererFlip flip;
-            };
-
-            struct RenderInfoRect
-            {
-                SDL_Rect rect;
-                SDL_Color colour;
-            };
-
-        }
+        };
 
         // Wrapper class for SDL_Renderer - also supports layering
         class Renderer
         {
         public:
-            Renderer(Window* window, int numLayers = 1, bool culling = true, Uint32 flags = SDL_RENDERER_ACCELERATED, int driver = -1);
+            Renderer(Window* window, int numLayers = 1, Uint32 flags = SDL_RENDERER_ACCELERATED, int driver = -1);
             ~Renderer();
 
-            //
-            // ENQUEUING METHODS
-            // These methods add objects to their respective layer queue, ready for rendering
-            //
+            /// Registers a graphic for rendering. Note that you cannot change the layer or forceCull parameter once registered;
+            /// to do so you must unregister the graphic and re-register it with the modified arguments.
+            void Register(Graphic* graphic, int layer = 0);
+            /// Unregisters a graphic so it no longer renders.
+            void Unregister(Graphic* graphic, int layer = 0);
 
-            // Adds a texture pointer to a queue corresponding to the layer. If the layer does not exist, throws an exception
-            void enqueue(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, bool forceCull = false);
-            void enqueueEx(Texture* texture, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, float angle = 0.0, SDL_Point origin = {0, 0}, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
+            /// Unregisters all graphics
+            void UnregisterAll();
 
-            // Ditto but for fancy Text
-            void enqueue(Text* text, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, bool forceCull = false);
-            void enqueueEx(Text* text, SDL_Rect dest, SDL_Rect src = {0, 0, 0, 0}, int layer = 0, float angle = 0, SDL_Point origin = {0, 0}, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
+            /// Clears the render queue
+            void ClearQueue();
 
-            // These all add a point, line or rect to the respective layer queue. If the layer does not exist, throws an exception
-            void enqueue(SDL_Point* point, int layer = 0, SDL_Color colour = colour::BLACK, bool forceCull = false);
-            void enqueue(Line* line, int layer = 0, SDL_Color colour = colour::BLACK, SDL_RendererFlip flip = SDL_FLIP_NONE, bool forceCull = false);
-            void enqueue(SDL_Rect* rect, int layer = 0, bool filled = false, SDL_Color colour = colour::BLACK, bool forceCull = false);
+            /// Enqueues a graphic to be rendered in the next frame only.
+            void Enqueue(Graphic* graphic, int layer = 0);
 
-            //
-            // RENDER METHODS
-            // These methods render enqueued objects
-            //
+            /// Renders all registered and enqueued graphics in the current frame.
+            /// Note that enqueued graphics are rendered last in each layer,
+            /// so they appear on top of registered graphics if they overlap in the same layer.
+            /// Set clearFirst to false if you don't want to clear the video buffer before drawing stuff
+            void RenderPresent(bool clearFirst = true);
 
-            // Renders a specific layer of textures, or all layers by default
-            void renderTextures(int layer = -1);
-            void renderTexturesEx(int layer = -1);
+            /// Sets the rendering colour for drawn points, lines and rects
+            void SetDrawColour(SDL_Color colour);
 
-            // Ditto but for text
-            void renderTexts(int layer = -1);
-            void renderTextsEx(int layer = -1);
+            /// Overload takes individual values for convenience
+            void SetDrawColour(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 0xFF);
 
-            // Renders a specific layer of points, lines and rects respectively, or all layers by default
-            void renderPoints(int layer = -1);
-            void renderLines(int layer = -1);
-            void renderRects(int layer = -1);
-            void renderFillRects(int layer = -1);
-            // Ditto, but with offsets and rotations
-            // Note: These methods are not yet supported
-            /*void renderPointsEx(int layer = -1, int xOffset = 0, int yOffset = 0, SDL_Point* origin = NULL, float angle = 0.0);
-            void renderLinesEx(int layer = -1, int xOffset = 0, int yOffset = 0, SDL_Point* origin = NULL, float angle = 0.0);
-            void renderRectsEx(int layer = -1, int xOffset = 0, int yOffset = 0, SDL_Point* origin = NULL, float angle = 0.0);
-            */
-            // Renders EVERYTHING on a specified layer, or all layers by default
-            // If the SPLIT argument is true, then ALL textures are rendered, followed by ALL fill rects, etc.
-            // regardless of their actual layering
-            void renderAll(int layer = -1, bool split = false);
+            /// Returns a pointer to the window associated with this renderer
+            Window* GetWindow();
 
-            // Ditto but with options for x/y offsets and rotation
-            // Note: not yet supported
-            //void renderAllEx(int layer = -1, int xOffset = 0, int yOffset = 0, SDL_Point* origin = NULL, float angle = 0.0);
+            /// Renders a specific layer of graphics; renders everything if layer < 0
+            void RenderLayer(int layer = -1);
 
-            // Clears whatever is currently sitting in the video/graphics memory buffer
-            // This does NOT clear the layer queues - but they should be clear anyway when all layers are rendered
-            void renderClear();
+            /// Returns the SDL renderer context associated with this renderer
+            SDL_Renderer* GetRendererSDL();
 
-            // Calls SDL_RenderPresent(renderer);
-            void renderPresent();
+            /// This does what it says on the tin. Ideally, this will only be used when loading levels
+            /// (if at all). Note that enqueued and registered graphics are removed and unregistered upon calling this method!
+            void ReallocateLayers(int numLayers);
 
-            //
-            // GENERAL METHODS
-            //
-
-            // Turns render culling on or off
-            // Culling is very crude at the moment - it simply performs brute-force intersect tests
-            // when render objects are enqueued
-            // Ideally, a spatial hash grid or a tree structure (e.g. quadtree) should be used so that only
-            // render objects in cells that intersect the renderer are enqueued in the first place
-            // This is only really here for convenience
-            void setCulling(bool culling);
-
-            // Returns the SDL renderer context associated with this renderer
-            SDL_Renderer* getRenderer();
-
-            // This triggers reallocation of memory for the layer queue arrays at the end of the next renderAll() call
-            // Use this to add/remove layers dynamically at run time. Ideally, this will only be used when loading levels
-            // (if at all)
-            void changeLayers(int numLayers = 1);
-
-            // Gets the number of culled and rendered objects respectively, in the previous frame
-            int getNumCulled();
-            int getNumRendered();
+            #ifdef DEBUG
+            /// Returns the number of rendered graphics in the previous frame
+            int GetNumRendered();
+            #endif // DEBUG
 
         private:
-            // Copying of renderer is not permitted
-            Renderer(const Renderer& thisCopy);
-            Renderer operator=(const Renderer& thisCopy);
+            NOCOPY(Renderer);
 
-            // SDL renderer context that deals with the actual rendering
+            /// Deals with the actual rendering
             SDL_Renderer* renderer;
 
-            // Pointer to the window associated with this renderer, for getting width/height
+            /// Pointer to the window associated with this renderer
             Window* renderWindow;
 
-            // Number of layers this renderer has
+            /// Number of layers this renderer has
             int numLayersActive;
 
-            // When true, cull anything outside of the renderer view (this is applied when enqueuing takes place)
-            bool renderCull;
-
-            // These 2 metrics are handy for debugging/profiling
-            // Number of objects culled in the current frame
-            int numCulled;
-            // Number of objects rendered in the current frame
+            #ifdef DEBUG
+            /// Number of graphics rendered in the current frame
             int numRendered;
-
-            // Ditto, but for the previous frame
-            int numCulledPrevious;
+            /// Number of graphics rendered in the previous frame
             int numRenderedPrevious;
+            #endif // DEBUG
 
-            // Dynamic array of layer queues for various textures, where layer 0 is the topmost layer (rendered last of all)
-            queue<internals::RenderInfoTexture>* textureLayers;
-            queue<internals::RenderInfoTextureEx>* textureExLayers;
-
-            // Ditto but for text
-            queue<internals::RenderInfoText>* textLayers;
-            queue<internals::RenderInfoTextEx>* textExLayers;
-
-            // Dynamic arrays of layer queues for points, lines and rects
-            queue<internals::RenderInfoPoint>* pointLayers;
-            queue<internals::RenderInfoLine>* lineLayers;
-            queue<internals::RenderInfoRect>* rectLayers;
-            queue<internals::RenderInfoRect>* fillRectLayers;
+            /// Registered graphics
+            unordered_set<Graphic*>* registeredGraphics;
+            /// Graphics queued to be rendered for this frame only
+            queue<Graphic*>* queuedGraphics;
 
         };
 

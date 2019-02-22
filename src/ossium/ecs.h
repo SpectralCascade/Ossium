@@ -176,7 +176,7 @@ namespace Ossium
             auto itr = components.find(getComponentType<T>());
             if (itr != components.end() && !itr->second.empty())
             {
-                return reinterpret_cast<T*>(itr->second[0]);
+                return static_cast<T*>(itr->second[0]);
             }
             return nullptr;
         }
@@ -192,7 +192,7 @@ namespace Ossium
                 vector<T*> retComponents;
                 for (auto i = itr->second.begin(); i != itr->second.end(); i++)
                 {
-                    retComponents.push_back(reinterpret_cast<T*>(*i));
+                    retComponents.push_back(static_cast<T*>(*i));
                 }
                 return retComponents;
             }

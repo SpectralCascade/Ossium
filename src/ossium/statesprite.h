@@ -11,7 +11,7 @@
 #include "renderer.h"
 
 using namespace std;
-
+/*
 namespace Ossium
 {
     /// Bit masks for flag that decides whether a state texture is split along x or y axis
@@ -38,18 +38,21 @@ namespace Ossium
         /// Returns the current state
         string getCurrentState();
 
+        /// Returns a pointer to the current state texture
+        Texture* getCurrentTexture();
+
         /// Returns the current substate segment number
         Uint16 getCurrentSubstate();
 
         /// Sends the current state to the provided renderer
-        void render(Renderer* renderer, int x, int y, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(Renderer& renderer, int x, int y, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Overload for simplicity
-        void render(Renderer* renderer, SDL_Rect dest, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(Renderer& renderer, SDL_Rect dest, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Very simple alternative render methods
-        void renderSimple(Renderer* renderer, int x, int y, int layer = 0);
-        void renderSimple(Renderer* renderer, SDL_Rect dest, int layer = 0);
+        void renderSimple(Renderer& renderer, int x, int y, int layer = 0);
+        void renderSimple(Renderer& renderer, SDL_Rect dest, int layer = 0);
 
     protected:
         /// Prohibited copying for safety
@@ -86,5 +89,5 @@ namespace Ossium
     };
 
 }
-
+*/
 #endif // STATESPRITE_H

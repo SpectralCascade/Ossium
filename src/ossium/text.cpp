@@ -17,22 +17,17 @@ namespace Ossium
         update = false;
         color = {0xFF, 0xFF, 0xFF, 0xFF};
         bgColor = {0x00, 0x00, 0x00, 0xFF};
-        texture = NULL;
-        outlineTexture = NULL;
         font = NULL;
         style = TTF_STYLE_NORMAL;
         hinting = TTF_HINTING_NORMAL;
         renderMode = RENDERTEXT_SOLID;
-        width = 0;
-        height = 0;
-        outlineWidth = 0;
-        outlineHeight = 0;
         outline = 0;
         boxPadWidth = 4;
         boxPadHeight = 2;
         kerning = true;
         box = false;
         cachedPointSize = 24;
+        SetSource(&image);
     }
 
     Text::Text(const Text& copySource)
@@ -44,21 +39,15 @@ namespace Ossium
         color = copySource.color;
         font = copySource.font;
         font_guid = copySource.font_guid;
-        height = copySource.height;
-        width = copySource.width;
         hinting = copySource.hinting;
         kerning = copySource.kerning;
         outline = copySource.outline;
-        outlineHeight = copySource.outlineHeight;
-        outlineWidth = copySource.outlineWidth;
         renderMode = copySource.renderMode;
         style = copySource.style;
         textData = copySource.textData;
         update = copySource.update;
         cachedPointSize = copySource.cachedPointSize;
-        /// Next time a render or textToTexture() method is called, these texture(s) are created
-        texture = NULL;
-        outlineTexture = NULL;
+        SetSource(&image);
         /// No need to NULL the font, as the font is not managed by this class
     }
 
@@ -70,19 +59,9 @@ namespace Ossium
             /// Leave that job to the font resource manager
             font = NULL;
         }
-        if (texture != NULL)
-        {
-            SDL_DestroyTexture(texture);
-            texture = NULL;
-        }
-        if (outlineTexture != NULL)
-        {
-            SDL_DestroyTexture(outlineTexture);
-            outlineTexture = NULL;
-        }
     }
 
-    bool Text::textToTexture(Renderer* renderer, Font* fontToUse, int pointSize)
+    bool Text::textToTexture(Renderer& renderer, Font* fontToUse, int pointSize)
     {
         if (update)
         {
@@ -98,6 +77,10 @@ namespace Ossium
                 return false;
             }
         }
+        else
+        {
+            font = fontToUse;
+        }
         if (pointSize <= 0)
         {
             pointSize = cachedPointSize;
@@ -106,128 +89,39 @@ namespace Ossium
         {
             cachedPointSize = pointSize;
         }
-        TTF_Font* actualFont = fontToUse->getFont(pointSize);
-        if (actualFont == NULL)
+        bool success = image.CreateFromText(renderer, *fontToUse, textData, pointSize, color, hinting, kerning, outline, style, renderMode, bgColor);
+        if (success)
         {
-            return false;
+            SetRenderWidth(1);
+            SetRenderHeight(1);
         }
-        font = fontToUse;
-
-        /// Free texture
-        if (texture != NULL)
-        {
-            SDL_DestroyTexture(texture);
-            texture = NULL;
-        }
-        /// Configure font
-        TTF_SetFontHinting(actualFont, hinting);
-        TTF_SetFontKerning(actualFont, (int)kerning);
-        TTF_SetFontOutline(actualFont, outline);
-        TTF_SetFontStyle(actualFont, style);
-        /// Now render the text to a surface - do the outline first if one exists and we're not doing a shaded render
-        SDL_Surface* textSurface = NULL;
-        if (outline > 0 && renderMode != RENDERTEXT_SHADED)
-        {
-            if (outlineTexture != NULL)
-            {
-                SDL_DestroyTexture(outlineTexture);
-                outlineTexture = NULL;
-            }
-            switch (renderMode)
-            {
-                case RENDERTEXT_BLEND:
-                {
-                    textSurface = TTF_RenderText_Blended(actualFont, textData.c_str(), bgColor);
-                }
-                default:
-                {
-                    textSurface = TTF_RenderText_Solid(actualFont, textData.c_str(), bgColor);
-                }
-            }
-            if (textSurface != NULL)
-            {
-                outlineWidth = textSurface->w;
-                outlineHeight = textSurface->h;
-                outlineTexture = SDL_CreateTextureFromSurface(renderer->getRenderer(), textSurface);
-                SDL_FreeSurface(textSurface);
-                textSurface = NULL;
-                if (outlineTexture == NULL)
-                {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
-                }
-            }
-            else
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, TTF_GetError());
-            }
-        }
-        /// Now do the actual text texture
-        TTF_SetFontOutline(actualFont, 0);
-        switch (renderMode)
-        {
-            case RENDERTEXT_SOLID:
-            {
-                textSurface = TTF_RenderText_Solid(actualFont, textData.c_str(), color);
-            }
-            case RENDERTEXT_SHADED:
-            {
-                textSurface = TTF_RenderText_Shaded(actualFont, textData.c_str(), color, bgColor);
-            }
-            case RENDERTEXT_BLEND:
-            {
-                textSurface = TTF_RenderText_Blended(actualFont, textData.c_str(), color);
-            }
-            default:
-            {
-                textSurface = TTF_RenderText_Solid(actualFont, textData.c_str(), color);
-            }
-        }
-        if (textSurface != NULL)
-        {
-            width = textSurface->w;
-            height = textSurface->h;
-            texture = SDL_CreateTextureFromSurface(renderer->getRenderer(), textSurface);
-            SDL_FreeSurface(textSurface);
-            textSurface = NULL;
-            if (texture == NULL)
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
-            }
-        }
-        else
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, TTF_GetError());
-        }
-
-        return texture != NULL;
+        return false;
     }
 
-    void Text::render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void Text::Render(Renderer& renderer)
     {
-        if (!texture)
+        if (update && font != NULL)
         {
             textToTexture(renderer, font);
         }
-        renderer->enqueueEx(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer, angle, origin == NULL ? (SDL_Point){width / 2, height / 2} : *origin, flip);
-    }
-
-    void Text::render(Renderer* renderer, int x, int y, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        render(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip, layer, angle, origin, flip);
-    }
-
-    void Text::renderSimple(Renderer* renderer, int x, int y, SDL_Rect* clip, int layer)
-    {
-        renderSimple(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip, layer);
-    }
-
-    void Text::renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer)
-    {
-        if (!texture)
+        if (box)
         {
-            textToTexture(renderer, font);
+            SDL_Rect boxDest = GetSDL();
+            boxDest.x -= boxPadWidth;
+            boxDest.y -= boxPadHeight;
+            boxDest.w += 2 * boxPadWidth;
+            boxDest.h += 2 * boxPadHeight;
+            SDL_SetRenderDrawColor(renderer.GetRendererSDL(), bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+            SDL_RenderFillRect(renderer.GetRendererSDL(), &boxDest);
+            position.x += boxPadWidth;
+            position.y += boxPadHeight;
         }
-        renderer->enqueue(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer);
+        Texture::Render(renderer);
+        if (box)
+        {
+            position.x -= boxPadWidth;
+            position.y -= boxPadHeight;
+        }
     }
 
     void Text::setStyling(int textStyle, int textOutline, int textHinting, SDL_Color textColor)
@@ -237,12 +131,6 @@ namespace Ossium
         hinting = textHinting;
         color = textColor;
         update = true;
-        /// Destroy outline texture
-        if (outlineTexture != NULL)
-        {
-            SDL_DestroyTexture(outlineTexture);
-            outlineTexture = NULL;
-        }
     }
 
     ///
@@ -328,11 +216,6 @@ namespace Ossium
     {
         outline = textOutine;
         update = true;
-        if (outlineTexture != NULL)
-        {
-            SDL_DestroyTexture(outlineTexture);
-            outlineTexture = NULL;
-        }
     }
     void Text::setStyle(int textStyle)
     {
@@ -370,104 +253,5 @@ namespace Ossium
     ///
     /// END OF GET/SET METHODS
     ///
-
-    ///
-    /// PRIVATE RENDER METHODS
-    /// Accessible by friend class Renderer
-    ///
-
-    void Text::renderText(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        if (update && font != NULL)
-        {
-            textToTexture(renderer, font);
-        }
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        if (box)
-        {
-            dest.x += boxPadWidth;
-            dest.y += boxPadHeight;
-            SDL_Rect boxDest = {dest.x - boxPadWidth, dest.y - boxPadHeight, dest.w + (2 * boxPadWidth), dest.h + (2 * boxPadHeight)};
-            SDL_SetRenderDrawColor(renderer->getRenderer(), bgColor.r, bgColor.g, bgColor.b, bgColor.a);
-            SDL_RenderFillRect(renderer->getRenderer(), &boxDest);
-        }
-        if (clip != NULL)
-        {
-            if (outline > 0 && !box)
-            {
-                SDL_assert(outlineTexture != NULL);
-                SDL_RenderCopyEx(renderer->getRenderer(), outlineTexture, clip, &dest, angle, origin, flip);
-            }
-            SDL_RenderCopyEx(renderer->getRenderer(), texture, clip, &dest, angle, origin, flip);
-        }
-        else
-        {
-            SDL_Rect src;
-            if (outline > 0 && !box)
-            {
-                SDL_assert(outlineTexture != NULL);
-                src = {0, 0, outlineWidth, outlineHeight};
-                SDL_RenderCopyEx(renderer->getRenderer(), outlineTexture, clip, &dest, angle, origin, flip);
-            }
-            src = {0, 0, width, height};
-            SDL_RenderCopyEx(renderer->getRenderer(), texture, clip, &dest, angle, origin, flip);
-        }
-    }
-
-    void Text::renderText(Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        SDL_Rect dest = {x, y, width, height};
-        if (clip != NULL)
-        {
-            dest.w = clip->w;
-            dest.h = clip->h;
-        }
-        renderText(renderer, dest, clip, angle, origin, flip);
-    }
-
-    void Text::renderTextSimple(Renderer* renderer, int x, int y, SDL_Rect* clip)
-    {
-        renderTextSimple(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip);
-    }
-
-    void Text::renderTextSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip)
-    {
-        if (update && font != NULL)
-        {
-            textToTexture(renderer, font);
-        }
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        if (box)
-        {
-            dest.x += boxPadWidth;
-            dest.y += boxPadHeight;
-            SDL_Rect boxDest = {dest.x - boxPadWidth, dest.y - boxPadHeight, dest.w + (2 * boxPadWidth), dest.h + (2 * boxPadHeight)};
-            SDL_SetRenderDrawColor(renderer->getRenderer(), bgColor.r, bgColor.g, bgColor.b, bgColor.a);
-            SDL_RenderFillRect(renderer->getRenderer(), &boxDest);
-        }
-        if (clip != NULL)
-        {
-            if (outline > 0 && !box)
-            {
-                SDL_assert(outlineTexture != NULL);
-                SDL_RenderCopy(renderer->getRenderer(), outlineTexture, clip, &dest);
-            }
-            SDL_RenderCopy(renderer->getRenderer(), texture, clip, &dest);
-        }
-        else
-        {
-            SDL_Rect src;
-            if (outline > 0 && !box)
-            {
-                SDL_assert(outlineTexture != NULL);
-                src = {0, 0, outlineWidth, outlineHeight};
-                SDL_RenderCopy(renderer->getRenderer(), outlineTexture, &src, &dest);
-            }
-            src = {0, 0, width, height};
-            SDL_RenderCopy(renderer->getRenderer(), texture, &src, &dest);
-        }
-    }
 
 }

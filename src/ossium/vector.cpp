@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 
 #include "basics.h"
 #include "vector.h"
@@ -7,6 +7,91 @@ using namespace std;
 
 namespace Ossium
 {
+
+    inline namespace structs
+    {
+
+        float Vector::Dot(Vector vec)
+        {
+            return (x * vec.x) + (y * vec.y);
+        }
+
+        float Vector::MagnitudeSquared()
+        {
+            return (x * x) + (y * y);
+        }
+
+        float Vector::Magnitude()
+        {
+            return sqrt(MagnitudeSquared());
+        }
+
+        Vector Vector::Normalised()
+        {
+            if (x == 0.0f && y == 0.0f)
+            {
+                return *this;
+            }
+            return (*this) * (1.0f / Magnitude());
+        }
+
+        Vector Vector::ProjectOnto(Vector vec)
+        {
+            return vec * (Dot(vec) / vec.MagnitudeSquared());
+        }
+
+        float Vector::DistanceSquared(Vector point)
+        {
+            point -= (*this);
+            return point.MagnitudeSquared();
+        }
+
+        float Vector::Distance(Vector point)
+        {
+            point -= (*this);
+            return point.Magnitude();
+        }
+
+        Vector Vector::Reflection(Vector normal)
+        {
+            return (*this) - (2.0f * ProjectOnto(normal));
+        }
+
+        Vector Vector::Rotation90Clockwise()
+        {
+            Vector output;
+            output.x = y;
+            output.y = -x;
+            return output;
+        }
+
+        void Vector::Rotate90Clockwise()
+        {
+            float cachex = x;
+            x = y;
+            y = -cachex;
+        }
+
+        Vector Vector::Lerp(Vector vec, float w)
+        {
+            w = clamp(w, 0.0f, 1.0f);
+            return ((*this) * (1.0f - w)) + (vec * w);
+        }
+
+        void Vector::Rotate(float degrees)
+        {
+            RotateRad((constants::pi / 180.0f) * degrees);
+        }
+
+        void Vector::RotateRad(float radians)
+        {
+            float length = Magnitude();
+            x = SDL_sinf(radians) * length;
+            y = SDL_cosf(radians) * length;
+        }
+
+    }
+
     Vector operator+(const Vector& vec_a, const Vector& vec_b)
     {
         return {vec_a.x + vec_b.x, vec_a.y + vec_b.y};
@@ -39,66 +124,6 @@ namespace Ossium
     Vector operator*(float scalar, const Vector& vec)
     {
         return {vec.x * scalar, vec.y * scalar};
-    }
-
-    float CalcDotProduct(Vector vec_a, Vector vec_b)
-    {
-        return (vec_a.x * vec_b.x) + (vec_a.y * vec_b.y);
-    }
-
-    float CalcMagnitudeSquared(Vector vec)
-    {
-        return (vec.x * vec.x) + (vec.y * vec.y);
-    }
-
-    float CalcMagnitude(Vector vec)
-    {
-        return sqrt(CalcMagnitudeSquared(vec));
-    }
-
-    Vector CalcUnitVector(Vector vec)
-    {
-        if (vec.x == 0.0 && vec.y == 0.0)
-        {
-            return vec;
-        }
-        return vec * (1.0 / CalcMagnitude(vec));
-    }
-
-    Vector CalcProjectVector(Vector vec_a, Vector vec_b)
-    {
-        return vec_b * (CalcDotProduct(vec_a, vec_b) / CalcMagnitudeSquared(vec_b));
-    }
-
-    float CalcDistanceSquared(Vector pointA, Vector pointB)
-    {
-        return CalcMagnitudeSquared(pointB - pointA);
-    }
-
-    float CalcDistance(Vector pointA, Vector pointB)
-    {
-        return CalcMagnitude(pointB - pointA);
-    }
-
-    Vector CalcReflectionVector(Vector vec, Vector normal)
-    {
-        return vec - (2 * CalcProjectVector(vec, normal));
-    }
-
-    Vector CalcRotation90Clockwise(Vector vec)
-    {
-        return {vec.y, -vec.x};
-    }
-
-    void CalcRotation90Clockwise(Vector &vec)
-    {
-        vec = {vec.y, -vec.x};
-    }
-
-    Vector CalcLerp(Vector a, Vector b, float w)
-    {
-        w = clamp(w, 0.0f, 1.0f);
-        return (a * (1.0f - w)) + (b * w);
     }
 
 }

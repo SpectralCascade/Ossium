@@ -40,6 +40,7 @@
 		<Unit filename="src/Ossium/basics.cpp" />
 		<Unit filename="src/Ossium/basics.h" />
 		<Unit filename="src/Ossium/circularbuffer.h" />
+		<Unit filename="src/Ossium/colours.cpp" />
 		<Unit filename="src/Ossium/colours.h" />
 		<Unit filename="src/Ossium/config.cpp" />
 		<Unit filename="src/Ossium/config.h" />
@@ -61,6 +62,7 @@
 		<Unit filename="src/Ossium/input.h" />
 		<Unit filename="src/Ossium/keyboard.cpp" />
 		<Unit filename="src/Ossium/keyboard.h" />
+		<Unit filename="src/Ossium/metarect.h" />
 		<Unit filename="src/Ossium/mouse.cpp" />
 		<Unit filename="src/Ossium/mouse.h" />
 		<Unit filename="src/Ossium/primitives.cpp" />

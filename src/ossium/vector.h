@@ -1,8 +1,15 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <SDL.h>
+
 namespace Ossium
 {
+
+    namespace constants
+    {
+        const float pi = 3.14159265358979f;
+    }
 
     inline namespace structs
     {
@@ -11,11 +18,60 @@ namespace Ossium
         {
             float x;
             float y;
+
+            /// Dot product of this and another vector
+            float Dot(Vector vec);
+
+            /// Magnitude of this vector squared
+            inline float MagnitudeSquared();
+
+            /// Magnitude of this vector
+            float Magnitude();
+
+            /// Normalised (unit) vector
+            Vector Normalised();
+
+            /// Vector projection of vec_a onto vec_b
+            Vector ProjectOnto(Vector vec);
+
+            /// Calculate distance squared between two point vectors
+            float DistanceSquared(Vector point);
+
+            /// Calculate distance between two point vectors
+            float Distance(Vector point);
+
+            /// Calculate reflection of vector
+            Vector Reflection(Vector normal);
+
+            /// Rotate a vector 90 degrees clockwise
+            Vector Rotation90Clockwise();
+            /// Rotate this vector 90 degrees clockwise
+            void Rotate90Clockwise();
+
+            /// Calculate some point between two vectors (LERP - linear interpolation)
+            Vector Lerp(Vector vec, float w);
+
+            /// Gets the rotation of this vector in radians
+            inline float RotationRad()
+            {
+                return SDL_atan2f(x, y);
+            }
+            /// Gets the rotation of this vector in degrees
+            inline float Rotation()
+            {
+                return RotationRad() * (180.0f / constants::pi);
+            }
+            /// Rotates the vector in degrees
+            void Rotate(float degrees);
+            /// Rotates the vector in radians
+            void RotateRad(float radians);
+
         };
 
     }
 
     /// Basic vector arithmetic
+
     Vector operator+(const Vector& vec_a, const Vector& vec_b);
 
     void operator+=(Vector &vec_a, const Vector& vec_b);
@@ -27,39 +83,10 @@ namespace Ossium
     Vector operator*(const Vector& vec_a, const Vector& vec_b);
 
     /// Scalar multiplication
+
     Vector operator*(const Vector& vec, float scalar);
     Vector operator*(float scalar, const Vector& vec);
 
-    /// Dot product
-    float CalcDotProduct(Vector vec_a, Vector vec_b);
-
-    /// Magnitude of vector squared
-    float CalcMagnitudeSquared(Vector vec);
-
-    /// Magnitude of vector
-    float CalcMagnitude(Vector vec);
-
-    /// Normalised (unit) vector
-    Vector CalcUnitVector(Vector vec);
-
-    /// Vector projection of vec_a onto vec_b
-    Vector CalcProjectVector(Vector vec_a, Vector vec_b);
-
-    /// Calculate distance squared between two point vectors
-    float CalcDistanceSquared(Vector pointA, Vector pointB);
-
-    /// Calculate distance between two point vectors
-    float CalcDistance(Vector pointA, Vector pointB);
-
-    /// Calculate reflection of vector
-    Vector CalcReflectionVector(Vector vec, Vector normal);
-
-    /// Rotate a vector 90 degrees clockwise (anti-clockwise in SDL coordinate system)...
-    Vector CalcRotation90Clockwise(Vector vec);
-    void CalcRotation90Clockwise(Vector &vec);
-
-    /// Calculate some point between two vectors (LERP - linear interpolation)
-    Vector CalcLerp(Vector a, Vector b, float w);
 }
 
 #endif // VECTOR_H

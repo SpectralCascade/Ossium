@@ -6,336 +6,441 @@
 #include <SDL_ttf.h>
 
 #include "texture.h"
-#include "renderer.h"
+#include "primitives.h"
+#include "colours.h"
 
 using namespace std;
 
 namespace Ossium
 {
 
-    Texture::Texture()
+    inline namespace graphics
     {
-        tempSurface = NULL;
-        texture = NULL;
-        width = 0;
-        height = 0;
-        pixels = NULL;
-        pitch = 0;
-    }
 
-    Texture::~Texture()
-    {
-        freeTexture();
-        if (tempSurface != NULL)
+        ///       ///
+        /// IMAGE ///
+        ///       ///
+
+        Image::Image()
         {
-            SDL_FreeSurface(tempSurface);
             tempSurface = NULL;
-        }
-    }
-
-    void Texture::freeTexture()
-    {
-        if (texture != NULL)
-        {
-            SDL_DestroyTexture(texture);
             texture = NULL;
+            outlineTexture = NULL;
+            width = 0;
+            height = 0;
+            pixels = NULL;
+            pitch = 0;
         }
-    }
 
-    bool Texture::load(string guid_path, int* loadArgs)
-    {
-        if (tempSurface != NULL)
+        Image::~Image()
         {
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
-        }
-        #ifdef SDL_IMAGE_H_
-        tempSurface = IMG_Load(guid_path.c_str());
-        if (tempSurface == NULL)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! IMG_Error: %s", guid_path.c_str(), IMG_GetError());
-        }
-        #else
-        tempSurface = SDL_LoadBMP(guid_path.c_str());
-        if (tempSurface == NULL)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! SDL_Error: %s", guid_path.c_str(), SDL_GetError());
-        }
-        #endif // SDL_IMAGE_H_
-        return tempSurface != NULL;
-    }
-
-    bool Texture::init(Renderer* renderer, Uint32 windowPixelFormat)
-    {
-        // pixel format stuff not working currently - disabling it
-        //windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN;
-        #ifdef DEBUG
-        SDL_assert(renderer != NULL);
-        #endif
-        freeTexture();
-        if (tempSurface == NULL)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "NULL surface image, cannot initialise texture!");
-        }
-        else if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
-        {
-            SDL_Surface* formattedSurface = NULL;
-            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, 0);
-            if (formattedSurface == NULL)
+            Free();
+            if (tempSurface != NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to format surface! SDL_Error: %s", SDL_GetError());
+                SDL_FreeSurface(tempSurface);
+                tempSurface = NULL;
             }
-            else
+        }
+
+        void Image::Free()
+        {
+            if (texture != NULL)
             {
-                texture = SDL_CreateTexture(renderer->getRenderer(), windowPixelFormat, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
+                SDL_DestroyTexture(texture);
+                texture = NULL;
+            }
+            if (outlineTexture != NULL)
+            {
+                SDL_DestroyTexture(outlineTexture);
+                outlineTexture = NULL;
+            }
+            width = 0;
+            height = 0;
+        }
+
+        bool Image::Load(string guid_path, int* loadArgs)
+        {
+            if (tempSurface != NULL)
+            {
+                SDL_FreeSurface(tempSurface);
+                tempSurface = NULL;
+            }
+            #ifdef SDL_IMAGE_H_
+            tempSurface = IMG_Load(guid_path.c_str());
+            if (tempSurface == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! IMG_Error: %s", guid_path.c_str(), IMG_GetError());
+            }
+            #else
+            tempSurface = SDL_LoadBMP(guid_path.c_str());
+            if (tempSurface == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! SDL_Error: %s", guid_path.c_str(), SDL_GetError());
+            }
+            #endif // SDL_IMAGE_H_
+            return tempSurface != NULL;
+        }
+
+        bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color colour, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColour)
+        {
+            if (pointSize <= 0)
+            {
+                pointSize = 1;
+            }
+            TTF_Font* actualFont = font.getFont(pointSize);
+            if (actualFont == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create text. Failure obtaining the font!");
+                return false;
+            }
+            Free();
+            if (tempSurface != NULL)
+            {
+                SDL_FreeSurface(tempSurface);
+                tempSurface = NULL;
+            }
+            /// Configure font
+            TTF_SetFontHinting(actualFont, hinting);
+            TTF_SetFontKerning(actualFont, (int)kerning);
+            TTF_SetFontOutline(actualFont, outline);
+            TTF_SetFontStyle(actualFont, style);
+            if (outline > 0 && renderMode != RENDERTEXT_SHADED)
+            {
+                if (outlineTexture != NULL)
+                {
+                    SDL_DestroyTexture(outlineTexture);
+                    outlineTexture = NULL;
+                }
+                switch (renderMode)
+                {
+                    case RENDERTEXT_BLEND:
+                    {
+                        tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), bgColour);
+                    }
+                    default:
+                    {
+                        tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), bgColour);
+                    }
+                }
+                if (tempSurface != NULL)
+                {
+                    width = tempSurface->w;
+                    height = tempSurface->h;
+                    outlineTexture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
+                    SDL_FreeSurface(tempSurface);
+                    tempSurface = NULL;
+                    if (outlineTexture == NULL)
+                    {
+                        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
+                    }
+                }
+                else
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from text! TTF_Error: %s", TTF_GetError());
+                }
+            }
+            /// Now do the actual text texture
+            TTF_SetFontOutline(actualFont, 0);
+            switch (renderMode)
+            {
+                case RENDERTEXT_SOLID:
+                {
+                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), colour);
+                }
+                case RENDERTEXT_SHADED:
+                {
+                    tempSurface = TTF_RenderText_Shaded(actualFont, text.c_str(), colour, bgColour);
+                }
+                case RENDERTEXT_BLEND:
+                {
+                    tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), colour);
+                }
+                default:
+                {
+                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), colour);
+                }
+            }
+            if (tempSurface != NULL)
+            {
+                if (width == 0 || height == 0)
+                {
+                    width = tempSurface->w;
+                    height = tempSurface->h;
+                }
+                texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
+                SDL_FreeSurface(tempSurface);
+                tempSurface = NULL;
                 if (texture == NULL)
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
                 }
+            }
+            else
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from text! TTF_Error: %s", TTF_GetError());
+            }
+
+            return texture != NULL;
+        }
+
+        bool Image::Init(Renderer& renderer, Uint32 windowPixelFormat, bool cache)
+        {
+            Free();
+            format = windowPixelFormat;
+            if (tempSurface == NULL)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "NULL surface, cannot initialise Image!");
+            }
+            else if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
+            {
+                SDL_Surface* formattedSurface = NULL;
+                formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, 0);
+                if (formattedSurface == NULL)
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to format surface! SDL_Error: %s", SDL_GetError());
+                }
                 else
                 {
-                    /// Grab pixel manipulation data
-                    SDL_LockTexture(texture, NULL, &pixels, &pitch);
-                    memcpy(pixels, formattedSurface->pixels, formattedSurface->pitch * formattedSurface->h);
-                    SDL_UnlockTexture(texture);
-                    pixels = NULL;
-                    width = formattedSurface->w;
-                    height = formattedSurface->h;
+                    texture = SDL_CreateTexture(renderer.GetRendererSDL(), windowPixelFormat, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
+                    if (texture == NULL)
+                    {
+                        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Image from surface! SDL_Error: %s", SDL_GetError());
+                    }
+                    else
+                    {
+                        /// Grab pixel manipulation data
+                        SDL_LockTexture(texture, NULL, &pixels, &pitch);
+                        memcpy(pixels, formattedSurface->pixels, formattedSurface->pitch * formattedSurface->h);
+                        SDL_UnlockTexture(texture);
+                        pixels = NULL;
+                        width = formattedSurface->w;
+                        height = formattedSurface->h;
+                    }
+                    SDL_FreeSurface(formattedSurface);
+                    formattedSurface = NULL;
                 }
-                SDL_FreeSurface(formattedSurface);
-                formattedSurface = NULL;
-            }
-        }
-        else
-        {
-            texture = SDL_CreateTextureFromSurface(renderer->getRenderer(), tempSurface);
-            if (texture == NULL)
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
             }
             else
             {
-                width = tempSurface->w;
-                height = tempSurface->h;
+                texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
+                if (texture == NULL)
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Image from surface! SDL_Error: %s", SDL_GetError());
+                }
+                else
+                {
+                    width = tempSurface->w;
+                    height = tempSurface->h;
+                }
             }
-        }
-        if (texture != NULL)
-        {
-            /// Enable hardware-accelerated alpha blending by default
-            setBlendMode(SDL_BLENDMODE_BLEND);
-        }
-        if (tempSurface != NULL)
-        {
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
-        }
-        return texture != NULL;
-    }
-
-    #ifdef _SDL_TTF_H
-    bool Texture::createText(string text, Renderer* renderer, TTF_Font* font, SDL_Color color)
-    {
-        freeTexture();
-        SDL_Texture* newTexture = NULL;
-        SDL_Surface* textSurface = NULL;
-        textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
-        if (textSurface == NULL)
-        {
-            newTexture = SDL_CreateTextureFromSurface(renderer->getRenderer(), textSurface);
-            if (newTexture == NULL)
+            if (tempSurface != NULL && !cache)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
+                SDL_FreeSurface(tempSurface);
+                tempSurface = NULL;
             }
-            else
-            {
-                width = textSurface->w;
-                height = textSurface->h;
-            }
-            SDL_FreeSurface(textSurface);
+            return texture != NULL;
         }
-        texture = newTexture;
-        return texture != NULL;
-    }
-    #endif // _SDL_TTF_H
 
-    void Texture::render(Renderer* renderer, int x, int y, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        render(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip, layer, angle, origin, flip);
-    }
-
-    void Texture::render(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        renderer->enqueueEx(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer, angle, origin == NULL ? (SDL_Point){width / 2, height / 2} : *origin, flip);
-    }
-
-    void Texture::renderSimple(Renderer* renderer, int x, int y, SDL_Rect* clip, int layer)
-    {
-        renderSimple(renderer, clip == NULL ? (SDL_Rect){x, y, width, height} : (SDL_Rect){x, y, clip->w, clip->h}, clip, layer);
-    }
-
-    void Texture::renderSimple(Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, int layer)
-    {
-        renderer->enqueue(this, dest, clip == NULL ? (SDL_Rect){0, 0, width, height} : *clip, layer);
-    }
-
-    void Texture::setBlendMode(SDL_BlendMode blend)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        SDL_SetTextureBlendMode(texture, blend);
-    }
-
-    void Texture::setAlpha(Uint8 a)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        SDL_SetTextureAlphaMod(texture, a);
-    }
-
-    void Texture::setColorMod(Uint8 r, Uint8 g, Uint8 b)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        SDL_SetTextureColorMod(texture, r, g, b);
-    }
-
-    int Texture::getWidth()
-    {
-        return width;
-    }
-
-    int Texture::getHeight()
-    {
-        return height;
-    }
-
-    bool Texture::lockPixels()
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        if (pixels != NULL)
+        bool Image::LoadAndInit(string guid_path, Renderer& renderer, Uint32 windowPixelFormat, bool cache)
         {
-            return false;
+            return Load(guid_path) && Init(renderer, windowPixelFormat, cache);
         }
-        else
+
+        bool Image::Initialised()
         {
-            if (SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
+            return texture != NULL;
+        }
+
+        int Image::GetWidth()
+        {
+            return width;
+        }
+        int Image::GetHeight()
+        {
+            return height;
+        }
+
+        bool Image::LockPixels()
+        {
+            #ifdef DEBUG
+            SDL_assert(texture != NULL);
+            #endif
+            if (pixels != NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Texture lock failure, %s", SDL_GetError());
                 return false;
             }
-        }
-        return true;
-    }
-
-    bool Texture::unlockPixels()
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        if (pixels == NULL)
-        {
-            return false;
-        }
-        else
-        {
-            SDL_UnlockTexture(texture);
-            pixels = NULL;
-            pitch = 0;
-        }
-        return true;
-    }
-
-    void* Texture::getPixels()
-    {
-        return pixels;
-    }
-
-    int Texture::getPitch()
-    {
-        return pitch;
-    }
-
-    ///
-    /// PRIVATE RENDERING METHODS, utilised by friend class Renderer
-    ///
-
-    void Texture::renderTexture(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        #endif
-        if (clip != NULL)
-        {
-            if (dest.w == 0)
+            else
             {
-                dest.w = clip->w;
+                if (SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Image texture lock failure! %s", SDL_GetError());
+                    return false;
+                }
             }
-            if (dest.h == 0)
+            return true;
+        }
+
+        bool Image::UnlockPixels()
+        {
+            #ifdef DEBUG
+            SDL_assert(texture != NULL);
+            #endif
+            if (pixels == NULL)
             {
-                dest.h = clip->h;
+                return false;
             }
-            SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
+            else
+            {
+                SDL_UnlockTexture(texture);
+                pixels = NULL;
+                pitch = 0;
+            }
+            return true;
         }
-        else
-        {
-            SDL_Rect src = {0, 0, width, height};
-            SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
-        }
-    }
 
-    void Texture::renderTexture(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, float angle, SDL_Point* origin, SDL_RendererFlip flip)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        #endif
-        SDL_Rect dest = {x, y, width, height};
-        if (clip != NULL)
-        {
-            dest.w = clip->w;
-            dest.h = clip->h;
-            SDL_RenderCopyEx(renderer, texture, clip, &dest, angle, origin, flip);
-        }
-        else
-        {
-            SDL_Rect src = {0, 0, width, height};
-            SDL_RenderCopyEx(renderer, texture, &src, &dest, angle, origin, flip);
-        }
-    }
+        ///         ///
+        /// TEXTURE ///
+        ///         ///
 
-    void Texture::renderTextureSimple(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        #endif
-        SDL_Rect dest = {x, y, width, height};
-        if (clip != NULL)
-        {
-            dest.w = clip->w;
-            dest.h = clip->h;
-            SDL_RenderCopy(renderer, texture, clip, &dest);
-        }
-        else
-        {
-            SDL_Rect src = {0, 0, width, height};
-            SDL_RenderCopy(renderer, texture, &src, &dest);
-        }
-    }
+        REGISTER_COMPONENT(Texture);
 
-    void Texture::renderTextureSimple(SDL_Renderer* renderer, SDL_Rect dest, SDL_Rect* clip)
-    {
-        #ifdef DEBUG
-        SDL_assert(texture != NULL);
-        SDL_assert(renderer != NULL);
-        #endif // DEBUG
-        SDL_RenderCopy(renderer, texture, clip, &dest);
+        Texture::Texture()
+        {
+            source = nullptr;
+            modulation = {0xFF, 0xFF, 0xFF, 0xFF};
+            blending = SDL_BLENDMODE_BLEND;
+            clip = {0, 0, 0, 0};
+            flip = SDL_FLIP_NONE;
+        }
+
+        Texture::Texture(const Texture& src)
+        {
+            source = src.source;
+            modulation = src.modulation;
+            blending = src.blending;
+            clip = src.clip;
+            flip = src.flip;
+        }
+
+        Texture::~Texture()
+        {
+        }
+
+        void Texture::Render(Renderer& renderer)
+        {
+
+            SDL_Rect dest = GetSDL();
+            if (source == nullptr || source->texture == NULL)
+            {
+                SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 200, 255, 255);
+                SDL_RenderFillRect(renderer.GetRendererSDL(), &dest);
+                return;
+            }
+
+            if (source->outlineTexture != NULL)
+            {
+                SDL_SetTextureBlendMode(source->outlineTexture, blending);
+                SDL_SetTextureColorMod(source->outlineTexture, modulation.r, modulation.g, modulation.b);
+                SDL_SetTextureAlphaMod(source->outlineTexture, modulation.a);
+            }
+
+            SDL_SetTextureBlendMode(source->texture, blending);
+            SDL_SetTextureColorMod(source->texture, modulation.r, modulation.g, modulation.b);
+            SDL_SetTextureAlphaMod(source->texture, modulation.a);
+
+            SDL_Point trueOrigin = {(int)(origin.x * (float)source->width), (int)(origin.y * (float)source->height)};
+
+            /// Rendering time!
+            if (clip.w != 0 && clip.h != 0)
+            {
+                if (source->outlineTexture != NULL)
+                {
+                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, Rotation(), &trueOrigin, flip);
+                }
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, Rotation(), &trueOrigin, flip);
+            }
+            else
+            {
+                if (source->outlineTexture != NULL)
+                {
+                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, Rotation(), &trueOrigin, flip);
+                }
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, Rotation(), &trueOrigin, flip);
+            }
+        }
+
+        ///
+        /// Setters
+        ///
+
+        void Texture::SetSource(Image* src)
+        {
+            source = src;
+        }
+        void Texture::SetBlendMode(SDL_BlendMode blend)
+        {
+            blending = blend;
+        }
+        void Texture::SetAlphaMod(Uint8 a)
+        {
+            modulation.a = a;
+        }
+        void Texture::SetColourMod(Uint8 r, Uint8 g, Uint8 b)
+        {
+            modulation.r = r;
+            modulation.g = g;
+            modulation.b = b;
+        }
+        void Texture::SetMod(SDL_Color mod)
+        {
+            modulation = mod;
+        }
+        void Texture::SetRenderWidth(float percent)
+        {
+            width = (int)(percent * (float)source->width);
+        }
+        void Texture::SetRenderHeight(float percent)
+        {
+            height = (int)(percent * (float)source->height);
+        }
+        void Texture::SetFlip(SDL_RendererFlip flipMode)
+        {
+            flip = flipMode;
+        }
+
+        ///
+        /// Getters
+        ///
+
+        Image* Texture::GetSource()
+        {
+            return source;
+        }
+        float Texture::GetRenderWidth()
+        {
+            return source->width == 0 ? 0 : width / source->width;
+        }
+        float Texture::GetRenderHeight()
+        {
+            return source->height == 0 ? 0 : height / source->height;
+        }
+        SDL_RendererFlip Texture::GetFlip()
+        {
+            return flip;
+        }
+        SDL_Color Texture::GetMod()
+        {
+            return modulation;
+        }
+        int Texture::GetSourceWidth()
+        {
+            return source->width;
+        }
+        int Texture::GetSourceHeight()
+        {
+            return source->height;
+        }
+
     }
 
 }
