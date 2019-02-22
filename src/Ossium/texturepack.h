@@ -5,8 +5,11 @@
 #include <vector>
 #include <math.h>
 
+#include "helpermacros.h"
+#include "texture.h"
+
 using namespace std;
-/*
+
 namespace Ossium
 {
 
@@ -24,7 +27,7 @@ namespace Ossium
         string path;
         SDL_Rect pureClip;
         bool mipmapped;
-        Texture* texture;
+        Image* texture;
     };
 
     // Returns the clip rect for a specified mipmap level of a given source clip rect
@@ -63,7 +66,7 @@ namespace Ossium
         bool save(Renderer& renderer, Uint32 windowPixelFormat, string path);
 
         // Returns a reference to the packed texture
-        Texture& getPackedTexture();
+        Image& getPackedTexture();
 
         // Returns a clip rect for a given texture
         SDL_Rect getClip(string textureId);
@@ -71,9 +74,7 @@ namespace Ossium
         SDL_Rect getClip(string textureId, int mipmapLevel);
 
     private:
-        // No copying of this permitted
-        TexturePack(const TexturePack& thisCopy);
-        TexturePack operator=(const TexturePack& thisCopy);
+        NOCOPY(TexturePack);
 
         // The texture sheet of the texture pack
         Texture packedTexture;
@@ -89,5 +90,5 @@ namespace Ossium
     };
 
 }
-*/
+
 #endif // TEXTUREPACK_H

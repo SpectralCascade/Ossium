@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
         ///
 
         Image testImg;
-        testImg.LoadAndInit("sprite_test.png", mainRenderer);
+        testImg.LoadAndInit("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
 
         Entity other(&entitySystem);
         other.AttachComponent<Texture>();
@@ -181,6 +181,12 @@ int main(int argc, char* argv[])
             tex->position.x = (float)(mainRenderer.GetWidth() / 2);
             tex->position.y = (float)(mainRenderer.GetHeight() / 2);
             mainRenderer.Register(tex);
+            /// Grayscale effect
+            testImg.ApplyEffect([] (SDL_Color c, SDL_Point p) {
+                Uint8 grayscale = (Uint8)(((float)c.r * 0.3f) + ((float)c.g * 0.59f) + ((float)c.b * 0.11f));
+                c = Colour(grayscale, grayscale, grayscale, c.a);
+                return c;
+            });
         }
 
         ///
