@@ -74,6 +74,11 @@ namespace Ossium
             /// Returns a pointer to the window associated with this renderer
             Window* GetWindow();
 
+            /// Returns the viewport width of this renderer
+            int GetWidth();
+            /// Returns the viewport height of this renderer
+            int GetHeight();
+
             /// Renders a specific layer of graphics; renders everything if layer < 0
             void RenderLayer(int layer = -1);
 

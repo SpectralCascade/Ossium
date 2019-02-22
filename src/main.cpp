@@ -142,7 +142,6 @@ int main(int argc, char* argv[])
         gameObject.AttachComponent<Text>();
 
         targetText = gameObject.GetComponent<Text>();
-        SDL_Log("Text type is %d, texture type is %d.", getComponentType<Text>(), getComponentType<Texture>());
         if (targetText != nullptr)
         {
             targetText->setText("FPS: 0");
@@ -166,22 +165,41 @@ int main(int argc, char* argv[])
         }
 
         ///
+        ///  ECS + Image + Texture demo
+        ///
+
+        Image testImg;
+        testImg.LoadAndInit("sprite_test.png", mainRenderer);
+
+        Entity other(&entitySystem);
+        other.AttachComponent<Texture>();
+
+        Texture* tex = other.GetComponent<Texture>();
+        if (tex != nullptr)
+        {
+            tex->SetSource(&testImg);
+            tex->position.x = (float)(mainRenderer.GetWidth() / 2);
+            tex->position.y = (float)(mainRenderer.GetHeight() / 2);
+            mainRenderer.Register(tex);
+        }
+
+        ///
         /// Input handling demo
         ///
 
         InputContext mainContext;
-        KeyboardHandler* keyboard = mainContext.AddHandler<KeyboardHandler>();
+        KeyboardHandler& keyboard = *mainContext.AddHandler<KeyboardHandler>();
 
-        keyboard->AddAction("TOGGLE MUTE", *KeyAction);
-        keyboard->Bind("TOGGLE MUTE", SDLK_m);
-        keyboard->AddBindlessAction(*GetKey);
+        keyboard.AddAction("TOGGLE MUTE", *KeyAction);
+        keyboard.Bind("TOGGLE MUTE", SDLK_m);
+        keyboard.AddBindlessAction(*GetKey);
 
-        MouseHandler* mouse = mainContext.AddHandler<MouseHandler>();
+        MouseHandler& mouse = *mainContext.AddHandler<MouseHandler>();
 
-        mouse->AddAction("mouseclick", *MouseClickAction);
-        mouse->AddAction("scroll", *MouseScrollAction);
-        mouse->Bind("mouseclick", MOUSE_BUTTON_LEFT);
-        mouse->Bind("scroll", MOUSE_WHEEL);
+        mouse.AddAction("mouseclick", *MouseClickAction);
+        mouse.AddAction("scroll", *MouseScrollAction);
+        mouse.Bind("mouseclick", MOUSE_BUTTON_LEFT);
+        mouse.Bind("scroll", MOUSE_WHEEL);
 
         InputController mainInput;
 
@@ -251,7 +269,7 @@ int main(int argc, char* argv[])
             if (update_binding)
             {
                 /// Rebind the key
-                keyboard->Bind("TOGGLE MUTE", currentKey);
+                keyboard.Bind("TOGGLE MUTE", currentKey);
                 update_binding = false;
             }
 

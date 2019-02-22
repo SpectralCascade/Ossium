@@ -373,9 +373,14 @@ namespace Ossium
         /// Setters
         ///
 
-        void Texture::SetSource(Image* src)
+        void Texture::SetSource(Image* src, bool configureDimensions)
         {
             source = src;
+            if (configureDimensions && src != nullptr)
+            {
+                width = src->width;
+                height = src->height;
+            }
         }
         void Texture::SetBlendMode(SDL_BlendMode blend)
         {

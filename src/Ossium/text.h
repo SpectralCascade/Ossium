@@ -10,6 +10,7 @@
 #include "ecs.h"
 #include "primitives.h"
 #include "texture.h"
+#include "helpermacros.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ namespace Ossium
         DECLARE_COMPONENT(Text);
 
         Text();
+        Text(const Text& src);
         ~Text();
 
         friend class graphics::Renderer;
@@ -69,9 +71,6 @@ namespace Ossium
         void setBox(bool enabled);
 
     private:
-        /// Prohibited copying for all but the Component Clone() method
-        NOCOPY(Text);
-
         /// If true, render box behind text in the background colour
         bool box;
 

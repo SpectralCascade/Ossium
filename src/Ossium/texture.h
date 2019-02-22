@@ -36,7 +36,7 @@ namespace Ossium
         /// Forward declare Texture
         class Texture;
 
-        /// This class wraps an SDL_Texture
+        /// This class wraps an SDL_Texture resource
         class Image
         {
         public:
@@ -164,17 +164,12 @@ namespace Ossium
             /// Inherited Graphic::Render() method
             virtual void Render(Renderer& renderer);
 
-            /// Sets the source image this texture should use
-            void SetSource(Image* src);
+            /// Sets the source image this texture should use. If configureDimensions is true, the width and height are set
+            /// to the source image width and height
+            void SetSource(Image* src, bool configureDimensions = true);
             /// Returns a pointer to the source image
             Image* GetSource();
 
-            /// Sets the rendered position of the texture (from the centre)
-            void SetPosition(float x, float y);
-            /// Sets the rotation of the texture
-            void SetRotation(float rot_angle);
-            /// Sets the point at which the texture is rotated as percentages of the destination width and height
-            void SetRelativeOrigin(float xpercent, float ypercent);
             /// Sets the width as a percentage of the source image width
             void SetRenderWidth(float percent);
             /// Sets the height as a percentage of the source image height
@@ -183,7 +178,6 @@ namespace Ossium
             void SetFlip(SDL_RendererFlip flipMode);
             /// Sets the clip rect area
             void SetClip(int x, int y, int w = 0, int h = 0);
-
 
             /// Gets the source image width
             int GetSourceWidth();

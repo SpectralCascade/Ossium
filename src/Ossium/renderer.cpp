@@ -149,6 +149,18 @@ namespace Ossium
             return renderWindow;
         }
 
+        int Renderer::GetWidth()
+        {
+            SDL_Rect view = renderWindow != nullptr ? renderWindow->getViewportRect() : (SDL_Rect){0, 0, 0, 0};
+            return view.w;
+        }
+        /// Returns the viewport height of this renderer
+        int Renderer::GetHeight()
+        {
+            SDL_Rect view = renderWindow != nullptr ? renderWindow->getViewportRect() : (SDL_Rect){0, 0, 0, 0};
+            return view.h;
+        }
+
         void Renderer::ReallocateLayers(int numLayers)
         {
             delete[] registeredGraphics;

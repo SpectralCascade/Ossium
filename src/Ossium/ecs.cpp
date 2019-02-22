@@ -36,7 +36,7 @@ namespace Ossium
 
     Entity* Entity::Clone()
     {
-        Entity* entityCopy = new Entity(controller, self->parent->data);
+        Entity* entityCopy = new Entity(controller, self->parent != nullptr ? self->parent->data : nullptr);
         entityCopy->self->name = self->name + " (copy)";
         for (auto i = components.begin(); i != components.end(); i++)
         {
