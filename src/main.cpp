@@ -169,7 +169,8 @@ int main(int argc, char* argv[])
         ///
 
         Image testImg;
-        testImg.LoadAndInit("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()));
+        /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
+        testImg.LoadAndInit("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
         Entity other(&entitySystem);
         other.AttachComponent<Texture>();
@@ -182,11 +183,11 @@ int main(int argc, char* argv[])
             tex->position.y = (float)(mainRenderer.GetHeight() / 2);
             mainRenderer.Register(tex);
             /// Grayscale effect
-            testImg.ApplyEffect([] (SDL_Color c, SDL_Point p) {
+            /*testImg.ApplyEffect([] (SDL_Color c, SDL_Point p) {
                 Uint8 grayscale = (Uint8)(((float)c.r * 0.3f) + ((float)c.g * 0.59f) + ((float)c.b * 0.11f));
                 c = Colour(grayscale, grayscale, grayscale, c.a);
                 return c;
-            });
+            });*/
         }
 
         ///
@@ -249,6 +250,8 @@ int main(int argc, char* argv[])
         /// Initialise the global delta time and FPS controller
         delta.init(settings);
 
+        Point lightSpot(0.0f, 0.0f);
+
         while (!quit)
         {
             /// Input handling phase
@@ -262,6 +265,10 @@ int main(int argc, char* argv[])
                 }
                 mainInput.HandleEvent(e);
             }
+
+            int mx, my;
+            SDL_GetMouseState(&mx, &my);
+            lightSpot = Point((float)mx - tex->position.x + (tex->width * 0.5f), (float)my - tex->position.y - (tex->height * 0.5f));
 
             /// Logic update phase
             if (volume_change)
@@ -280,6 +287,15 @@ int main(int argc, char* argv[])
             }
 
             entitySystem.UpdateComponents();
+
+            testImg.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
+
+            /// Pixel-precise lighting effect
+            testImg.ApplyEffect([&lightSpot] (SDL_Color c, SDL_Point p) {
+                float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, 100.0f * 100.0f), 0.0f, 100.0f * 100.0f, 0.0f, 1.0f);
+                c = Colour((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
+                return c;
+            });
 
             /// Rendering phase
             SDL_RenderClear(mainRenderer.GetRendererSDL());

@@ -18,6 +18,12 @@ namespace Ossium
         {
         }
 
+        Point::Point(float x, float y)
+        {
+            this->x = x;
+            this->y = y;
+        }
+
         Point::Point(const Vector& vec)
         {
             x = vec.x;

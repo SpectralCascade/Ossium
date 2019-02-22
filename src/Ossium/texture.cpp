@@ -332,7 +332,7 @@ namespace Ossium
             SDL_Rect dest = GetSDL();
             if (source == nullptr || source->texture == NULL)
             {
-                SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 200, 255, 255);
+                SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
                 SDL_RenderFillRect(renderer.GetRendererSDL(), &dest);
                 return;
             }

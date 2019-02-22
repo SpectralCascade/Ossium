@@ -35,6 +35,7 @@ namespace Ossium
         struct Point : public Vector
         {
             Point();
+            Point(float x, float y);
             Point(const Vector& vec);
 
             void Draw(Renderer& renderer);
