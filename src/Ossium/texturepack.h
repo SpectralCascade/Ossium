@@ -55,7 +55,7 @@ namespace Ossium
         bool init(Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
 
         // Loads up a single texture ready to be packed and generates mip maps for it if required
-        bool import(string path, Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
+        bool import(string path, Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
 
         // Packs all imported textures into one single texture; returns number of textures packed
         // Smallest first means textures are sorted smallest to largest when true, or largest to smallest when false
@@ -77,7 +77,7 @@ namespace Ossium
         NOCOPY(TexturePack);
 
         // The texture sheet of the texture pack
-        Texture packedTexture;
+        Image packedTexture;
 
         // Meta data for the texture pack
         vector<TextureData> packData;

@@ -10,7 +10,7 @@
 #include "serialisation.h"
 
 using namespace std;
-/*
+
 namespace Ossium
 {
 
@@ -52,7 +52,7 @@ namespace Ossium
     void TexturePack::freePack()
     {
         packData.clear();
-        packedTexture.freeTexture();
+        packedTexture.Free();
     }
 
     void TexturePack::freeImported()
@@ -89,24 +89,24 @@ namespace Ossium
         metaStream.CloseSector(READ);
         metaStream.Close(READ);
         // Now load the texture itself
-        return packedTexture.load(path + ".png", args);
+        return packedTexture.Load(path + ".png");
     }
 
     bool TexturePack::init(Renderer& renderer, Uint32 windowPixelFormat)
     {
-        return packedTexture.init(renderer, windowPixelFormat);
+        return packedTexture.Init(renderer, windowPixelFormat);
     }
 
-    bool TexturePack::import(string path, Renderer* renderer, Uint32 windowPixelFormat, int minMipMapSize)
+    bool TexturePack::import(string path, Renderer& renderer, Uint32 windowPixelFormat, int minMipMapSize)
     {
-        Texture* importedTexture = new Texture();
-        if (!importedTexture->load(path, NULL) || !importedTexture->init(renderer, windowPixelFormat))
+        Image* importedTexture = new Image();
+        if (!importedTexture->LoadAndInit(path, renderer, windowPixelFormat))
         {
             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to import texture into texture pack with path '%s'", path.c_str());
             return false;
         }
         bool mipmapped = false;
-        SDL_Rect src = {0, 0, importedTexture->getWidth(), importedTexture->getHeight()};
+        SDL_Rect src = {0, 0, importedTexture->GetWidth(), importedTexture->GetHeight()};
         // If a pixel format is provided, we will try and generate a mipmap for the imported texture
         if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
         {
@@ -211,7 +211,7 @@ namespace Ossium
                 markerRect.y += markerRect.h;
                 markerRect.h = 0;
             }
-            SDL_Rect src = {0, 0, insertList[i].texture->getWidth(), insertList[i].texture->getHeight()};
+            SDL_Rect src = {0, 0, insertList[i].texture->GetWidth(), insertList[i].texture->GetHeight()};
             SDL_Rect dest = {markerRect.x, markerRect.y, src.w, src.h};
             markerRect.x += src.w;
             markerRect.h = src.h > markerRect.h ? src.h : markerRect.h;
@@ -232,7 +232,7 @@ namespace Ossium
         SDL_Rect targetRect = {0, 0, finalWidth, finalHeight};
         SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
-        packedTexture.freeTexture();
+        packedTexture.Free();
         packedTexture.texture = SDL_CreateTextureFromSurface(render, renderSurface);
         packedTexture.width = renderSurface->w;
         packedTexture.height = renderSurface->h;
@@ -252,7 +252,7 @@ namespace Ossium
             // Setup target texture and surface
             SDL_Renderer* render = renderer.GetRendererSDL();
             SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
-            SDL_Rect targetRect = {0, 0, packedTexture.getWidth(), packedTexture.getHeight()};
+            SDL_Rect targetRect = {0, 0, packedTexture.width, packedTexture.height};
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
             if (renderSurface == NULL)
             {
@@ -312,7 +312,7 @@ namespace Ossium
         return false;
     }
 
-    Texture& TexturePack::getPackedTexture()
+    Image& TexturePack::getPackedTexture()
     {
         return packedTexture;
     }
@@ -346,4 +346,4 @@ namespace Ossium
     }
 
 }
-*/
+

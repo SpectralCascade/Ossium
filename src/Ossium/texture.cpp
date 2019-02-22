@@ -350,7 +350,7 @@ namespace Ossium
             SDL_Point trueOrigin = {(int)(origin.x * (float)source->width), (int)(origin.y * (float)source->height)};
 
             /// Rendering time!
-            if (clip.w != 0 && clip.h != 0)
+            if (clip.w > 0 && clip.h > 0)
             {
                 if (source->outlineTexture != NULL)
                 {
@@ -411,6 +411,10 @@ namespace Ossium
         {
             flip = flipMode;
         }
+        void Texture::SetClip(int x, int y, int w, int h)
+        {
+            clip = {x, y, w, h};
+        }
 
         ///
         /// Getters
@@ -443,6 +447,10 @@ namespace Ossium
         int Texture::GetSourceHeight()
         {
             return source->height;
+        }
+        SDL_Rect Texture::GetClip()
+        {
+            return clip;
         }
 
     }

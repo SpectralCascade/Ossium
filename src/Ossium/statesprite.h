@@ -11,7 +11,7 @@
 #include "renderer.h"
 
 using namespace std;
-/*
+
 namespace Ossium
 {
     /// Bit masks for flag that decides whether a state texture is split along x or y axis
@@ -19,75 +19,60 @@ namespace Ossium
     #define STATE_HORIZONTAL        32768
     #define STATE_VERTICAL              0
 
-    /// Can be switched between different textures/texture clips
-    class StateSprite
+    inline namespace graphics
     {
-    public:
-        StateSprite();
-        ~StateSprite();
 
-        /// Sets the final bit to whatever the boolean flag is, rather than worry about bit masks
-        bool addState(string state, Texture* texture, bool horizontal = true, Uint16 segments = 1);
+        /// Can be switched between different textures/texture clips
+        class StateSprite : public Texture
+        {
+        public:
+            DECLARE_COMPONENT(StateSprite);
 
-        /// Changes state and initialises current substate to 0
-        bool changeState(string& state);
+            StateSprite();
+            ~StateSprite();
 
-        /// Changes current substate clip segment
-        void changeSubState(Uint16 substate, bool forceChange = false);
+            /// Adds a state to the sprite; horizontal specifies whether the image should be sliced horizontally or vertically,
+            /// and segments specifies how many substates the image should be sliced up into.
+            bool AddState(string state, Image* image, bool horizontal = true, Uint16 segments = 1);
 
-        /// Returns the current state
-        string getCurrentState();
+            /// Changes state and initialises current substate to 0
+            bool ChangeState(const string& state);
 
-        /// Returns a pointer to the current state texture
-        Texture* getCurrentTexture();
+            /// Changes current substate clip segment
+            void ChangeSubState(Uint16 substate, bool forceChange = false);
 
-        /// Returns the current substate segment number
-        Uint16 getCurrentSubstate();
+            /// Returns the string id of the current state
+            string GetCurrentState();
 
-        /// Sends the current state to the provided renderer
-        void render(Renderer& renderer, int x, int y, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+            /// Returns the current substate segment number
+            Uint16 GetCurrentSubstate();
 
-        /// Overload for simplicity
-        void render(Renderer& renderer, SDL_Rect dest, int layer = 0, float angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        protected:
+            /// Original addState method - this one does worry about bit masks, hence why it's abstracted away
+            bool AddState(string state, Image* image, Uint16 clipData = 1 | STATE_HORIZONTAL);
 
-        /// Very simple alternative render methods
-        void renderSimple(Renderer& renderer, int x, int y, int layer = 0);
-        void renderSimple(Renderer& renderer, SDL_Rect dest, int layer = 0);
+            /// Multiple states, multiple textures
+            /// Key = state, pair first = pointer to texture resource, pair second = clipping info
+            /// First 15 bits of clipping info = number of segments
+            /// Final bit decides whether clipping along horizontal or vertical
+            map<string, pair<Image*, Uint16>> states;
 
-    protected:
-        /// Prohibited copying for safety
-        StateSprite(const StateSprite& thisCopy);
-        StateSprite operator=(const StateSprite& thisCopy);
+            /// Current state key
+            string currentState;
 
-        /// Original addState method - this one does worry about bit masks, hence why it's protected
-        bool addState(string state, Texture* texture, Uint16 clipData = 1 | STATE_HORIZONTAL);
+            /// Current substate
+            Uint16 currentSubState;
 
-        /// Multiple states, multiple textures
-        /// Key = state, pair first = pointer to texture resource, pair second = clipping info
-        /// First 15 bits of clipping info = number of segments
-        /// Final bit decides whether clipping along horizontal or vertical
-        map<string, pair<Texture*, Uint16>> states;
+            /// Current horizontal flag
+            bool horizontalFlag;
 
-        /// Current state key
-        string currentState;
+            /// Current number of segments
+            Uint16 totalCurrentSegments;
 
-        /// Current state texture
-        Texture* stateTexture;
+        };
 
-        /// Current substate
-        Uint16 currentSubState;
-
-        /// Current horizontal flag
-        bool horizontalFlag;
-
-        /// Current number of segments
-        Uint16 totalCurrentSegments;
-
-        /// Current substate clip rect to use
-        SDL_Rect substateRect;
-
-    };
+    }
 
 }
-*/
+
 #endif // STATESPRITE_H

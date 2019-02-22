@@ -30,6 +30,9 @@ namespace Ossium
         RENDERTEXT_BLEND
     };
 
+    /// Forward declaration
+    class TexturePack;
+
     inline namespace graphics
     {
 
@@ -44,6 +47,7 @@ namespace Ossium
             ~Image();
 
             friend class Texture;
+            friend class Ossium::TexturePack;
 
             /// Destroys the image, freeing it from memory. Does not modify the temporary SDL_Surface
             void Free();
@@ -189,8 +193,10 @@ namespace Ossium
             float GetRenderHeight();
             /// Gets the flip mode of the texture; a texture can be flipped horizontally, vertically, or not at all
             SDL_RendererFlip GetFlip();
+            /// Returns the clip area of the image to be rendered
+            SDL_Rect GetClip();
 
-        private:
+        protected:
             /// The source image that this texture renders a copy of
             Image* source;
 

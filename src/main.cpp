@@ -15,6 +15,7 @@
 #include "Ossium/mouse.h"
 #include "Ossium/audio.h"
 #include "Ossium/colours.h"
+#include "Ossium/statesprite.h"
 
 #ifdef UNIT_TESTS
 #include "Ossium/testmodules.h"
@@ -173,15 +174,18 @@ int main(int argc, char* argv[])
         testImg.LoadAndInit("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
         Entity other(&entitySystem);
-        other.AttachComponent<Texture>();
+        other.AttachComponent<StateSprite>();
 
-        Texture* tex = other.GetComponent<Texture>();
-        if (tex != nullptr)
+        StateSprite* sprite = other.GetComponent<StateSprite>();
+        if (sprite != nullptr)
         {
-            tex->SetSource(&testImg);
-            tex->position.x = (float)(mainRenderer.GetWidth() / 2);
-            tex->position.y = (float)(mainRenderer.GetHeight() / 2);
-            mainRenderer.Register(tex);
+            sprite->position.x = (float)(mainRenderer.GetWidth() / 2);
+            sprite->position.y = (float)(mainRenderer.GetHeight() / 2);
+            if (!sprite->AddState("chest", &testImg, false, 4))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not add state to state sprite!");
+            }
+            mainRenderer.Register(sprite);
             /// Grayscale effect
             /*testImg.ApplyEffect([] (SDL_Color c, SDL_Point p) {
                 Uint8 grayscale = (Uint8)(((float)c.r * 0.3f) + ((float)c.g * 0.59f) + ((float)c.b * 0.11f));
@@ -266,9 +270,14 @@ int main(int argc, char* argv[])
                 mainInput.HandleEvent(e);
             }
 
+            SDL_Rect viewrect = mainWindow.getViewportRect();
+
             int mx, my;
             SDL_GetMouseState(&mx, &my);
-            lightSpot = Point((float)mx - tex->position.x + (tex->width * 0.5f), (float)my - tex->position.y - (tex->height * 0.5f));
+            mx -= viewrect.x;
+            my -= viewrect.y;
+
+            lightSpot = Point((float)mx - sprite->position.x + (sprite->width * 0.5f), (float)my - sprite->position.y + (sprite->height * 0.5f));
 
             /// Logic update phase
             if (volume_change)
@@ -318,7 +327,6 @@ int main(int argc, char* argv[])
             mainRenderer.RenderPresent(true);
 
             mainRenderer.SetDrawColour(colours::RED);
-            SDL_Rect viewrect = mainWindow.getViewportRect();
             viewrect.x = 0;
             viewrect.y = 0;
             SDL_RenderDrawRect(mainRenderer.GetRendererSDL(), &viewrect);
