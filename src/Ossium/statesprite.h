@@ -47,6 +47,9 @@ namespace Ossium
             /// Returns the current substate segment number
             Uint16 GetCurrentSubstate();
 
+            /// Returns the current substate clip rect
+            SDL_Rect GetCurrentClip();
+
         protected:
             /// Original addState method - this one does worry about bit masks, hence why it's abstracted away
             bool AddState(string state, Image* image, Uint16 clipData = 1 | STATE_HORIZONTAL);

@@ -125,6 +125,11 @@ namespace Ossium
             return currentSubState;
         }
 
+        SDL_Rect StateSprite::GetCurrentClip()
+        {
+            return clip;
+        }
+
     }
 
 }

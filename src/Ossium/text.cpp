@@ -14,7 +14,7 @@ namespace Ossium
     Text::Text()
     {
         textData = "";
-        update = false;
+        update = true;
         color = {0xFF, 0xFF, 0xFF, 0xFF};
         bgColor = {0x00, 0x00, 0x00, 0xFF};
         font = NULL;
@@ -27,7 +27,6 @@ namespace Ossium
         kerning = true;
         box = false;
         cachedPointSize = 24;
-        SetSource(&image);
     }
 
     Text::Text(const Text& copySource)
@@ -45,9 +44,8 @@ namespace Ossium
         renderMode = copySource.renderMode;
         style = copySource.style;
         textData = copySource.textData;
-        update = copySource.update;
+        update = true;
         cachedPointSize = copySource.cachedPointSize;
-        SetSource(&image);
         /// No need to NULL the font, as the font is not managed by this class
     }
 
@@ -92,8 +90,7 @@ namespace Ossium
         bool success = image.CreateFromText(renderer, *fontToUse, textData, pointSize, color, hinting, kerning, outline, style, renderMode, bgColor);
         if (success)
         {
-            SetRenderWidth(1);
-            SetRenderHeight(1);
+            SetSource(&image);
         }
         return false;
     }

@@ -84,7 +84,7 @@ namespace Ossium
             /// Also note that this doesn't do it's work on the GPU, so be wary of using it frequently as it's pretty expensive
             /// Returns false on failure.
             template<class Func>
-            bool ApplyEffect(Func f)
+            bool ApplyEffect(Func f, SDL_Rect* clipArea = nullptr)
             {
                 if (LockPixels())
                 {
@@ -97,13 +97,40 @@ namespace Ossium
                     }
                     SDL_Color pixelData;
                     SDL_Point pixelPos;
-                    for (int i = 0, counti = (pitch / 4) * height; i < counti; i++)
+                    if (clipArea == nullptr)
                     {
-                        pixelData = ConvertToColour(pixelArray[i], pixelFormat);
-                        pixelPos.x = i % width;
-                        pixelPos.y = i / width;
-                        SDL_Color outputColour = f(pixelData, pixelPos);
-                        pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColour.r, outputColour.g, outputColour.b, outputColour.a);
+                        for (int i = 0, counti = (pitch / 4) * height; i < counti; i++)
+                        {
+                            pixelData = ConvertToColour(pixelArray[i], pixelFormat);
+                            pixelPos.x = i % width;
+                            pixelPos.y = i / width;
+                            SDL_Color outputColour = f(pixelData, pixelPos);
+                            pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColour.r, outputColour.g, outputColour.b, outputColour.a);
+                        }
+                    }
+                    else
+                    {
+                        int memwidth = (pitch / 4);
+                        int clipskipy = (memwidth * clipArea->y);
+                        int clipxw = clipArea->w + clipArea->x;
+                        int increment = (memwidth - clipArea->w);
+                        for (int i = clipskipy + clipArea->x, counti = memwidth * clipArea->h; i < counti; i++)
+                        {
+                            if (i >= clipxw + clipskipy)
+                            {
+                                i += increment;
+                                clipskipy += memwidth;
+                                if (i > counti)
+                                {
+                                    break;
+                                }
+                            }
+                            pixelData = ConvertToColour(pixelArray[i], pixelFormat);
+                            pixelPos.x = i % width;
+                            pixelPos.y = i / width;
+                            SDL_Color outputColour = f(pixelData, pixelPos);
+                            pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColour.r, outputColour.g, outputColour.b, outputColour.a);
+                        }
                     }
                     UnlockPixels();
                     SDL_FreeFormat(pixelFormat);
@@ -180,21 +207,24 @@ namespace Ossium
             void SetRenderHeight(float percent);
             /// Sets the flip mode of the texture; a texture can be flipped horizontally, vertically, or not at all
             void SetFlip(SDL_RendererFlip flipMode);
-            /// Sets the clip rect area
-            void SetClip(int x, int y, int w = 0, int h = 0);
+            /// Sets the clip rect area. Set autoScale to false to prevent resizing the rendered dimensions
+            void SetClip(int x, int y, int w = 0, int h = 0, bool autoScale = true);
 
             /// Gets the source image width
             int GetSourceWidth();
             /// Gets the source image height
             int GetSourceHeight();
-            /// Gets the width as a percentage of the source image width
+            /// Gets the width as a percentage of the clip width
             float GetRenderWidth();
-            /// Ditto, but as a percentage of the source image height
+            /// Ditto, but as a percentage of the clip height
             float GetRenderHeight();
             /// Gets the flip mode of the texture; a texture can be flipped horizontally, vertically, or not at all
             SDL_RendererFlip GetFlip();
             /// Returns the clip area of the image to be rendered
             SDL_Rect GetClip();
+
+            /// Takes a point from UI space and transforms it to the local texture space
+            Point ScreenToLocalPoint(Point source);
 
         protected:
             /// The source image that this texture renders a copy of

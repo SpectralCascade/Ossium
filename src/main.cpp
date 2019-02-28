@@ -185,6 +185,8 @@ int main(int argc, char* argv[])
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not add state to state sprite!");
             }
+            sprite->SetRenderWidth(8);
+            sprite->SetRenderHeight(8);
             mainRenderer.Register(sprite);
             /// Grayscale effect
             /*testImg.ApplyEffect([] (SDL_Color c, SDL_Point p) {
@@ -277,7 +279,7 @@ int main(int argc, char* argv[])
             mx -= viewrect.x;
             my -= viewrect.y;
 
-            lightSpot = Point((float)mx - sprite->position.x + (sprite->width * 0.5f), (float)my - sprite->position.y + (sprite->height * 0.5f));
+            lightSpot = sprite->ScreenToLocalPoint(Point((float)mx, (float)my));
 
             /// Logic update phase
             if (volume_change)
@@ -299,12 +301,13 @@ int main(int argc, char* argv[])
 
             testImg.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
-            /// Pixel-precise lighting effect
-            testImg.ApplyEffect([&lightSpot] (SDL_Color c, SDL_Point p) {
-                float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, 100.0f * 100.0f), 0.0f, 100.0f * 100.0f, 0.0f, 1.0f);
+            /// Pixel-precise lighting effect that stays constant despite sprite size changes
+            SDL_Rect area = sprite->GetCurrentClip();
+            testImg.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
+                float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
                 c = Colour((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
                 return c;
-            });
+            }, &area);
 
             /// Rendering phase
             SDL_RenderClear(mainRenderer.GetRendererSDL());

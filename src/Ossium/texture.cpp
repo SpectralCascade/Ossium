@@ -379,6 +379,10 @@ namespace Ossium
             {
                 width = src->width;
                 height = src->height;
+                clip.x = 0;
+                clip.y = 0;
+                clip.w = src->width;
+                clip.h = src->height;
             }
         }
         void Texture::SetBlendMode(SDL_BlendMode blend)
@@ -401,19 +405,32 @@ namespace Ossium
         }
         void Texture::SetRenderWidth(float percent)
         {
-            width = (int)(percent * (float)source->width);
+            width = (int)(percent * (float)clip.w);
         }
         void Texture::SetRenderHeight(float percent)
         {
-            height = (int)(percent * (float)source->height);
+            height = (int)(percent * (float)clip.h);
         }
         void Texture::SetFlip(SDL_RendererFlip flipMode)
         {
             flip = flipMode;
         }
-        void Texture::SetClip(int x, int y, int w, int h)
+        void Texture::SetClip(int x, int y, int w, int h, bool autoScale)
         {
-            clip = {x, y, w, h};
+            if (autoScale)
+            {
+                /// Cache percentage width and height
+                float wpercent = width / (float)clip.w;
+                float hpercent = height / (float)clip.h;
+                clip = {x, y, w, h};
+                /// Recalculate destination dimensions with new clip rect
+                SetRenderWidth(wpercent);
+                SetRenderHeight(hpercent);
+            }
+            else
+            {
+                clip = {x, y, w, h};
+            }
         }
 
         ///
@@ -426,11 +443,11 @@ namespace Ossium
         }
         float Texture::GetRenderWidth()
         {
-            return source->width == 0 ? 0 : width / source->width;
+            return clip.w == 0 ? 0 : width / (float)clip.w;
         }
         float Texture::GetRenderHeight()
         {
-            return source->height == 0 ? 0 : height / source->height;
+            return clip.h == 0 ? 0 : width / (float)clip.h;
         }
         SDL_RendererFlip Texture::GetFlip()
         {
@@ -451,6 +468,13 @@ namespace Ossium
         SDL_Rect Texture::GetClip()
         {
             return clip;
+        }
+
+        Point Texture::ScreenToLocalPoint(Point source)
+        {
+            source.x = (source.x - position.x + (width * 0.5f)) / (width / (float)(clip.w == 0 ? 0 : clip.w));
+            source.y = (source.y - position.y + (height * 0.5f)) / (height / (float)(clip.h == 0 ? 0 : clip.h));
+            return source;
         }
 
     }

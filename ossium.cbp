@@ -35,6 +35,7 @@
 		<Linker>
 			<Add option="-lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net" />
 		</Linker>
+		<Unit filename="src/Ossium/animator.h" />
 		<Unit filename="src/Ossium/audio.cpp" />
 		<Unit filename="src/Ossium/audio.h" />
 		<Unit filename="src/Ossium/basics.cpp" />
