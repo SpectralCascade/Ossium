@@ -55,14 +55,23 @@ namespace Ossium
 
     }
 
-    /// Declares a component type and declares a virtual copy method
+    /// Declares a component type, declares a virtual copy method and constructor
     /// Add this to the end of any class you wish to register as a component
-    #define DECLARE_COMPONENT(TYPE) public: static ecs::ComponentRegistry __ecs_entry_; \
+    #define DECLARE_COMPONENT(TYPE)                                                     \
+    friend class Ossium::Entity;                                                        \
+    protected:                                                                          \
+        virtual TYPE* Clone();                                                          \
                                                                                         \
-    TYPE* Clone()
-    /// Adds the component type to the registry by static instantiation and defines a virtual copy method
+        TYPE(){};                                                                       \
+                                                                                        \
+    public:                                                                             \
+        static ecs::ComponentRegistry __ecs_entry_
+
+    /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
+    /// Also defines an empty constructor (using the default keyword results in an ill-formed constructor).
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
-    #define REGISTER_COMPONENT(TYPE) ecs::ComponentRegistry TYPE::__ecs_entry_;         \
+    #define REGISTER_COMPONENT(TYPE)                                                    \
+    ecs::ComponentRegistry TYPE::__ecs_entry_;                                          \
                                                                                         \
     TYPE* TYPE::Clone()                                                                 \
     {                                                                                   \
@@ -250,7 +259,7 @@ namespace Ossium
         Transform transform;
 
         /// This effectively replaces the copy constructor; entities can only be explicitly copied
-        Entity* Clone();
+        Entity& Clone();
 
         /// Returns pointer to first found instance of an entity
         Entity* find(string name);
@@ -285,39 +294,32 @@ namespace Ossium
         Entity* GetEntity();
 
     protected:
-        /// Effectively replace the constructor and destructor
+        /// These replace the constructor and destructor
         virtual void OnCreate();
         virtual void OnDestroy();
 
-        /// Called when the parent entity is spawned
-        virtual void OnSpawn();
+        /// Called when this component is copied; replaces the copy constructor
+        virtual void OnClone();
 
         /// Each frame this method is called
         virtual void Update();
 
         /// Pointer to the entity that this component is attached to
-        Entity* entity;
+        Entity* entity = nullptr;
 
-        /// Initialise entity pointer to null
-        /// Protected - only friend class Entity can instantiate components
-        Component();
+        /// A cloning method is required for polymorphic copies, e.g. when copying an entity
+        /// we need to perform a deep copy of different component types in a vector<Component*>.
+        /// This is implemented automagically by the REGISTER_COMPONENT(TYPE) macro.
+        virtual Component* Clone() = 0;
 
-        /// Make sure derived classes are destroyed properly
         virtual ~Component();
 
-    private:
-        /// A cloning method is required for polymorphic copies, e.g. when copying an entity
-        /// we need to perform a deep copy of different component types in a vector<Component*>
-        /// This is implemented automagically by the DECLARE_COMPONENT(TYPE) and REGISTER_COMPONENT(TYPE) macros
-        virtual Component* Clone() = 0;
+        /// Only friend class Entity can instantiate components
+        Component();
 
         /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
         Component(const Component& copySource);
-        Component& operator=(const Component& copySource);
-
-        #ifdef DEBUG
-        bool onDestroyCalled;
-        #endif // DEBUG
+        Component& operator=(const Component& copySource) = delete;
 
     };
 

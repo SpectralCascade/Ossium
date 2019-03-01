@@ -28,9 +28,6 @@ namespace Ossium
         public:
             DECLARE_COMPONENT(StateSprite);
 
-            StateSprite();
-            ~StateSprite();
-
             /// Adds a state to the sprite; horizontal specifies whether the image should be sliced horizontally or vertically,
             /// and segments specifies how many substates the image should be sliced up into.
             bool AddState(string state, Image* image, bool horizontal = true, Uint16 segments = 1);
@@ -61,16 +58,16 @@ namespace Ossium
             map<string, pair<Image*, Uint16>> states;
 
             /// Current state key
-            string currentState;
+            string currentState = "";
 
             /// Current substate
-            Uint16 currentSubState;
+            Uint16 currentSubState = 0;
 
             /// Current horizontal flag
-            bool horizontalFlag;
+            bool horizontalFlag = true;
 
             /// Current number of segments
-            Uint16 totalCurrentSegments;
+            Uint16 totalCurrentSegments = 1;
 
         };
 

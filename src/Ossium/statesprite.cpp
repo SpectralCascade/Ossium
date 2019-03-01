@@ -15,19 +15,6 @@ namespace Ossium
 
         REGISTER_COMPONENT(StateSprite);
 
-        StateSprite::StateSprite()
-        {
-            currentState = "";
-            currentSubState = 0;
-            horizontalFlag = true;
-            totalCurrentSegments = 1;
-        }
-
-        StateSprite::~StateSprite()
-        {
-            states.clear();
-        }
-
         bool StateSprite::AddState(string state, Image* image, Uint16 clipData)
         {
             if (image != nullptr)

@@ -11,52 +11,12 @@ namespace Ossium
 {
     REGISTER_COMPONENT(Text);
 
-    Text::Text()
+    void Text::OnClone()
     {
-        textData = "";
+        /// Set the source image to the newly instantiated, empty image
+        source = &image;
+        /// We must create the text texture before we can render it
         update = true;
-        color = {0xFF, 0xFF, 0xFF, 0xFF};
-        bgColor = {0x00, 0x00, 0x00, 0xFF};
-        font = NULL;
-        style = TTF_STYLE_NORMAL;
-        hinting = TTF_HINTING_NORMAL;
-        renderMode = RENDERTEXT_SOLID;
-        outline = 0;
-        boxPadWidth = 4;
-        boxPadHeight = 2;
-        kerning = true;
-        box = false;
-        cachedPointSize = 24;
-    }
-
-    Text::Text(const Text& copySource)
-    {
-        bgColor = copySource.bgColor;
-        box = copySource.box;
-        boxPadHeight = copySource.boxPadWidth;
-        boxPadWidth = copySource.boxPadWidth;
-        color = copySource.color;
-        font = copySource.font;
-        font_guid = copySource.font_guid;
-        hinting = copySource.hinting;
-        kerning = copySource.kerning;
-        outline = copySource.outline;
-        renderMode = copySource.renderMode;
-        style = copySource.style;
-        textData = copySource.textData;
-        update = true;
-        cachedPointSize = copySource.cachedPointSize;
-        /// No need to NULL the font, as the font is not managed by this class
-    }
-
-    Text::~Text()
-    {
-        if (font != NULL)
-        {
-            /// Don't close the font, as other Text objects may be using it still.
-            /// Leave that job to the font resource manager
-            font = NULL;
-        }
     }
 
     bool Text::textToTexture(Renderer& renderer, Font* fontToUse, int pointSize)
@@ -66,10 +26,10 @@ namespace Ossium
             update = false;
         }
         /// If for whatever reason fontToUse is NULL, attempt to use last known font
-        if (fontToUse == NULL)
+        if (fontToUse == nullptr)
         {
             fontToUse = font;
-            if (fontToUse == NULL)
+            if (fontToUse == nullptr)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Cannot render text with NULL font resource!");
                 return false;
@@ -97,7 +57,7 @@ namespace Ossium
 
     void Text::Render(Renderer& renderer)
     {
-        if (update && font != NULL)
+        if (update && font != nullptr)
         {
             textToTexture(renderer, font);
         }

@@ -34,7 +34,7 @@ namespace Ossium
         SetName(name);
     }
 
-    Entity* Entity::Clone()
+    Entity& Entity::Clone()
     {
         Entity* entityCopy = new Entity(controller, self->parent != nullptr ? self->parent->data : nullptr);
         entityCopy->self->name = self->name + " (copy)";
@@ -45,11 +45,12 @@ namespace Ossium
             {
                 Component* copyComponent = (*itr)->Clone();
                 copyComponent->entity = entityCopy;
+                copyComponent->OnClone();
                 copiedComponents.push_back(copyComponent);
             }
             entityCopy->components.insert({i->first, copiedComponents});
         }
-        return entityCopy;
+        return *entityCopy;
     }
 
     Entity::~Entity()
@@ -115,18 +116,19 @@ namespace Ossium
         return node != nullptr ? node->data : nullptr;
     }
 
+    Component::~Component()
+    {
+    }
+
     void Component::OnCreate()
     {
     }
 
     void Component::OnDestroy()
     {
-        #ifdef DEBUG
-        onDestroyCalled = true;
-        #endif // DEBUG
     }
 
-    void Component::OnSpawn()
+    void Component::OnClone()
     {
     }
 
@@ -136,10 +138,6 @@ namespace Ossium
 
     Component::Component()
     {
-        entity = nullptr;
-        #ifdef DEBUG
-        onDestroyCalled = false;
-        #endif // DEBUG
     }
 
     Component::Component(const Component& copySource)
@@ -148,22 +146,9 @@ namespace Ossium
         /// The entity reference should be constant once created
     }
 
-    Component& Component::operator=(const Component& copySource)
-    {
-        /// Ditto
-        return *this;
-    }
-
     Entity* Component::GetEntity()
     {
         return entity;
-    }
-
-    Component::~Component()
-    {
-        #ifdef DEBUG
-        SDL_assert(onDestroyCalled != false);
-        #endif // DEBUG
     }
 
     ComponentType ecs::ComponentRegistry::nextTypeIdent = 0;

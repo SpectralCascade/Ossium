@@ -22,11 +22,9 @@ namespace Ossium
     public:
         DECLARE_COMPONENT(Text);
 
-        Text();
-        Text(const Text& src);
-        ~Text();
-
         friend class graphics::Renderer;
+
+        virtual void OnClone();
 
         /// Renders textData to a texture using a TrueType Font
         bool textToTexture(Renderer& renderer, Font* fontToUse, int pointSize = 0);
@@ -72,50 +70,50 @@ namespace Ossium
 
     private:
         /// If true, render box behind text in the background colour
-        bool box;
+        bool box = false;
 
         /// Box padding, in pixels
-        int boxPadWidth;
-        int boxPadHeight;
+        int boxPadWidth = 4;
+        int boxPadHeight = 2;
 
         /// If true, next time render() is called, the text is rerendered to texture first with textToTexture()
-        bool update;
+        bool update = true;
 
         /// The text string
-        string textData;
+        string textData = "";
 
         /// The image that is used to generate the text
         Image image;
 
         /// Pointer to font
-        Font* font;
+        Font* font = nullptr;
 
         /// Cached point size of the font
-        int cachedPointSize;
+        int cachedPointSize = 24;
 
         /// GUID of font to use:
         string font_guid;
 
         /// Text colour
-        SDL_Color color;
+        SDL_Color color = {0xFF, 0xFF, 0xFF, 0xFF};
 
         /// Background colour for outlines or shaded rendering box
-        SDL_Color bgColor;
+        SDL_Color bgColor = {0x00, 0x00, 0x00, 0xFF};
 
         /// Text outline thickness in pixels
-        int outline;
+        int outline = 0;
 
         /// General text style, e.g. bold, italics etc.
-        int style;
+        int style = TTF_STYLE_NORMAL;
 
         /// Whether or not kerning should be enabled
-        bool kerning;
+        bool kerning = true;
 
         /// Font hinting, e.g. monospace
-        int hinting;
+        int hinting = TTF_HINTING_NORMAL;
 
         /// Solid, shaded or blended (alpha)
-        int renderMode;
+        int renderMode = RENDERTEXT_SOLID;
 
     };
 

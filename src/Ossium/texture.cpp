@@ -20,15 +20,9 @@ namespace Ossium
         /// IMAGE ///
         ///       ///
 
-        Image::Image()
+        /// No values or references are copied by default. You have to call Clone() to make a deep copy.
+        Image::Image(const Image& source)
         {
-            tempSurface = NULL;
-            texture = NULL;
-            outlineTexture = NULL;
-            width = 0;
-            height = 0;
-            pixels = NULL;
-            pitch = 0;
         }
 
         Image::~Image()
@@ -43,6 +37,10 @@ namespace Ossium
 
         void Image::Free()
         {
+            if (pixels != NULL)
+            {
+                UnlockPixels();
+            }
             if (texture != NULL)
             {
                 SDL_DestroyTexture(texture);
@@ -302,28 +300,6 @@ namespace Ossium
         ///         ///
 
         REGISTER_COMPONENT(Texture);
-
-        Texture::Texture()
-        {
-            source = nullptr;
-            modulation = {0xFF, 0xFF, 0xFF, 0xFF};
-            blending = SDL_BLENDMODE_BLEND;
-            clip = {0, 0, 0, 0};
-            flip = SDL_FLIP_NONE;
-        }
-
-        Texture::Texture(const Texture& src)
-        {
-            source = src.source;
-            modulation = src.modulation;
-            blending = src.blending;
-            clip = src.clip;
-            flip = src.flip;
-        }
-
-        Texture::~Texture()
-        {
-        }
 
         void Texture::Render(Renderer& renderer)
         {

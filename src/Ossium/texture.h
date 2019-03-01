@@ -43,7 +43,8 @@ namespace Ossium
         class Image
         {
         public:
-            Image();
+            Image() = default;
+            Image(const Image& source);
             ~Image();
 
             friend class Texture;
@@ -140,32 +141,30 @@ namespace Ossium
             };
 
         private:
-            NOCOPY(Image);
-
             /// Locks the texture so the raw pixels may be modified
             bool LockPixels();
             /// Unlocks the texture so the raw pixels can no longer be modified
             bool UnlockPixels();
 
             /// The image prior to being converted to an SDL_Texture
-            SDL_Surface* tempSurface;
+            SDL_Surface* tempSurface = NULL;
 
             /// A representation of the image in video memory
-            SDL_Texture* texture;
+            SDL_Texture* texture = NULL;
 
             /// Outline texture (used purely for rendered text)
-            SDL_Texture* outlineTexture;
+            SDL_Texture* outlineTexture = NULL;
 
             /// Image dimensions
-            int width;
-            int height;
+            int width = 0;
+            int height = 0;
 
             /// The pixel format
             Uint32 format;
             /// Pixel data; NULL unless you have locked the pixels in video memory
-            void* pixels;
+            void* pixels = NULL;
             /// 'Width' of the image as laid out in memory, in bytes
-            int pitch;
+            int pitch = 0;
 
         };
 
@@ -174,10 +173,6 @@ namespace Ossium
         {
         public:
             DECLARE_COMPONENT(Texture);
-
-            Texture();
-            Texture(const Texture& src);
-            virtual ~Texture();
 
             /// Sets the alpha blending mode
             void SetBlendMode(SDL_BlendMode blend);
@@ -205,6 +200,7 @@ namespace Ossium
             void SetRenderWidth(float percent);
             /// Sets the height as a percentage of the source image height
             void SetRenderHeight(float percent);
+
             /// Sets the flip mode of the texture; a texture can be flipped horizontally, vertically, or not at all
             void SetFlip(SDL_RendererFlip flipMode);
             /// Sets the clip rect area. Set autoScale to false to prevent resizing the rendered dimensions
@@ -228,19 +224,19 @@ namespace Ossium
 
         protected:
             /// The source image that this texture renders a copy of
-            Image* source;
+            Image* source = nullptr;
 
             /// The area of the source image that should be rendered
-            SDL_Rect clip;
+            SDL_Rect clip = {0, 0, 0, 0};
 
             /// Should this texture be flipped vertically, horizontally, or not at all?
-            SDL_RendererFlip flip;
+            SDL_RendererFlip flip = SDL_FLIP_NONE;
 
             /// Colour and alpha modulation values. These are applied whenever the Render() method is called
-            SDL_Color modulation;
+            SDL_Color modulation = {0xFF, 0xFF, 0xFF, 0xFF};
 
             /// The blending mode for this texture. Applied whenever the Render() method is called
-            SDL_BlendMode blending;
+            SDL_BlendMode blending = SDL_BLENDMODE_BLEND;
 
         };
 
