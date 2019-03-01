@@ -151,16 +151,14 @@ namespace Ossium
         return entity;
     }
 
-    ComponentType ecs::ComponentRegistry::nextTypeIdent = 0;
-
     EntityComponentSystem::EntityComponentSystem()
     {
-        components = new vector<Component*>[ecs::ComponentRegistry::GetTotalTypes()];
+        components = new vector<Component*>[typesys::TypeRegistry<ComponentType>::GetTotalTypes()];
     }
 
     void EntityComponentSystem::UpdateComponents()
     {
-        for (unsigned int i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = typesys::TypeRegistry<ComponentType>::GetTotalTypes(); i < counti; i++)
         {
             for (auto j = components[i].begin(); j != components[i].end(); j++)
             {
@@ -184,7 +182,7 @@ namespace Ossium
         }
         /// Now we can safely remove all nodes from the tree and remove all components
         entityTree.clear();
-        for (unsigned int i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = typesys::TypeRegistry<ComponentType>::GetTotalTypes(); i < counti; i++)
         {
             /// No need to delete components as they are deleted when their parent entity is destroyed
             components[i].clear();
@@ -198,7 +196,7 @@ namespace Ossium
 
     EntityComponentSystem::~EntityComponentSystem()
     {
-        for (Uint32 i = 0, counti = ecs::ComponentRegistry::GetTotalTypes(); i < counti; i++)
+        for (Uint32 i = 0, counti = typesys::TypeRegistry<ComponentType>::GetTotalTypes(); i < counti; i++)
         {
             components[i].clear();
         }

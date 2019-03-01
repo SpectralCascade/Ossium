@@ -16,7 +16,7 @@ namespace Ossium
         scale = 1.0f;
     }
 
-    void Clock::update(float deltaTimeSeconds)
+    void Clock::Update(float deltaTimeSeconds)
     {
         if (!paused)
         {
@@ -42,27 +42,27 @@ namespace Ossium
         }
     }
 
-    void Clock::setPaused(bool pause)
+    void Clock::SetPaused(bool pause)
     {
         paused = pause;
     }
 
-    bool Clock::isPaused()
+    bool Clock::IsPaused()
     {
         return paused;
     }
 
-    void Clock::stretch(float scaleFactor)
+    void Clock::Stretch(float scaleFactor)
     {
         scale = scaleFactor;
     }
 
-    float Clock::getScaleFactor()
+    float Clock::GetScaleFactor()
     {
         return scale;
     }
 
-    void Clock::stepFrames(int frames, float framePeriod)
+    void Clock::StepFrames(int frames, float framePeriod)
     {
         float deltaTime = (float)frames * framePeriod * 1000.0f;
         previousTime = time;
@@ -83,17 +83,17 @@ namespace Ossium
         }
     }
 
-    Uint32 Clock::getTime()
+    Uint32 Clock::GetTime()
     {
         return time;
     }
 
-    Uint32 Clock::getInitialTime()
+    Uint32 Clock::GetInitialTime()
     {
         return initialTime;
     }
 
-    float Clock::getDeltaTime()
+    float Clock::GetDeltaTime()
     {
         return ((float)time - (float)previousTime) / 1000.0f;
     }
@@ -105,39 +105,33 @@ namespace Ossium
     Timer::Timer(Clock* refClock)
     {
         clock = refClock;
-        startTicks = 0;
-        pausedTicks = 0;
-        started = false;
-        paused = false;
     }
 
-    Timer::Timer(const Timer& thisCopy)
+    Timer::Timer(const Timer& source)
     {
-        copy(thisCopy);
+        paused = source.paused;
+        started = source.started;
+        startTicks = source.startTicks;
+        pausedTicks = source.pausedTicks;
+        if (source.clock != nullptr)
+        {
+            clock = new Clock(*source.clock);
+        }
     }
-    Timer Timer::operator=(const Timer& thisCopy)
+    Timer& Timer::operator=(const Timer& source)
     {
-        copy(thisCopy);
+        *this = Timer(source);
         return *this;
     }
 
-    void Timer::copy(const Timer& thisCopy)
-    {
-        if (thisCopy.clock != NULL)
-        {
-            clock = new Clock();
-            *clock = *thisCopy.clock;
-        }
-    }
-
-    void Timer::start()
+    void Timer::Start()
     {
         started = true;
         paused = false;
         pausedTicks = 0;
-        if (clock != NULL)
+        if (clock != nullptr)
         {
-            startTicks = clock->getTime();
+            startTicks = clock->GetTime();
         }
         else
         {
@@ -145,7 +139,7 @@ namespace Ossium
         }
     }
 
-    void Timer::stop()
+    void Timer::Stop()
     {
         started = false;
         paused = false;
@@ -153,14 +147,14 @@ namespace Ossium
         pausedTicks = 0;
     }
 
-    void Timer::pause()
+    void Timer::Pause()
     {
         if (started && !paused)
         {
             paused = true;
-            if (clock != NULL)
+            if (clock != nullptr)
             {
-                pausedTicks = clock->getTime() - startTicks;
+                pausedTicks = clock->GetTime() - startTicks;
             }
             else
             {
@@ -170,14 +164,14 @@ namespace Ossium
         }
     }
 
-    void Timer::resume()
+    void Timer::Resume()
     {
         if (started && paused)
         {
             paused = false;
-            if (clock != NULL)
+            if (clock != nullptr)
             {
-                startTicks = clock->getTime() - pausedTicks;
+                startTicks = clock->GetTime() - pausedTicks;
             }
             else
             {
@@ -187,7 +181,7 @@ namespace Ossium
         }
     }
 
-    Uint32 Timer::getTicks()
+    Uint32 Timer::GetTicks()
     {
         Uint32 time = 0;
         if (started)
@@ -198,9 +192,9 @@ namespace Ossium
             }
             else
             {
-                if (clock != NULL)
+                if (clock != nullptr)
                 {
-                    time = clock->getTime() - startTicks;
+                    time = clock->GetTime() - startTicks;
                 }
                 else
                 {
@@ -211,11 +205,11 @@ namespace Ossium
         return time;
     }
 
-    bool Timer::isStarted()
+    bool Timer::IsStarted()
     {
         return started;
     }
-    bool Timer::isPaused()
+    bool Timer::IsPaused()
     {
         return paused;
     }

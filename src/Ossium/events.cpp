@@ -147,7 +147,7 @@ namespace Ossium
                 /// Use the default clock if none is provided
                 info.category_clock = &events_clock;
             }
-            event.sendTime = info.category_clock->getTime() + delay;
+            event.sendTime = info.category_clock->GetTime() + delay;
             info.broadcast_queue.insert(event);
         }
     }
@@ -171,7 +171,7 @@ namespace Ossium
             EventMessage message;
             message.data = event.data;
             message.category = event.category;
-            message.sendTime = info.category_clock->getTime() + delay;
+            message.sendTime = info.category_clock->GetTime() + delay;
             message.target = target;
             info.dispatch_queue.insert(message);
         }
@@ -179,15 +179,15 @@ namespace Ossium
 
     void EventController::Update(float deltaTime)
     {
-        events_clock.update(deltaTime);
+        events_clock.Update(deltaTime);
         for (auto info = registry.begin(); info != registry.end(); info++)
         {
-            for (auto i = (*info).second.dispatch_queue.begin(); i != (*info).second.dispatch_queue.end() && (*i).sendTime < (*info).second.category_clock->getTime(); i++)
+            for (auto i = (*info).second.dispatch_queue.begin(); i != (*info).second.dispatch_queue.end() && (*i).sendTime < (*info).second.category_clock->GetTime(); i++)
             {
                 (*i).target->HandleEvent(*i);
                 (*info).second.dispatch_queue.erase(i);
             }
-            for (auto i = (*info).second.broadcast_queue.begin(); i != (*info).second.broadcast_queue.end() && (*i).sendTime < (*info).second.category_clock->getTime(); i++)
+            for (auto i = (*info).second.broadcast_queue.begin(); i != (*info).second.broadcast_queue.end() && (*i).sendTime < (*info).second.category_clock->GetTime(); i++)
             {
                 for (auto j = (*info).second.subscribers.begin(); j != (*info).second.subscribers.end(); j++)
                 {

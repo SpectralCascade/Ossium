@@ -5,13 +5,13 @@ namespace Ossium
 
     inline namespace input
     {
-
+/*
         namespace internals
         {
 
-            InputHandlerType HandlerRegistry::nextTypeIdent = 0;
+            InputHandlerType TypeRegistry<InputHandlerType>::nextTypeIdent = 0;
 
-        }
+        }*/
 
         InputController::InputController()
         {

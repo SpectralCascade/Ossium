@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <SDL.h>
 
 #include "helpermacros.h"
 
@@ -70,6 +71,39 @@ namespace Ossium
 
     template<class Derived>
     Derived Singleton<Derived>::singleInstance;
+
+    namespace typesys
+    {
+
+        template<class BaseType>
+        class TypeRegistry
+        {
+        private:
+            static BaseType nextTypeIdent;
+            BaseType typeIdent;
+
+        public:
+            TypeRegistry()
+            {
+                typeIdent = nextTypeIdent;
+                nextTypeIdent++;
+            }
+
+            const BaseType getType()
+            {
+                return typeIdent;
+            }
+
+            static Uint32 GetTotalTypes()
+            {
+                return (Uint32)nextTypeIdent;
+            }
+        };
+
+        template<class BaseType>
+        BaseType TypeRegistry<BaseType>::nextTypeIdent = 0;
+
+    }
 
 }
 

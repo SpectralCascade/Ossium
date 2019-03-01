@@ -18,43 +18,6 @@ namespace Ossium
 
     typedef Uint32 ComponentType;
 
-    namespace ecs
-    {
-        /// This is a class designed to provide custom type identification
-        /// as an efficient alternative to RTTI.
-        class ComponentRegistry
-        {
-        private:
-            static ComponentType nextTypeIdent;
-            /// The type identifier for this registered component
-            ComponentType typeIdent;
-
-            /// Whether or not the registered component type implements the Update() method
-            bool update;
-
-        public:
-            ComponentRegistry()
-            {
-                typeIdent = nextTypeIdent;
-                /// Now increment nextTypeIdent for when we register another type
-                nextTypeIdent++;
-            }
-
-            /// The type identifier never changes once set for a type, hence const
-            const ComponentType getType()
-            {
-                return typeIdent;
-            }
-
-            static Uint32 GetTotalTypes()
-            {
-                return (Uint32)nextTypeIdent;
-            }
-
-        };
-
-    }
-
     /// Declares a component type, declares a virtual copy method and constructor
     /// Add this to the end of any class you wish to register as a component
     #define DECLARE_COMPONENT(TYPE)                                                     \
@@ -65,13 +28,13 @@ namespace Ossium
         TYPE(){};                                                                       \
                                                                                         \
     public:                                                                             \
-        static ecs::ComponentRegistry __ecs_entry_
+        static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Also defines an empty constructor (using the default keyword results in an ill-formed constructor).
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE)                                                    \
-    ecs::ComponentRegistry TYPE::__ecs_entry_;                                          \
+    Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                  \
                                                                                         \
     TYPE* TYPE::Clone()                                                                 \
     {                                                                                   \

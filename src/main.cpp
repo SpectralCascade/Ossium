@@ -250,7 +250,7 @@ int main(int argc, char* argv[])
         ///
 
         Timer fpsTimer;
-        fpsTimer.start();
+        fpsTimer.Start();
         int countedFrames = 0;
 
         /// Initialise the global delta time and FPS controller
@@ -320,11 +320,11 @@ int main(int argc, char* argv[])
                     handyComponents[i]->position.x = (handyComponents[i]->getWidth() / 2) + posx;
                     handyComponents[i]->position.y = (handyComponents[i]->getHeight() / 2) + (i * 50) + posy;
                 }
-                if (fpsTimer.getTicks() > 250)
+                if (fpsTimer.GetTicks() > 250)
                 {
-                    handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.getTicks() / 1000.0f))));
+                    handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.GetTicks() / 1000.0f))));
                     countedFrames = 0;
-                    fpsTimer.start();
+                    fpsTimer.Start();
                 }
             }
             mainRenderer.RenderPresent(true);
