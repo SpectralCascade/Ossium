@@ -10,6 +10,8 @@
 #include "events.h"
 #include "csvdata.h"
 #include "basics.h"
+#include "time.h"
+#include "delta.h"
 
 using namespace std;
 
@@ -353,7 +355,7 @@ namespace Ossium
                 TEST_ASSERT(csv.GetCell(5, 2) == "");
                 TEST_ASSERT(csv.GetCell(6, 2) == "43");
 
-                csv.Data()[0][1] = "TESTING OUTPUT";
+                csv.data[0][1] = "TESTING OUTPUT";
                 csv.Export("test_output.csv");
                 csv.Import("test_output.csv");
                 TEST_ASSERT(csv.GetCell(0, 1) == "TESTING OUTPUT");
@@ -364,6 +366,37 @@ namespace Ossium
                 myevent.Init(csv);
                 TEST_ASSERT(myevent.getCategory() == "npc_talk_question_rhetorical");
                 TEST_ASSERT(get<string>(*(myevent.GetValue("Name"))) == "Bob");
+            }
+
+        };
+
+        class ClockTests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                Clock c;
+                c.SetWrap(400);
+                c.Update(0.049f);
+                SDL_Log("%d", (int)c.GetTime());
+                TEST_ASSERT(c.GetTime() == 49);
+                c.Update(0.346f);
+                TEST_ASSERT(c.GetTime() == 395);
+                c.Update(0.005f);
+                TEST_ASSERT(c.GetTime() == 400);
+                c.Update(0.002f);
+                TEST_ASSERT(c.GetTime() == 1);
+                c.Stretch(-1.0f);
+                c.Update(0.002f);
+                TEST_ASSERT(c.GetTime() == 400);
+                c.Stretch(-2.0f);
+                c.Update(0.100f);
+                TEST_ASSERT(c.GetTime() == 200);
+                c.Update(0.200f);
+                TEST_ASSERT(c.GetTime() == 201);
+                c.SetWrap(399);
+                c.Update(0.200f);
+                TEST_ASSERT(c.GetTime() == 201);
             }
 
         };

@@ -21,7 +21,7 @@ namespace Ossium
 
     void Event::Init(CSV& event_data)
     {
-        for (auto i = event_data.Data().begin(); i != event_data.Data().end(); i++)
+        for (auto i = event_data.data.begin(); i != event_data.data.end(); i++)
         {
             if ((*i).empty() || (*i).size() < 2)
             {

@@ -9,7 +9,6 @@ namespace Ossium
 {
 
     /// Some sort of magical rectangle with basic positioning and rotation information...
-    template<class Derived>
     class MetaRect
     {
     public:

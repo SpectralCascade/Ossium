@@ -55,7 +55,7 @@ namespace Ossium
             height = 0;
         }
 
-        bool Image::Load(string guid_path, int* loadArgs)
+        bool Image::Load(string guid_path)
         {
             if (tempSurface != NULL)
             {
@@ -342,6 +342,10 @@ namespace Ossium
                 }
                 SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, Rotation(), &trueOrigin, flip);
             }
+        }
+
+        void Texture::Update()
+        {
         }
 
         ///

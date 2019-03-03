@@ -1,6 +1,10 @@
 #include <SDL.h>
+#include <cmath>
 
 #include "time.h"
+#include "basics.h"
+
+using namespace std;
 
 namespace Ossium
 {
@@ -11,24 +15,25 @@ namespace Ossium
     Clock::Clock(Uint32 startTimeMS)
     {
         initialTime = startTimeMS;
-        time = 0;
-        previousTime = 0;
-        scale = 1.0f;
     }
 
-    void Clock::Update(float deltaTimeSeconds)
+    bool Clock::Update(float deltaTimeSeconds)
     {
         if (!paused)
         {
             previousTime = time;
-            Uint32 changeInTime = 0;
+            overflow = 0;
             if (scale < 0.0f)
             {
-                changeInTime = (Uint32)(((-scale) * deltaTimeSeconds) * 1000.0f);
-                /// Check ensures that timeline does not wrap around - no going below 0
-                if (changeInTime > time)
+                Uint32 changeInTime = (Uint32)round(((-scale) * deltaTimeSeconds) * 1000.0f);
+                if (wrapValue != 0)
                 {
-                    time = 0;
+                    time = (Uint32)wrap(time, -(int)changeInTime, 0, wrapValue);
+                    if (time > previousTime)
+                    {
+                        overflow = (int)previousTime + (int)wrapValue;
+                        return true;
+                    }
                 }
                 else
                 {
@@ -37,9 +42,22 @@ namespace Ossium
             }
             else
             {
-                time += (Uint32)((scale * deltaTimeSeconds) * 1000.0f);
+                if (wrapValue != 0)
+                {
+                    time = (Uint32)wrap(time, (int)round((scale * deltaTimeSeconds) * 1000.0f), 0, wrapValue);
+                    if (time < previousTime)
+                    {
+                        overflow = (int)wrapValue - (int)previousTime;
+                        return true;
+                    }
+                }
+                else
+                {
+                    time += (Uint32)round((scale * deltaTimeSeconds) * 1000.0f);
+                }
             }
         }
+        return false;
     }
 
     void Clock::SetPaused(bool pause)
@@ -68,18 +86,40 @@ namespace Ossium
         previousTime = time;
         if (deltaTime < 0)
         {
-            if ((Uint32)(-deltaTime) > time)
+            if (wrapValue != 0)
             {
-                time = 0;
+                time = (Uint32)wrap(time, (int)round(deltaTime), 0, wrapValue);
+                if (time > previousTime)
+                {
+                    overflow = (int)previousTime + (int)wrapValue;
+                }
             }
             else
             {
-                time -= (Uint32)(-deltaTime);
+                if ((Uint32)round(-deltaTime) > time)
+                {
+                    time = 0;
+                }
+                else
+                {
+                    time -= (Uint32)round(-deltaTime);
+                }
             }
         }
         else
         {
-            time += (Uint32)deltaTime;
+            if (wrapValue != 0)
+            {
+                time = wrap(time, (int)round(deltaTime), 0, wrapValue);
+                if (time < previousTime)
+                {
+                    overflow = (int)wrapValue - (int)previousTime;
+                }
+            }
+            else
+            {
+                time += (Uint32)round(deltaTime);
+            }
         }
     }
 
@@ -95,7 +135,28 @@ namespace Ossium
 
     float Clock::GetDeltaTime()
     {
-        return ((float)time - (float)previousTime) / 1000.0f;
+        if (overflow != 0)
+        {
+            return (float)((int)time - overflow) / 1000.0f;
+        }
+        return (float)((int)time - (int)previousTime) / 1000.0f;
+    }
+
+    void Clock::SetTime(Uint32 pos)
+    {
+        time = pos;
+        previousTime = pos;
+        overflow = 0;
+    }
+
+    void Clock::SetWrap(Uint32 value)
+    {
+        wrapValue = value;
+    }
+
+    Uint32 Clock::GetWrap()
+    {
+        return wrapValue;
     }
 
     ///
@@ -212,6 +273,16 @@ namespace Ossium
     bool Timer::IsPaused()
     {
         return paused;
+    }
+
+    Uint32 GetMS(float seconds)
+    {
+        return (Uint32)(seconds * 1000.0f);
+    }
+
+    float GetSeconds(Uint32 ms)
+    {
+        return (float)ms / 1000.0f;
     }
 
 }

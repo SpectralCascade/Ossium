@@ -54,7 +54,7 @@ namespace Ossium
             void Free();
 
             /// Load an image and returns true if it was successful
-            bool Load(string guid_path, int* loadArgs = NULL);
+            bool Load(string guid_path);
 
             /// Creates an image with a text string
             bool CreateFromText(Renderer& renderer, Font& fontToUse, string text, int pointSize = 12, SDL_Color colour = colours::RED,
@@ -140,7 +140,7 @@ namespace Ossium
                 return false;
             };
 
-        private:
+        protected:
             /// Locks the texture so the raw pixels may be modified
             bool LockPixels();
             /// Unlocks the texture so the raw pixels can no longer be modified
@@ -169,10 +169,15 @@ namespace Ossium
         };
 
         /// This class is used for rendering an image
-        class Texture : public Graphic, public Component, public MetaRect<Texture>
+        class Texture : public Graphic, public Component, public MetaRect
         {
         public:
             DECLARE_COMPONENT(Texture);
+
+            virtual ~Texture(){};
+
+            /// Updates any derived instance if necessary.
+            virtual void Update();
 
             /// Sets the alpha blending mode
             void SetBlendMode(SDL_BlendMode blend);

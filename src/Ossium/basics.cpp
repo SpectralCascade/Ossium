@@ -9,178 +9,191 @@ using namespace std;
 
 namespace Ossium
 {
-    float clamp(float n, float min, float max)
-    {
-        if (n < min)
-        {
-            return min;
-        }
-        else if (n > max)
-        {
-            return max;
-        }
-        return n;
-    }
 
-    int clamp(int n, int min, int max)
+    inline namespace functions
     {
-        if (n < min)
-        {
-            return min;
-        }
-        else if (n > max)
-        {
-            return max;
-        }
-        return n;
-    }
 
-    int wrap(int n, int change, int min, int max)
-    {
-        int wrapped = n + change;
-        if (change > max - min)
+        float clamp(float n, float min, float max)
         {
-            wrapped = n + (change % ((max - min) + 1));
-        }
-        else if (change < min - max)
-        {
-            wrapped = n + (change % ((max - min) + 1));
-        }
-        if (wrapped > max)
-        {
-            wrapped = min + (wrapped - (max + 1));
-        }
-        else if (wrapped < min)
-        {
-            wrapped = max - ((min - 1) - wrapped);
-        }
-        return wrapped;
-    }
-
-    float mapRange(float value, float min, float max, float min_new, float max_new)
-    {
-        float fraction = clamp(value, min, max) / (max - min);
-        return min_new + (fraction * (max_new - min_new));
-    }
-
-    string ToString(float n)
-    {
-        stringstream strStream;
-        strStream.str("");
-        strStream << n;
-        return strStream.str();
-    }
-
-    string ToString(int n)
-    {
-        stringstream strStream;
-        strStream.str("");
-        strStream << n;
-        return strStream.str();
-    }
-
-    string strip(string data)
-    {
-        for (int i = 0, counti = data.length(); i < counti; i++)
-        {
-            if (data[i] != ' ')
+            if (n < min)
             {
-                data = data.substr(i, counti - i);
-                break;
+                return min;
             }
-        }
-        for (int i = data.length(); i > 0; i--)
-        {
-            if (data[i - 1] != ' ')
+            else if (n > max)
             {
-                data = data.substr(0, i);
-                break;
+                return max;
             }
+            return n;
         }
-        return data;
-    }
 
-    bool IsInt(const string& data)
-    {
-        bool isi = false;
-        for (int i = 0, counti = data.length(); i < counti; i++)
+        int clamp(int n, int min, int max)
         {
-            if (data[i] > 47 && data[i] < 58)
+            if (n < min)
             {
-                isi = true;
+                return min;
             }
-            else if (i == 0 && data[i] == '-')
+            else if (n > max)
             {
-                continue;
+                return max;
             }
-            else
-            {
-                return false;
-            }
+            return n;
         }
-        return isi;
-    }
 
-    bool IsFloat(const string& data)
-    {
-        bool isf = false;
-        bool singlepoint = false;
-        bool exponent = false;
-        for (int i = 0, counti = data.length(); i < counti; i++)
+        int wrap(int n, int change, int min, int max)
         {
-            if (data[i] > 47 && data[i] < 58)
+            int wrapped = n + change;
+            if (change > max - min)
             {
-                isf = true;
+                wrapped = n + (change % ((max - min) + 1));
             }
-            else if (data[i] == '.' && !singlepoint)
+            else if (change < min - max)
             {
-                singlepoint = true;
+                wrapped = n + (change % ((max - min) + 1));
             }
-            else if (data[i] == '-')
+            if (wrapped > max)
             {
-                continue;
+                wrapped = min + (wrapped - (max + 1));
             }
-            else if (data[i] == 'e' && isf && !exponent && i < counti - 1)
+            else if (wrapped < min)
             {
-                exponent = true;
+                wrapped = max - ((min - 1) - wrapped);
             }
-            else
-            {
-                return false;
-            }
+            return wrapped;
         }
-        return isf;
-    }
 
-    bool IsNumber(const string& data)
-    {
-        return IsInt(data) || IsFloat(data);
-    }
-
-    int ToInt(const string& data)
-    {
-        stringstream str;
-        str.str("");
-        str.str(data);
-        int value = 0;
-        if (!(str >> value))
+        float mapRange(float value, float min, float max, float min_new, float max_new)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
+            float fraction = clamp(value, min, max) / (max - min);
+            return min_new + (fraction * (max_new - min_new));
         }
-        return value;
-    }
 
-    float ToFloat(const string& data)
-    {
-        stringstream str;
-        str.str("");
-        str.str(data);
-        float value = 0;
-        if (!(str >> value))
+        string ToString(float n)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
+            stringstream strStream;
+            strStream.str("");
+            strStream << n;
+            return strStream.str();
         }
-        return value;
+
+        string ToString(int n)
+        {
+            stringstream strStream;
+            strStream.str("");
+            strStream << n;
+            return strStream.str();
+        }
+
+        string strip(string data)
+        {
+            for (int i = 0, counti = data.length(); i < counti; i++)
+            {
+                if (data[i] != ' ')
+                {
+                    data = data.substr(i, counti - i);
+                    break;
+                }
+            }
+            for (int i = data.length(); i > 0; i--)
+            {
+                if (data[i - 1] != ' ')
+                {
+                    data = data.substr(0, i);
+                    break;
+                }
+            }
+            return data;
+        }
+
+        string splitPair(string data, char delimiter)
+        {
+            int index = data.find(delimiter) + 1;
+            data = index < (int)data.length() ? data.substr(index) : "";
+            return data;
+        }
+
+        bool IsInt(const string& data)
+        {
+            bool isi = false;
+            for (int i = 0, counti = data.length(); i < counti; i++)
+            {
+                if (data[i] > 47 && data[i] < 58)
+                {
+                    isi = true;
+                }
+                else if (i == 0 && data[i] == '-')
+                {
+                    continue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return isi;
+        }
+
+        bool IsFloat(const string& data)
+        {
+            bool isf = false;
+            bool singlepoint = false;
+            bool exponent = false;
+            for (int i = 0, counti = data.length(); i < counti; i++)
+            {
+                if (data[i] > 47 && data[i] < 58)
+                {
+                    isf = true;
+                }
+                else if (data[i] == '.' && !singlepoint)
+                {
+                    singlepoint = true;
+                }
+                else if (data[i] == '-')
+                {
+                    continue;
+                }
+                else if (data[i] == 'e' && isf && !exponent && i < counti - 1)
+                {
+                    exponent = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return isf;
+        }
+
+        bool IsNumber(const string& data)
+        {
+            return IsInt(data) || IsFloat(data);
+        }
+
+        int ToInt(const string& data)
+        {
+            stringstream str;
+            str.str("");
+            str.str(data);
+            int value = 0;
+            if (!(str >> value))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
+            }
+            return value;
+        }
+
+        float ToFloat(const string& data)
+        {
+            stringstream str;
+            str.str("");
+            str.str(data);
+            float value = 0;
+            if (!(str >> value))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
+            }
+            return value;
+        }
+
     }
 
 }

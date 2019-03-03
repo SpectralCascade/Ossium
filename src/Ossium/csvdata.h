@@ -15,7 +15,7 @@ namespace Ossium
         ~CSV();
 
         /// Import a CSV file; set quoted to false if importing a csv file that doesn't wrap each cell in "" characters
-        void Import(string path, bool quoted = true);
+        bool Import(string path, bool quoted = true);
         /// Export data to a CSV file
         void Export(string path, bool quoted = true);
 
@@ -26,10 +26,6 @@ namespace Ossium
         vector<string> GetRow(unsigned int index);
         vector<string> GetColumn(unsigned int index);
 
-        /// Returns a reference to the CSV data
-        vector<vector<string>>& Data();
-
-    private:
         /// Loaded data in a two dimensional dynamic array
         vector<vector<string>> data;
 

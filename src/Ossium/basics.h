@@ -12,38 +12,46 @@ using namespace std;
 namespace Ossium
 {
 
-    ///
-    /// Handy utility functions
-    ///
+    inline namespace functions
+    {
 
-    /// Clamps a number to maxima/minima
-    float clamp(float n, float min, float max);
-    int clamp(int n, int min, int max);
+        ///
+        /// Handy utility functions
+        ///
 
-    /// Wraps an integer number within a given range
-    int wrap(int n, int change, int min, int max);
+        /// Clamps a number to maxima/minima
+        float clamp(float n, float min, float max);
+        int clamp(int n, int min, int max);
 
-    /// Maps a value and it's range to a different range
-    /// value = value to be mapped, min and max = original range, min_new and max_new = the new range to be mapped to
-    float mapRange(float value, float min, float max, float min_new, float max_new);
+        /// Wraps an integer number within a given range. Both min and max are INCLUSIVE.
+        int wrap(int n, int change, int min, int max);
 
-    /// Converts numerical values to strings using stringstream
-    string ToString(float n);
-    string ToString(int n);
+        /// Maps a value and it's range to a different range
+        /// value = value to be mapped, min and max = original range, min_new and max_new = the new range to be mapped to
+        float mapRange(float value, float min, float max, float min_new, float max_new);
 
-    /// Removes spaces from either end of an input string and returns a new string
-    string strip(string data);
+        /// Converts numerical values to strings using stringstream
+        string ToString(float n);
+        string ToString(int n);
 
-    /// Determine whether a stripped ASCII string is an integer
-    bool IsInt(const string& data);
-    /// Determine whether a stripped ASCII string is a float
-    bool IsFloat(const string& data);
-    /// Convenient method to check whether a string is numerical at all
-    bool IsNumber(const string& data);
+        /// Removes spaces from either end of an input string and returns a new string
+        string strip(string data);
 
-    /// Convert a string to int or float using stringstream
-    int ToInt(const string& data);
-    float ToFloat(const string& data);
+        /// Splits a string and returns the second half
+        string splitPair(string data, char delimiter = ' ');
+
+        /// Determine whether a stripped ASCII string is an integer
+        bool IsInt(const string& data);
+        /// Determine whether a stripped ASCII string is a float
+        bool IsFloat(const string& data);
+        /// Convenient method to check whether a string is numerical at all
+        bool IsNumber(const string& data);
+
+        /// Convert a string to int or float using stringstream
+        int ToInt(const string& data);
+        float ToFloat(const string& data);
+
+    }
 
     ///
     /// General interfaces and mix-in classes for programming patterns

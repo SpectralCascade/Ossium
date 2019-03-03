@@ -16,6 +16,7 @@
 #include "Ossium/audio.h"
 #include "Ossium/colours.h"
 #include "Ossium/statesprite.h"
+#include "Ossium/sprite.h"
 
 #ifdef UNIT_TESTS
 #include "Ossium/testmodules.h"
@@ -111,6 +112,7 @@ int main(int argc, char* argv[])
         TEST_RUN(FSM_Tests);
         TEST_RUN(EventSystemTests);
         TEST_RUN(CSV_Tests);
+        TEST_RUN(ClockTests);
         TEST_EVALUATE();
         return 0;
         #endif // UNIT_TESTS
@@ -166,30 +168,29 @@ int main(int argc, char* argv[])
         }
 
         ///
-        ///  ECS + Image + Texture demo
+        ///  ECS + Sprite animation demo
         ///
 
-        Image testImg;
+        AnimatorTimeline timeline;
+
+        SpriteAnimation spriteAnim;
         /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
-        testImg.LoadAndInit("sprite_test.png", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
+        spriteAnim.LoadAndInit("sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
         Entity other(&entitySystem);
-        other.AttachComponent<StateSprite>();
+        other.AttachComponent<Sprite>();
 
-        StateSprite* sprite = other.GetComponent<StateSprite>();
+        Sprite* sprite = other.GetComponent<Sprite>();
         if (sprite != nullptr)
         {
+            sprite->PlayAnimation(timeline, &spriteAnim, 0, -1, false);
             sprite->position.x = (float)(mainRenderer.GetWidth() / 2);
             sprite->position.y = (float)(mainRenderer.GetHeight() / 2);
-            if (!sprite->AddState("chest", &testImg, false, 4))
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not add state to state sprite!");
-            }
-            sprite->SetRenderWidth(8);
-            sprite->SetRenderHeight(8);
+            sprite->SetRenderWidth(6);
+            sprite->SetRenderHeight(6);
             mainRenderer.Register(sprite);
             /// Grayscale effect
-            /*testImg.ApplyEffect([] (SDL_Color c, SDL_Point p) {
+            /*spriteAnim.ApplyEffect([] (SDL_Color c, SDL_Point p) {
                 Uint8 grayscale = (Uint8)(((float)c.r * 0.3f) + ((float)c.g * 0.59f) + ((float)c.b * 0.11f));
                 c = Colour(grayscale, grayscale, grayscale, c.a);
                 return c;
@@ -281,6 +282,8 @@ int main(int argc, char* argv[])
 
             lightSpot = sprite->ScreenToLocalPoint(Point((float)mx, (float)my));
 
+            timeline.Update(global::delta.time());
+
             /// Logic update phase
             if (volume_change)
             {
@@ -299,15 +302,16 @@ int main(int argc, char* argv[])
 
             entitySystem.UpdateComponents();
 
-            testImg.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
+            /// Note: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
+            //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
             /// Pixel-precise lighting effect that stays constant despite sprite size changes
-            SDL_Rect area = sprite->GetCurrentClip();
-            testImg.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
+            //SDL_Rect area = sprite->GetClip();
+            /*spriteAnim.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
                 float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
                 c = Colour((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
                 return c;
-            }, &area);
+            });*/
 
             /// Rendering phase
             SDL_RenderClear(mainRenderer.GetRendererSDL());

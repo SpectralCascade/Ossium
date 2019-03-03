@@ -16,7 +16,7 @@ namespace Ossium
         data.clear();
     }
 
-    void CSV::Import(string path, bool quoted)
+    bool CSV::Import(string path, bool quoted)
     {
         data.clear();
         ifstream file(path.c_str());
@@ -89,11 +89,10 @@ namespace Ossium
         if (data.empty() || data[0].empty())
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to import CSV '%s' but no data was loaded.", path.c_str());
+            return false;
         }
-        else
-        {
-            SDL_Log("Imported CSV '%s' with %d rows and %d columns.", path.c_str(), (int)data.size(), (int)data[0].size());
-        }
+        SDL_Log("Imported CSV '%s' with %d rows and %d columns.", path.c_str(), (int)data.size(), (int)data[0].size());
+        return true;
     }
 
     void CSV::Export(string path, bool quoted)
@@ -160,11 +159,6 @@ namespace Ossium
             SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not get column from CSV, column index [%d] is out of range!", index);
         }
         return column;
-    }
-
-    vector<vector<string>>& CSV::Data()
-    {
-        return data;
     }
 
 }
