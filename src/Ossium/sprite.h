@@ -41,9 +41,6 @@ namespace Ossium
         private:
             using Image::CreateFromText;
 
-            /// An empty keyframe; returned if GetSample() is called and no keyframes exist.
-            SpriteKeyframe defaultKeyframe;
-
             /// The file path to the sprite sheet for this animation.
             string spriteSheetPath;
 

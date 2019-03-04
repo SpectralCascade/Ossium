@@ -18,47 +18,20 @@ namespace Ossium
             position.y = 0;
             origin.x = 0.5f;
             origin.y = 0.5f;
-            width = 0;
-            height = 0;
-            direction.x = 0;
-            direction.y = 0;
         }
 
         /// Position at the centre of the rect
         Point position;
 
         /// Dimensions of the rect
-        float width;
-        float height;
+        float width = 0;
+        float height = 0;
 
-        /// The direction the rect is rotated towards
-        Vector direction;
+        /// The angle the rect is rotated by.
+        float angle = 0;
 
         /// The origin point around which the rect rotates, as a percentage of the dimensions
         Point origin;
-
-        /// These rotation methods are purely for convenience to save typing long lines of code
-
-        /// Gets the rotation of the rect in degrees
-        inline float Rotation()
-        {
-            return direction.Rotation();
-        }
-        /// Rotates the rect in degrees
-        void Rotate(float degrees)
-        {
-            direction.Rotate(degrees);
-        }
-        /// Gets the rotation of the rect in radians
-        inline float RotationRad()
-        {
-            return direction.RotationRad();
-        }
-        /// Rotates the rect in radians
-        void RotateRad(float radians)
-        {
-            direction.RotateRad(radians);
-        }
 
         /// Returns the SDL_Rect equivalent of the rect
         SDL_Rect GetSDL()

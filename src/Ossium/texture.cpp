@@ -323,24 +323,24 @@ namespace Ossium
             SDL_SetTextureColorMod(source->texture, modulation.r, modulation.g, modulation.b);
             SDL_SetTextureAlphaMod(source->texture, modulation.a);
 
-            SDL_Point trueOrigin = {(int)(origin.x * (float)source->width), (int)(origin.y * (float)source->height)};
+            SDL_Point trueOrigin = {(int)(origin.x * width), (int)(origin.y * height)};
 
             /// Rendering time!
             if (clip.w > 0 && clip.h > 0)
             {
                 if (source->outlineTexture != NULL)
                 {
-                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, Rotation(), &trueOrigin, flip);
+                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, angle, &trueOrigin, flip);
                 }
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, Rotation(), &trueOrigin, flip);
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, angle, &trueOrigin, flip);
             }
             else
             {
                 if (source->outlineTexture != NULL)
                 {
-                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, Rotation(), &trueOrigin, flip);
+                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, angle, &trueOrigin, flip);
                 }
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, Rotation(), &trueOrigin, flip);
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, angle, &trueOrigin, flip);
             }
         }
 

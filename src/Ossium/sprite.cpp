@@ -43,8 +43,7 @@ namespace Ossium
                     keyframe.height = ToFloat(csv.GetCell(i, 8));
                     keyframe.origin.x = ToFloat(csv.GetCell(i, 9));
                     keyframe.origin.y = ToFloat(csv.GetCell(i, 10));
-                    keyframe.direction.x = ToFloat(csv.GetCell(i, 11));
-                    keyframe.direction.y = ToFloat(csv.GetCell(i, 12));
+                    keyframe.angle = ToFloat(csv.GetCell(i, 11));
                     keyframes.insert(keyframe);
                 }
                 return Image::Load(spriteSheetPath);
@@ -104,8 +103,7 @@ namespace Ossium
                     ToString(keyframe.height),
                     ToString(keyframe.origin.x),
                     ToString(keyframe.origin.y),
-                    ToString(keyframe.direction.x),
-                    ToString(keyframe.direction.y)
+                    ToString(keyframe.angle)
                 });
             }
             csv.Export(path, false);
@@ -141,11 +139,18 @@ namespace Ossium
     {
         anim.SetAnimation(animation);
         SetSource(static_cast<Image*>(animation));
+        SpriteKeyframe kf;
+        kf.clipArea = {0, 0, animation->GetWidth(), animation->GetHeight()};
+        kf.position = Point(0, 0);
+        kf.width = animation->GetWidth();
+        kf.height = animation->GetHeight();
+        kf.origin = Point(0.5f, 0.5f);
+        kf.angle = 0;
+        animation->SetDefaultKeyframe(kf);
         anim.SetLoops(loops);
         anim.Play(timeline, startTime, autoRemove);
     }
 
-    /// TODO: all the positioning/movement stuff
     void Sprite::Update()
     {
         SpriteKeyframe kf = anim.Sample<SpriteKeyframe>();
@@ -153,6 +158,9 @@ namespace Ossium
         position -= offset;
         offset = kf.position;
         position += offset;
+        width = kf.width;
+        height = kf.height;
+        angle = kf.angle;
     }
 
 }

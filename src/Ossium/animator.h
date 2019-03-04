@@ -115,8 +115,17 @@ namespace Ossium
                 keyframes.clear();
             }
 
+            /// Sets the default keyframe returned by GetSample().
+            void SetDefaultKeyframe(KeyframeType keyframe)
+            {
+                defaultKeyframe = keyframe;
+            }
+
         protected:
             set<KeyframeType> keyframes;
+
+            /// The keyframe returned by GetSample().
+            KeyframeType defaultKeyframe;
 
         };
 
