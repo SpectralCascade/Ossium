@@ -150,6 +150,9 @@ namespace Ossium
     {
         SpriteKeyframe kf = anim.Sample<SpriteKeyframe>();
         SetClip(kf.clipArea.x, kf.clipArea.y, kf.clipArea.w, kf.clipArea.h);
+        position -= offset;
+        offset = kf.position;
+        position += offset;
     }
 
 }

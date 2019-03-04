@@ -65,6 +65,10 @@ namespace Ossium
         /// Current animator clip associated with this sprite.
         AnimatorClip anim;
 
+    protected:
+        /// Stores the temporary position offset so the position can be reverted to normal when no longer animating.
+        Point offset = {0, 0};
+
     };
 
 }
