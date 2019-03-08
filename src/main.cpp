@@ -173,6 +173,9 @@ int main(int argc, char* argv[])
 
         AnimatorTimeline timeline;
 
+        timeline.AddTweeningFuncs((vector<CurveFunction>){tweening::Power2, tweening::Power3, tweening::Power4, tweening::Power5, tweening::Sine, tweening::SineHalf, tweening::SineQuarter,
+                                  tweening::Cosine, tweening::CosineHalf, tweening::CosineQuarter, tweening::Overshoot});
+
         SpriteAnimation spriteAnim;
         /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
         spriteAnim.LoadAndInit("sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
@@ -186,8 +189,6 @@ int main(int argc, char* argv[])
             sprite->PlayAnimation(timeline, &spriteAnim, 0, -1, false);
             sprite->position.x = (float)(mainRenderer.GetWidth() / 2);
             sprite->position.y = (float)(mainRenderer.GetHeight() / 2);
-            sprite->SetRenderWidth(6);
-            sprite->SetRenderHeight(6);
             mainRenderer.Register(sprite);
             /// Grayscale effect
             /*spriteAnim.ApplyEffect([] (SDL_Color c, SDL_Point p) {
@@ -232,6 +233,7 @@ int main(int argc, char* argv[])
         SoundStream.Link(&master);
         SoundStream.Play("test_stream.wav", 0.5f, -1);
 
+        master.Mute();
         /// Source goes into sfx bus
         source.Link(&sfx);
         /// The sfx bus goes into the master bus

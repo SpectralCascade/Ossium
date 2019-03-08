@@ -3,13 +3,10 @@
 
 #include <SDL.h>
 
+#include "mathconsts.h"
+
 namespace Ossium
 {
-
-    namespace constants
-    {
-        const float pi = 3.14159265358979f;
-    }
 
     inline namespace structs
     {
