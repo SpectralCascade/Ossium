@@ -40,7 +40,7 @@ namespace Ossium
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Fallback software renderer could not be created! SDL_Error: %s", SDL_GetError());
                 }
             }
-            registeredGraphics = new unordered_set<Graphic*>[numLayers];
+            registeredGraphics = new set<Graphic*>[numLayers];
             queuedGraphics = new queue<Graphic*>[numLayers];
 
             numLayersActive = numLayers;
@@ -166,7 +166,7 @@ namespace Ossium
             delete[] registeredGraphics;
             delete[] queuedGraphics;
 
-            registeredGraphics = new unordered_set<Graphic*>[numLayers];
+            registeredGraphics = new set<Graphic*>[numLayers];
             queuedGraphics = new queue<Graphic*>[numLayers];
 
             numLayersActive = numLayers;

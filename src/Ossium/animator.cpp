@@ -244,7 +244,7 @@ namespace Ossium
             clip->globalStartTime = startTime + (int)clock.GetTime() < 0 ? 0 : startTime + (int)clock.GetTime();
             clip->autoRemove = removeOnFinish;
             /// This could be improved using a set with a comparator which returns lhs.globalStartTime < rhs.globalStartTime
-            /// Note: has not been done because GCC 8 std predicates might be bugged (with pointers at least).
+            /// Note: has not been done because GCC 8 std::set predicates might be bugged (with pointers at least).
             for (auto i = clips.begin(); i != clips.end(); i++)
             {
                 if (clip->globalStartTime < (*i)->globalStartTime)

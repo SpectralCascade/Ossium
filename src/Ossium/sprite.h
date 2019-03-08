@@ -60,7 +60,7 @@ namespace Ossium
         void PlayAnimation(AnimatorTimeline& timeline, SpriteAnimation* animation, int startTime = 0, int loops = -1, bool autoRemove = true);
 
         /// Updates this sprite. Note this is automatically called by the ECS.
-        virtual void Update();
+        void Update();
 
         /// Current animator clip associated with this sprite.
         AnimatorClip anim;

@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <queue>
-#include <unordered_set>
-#include <unordered_map>
+#include <set>
 
 #include <SDL.h>
 
@@ -114,7 +113,7 @@ namespace Ossium
             #endif // DEBUG
 
             /// Registered graphics
-            unordered_set<Graphic*>* registeredGraphics;
+            set<Graphic*>* registeredGraphics;
             /// Graphics queued to be rendered for this frame only
             queue<Graphic*>* queuedGraphics;
 

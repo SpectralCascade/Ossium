@@ -169,7 +169,7 @@ namespace Ossium
         };
 
         /// This class is used for rendering an image
-        class Texture : public Graphic, public Component, public MetaRect
+        class Texture : public GraphicComponent, public MetaRect
         {
         public:
             DECLARE_COMPONENT(Texture);
@@ -177,7 +177,7 @@ namespace Ossium
             virtual ~Texture(){};
 
             /// Updates any derived instance if necessary.
-            virtual void Update();
+            void Update();
 
             /// Sets the alpha blending mode
             void SetBlendMode(SDL_BlendMode blend);
@@ -193,7 +193,7 @@ namespace Ossium
             SDL_Color GetMod();
 
             /// Inherited Graphic::Render() method
-            virtual void Render(Renderer& renderer);
+            void Render(Renderer& renderer);
 
             /// Sets the source image this texture should use. If configureDimensions is true, the width and height are set
             /// to the source image width and height

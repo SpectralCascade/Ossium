@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <SDL.h>
 
+#include "renderer.h"
 #include "transform.h"
 #include "tree.h"
 
@@ -34,7 +35,7 @@ namespace Ossium
     /// Also defines an empty constructor (using the default keyword results in an ill-formed constructor).
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE)                                                    \
-    Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                  \
+    Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                    \
                                                                                         \
     TYPE* TYPE::Clone()                                                                 \
     {                                                                                   \
@@ -94,11 +95,12 @@ namespace Ossium
 
         /// Instantiates and attaches a component to this entity
         template<class T>
-        void AttachComponent()
+        T* AddComponent(Renderer* renderer = nullptr)
         {
             T* component = new T();
             component->entity = this;
             component->OnCreate();
+            component->OnInitGraphics(renderer);
             auto itr = components.find(getComponentType<T>());
             if (itr != components.end())
             {
@@ -112,6 +114,7 @@ namespace Ossium
             }
             /// Add the component to the ECS controller
             controller->components[getComponentType<T>()].push_back(component);
+            return component;
         }
 
         /// Destroys and removes first found instance of a component attached to this entity
@@ -132,6 +135,7 @@ namespace Ossium
                     }
                 }
                 /// Now remove the component pointer from this entity's components hash and delete it
+                itr->second[0]->OnRemoveGraphics();
                 itr->second[0]->OnDestroy();
                 delete itr->second[0];
                 itr->second[0] = nullptr;
@@ -261,6 +265,11 @@ namespace Ossium
         virtual void OnCreate();
         virtual void OnDestroy();
 
+        /// This follows up the OnCreate() call, allowing a component to initialise and register graphics with the provided renderer.
+        virtual void OnInitGraphics(Renderer* renderer);
+        /// This is called just before the OnDestroy() method is called. Use this to unregister graphics from the renderer if necessary.
+        virtual void OnRemoveGraphics();
+
         /// Called when this component is copied; replaces the copy constructor
         virtual void OnClone();
 
@@ -285,6 +294,53 @@ namespace Ossium
         Component& operator=(const Component& copySource) = delete;
 
     };
+
+    inline namespace graphics
+    {
+
+        /// A type of Component automatically registers and unregisters itself from a renderer instance upon creation.
+        /// Also holds on to a reference to the renderer in use.
+        class GraphicComponent : public Graphic, public Component
+        {
+        public:
+            /// Attempts to set the rendering layer of this graphic component. Note that you probably shouldn't call this
+            /// too frequently as it attempts a removal from one set and insertion into another set within the renderer.
+            void SetRenderLayer(int layer);
+
+            /// Returns the layer this component is being rendered on.
+            int GetRenderLayer();
+
+        protected:
+            GraphicComponent();
+            virtual ~GraphicComponent();
+
+            virtual void OnCreate();
+            virtual void OnDestroy();
+
+            /// Automatically registers this graphic on the bottom layer of the provided renderer instance.
+            virtual void OnInitGraphics(Renderer* renderer);
+
+            /// Automatically unregisters this graphic from the bottom layer of the provided renderer instance.
+            virtual void OnRemoveGraphics();
+
+            virtual void OnClone();
+
+            virtual void Update();
+
+            virtual void Render(Renderer& renderer) = 0;
+
+            virtual GraphicComponent* Clone() = 0;
+
+            /// Pointer to the renderer instance this graphic component is registered to.
+            Renderer* rendererInstance = nullptr;
+
+        private:
+            /// The rendering layer this graphic component should use.
+            int renderLayer = 0;
+
+        };
+
+    }
 
 }
 

@@ -39,11 +39,6 @@ namespace Ossium
             /// The position of this keyframe on the animation clip's local timeline, in milliseconds.
             Uint32 timePosition = 0;
 
-            /// The tweening function used to transition to the next keyframe.
-            unsigned int tweenFunction = 0;
-
-            bool operator<(const BaseKeyframe& other);
-
         };
 
         bool operator<(const BaseKeyframe& lhs, const BaseKeyframe& rhs);
@@ -172,6 +167,10 @@ namespace Ossium
             template<class KeyframeType>
             KeyframeType Sample()
             {
+                if (anim == nullptr)
+                {
+                    return KeyframeType();
+                }
                 return (static_cast<Animation<KeyframeType>*>(anim))->GetSample(this);
             }
 

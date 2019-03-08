@@ -8,6 +8,7 @@
 #include "basics.h"
 #include "transform.h"
 #include "ecs.h"
+#include "delta.h"
 
 using namespace std;
 
@@ -128,6 +129,14 @@ namespace Ossium
     {
     }
 
+    void Component::OnInitGraphics(Renderer* renderer)
+    {
+    }
+
+    void Component::OnRemoveGraphics()
+    {
+    }
+
     void Component::OnClone()
     {
     }
@@ -150,6 +159,75 @@ namespace Ossium
     {
         return entity;
     }
+
+    ///
+    /// GraphicComponent
+    ///
+
+    inline namespace graphics
+    {
+
+        void GraphicComponent::SetRenderLayer(int layer)
+        {
+            if (rendererInstance != nullptr)
+            {
+                rendererInstance->Unregister(this, renderLayer);
+                rendererInstance->Register(this, layer);
+            }
+            renderLayer = layer;
+        }
+
+        int GraphicComponent::GetRenderLayer()
+        {
+            return renderLayer;
+        }
+
+        GraphicComponent::GraphicComponent()
+        {
+        }
+
+        GraphicComponent::~GraphicComponent()
+        {
+        }
+
+        void GraphicComponent::OnCreate()
+        {
+        }
+
+        void GraphicComponent::OnDestroy()
+        {
+        }
+
+        void GraphicComponent::OnClone()
+        {
+        }
+
+        void GraphicComponent::Update()
+        {
+        }
+
+        void GraphicComponent::OnInitGraphics(Renderer* renderer)
+        {
+            rendererInstance = renderer;
+            if (renderer != nullptr)
+            {
+                rendererInstance->Register(this, renderLayer);
+            }
+        }
+
+        void GraphicComponent::OnRemoveGraphics()
+        {
+            if (rendererInstance != nullptr)
+            {
+                rendererInstance->Unregister(this, renderLayer);
+            }
+        }
+
+    }
+
+    ///
+    /// EntityComponentSystem
+    ///
 
     EntityComponentSystem::EntityComponentSystem()
     {

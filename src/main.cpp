@@ -17,6 +17,7 @@
 #include "Ossium/colours.h"
 #include "Ossium/statesprite.h"
 #include "Ossium/sprite.h"
+#include "teststuff.h"
 
 #ifdef UNIT_TESTS
 #include "Ossium/testmodules.h"
@@ -142,7 +143,7 @@ int main(int argc, char* argv[])
 
         Entity gameObject(&entitySystem);
         gameObject.SetName("Test Entity");
-        gameObject.AttachComponent<Text>();
+        gameObject.AddComponent<Text>();
 
         targetText = gameObject.GetComponent<Text>();
         if (targetText != nullptr)
@@ -156,7 +157,7 @@ int main(int argc, char* argv[])
             mainRenderer.Register(targetText);
         }
 
-        gameObject.AttachComponent<Text>();
+        gameObject.AddComponent<Text>();
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
@@ -168,7 +169,7 @@ int main(int argc, char* argv[])
         }
 
         ///
-        ///  ECS + Sprite animation demo
+        /// ECS + Sprite animation demo
         ///
 
         AnimatorTimeline timeline;
@@ -181,12 +182,12 @@ int main(int argc, char* argv[])
         spriteAnim.LoadAndInit("sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
         Entity other(&entitySystem);
-        other.AttachComponent<Sprite>();
+        other.AddComponent<Sprite>();
 
         Sprite* sprite = other.GetComponent<Sprite>();
         if (sprite != nullptr)
         {
-            sprite->PlayAnimation(timeline, &spriteAnim, 0, -1, false);
+            //sprite->PlayAnimation(timeline, &spriteAnim, 0, -1, false);
             sprite->position.x = (float)(mainRenderer.GetWidth() / 2);
             sprite->position.y = (float)(mainRenderer.GetHeight() / 2);
             mainRenderer.Register(sprite);
@@ -219,6 +220,7 @@ int main(int argc, char* argv[])
         InputController mainInput;
 
         mainInput.AddContext("main", &mainContext);
+        mainInput.AddContext("stickman", other.AddComponent<StickFighter>(&mainRenderer)->context);
 
         SDL_Event e;
 
@@ -257,7 +259,7 @@ int main(int argc, char* argv[])
         int countedFrames = 0;
 
         /// Initialise the global delta time and FPS controller
-        delta.init(settings);
+        global::delta.init(settings);
 
         Point lightSpot(0.0f, 0.0f);
 
@@ -293,7 +295,7 @@ int main(int argc, char* argv[])
                 volume_change = false;
             }
 
-            sfx.FadeIn(delta.time(), 3.0f);
+            sfx.FadeIn(global::delta.time(), 3.0f);
             /// Demo dynamic key binding
             if (update_binding)
             {
@@ -302,8 +304,9 @@ int main(int argc, char* argv[])
                 update_binding = false;
             }
 
+            //SDL_Log("dtime is %f before update", global::delta.time());
             entitySystem.UpdateComponents();
-
+            //SDL_Log("dtime is %f after update", global::delta.time());
             /// Note: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
             //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
 
@@ -345,7 +348,7 @@ int main(int argc, char* argv[])
 
             /// Update timer and FPS count
             countedFrames++;
-            delta.update();
+            global::delta.update();
         }
     }
     TerminateOssium();
