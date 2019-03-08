@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <functional>
 #include <SDL.h>
 
 #include "basics.h"
@@ -51,7 +52,7 @@ namespace Ossium
         {
         public:
             /// Function pointer for actions based on this input data
-            typedef void (*InputAction)(const InputData& data);
+            typedef function<void(const InputData&)> InputAction;
 
             virtual ~InputHandler()
             {
@@ -66,6 +67,26 @@ namespace Ossium
             void AddAction(string name, InputAction action)
             {
                 _action_bindings[name] = action;
+            }
+
+            /// Removes the specified action. Returns false if the action does not exist.
+            void RemoveAction(string name)
+            {
+                auto actionbind = _action_bindings.find(name);
+                if (actionbind != _action_bindings.end())
+                {
+                    _action_bindings.erase(actionbind);
+                }
+                auto inputbind = _input_bindings.find(name);
+                if (inputbind != _input_bindings.end())
+                {
+                    auto directbind = _input_map.find(inputbind->second);
+                    if (directbind != _input_map.end())
+                    {
+                        _input_map.erase(directbind);
+                    }
+                    _input_bindings.erase(inputbind);
+                }
             }
 
             /// Adds an action that is not bound to an identifier
