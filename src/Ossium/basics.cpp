@@ -104,11 +104,32 @@ namespace Ossium
             return data;
         }
 
-        string splitPair(string data, char delimiter)
+        string splitPair(string data, char delimiter, string outputOnError)
         {
-            int index = data.find(delimiter) + 1;
-            data = index < (int)data.length() ? data.substr(index) : "";
-            return data;
+            int index = data.find(delimiter);
+            if (data[index] != delimiter)
+            {
+                if (outputOnError == "%s")
+                {
+                    return data;
+                }
+                return outputOnError;
+            }
+            return data.substr(index + 1);
+        }
+
+        string splitPairFirst(string data, char delimiter, string outputOnError)
+        {
+            int index = data.find(delimiter);
+            if (data[index] != delimiter)
+            {
+                if (outputOnError == "%s")
+                {
+                    return data;
+                }
+                return outputOnError;
+            }
+            return data.substr(0, index);
         }
 
         bool IsInt(const string& data)
@@ -176,7 +197,9 @@ namespace Ossium
             int value = 0;
             if (!(str >> value))
             {
+                #ifdef DEBUG
                 SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
+                #endif // DEBUG
             }
             return value;
         }
@@ -189,7 +212,9 @@ namespace Ossium
             float value = 0;
             if (!(str >> value))
             {
+                #ifdef DEBUG
                 SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
+                #endif
             }
             return value;
         }

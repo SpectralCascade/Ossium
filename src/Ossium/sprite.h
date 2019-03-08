@@ -16,6 +16,9 @@ namespace Ossium
             /// The area of the image to be rendered in this keyframe.
             SDL_Rect clipArea = {0, 0, 0, 0};
 
+            /// Array of keyframe transition data. Defaults to no interpolation.
+            Uint8 transitions[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
         };
 
         class SpriteAnimation : public Animation<SpriteKeyframe>, public Image

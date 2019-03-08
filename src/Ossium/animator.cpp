@@ -31,6 +31,11 @@ namespace Ossium
             return name;
         }
 
+        bool BaseAnimation::CanTween()
+        {
+            return tween;
+        }
+
         bool operator<(const BaseKeyframe& lhs, const BaseKeyframe& rhs)
         {
             return lhs.timePosition < rhs.timePosition;
@@ -174,13 +179,19 @@ namespace Ossium
             return localClock.GetTime();
         }
 
+        AnimatorTimeline* AnimatorClip::GetTimeline()
+        {
+            return playingTimeline;
+        }
+
         ///
         /// AnimatorTimeline
         ///
 
         AnimatorTimeline::~AnimatorTimeline()
         {
-            Clear();
+            curves.clear();
+            ClearClips();
         }
 
         void AnimatorTimeline::Update(float deltaTime)
@@ -261,7 +272,37 @@ namespace Ossium
         {
         }
 
-        void AnimatorTimeline::Clear()
+        Uint8 AnimatorTimeline::AddTweeningFuncs(vector<CurveFunction> easingCurves)
+        {
+            unsigned int index = curves.size();
+            for (auto i : easingCurves)
+            {
+                if (curves.size() < 256)
+                {
+                    curves.push_back(i);
+                    continue;
+                }
+                else
+                {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Unable to add more tweening functions to animator timeline. Number of functions exceeds the 255 function limit!");
+                    return (Uint8)(index - 1);
+                }
+            }
+            return (Uint8)index;
+        }
+
+        CurveFunction AnimatorTimeline::GetTweeningFunc(Uint8 index)
+        {
+            return (index >= (Uint8)curves.size() ? nullptr : curves[index]);
+        }
+
+        void AnimatorTimeline::ClearTweeningFuncs()
+        {
+            curves.clear();
+            curves.push_back(nullptr);
+        }
+
+        void AnimatorTimeline::ClearClips()
         {
             clips.clear();
         }

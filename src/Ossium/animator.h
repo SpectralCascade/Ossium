@@ -8,6 +8,7 @@
 #include "time.h"
 #include "renderer.h"
 #include "basics.h"
+#include "curves.h"
 
 using namespace std;
 
@@ -16,9 +17,6 @@ namespace Ossium
 
     inline namespace animator
     {
-
-        /// Function pointer for curve/tweening functions.
-        typedef float (*CurveFunction)(float normalisedTime);
 
         /// The animation type identifier, for animation types such as skeleton animation, sprite animation etc.
         typedef Uint32 AnimationType;
@@ -42,7 +40,7 @@ namespace Ossium
             Uint32 timePosition = 0;
 
             /// The tweening function used to transition to the next keyframe.
-            CurveFunction tweenFunction = nullptr;
+            unsigned int tweenFunction = 0;
 
             bool operator<(const BaseKeyframe& other);
 
@@ -65,8 +63,11 @@ namespace Ossium
             /// Returns the duration of this animation in milliseconds.
             Uint32 GetDuration();
 
-            /// Returns the name of this animation
+            /// Returns the name of this animation.
             string GetName();
+
+            /// Whether or not this animation uses tweening functions.
+            bool CanTween();
 
         protected:
             /// The name of this animation
@@ -77,6 +78,9 @@ namespace Ossium
 
             /// The duration of this animation in milliseconds.
             Uint32 duration = 0;
+
+            /// Whether or not this animation should use tweening.
+            bool tween = false;
 
         };
 
@@ -121,11 +125,34 @@ namespace Ossium
                 defaultKeyframe = keyframe;
             }
 
+            /// Attempts to set the default keyframe to the first keyframe in the set.
+            void SetDefaultKeyframeToFirstKeyframe()
+            {
+                if (!keyframes.empty())
+                {
+                    defaultKeyframe = *keyframes.begin();
+                }
+                else
+                {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to set default animation keyframe to first keyframe as no keyframes exist yet!");
+                }
+            }
+
         protected:
             set<KeyframeType> keyframes;
 
             /// The keyframe returned by GetSample().
             KeyframeType defaultKeyframe;
+
+            /// This method is used to attempt interpolation between two keyframe parameters using a specified tweening function pointer.
+            inline float AttemptTween(float start, float end, float currentNormalised, CurveFunction tweenFunc)
+            {
+                if (tweenFunc != nullptr && start != end)
+                {
+                    return tweenFunc(start, end, currentNormalised);
+                }
+                return start;
+            }
 
         };
 
@@ -192,6 +219,9 @@ namespace Ossium
             /// Get the current local time of this clip.
             Uint32 GetTime();
 
+            /// Returns the timeline that this clip is playing, or null if the clip is not playing.
+            AnimatorTimeline* GetTimeline();
+
             /// Clears the number of times this clip has been looped and resets the local timeline to 0.
             void Reset();
 
@@ -239,7 +269,19 @@ namespace Ossium
             void Update(float deltaTime);
 
             /// Removes all clips from the timeline.
-            void Clear();
+            void ClearClips();
+
+            /// Adds curve/tweening functions to this animator timeline, for interpolating between keyframes.
+            /// Returns the index at which the argument function pointers start. Note that this is never 0, because 0 is reserved
+            /// for stop-motion (no tweening/interpolation is applied to animations with index 0).
+            /// Also note that you may only add up to 255 custom tweening functions; any more are simply ignored and a warning is logged.
+            Uint8 AddTweeningFuncs(vector<CurveFunction> easingCurves);
+
+            /// Returns the tweening function associated with the provided index, or a nullptr if index is out of range (also logs a warning).
+            CurveFunction GetTweeningFunc(Uint8 index);
+
+            /// Clears the array of tweening function pointers, except for index 0.
+            void ClearTweeningFuncs();
 
             /// The clock that keeps track of time (the global timeline for all clips in this animator).
             Clock clock;
@@ -258,6 +300,10 @@ namespace Ossium
 
             /// Clips ordered by their global start time
             vector<AnimatorClip*> clips;
+
+            /// A list of tweening function pointers to be used for tweening animations on this animator timeline.
+            /// The default curves are Ossium's
+            vector<CurveFunction> curves = {nullptr, tweening::Lerp};
 
         };
 

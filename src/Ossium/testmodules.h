@@ -125,6 +125,10 @@ namespace Ossium
                 TEST_ASSERT(strip(" t        ") == "t");
                 TEST_ASSERT(strip("  test again") == "test again");
                 TEST_ASSERT(strip("test    ") == "test");
+                TEST_ASSERT(splitPair("1:2", ':') == "2");
+                TEST_ASSERT(splitPairFirst("1:2", ':') == "1");
+                TEST_ASSERT(splitPairFirst("1111:2", ':') == "1111");
+                TEST_ASSERT(splitPairFirst("-3:55", ':') == "-3");
 
                 SDL_Log("Type conversion tests.");
 
