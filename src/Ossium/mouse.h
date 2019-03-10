@@ -21,8 +21,8 @@ namespace Ossium
             MOUSE_WHEEL
         };
 
-        const Uint32 MOUSE_PRESSED = SDL_PRESSED;
-        const Uint32 MOUSE_RELEASED = SDL_RELEASED;
+        const Uint8 MOUSE_PRESSED = SDL_PRESSED;
+        const Uint8 MOUSE_RELEASED = SDL_RELEASED;
 
         /// Unlike a keyboard, a mouse has more than one type of input (scroll wheel etc.)
         struct MouseInput
@@ -40,7 +40,7 @@ namespace Ossium
             /// Y position of mouse relative to previous y position (if mouse motion event)
             Sint32 yrel;
             /// Whether the associated button is pressed, OR button bit mask as returned by SDL_GetMouseState()
-            Uint32 state;
+            Uint8 state;
             /// Number of clicks, 1 = single click, 2 = double click, etc.
             Uint8 clicks;
             /// Direction of the scroll wheel (SDL_MOUSEWHEEL_NORMAL or SDL_MOUSEWHEEL_FLIPPED)

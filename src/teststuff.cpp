@@ -9,14 +9,14 @@ void StickFighter::OnCreate()
 {
     context = new InputContext();
     keyboard = context->AddHandler<KeyboardHandler>();
-    keyboard->AddAction("left", [&](const KeyboardInput& data){ this->OnMoveLeft(data); });
-    keyboard->AddAction("right", [&](const KeyboardInput& data){ this->OnMoveRight(data); });
-    keyboard->AddAction("up", [&](const KeyboardInput& data){ this->OnMoveUp(data); });
-    keyboard->AddAction("down", [&](const KeyboardInput& data){ this->OnMoveDown(data); });
-    keyboard->Bind("left", SDLK_LEFT);
-    keyboard->Bind("right", SDLK_RIGHT);
-    keyboard->Bind("up", SDLK_UP);
-    keyboard->Bind("down", SDLK_DOWN);
+    keyboard->AddState("left");
+    keyboard->AddState("right");
+    keyboard->AddState("up");
+    keyboard->AddState("down");
+    keyboard->BindState("left", SDLK_LEFT);
+    keyboard->BindState("right", SDLK_RIGHT);
+    keyboard->BindState("up", SDLK_UP);
+    keyboard->BindState("down", SDLK_DOWN);
     SDL_Log("Created a stickfighter instance.");
 }
 
@@ -38,57 +38,24 @@ void StickFighter::OnDestroy()
     SDL_Log("Destroying a stickfighter instance now.");
 }
 
-void StickFighter::OnMoveLeft(const KeyboardInput& data)
-{
-    if (data.state == KEY_DOWN)
-    {
-        movement.x = movement.x == 0 ? -5 : 0;
-    }
-    else
-    {
-        movement.x = 0;
-    }
-}
-
-void StickFighter::OnMoveRight(const KeyboardInput& data)
-{
-    if (data.state == KEY_DOWN)
-    {
-        movement.x = movement.x == 0 ? 5 : 0;
-    }
-    else
-    {
-        movement.x = 0;
-    }
-}
-
-void StickFighter::OnMoveUp(const KeyboardInput& data)
-{
-    if (data.state == KEY_DOWN)
-    {
-        movement.y = movement.y == 0 ? -5 : 0;
-    }
-    else
-    {
-        movement.y = 0;
-    }
-}
-
-void StickFighter::OnMoveDown(const KeyboardInput& data)
-{
-    if (data.state == KEY_DOWN)
-    {
-        movement.y = movement.y == 0 ? 5 : 0;
-    }
-    else
-    {
-        movement.y = 0;
-    }
-}
-
 void StickFighter::Update()
 {
     timeline.Update(global::delta.time());
     //global::delta.update();
-    stickman->position += movement;
+    if (keyboard->GetState("up"))
+    {
+        stickman->position.y -= 5;
+    }
+    if (keyboard->GetState("down"))
+    {
+        stickman->position.y += 5;
+    }
+    if (keyboard->GetState("left"))
+    {
+        stickman->position.x -= 5;
+    }
+    if (keyboard->GetState("right"))
+    {
+        stickman->position.x += 5;
+    }
 }

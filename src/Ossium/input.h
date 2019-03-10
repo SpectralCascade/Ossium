@@ -63,6 +63,46 @@ namespace Ossium
             /// Returns true if the raw event data should be discarded after handling
             virtual bool HandleInput(const SDL_Event& raw) = 0;
 
+            /// Adds a state tracker to the input handler
+            void AddState(string name)
+            {
+                InputIdent junk = InputIdent();
+                _input_state_bindings[name] = junk;
+            }
+
+            bool GetState(string name)
+            {
+                auto itr = _input_state_bindings.find(name);
+                if (itr != _input_state_bindings.end())
+                {
+                    return _state_map[itr->second];
+                }
+                return false;
+            }
+
+            /// Removes the specified state. Returns false if the state does not exist.
+            void RemoveState(string name)
+            {
+                auto binding = _input_state_bindings.find(name);
+                if (binding != _input_state_bindings.end())
+                {
+                    auto directbind = _state_map.find(binding->second);
+                    if (directbind != _state_map.end())
+                    {
+                        _state_map.erase(directbind);
+                    }
+                    _input_state_bindings.erase(binding);
+                }
+            }
+
+            /// Binds a state to a specific input
+            void BindState(string name, InputIdent stateIdent)
+            {
+                RemoveState(name);
+                _input_state_bindings[name] = stateIdent;
+                _state_map[stateIdent] = false;
+            }
+
             /// This method adds a callback for a specific game action
             void AddAction(string name, InputAction action)
             {
@@ -77,15 +117,15 @@ namespace Ossium
                 {
                     _action_bindings.erase(actionbind);
                 }
-                auto inputbind = _input_bindings.find(name);
-                if (inputbind != _input_bindings.end())
+                auto inputbind = _input_action_bindings.find(name);
+                if (inputbind != _input_action_bindings.end())
                 {
                     auto directbind = _input_map.find(inputbind->second);
                     if (directbind != _input_map.end())
                     {
                         _input_map.erase(directbind);
                     }
-                    _input_bindings.erase(inputbind);
+                    _input_action_bindings.erase(inputbind);
                 }
             }
 
@@ -120,8 +160,8 @@ namespace Ossium
                 else
                 {
                     /// Clean up the input map
-                    auto old_bind = _input_bindings.find(action);
-                    if (old_bind != _input_bindings.end())
+                    auto old_bind = _input_action_bindings.find(action);
+                    if (old_bind != _input_action_bindings.end())
                     {
                         auto old_input = _input_map.find((*old_bind).second);
                         if (old_input != _input_map.end())
@@ -129,7 +169,7 @@ namespace Ossium
                             _input_map.erase(old_input);
                         }
                     }
-                    _input_bindings[action] = condition;
+                    _input_action_bindings[action] = condition;
                     _input_map[condition] = (*itr).second;
                 }
             }
@@ -148,9 +188,10 @@ namespace Ossium
             /// Removes all actions, bindings and input data from this handler
             void Clear()
             {
-                _input_bindings.clear();
+                _input_action_bindings.clear();
                 _action_bindings.clear();
                 _input_map.clear();
+                _input_state_bindings.clear();
             }
 
         protected:
@@ -172,18 +213,24 @@ namespace Ossium
                 return false;
             }
 
-            /// Bindless actions - these actions or not bound to any particular identifier
+            /// Bindless actions - these actions or not bound to any particular identifier.
             /// When there are no corresponding actions for an input which is of the relevant type,
             /// these actions will be called. Useful for things like custom control bindings in a game,
-            /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code
+            /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code.
             vector<InputAction> _any_actions;
 
-            /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_bindings is changed
+            /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_action_bindings is changed.
             unordered_map<InputIdent, InputAction> _input_map;
 
+            /// Direct map of inputs to states for fast lookup at runtime; changes when _input_state_bindings is changed.
+            unordered_map<InputIdent, bool> _state_map;
+
         private:
-            /// Input data bindings
-            unordered_map<string, InputIdent> _input_bindings;
+            /// Input data bindings for states
+            unordered_map<string, InputIdent> _input_state_bindings;
+
+            /// Input data bindings for actions
+            unordered_map<string, InputIdent> _input_action_bindings;
 
             /// Constant bindings of names to actions; this shouldn't be changed once all actions are added
             unordered_map<string, InputAction> _action_bindings;

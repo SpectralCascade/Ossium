@@ -16,6 +16,12 @@ namespace Ossium
                 KeyboardInput data;
                 data.state = raw.type == SDL_KEYDOWN ? KEY_DOWN : KEY_UP;
                 data.key = raw.key.keysym.sym;
+                /// Set relevant state
+                auto itr = _state_map.find(data.key);
+                if (itr != _state_map.end())
+                {
+                    itr->second = data.state;
+                }
                 /// Find a bound action linked to this input condition
                 return CallAction(data, data.key);
             }

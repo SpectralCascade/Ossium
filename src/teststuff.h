@@ -20,11 +20,6 @@ public:
 
     void OnDestroy();
 
-    void OnMoveLeft(const KeyboardInput& data);
-    void OnMoveRight(const KeyboardInput& data);
-    void OnMoveUp(const KeyboardInput& data);
-    void OnMoveDown(const KeyboardInput& data);
-
     void Update();
 
     InputContext* context;
