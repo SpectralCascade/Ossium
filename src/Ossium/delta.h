@@ -37,7 +37,7 @@ namespace Ossium
     inline namespace global
     {
 
-        static Delta delta;
+        extern Delta delta;
 
     }
 
