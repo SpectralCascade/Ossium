@@ -41,21 +41,33 @@ void StickFighter::OnDestroy()
 void StickFighter::Update()
 {
     timeline.Update(global::delta.time());
-    //global::delta.update();
+    bool moving = false;
     if (keyboard->GetState("up"))
     {
         stickman->position.y -= 5;
+        moving = true;
     }
     if (keyboard->GetState("down"))
     {
         stickman->position.y += 5;
+        moving = true;
     }
     if (keyboard->GetState("left"))
     {
         stickman->position.x -= 5;
+        moving = true;
     }
     if (keyboard->GetState("right"))
     {
         stickman->position.x += 5;
+        moving = true;
+    }
+    if (moving && stickman->anim.GetSourceName() == "idle")
+    {
+        stickman->PlayAnimation(timeline, &walkAnim);
+    }
+    else if (!moving && stickman->anim.GetSourceName() == "walk")
+    {
+        stickman->PlayAnimation(timeline, &idleAnim);
     }
 }

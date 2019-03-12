@@ -184,6 +184,11 @@ namespace Ossium
             return playingTimeline;
         }
 
+        string AnimatorClip::GetSourceName()
+        {
+            return anim != nullptr ? anim->GetName() : "";
+        }
+
         ///
         /// AnimatorTimeline
         ///

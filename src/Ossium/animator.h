@@ -191,6 +191,9 @@ namespace Ossium
             /// Returns the absolute duration of the source animation in milliseconds.
             Uint32 GetSourceDuration();
 
+            /// Returns the name of the source animation.
+            string GetSourceName();
+
             /// Plays the clip on a given animator timeline, starting at startTime + timeline.clock.GetTime().
             void Play(AnimatorTimeline& timeline, int startTime = 0, bool removeOnFinish = true);
 
