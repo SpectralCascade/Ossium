@@ -62,12 +62,30 @@ namespace Ossium
         /// Updates this sprite. Note this is automatically called by the ECS.
         void Update();
 
+        /// Overrides Texture to account for offsets.
+        void SetRenderWidth(float percent);
+        /// Overrides Texture to account for offsets.
+        void SetRenderHeight(float percent);
+
+        /// Overrides Texture to account for percent width and percent height.
+        void SetClip(int x, int y, int w = 0, int h = 0, bool autoscale = true);
+
         /// Current animator clip associated with this sprite.
         AnimatorClip anim;
 
     protected:
+        /// Whether or not this sprite has ever had PlayAnimation() called or not.
+        bool initialised = false;
+
         /// Stores the temporary position offset so the position can be reverted to normal when no longer animating.
-        Point offset = {0, 0};
+        Point positionOffset = {0, 0};
+
+        /// Stores the temporary dimensions of the sprite as percentages, relative to the actual render width and height
+        float percentWidth = 1;
+        float percentHeight = 1;
+
+        /// The angular offset of the sprite, used in a similar way to the position offset
+        float angleOffset = 0;
 
     };
 

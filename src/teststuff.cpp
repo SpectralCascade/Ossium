@@ -17,6 +17,17 @@ void StickFighter::OnCreate()
     keyboard->BindState("right", SDLK_RIGHT);
     keyboard->BindState("up", SDLK_UP);
     keyboard->BindState("down", SDLK_DOWN);
+    keyboard->AddAction("squish", [&](const KeyboardInput& data) {
+        if (data.state)
+        {
+            this->stickman->SetRenderHeight(0.5f);
+        }
+        else
+        {
+            this->stickman->SetRenderHeight(1.0f);
+        }
+    });
+    keyboard->Bind("squish", SDLK_LCTRL);
     SDL_Log("Created a stickfighter instance.");
 }
 

@@ -67,6 +67,15 @@ namespace Ossium
             return min_new + (fraction * (max_new - min_new));
         }
 
+        float zeroToOne(float value)
+        {
+            if (value == 0)
+            {
+                return 1;
+            }
+            return value;
+        }
+
         string ToString(float n)
         {
             stringstream strStream;

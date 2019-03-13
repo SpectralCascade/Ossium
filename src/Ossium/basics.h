@@ -30,6 +30,9 @@ namespace Ossium
         /// value = value to be mapped, min and max = original range, min_new and max_new = the new range to be mapped to.
         float mapRange(float value, float min, float max, float min_new, float max_new);
 
+        /// Converts a value to a 1 if it is a 0; useful for avoiding division by zero.
+        float zeroToOne(float value);
+
         /// Converts numerical values to strings using stringstream.
         string ToString(float n);
         string ToString(int n);

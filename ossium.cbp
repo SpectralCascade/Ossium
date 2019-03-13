@@ -101,6 +101,7 @@
 		<Unit filename="src/Ossium/window.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/teststuff.cpp" />
+		<Unit filename="src/teststuff.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

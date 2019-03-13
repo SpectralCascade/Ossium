@@ -236,9 +236,20 @@ namespace Ossium
     {
         animation->SetDefaultKeyframeToFirstKeyframe();
         anim.SetAnimation(animation);
-        SetSource(static_cast<Image*>(animation));
+        SetSource(static_cast<Image*>(animation), !initialised);
+        SpriteKeyframe kf = anim.Sample<SpriteKeyframe>();
+        SetClip(0, 0, kf.clipArea.w, kf.clipArea.h, !initialised);
+        angle -= angleOffset;
+        position -= positionOffset;
+        width = initialised ? (percentWidth == 0 ? (0) : (width / percentWidth)) : width * percentWidth;
+        height = initialised ? (percentHeight == 0 ? (0) : (height / percentHeight)) : height * percentHeight;
+        positionOffset = Point(0, 0);
+        angleOffset = 0;
+        percentWidth = 1;
+        percentHeight = 1;
         anim.SetLoops(loops);
         anim.Play(timeline, startTime, autoRemove);
+        initialised = true;
     }
 
     void Sprite::Update()
@@ -246,13 +257,56 @@ namespace Ossium
         if (anim.IsPlaying())
         {
             SpriteKeyframe kf = anim.Sample<SpriteKeyframe>();
-            SetClip(kf.clipArea.x, kf.clipArea.y, kf.clipArea.w, kf.clipArea.h);
-            position -= offset;
-            offset = kf.position;
-            position += offset;
-            width = kf.width;
-            height = kf.height;
-            angle = kf.angle;
+            clip.x = kf.clipArea.x;
+            clip.y = kf.clipArea.y;
+            /// Note: these clip dimensions may have to be sequenced differently to correctly calculate the dimension offsets
+            clip.w = kf.clipArea.w;
+            clip.h = kf.clipArea.h;
+            /// Offset position
+            position -= positionOffset;
+            positionOffset = kf.position;
+            position += positionOffset;
+            /// Relative width and height
+            width = width / percentWidth;
+            percentWidth = kf.width;
+            width = width * percentWidth;
+            height = height / percentHeight;
+            percentHeight = kf.height;
+            height = height * percentHeight;
+            /// Offset angle
+            angle -= angleOffset;
+            angleOffset = kf.angle;
+            angle += angleOffset;
+        }
+    }
+
+    void Sprite::SetRenderWidth(float percent)
+    {
+        width = percentWidth == 0 ? 0 : (width / percentWidth);
+        Texture::SetRenderWidth(percent * percentWidth);
+    }
+
+    void Sprite::SetRenderHeight(float percent)
+    {
+        height = percentHeight == 0 ? 0 : (height / percentHeight);
+        Texture::SetRenderHeight(percent * percentHeight);
+    }
+
+    void Sprite::SetClip(int x, int y, int w, int h, bool autoScale)
+    {
+        if (autoScale)
+        {
+            /// Cache percentage width and height
+            float wpercent = (clip.w == 0 ? 0 : width / (float)clip.w) * percentWidth;
+            float hpercent = (clip.h == 0 ? 0 : height / (float)clip.h) * percentHeight;
+            clip = {x, y, w, h};
+            /// Recalculate destination dimensions with new clip rect
+            Texture::SetRenderWidth(wpercent);
+            Texture::SetRenderHeight(hpercent);
+        }
+        else
+        {
+            clip = {x, y, w, h};
         }
     }
 

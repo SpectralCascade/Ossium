@@ -202,14 +202,14 @@ namespace Ossium
             Image* GetSource();
 
             /// Sets the width as a percentage of the source image width
-            void SetRenderWidth(float percent);
+            virtual void SetRenderWidth(float percent);
             /// Sets the height as a percentage of the source image height
-            void SetRenderHeight(float percent);
+            virtual void SetRenderHeight(float percent);
 
             /// Sets the flip mode of the texture; a texture can be flipped horizontally, vertically, or not at all
             void SetFlip(SDL_RendererFlip flipMode);
             /// Sets the clip rect area. Set autoScale to false to prevent resizing the rendered dimensions
-            void SetClip(int x, int y, int w = 0, int h = 0, bool autoScale = true);
+            virtual void SetClip(int x, int y, int w = 0, int h = 0, bool autoScale = true);
 
             /// Gets the source image width
             int GetSourceWidth();

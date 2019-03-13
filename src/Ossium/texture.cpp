@@ -400,8 +400,8 @@ namespace Ossium
             if (autoScale)
             {
                 /// Cache percentage width and height
-                float wpercent = width / (float)clip.w;
-                float hpercent = height / (float)clip.h;
+                float wpercent = clip.w == 0 ? 0 : width / (float)clip.w;
+                float hpercent = clip.h == 0 ? 0 : height / (float)clip.h;
                 clip = {x, y, w, h};
                 /// Recalculate destination dimensions with new clip rect
                 SetRenderWidth(wpercent);
@@ -427,7 +427,7 @@ namespace Ossium
         }
         float Texture::GetRenderHeight()
         {
-            return clip.h == 0 ? 0 : width / (float)clip.h;
+            return clip.h == 0 ? 0 : height / (float)clip.h;
         }
         SDL_RendererFlip Texture::GetFlip()
         {
