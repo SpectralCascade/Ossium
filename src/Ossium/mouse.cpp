@@ -8,7 +8,7 @@ namespace Ossium
 
         REGISTER_INPUT_HANDLER(MouseHandler);
 
-        bool MouseHandler::HandleInput(const SDL_Event& raw)
+        ActionOutcome MouseHandler::HandleInput(const SDL_Event& raw)
         {
             MouseInput data;
             data.button = 0;
@@ -76,7 +76,7 @@ namespace Ossium
             {
                 return CallAction(data, data.type);
             }
-            return false;
+            return ActionOutcome::Ignore;
         }
 
     }

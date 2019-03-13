@@ -17,6 +17,25 @@ namespace Ossium
     inline namespace input
     {
 
+        /// This enumeration is used to determine how the input system should behave when calling actions during input handling.
+        /// Return one of these values from an action to indicate whether the system should continue handling a particular input.
+        /// Note that these outcomes also affect states as states will not be updated after claiming!
+        enum ActionOutcome
+        {
+            /// Other actions within a context will continue to be evaluated regardless.
+            Ignore = 0,
+            /// Other actions within the local context will NO LONGER be evaluated,
+            /// but actions and states associated with the input will still be evaluated in other contexts.
+            ClaimContext = 1,
+            /// Other actions associated with the input will NOT be evaluated again this frame, regardless of context.
+            ClaimGlobal = 2,
+            /// NO other actions will be evaluated this frame, EVEN if they are not associated with the input!
+            ClaimFinal = 3
+        };
+
+        /// Returns the name of an action outcome value
+        string GetActionOutcomeName(ActionOutcome outcome);
+
         typedef Uint32 InputHandlerType;
 
         /// Declares an input handler type
@@ -38,7 +57,7 @@ namespace Ossium
         class BaseInputHandler
         {
         public:
-            virtual bool HandleInput(const SDL_Event& raw) = 0;
+            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
             virtual ~BaseInputHandler()
             {
             }
@@ -52,7 +71,7 @@ namespace Ossium
         {
         public:
             /// Function pointer for actions based on this input data
-            typedef function<void(const InputData&)> InputAction;
+            typedef function<ActionOutcome(const InputData&)> InputAction;
 
             virtual ~InputHandler()
             {
@@ -61,7 +80,7 @@ namespace Ossium
 
             /// Takes raw input data and strips away the irrelevant stuff, then checks if it matches anything in the actions table
             /// Returns true if the raw event data should be discarded after handling
-            virtual bool HandleInput(const SDL_Event& raw) = 0;
+            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
 
             /// Adds a state tracker to the input handler
             void AddState(string name)
@@ -104,13 +123,13 @@ namespace Ossium
             }
 
             /// This method adds a callback for a specific game action
-            void AddAction(string name, InputAction action)
+            void AddActionOutcome(string name, InputAction action)
             {
                 _action_bindings[name] = action;
             }
 
             /// Removes the specified action. Returns false if the action does not exist.
-            void RemoveAction(string name)
+            void RemoveActionOutcome(string name)
             {
                 auto actionbind = _action_bindings.find(name);
                 if (actionbind != _action_bindings.end())
@@ -130,14 +149,14 @@ namespace Ossium
             }
 
             /// Adds an action that is not bound to an identifier
-            void AddBindlessAction(InputAction action)
+            void AddBindlessActionOutcome(InputAction action)
             {
                 /// No duplicates checks, but why would you add multiple identical actions?!
                 _any_actions.push_back(action);
             }
 
             /// Removes a bindless action
-            void RemoveBindlessAction(InputAction action)
+            void RemoveBindlessActionOutcome(InputAction action)
             {
                 for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
                 {
@@ -174,7 +193,7 @@ namespace Ossium
                 }
             }
 
-            const InputIdent* GetActionBind(string action)
+            const InputIdent* GetActionOutcomeBind(string action)
             {
                 auto itr = _action_bindings.find(action);
                 if (itr != _action_bindings.end())
@@ -196,21 +215,30 @@ namespace Ossium
 
         protected:
             /// Call the action associated with an input; returns true if successful
-            bool CallAction(const InputData& data, const InputIdent& ident)
+            ActionOutcome CallAction(const InputData& data, const InputIdent& ident)
             {
                 /// Call all actions that accept any old data, regardless of identifier first
                 for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
                 {
-                    (*i)(data);
+                    ActionOutcome outcome = (*i)(data);
+                    if (outcome != ActionOutcome::Ignore)
+                    {
+                        SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
+                        return outcome;
+                    }
                 }
                 auto actionItr = _input_map.find(ident);
                 if (actionItr != _input_map.end())
                 {
                     /// Call the action and pass in the input data
-                    (*actionItr).second(data);
-                    return true;
+                    ActionOutcome outcome = (*actionItr).second(data);
+                    if (outcome != ActionOutcome::Ignore)
+                    {
+                        SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
+                        return outcome;
+                    }
                 }
-                return false;
+                return ActionOutcome::Ignore;
             }
 
             /// Bindless actions - these actions or not bound to any particular identifier.
@@ -283,21 +311,21 @@ namespace Ossium
             }
 
             /// Pass an input event to all the handlers
-            bool HandleInput(const SDL_Event& raw)
+            ActionOutcome HandleInput(const SDL_Event& raw)
             {
-                if (!active)
+                if (active)
                 {
-                    return false;
-                }
-                for (auto i = inputs.begin(); i != inputs.end(); i++)
-                {
-                    /// Once handled, we can early-out and not bother passing the event to other handlers
-                    if ((*i).second->HandleInput(raw))
+                    for (auto i = inputs.begin(); i != inputs.end(); i++)
                     {
-                        return true;
+                        /// Once handled, we can early-out and not bother passing the event to other handlers
+                        ActionOutcome outcome = (*i).second->HandleInput(raw);
+                        if (outcome != ActionOutcome::Ignore)
+                        {
+                            return outcome;
+                        }
                     }
                 }
-                return false;
+                return ActionOutcome::Ignore;
             }
 
             /// Is this context currently active?
@@ -354,7 +382,7 @@ namespace Ossium
 
             /// Passes a single event to all contexts. Useful if you don't exclusively use InputHandlers to handle SDL events
             /// Returns true if the event was handled
-            bool HandleEvent(const SDL_Event& raw);
+            ActionOutcome HandleEvent(const SDL_Event& raw);
 
             /// Removes all input contexts
             void Clear();

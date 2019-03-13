@@ -244,6 +244,7 @@ namespace Ossium
         width = initialised ? (percentWidth == 0 ? (0) : (width / percentWidth)) : width * percentWidth;
         height = initialised ? (percentHeight == 0 ? (0) : (height / percentHeight)) : height * percentHeight;
         positionOffset = Point(0, 0);
+        originOffset = Point(0, 0);
         angleOffset = 0;
         percentWidth = 1;
         percentHeight = 1;
@@ -266,6 +267,10 @@ namespace Ossium
             position -= positionOffset;
             positionOffset = kf.position;
             position += positionOffset;
+            /// Offset origin
+            origin -= originOffset;
+            originOffset = kf.origin;
+            origin += originOffset;
             /// Relative width and height
             width = width / percentWidth;
             percentWidth = kf.width;

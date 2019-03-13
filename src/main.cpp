@@ -39,16 +39,17 @@ bool volume_change = false;
 Sint16 panning = 0;
 AudioBus master;
 
-void MouseScrollAction(const MouseInput& data)
+ActionOutcome MouseScrollActionOutcome(const MouseInput& data)
 {
     posx -= data.x * 8;
     posy -= data.y * 8;
     volume += data.y * 0.02f;
     volume_change = true;
     panning -= data.y * 6;
+    return ActionOutcome::ClaimContext;
 }
 
-void MouseClickAction(const MouseInput& data)
+ActionOutcome MouseClickActionOutcome(const MouseInput& data)
 {
     if (mainText != nullptr)
     {
@@ -57,23 +58,30 @@ void MouseClickAction(const MouseInput& data)
             mainText->setColor(colours::GREEN);
             mainText->setText("Press any key to bind to action TOGGLE AUDIO");
             check_for_key = true;
+            return ActionOutcome::ClaimContext;
         }
     }
+    return ActionOutcome::Ignore;
 }
 
-void GetKey(const KeyboardInput& data)
+ActionOutcome GetKey(const KeyboardInput& data)
 {
-    if (check_for_key && data.state == KEY_UP)
+    if (check_for_key)
     {
-        currentKey = data.key;
-        mainText->setColor(colours::RED);
-        mainText->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
-        check_for_key = false;
-        update_binding = true;
+        if (data.state == KEY_UP)
+        {
+            currentKey = data.key;
+            mainText->setColor(colours::RED);
+            mainText->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
+            check_for_key = false;
+            update_binding = true;
+        }
+        return ActionOutcome::ClaimGlobal;
     }
+    return ActionOutcome::Ignore;
 }
 
-void KeyAction(const KeyboardInput& data)
+ActionOutcome KeyActionOutcome(const KeyboardInput& data)
 {
     if (targetText != nullptr)
     {
@@ -94,7 +102,9 @@ void KeyAction(const KeyboardInput& data)
                 targetText->setBackgroundColor(colours::GREEN);
             }
         }
+        return ActionOutcome::ClaimContext;
     }
+    return ActionOutcome::Ignore;
 }
 
 int main(int argc, char* argv[])
@@ -206,14 +216,14 @@ int main(int argc, char* argv[])
         InputContext mainContext;
         KeyboardHandler& keyboard = *mainContext.AddHandler<KeyboardHandler>();
 
-        keyboard.AddAction("TOGGLE MUTE", *KeyAction);
+        keyboard.AddActionOutcome("TOGGLE MUTE", *KeyActionOutcome);
         keyboard.Bind("TOGGLE MUTE", SDLK_m);
-        keyboard.AddBindlessAction(*GetKey);
+        keyboard.AddBindlessActionOutcome(*GetKey);
 
         MouseHandler& mouse = *mainContext.AddHandler<MouseHandler>();
 
-        mouse.AddAction("mouseclick", *MouseClickAction);
-        mouse.AddAction("scroll", *MouseScrollAction);
+        mouse.AddActionOutcome("mouseclick", *MouseClickActionOutcome);
+        mouse.AddActionOutcome("scroll", *MouseScrollActionOutcome);
         mouse.Bind("mouseclick", MOUSE_BUTTON_LEFT);
         mouse.Bind("scroll", MOUSE_WHEEL);
 

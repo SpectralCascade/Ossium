@@ -52,7 +52,7 @@ namespace Ossium
         public:
             DECLARE_INPUT_HANDLER(MouseHandler);
 
-            bool HandleInput(const SDL_Event& raw);
+            ActionOutcome HandleInput(const SDL_Event& raw);
 
         };
 

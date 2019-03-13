@@ -74,17 +74,21 @@ namespace Ossium
         AnimatorClip anim;
 
     protected:
-        /// Whether or not this sprite has ever had PlayAnimation() called or not.
+        /// Whether or not this sprite has ever had PlayAnimation() called or not. Necessary for configuring dimensions the first time an animation is loaded.
         bool initialised = false;
 
         /// Stores the temporary position offset so the position can be reverted to normal when no longer animating.
         Point positionOffset = {0, 0};
 
-        /// Stores the temporary dimensions of the sprite as percentages, relative to the actual render width and height
+        /// Used in a very similar way to positionOffset.
+        Point originOffset = {0, 0};
+
+        /// Stores the temporary width of the sprite as percentage, relative to the actual render width
         float percentWidth = 1;
+        /// Stores the temporary height of the sprite as percentage, relative to the actual render height
         float percentHeight = 1;
 
-        /// The angular offset of the sprite, used in a similar way to the position offset
+        /// The angular offset of the sprite, used in a similar way to positionOffset
         float angleOffset = 0;
 
     };

@@ -13,6 +13,30 @@ namespace Ossium
 
         }*/
 
+        string GetActionOutcomeName(ActionOutcome outcome)
+        {
+            switch (outcome)
+            {
+                case ActionOutcome::ClaimContext:
+                {
+                    return "ClaimContext";
+                }
+                case ActionOutcome::ClaimGlobal:
+                {
+                    return "ClaimGlobal";
+                }
+                case ActionOutcome::ClaimFinal:
+                {
+                    return "ClaimFinal";
+                }
+                case ActionOutcome::Ignore:
+                {
+                    return "Ignore";
+                }
+            }
+            return "Ignore";
+        }
+
         InputController::InputController()
         {
         }
@@ -25,11 +49,28 @@ namespace Ossium
         void InputController::Update()
         {
             SDL_Event current;
+            bool claimedFinal = false;
             while (SDL_PollEvent(&current) != 0)
             {
                 for (auto i = contexts.begin(); i != contexts.end(); i++)
                 {
-                    (*i).second->HandleInput(current);
+                    ActionOutcome contextOutcome = (*i).second->HandleInput(current);
+                    if (contextOutcome == ActionOutcome::ClaimFinal)
+                    {
+                        claimedFinal = true;
+                        break;
+                    }
+                    else if (contextOutcome == ActionOutcome::ClaimGlobal)
+                    {
+                        /// Prevent other contexts from handling this specific input event as it has been claimed globally.
+                        break;
+                    }
+                }
+                if (claimedFinal)
+                {
+                    /// Get rid of all input events to prevent any more input event handling taking place.
+                    SDL_FlushEvents(0, 0xFFFFFFFF);
+                    break;
                 }
             }
         }
@@ -48,16 +89,17 @@ namespace Ossium
             }
         }
 
-        bool InputController::HandleEvent(const SDL_Event& raw)
+        ActionOutcome InputController::HandleEvent(const SDL_Event& raw)
         {
             for (auto i = contexts.begin(); i != contexts.end(); i++)
             {
-                if ((*i).second->HandleInput(raw))
+                ActionOutcome outcome = (*i).second->HandleInput(raw);
+                if (outcome == ActionOutcome::ClaimGlobal || outcome == ActionOutcome::ClaimFinal)
                 {
-                    return true;
+                    return outcome;
                 }
             }
-            return false;
+            return ActionOutcome::Ignore;
         }
 
         void InputController::Clear()

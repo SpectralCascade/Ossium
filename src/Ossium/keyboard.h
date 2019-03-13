@@ -27,7 +27,7 @@ namespace Ossium
         public:
             DECLARE_INPUT_HANDLER(KeyboardHandler);
 
-            bool HandleInput(const SDL_Event& raw);
+            ActionOutcome HandleInput(const SDL_Event& raw);
 
         };
 

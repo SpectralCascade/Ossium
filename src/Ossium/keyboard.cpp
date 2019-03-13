@@ -8,7 +8,7 @@ namespace Ossium
 
         REGISTER_INPUT_HANDLER(KeyboardHandler);
 
-        bool KeyboardHandler::HandleInput(const SDL_Event& raw)
+        ActionOutcome KeyboardHandler::HandleInput(const SDL_Event& raw)
         {
             if (raw.type == SDL_KEYUP || raw.type == SDL_KEYDOWN)
             {
@@ -25,7 +25,7 @@ namespace Ossium
                 /// Find a bound action linked to this input condition
                 return CallAction(data, data.key);
             }
-            return false;
+            return ActionOutcome::Ignore;
         }
 
     }
