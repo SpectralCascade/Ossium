@@ -223,7 +223,7 @@ namespace Ossium
                     ActionOutcome outcome = (*i)(data);
                     if (outcome != ActionOutcome::Ignore)
                     {
-                        SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
+                        //SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
                         return outcome;
                     }
                 }
@@ -234,7 +234,7 @@ namespace Ossium
                     ActionOutcome outcome = (*actionItr).second(data);
                     if (outcome != ActionOutcome::Ignore)
                     {
-                        SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
+                        //SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
                         return outcome;
                     }
                 }
