@@ -40,6 +40,10 @@ namespace Ossium
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Fallback software renderer could not be created! SDL_Error: %s", SDL_GetError());
                 }
             }
+            if (renderer != NULL)
+            {
+                SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+            }
             registeredGraphics = new set<Graphic*>[numLayers];
             queuedGraphics = new queue<Graphic*>[numLayers];
 
@@ -142,6 +146,11 @@ namespace Ossium
         void Renderer::SetDrawColour(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
         {
             SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+        }
+
+        void Renderer::SetBlendmode(SDL_BlendMode blending)
+        {
+            SDL_SetRenderDrawBlendMode(renderer, blending);
         }
 
         Window* Renderer::GetWindow()

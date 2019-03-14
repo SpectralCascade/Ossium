@@ -65,10 +65,10 @@ namespace Ossium
             /// If cache is set to true, the original image is stored in memory as an SDL_Surface for quick initialisation without loading the image again
             /// (in addition to the modifiable SDL_Texture in video memory)! This could be useful if you want to remove all applied effects on the image frequently,
             /// as long as your target system has adequate memory capacity for storing the original image. Leave this set to false unless you know what you're doing!
-            bool Init(Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN, bool cache = false);
+            bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, bool cache = false);
 
             /// Shorthand method
-            bool LoadAndInit(string guid_path, Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN, bool cache = false);
+            bool LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, bool cache = false);
 
             /// Returns true if the texture is not NULL
             bool Initialised();
@@ -180,14 +180,14 @@ namespace Ossium
             void Update();
 
             /// Sets the alpha blending mode
-            void SetBlendMode(SDL_BlendMode blend);
+            void SetBlendMode(SDL_BlendMode blend, bool immediate = false);
 
             /// Sets alpha modulation
-            void SetAlphaMod(Uint8 a);
+            void SetAlphaMod(Uint8 a, bool immediate = false);
             /// Sets colour modulation
-            void SetColourMod(Uint8 r, Uint8 g, Uint8 b);
+            void SetColourMod(Uint8 r, Uint8 g, Uint8 b, bool immediate = false);
             /// Sets both colour and alpha modulation
-            void SetMod(SDL_Color mod);
+            void SetMod(SDL_Color mod, bool immediate = false);
 
             /// Returns the colour and alpha modulation values for this texture
             SDL_Color GetMod();

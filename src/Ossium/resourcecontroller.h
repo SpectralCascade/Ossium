@@ -68,12 +68,12 @@ namespace Ossium
         };
 
         /// Overload for textures
-        bool initialise(string guid_path, Renderer* renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN)
+        bool initialise(string guid_path, Renderer* renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN)
         {
             resourceType* resource = find(guid_path);
             if (resource != NULL)
             {
-                if (resource->init(renderer, windowPixelFormat))
+                if (resource->init(renderer, pixelFormatting))
                 {
                     return true;
                 }

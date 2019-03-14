@@ -94,9 +94,9 @@ namespace Ossium
             return false;
         }
 
-        bool SpriteAnimation::LoadAndInit(string path, Renderer& renderer, Uint32 windowPixelFormat, bool cache)
+        bool SpriteAnimation::LoadAndInit(string path, Renderer& renderer, Uint32 pixelFormatting, bool cache)
         {
-            return Load(path) && Image::Init(renderer, windowPixelFormat, cache);
+            return Load(path) && Image::Init(renderer, pixelFormatting, cache);
         }
 
         void SpriteAnimation::Export(string path)

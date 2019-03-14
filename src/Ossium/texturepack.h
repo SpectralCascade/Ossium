@@ -52,18 +52,18 @@ namespace Ossium
         // Loads a texture pack (image + meta data)
         bool load(string path, int* args = NULL);
         // Initialises the texture
-        bool init(Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+        bool init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN);
 
         // Loads up a single texture ready to be packed and generates mip maps for it if required
-        bool import(string path, Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
+        bool import(string path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
 
         // Packs all imported textures into one single texture; returns number of textures packed
         // Smallest first means textures are sorted smallest to largest when true, or largest to smallest when false
         // Max size determines the maximum size of the final texture
-        int packImported(Renderer& renderer, Uint32 windowPixelFormat, bool smallestFirst = true, Uint16 maxSize = 4096);
+        int packImported(Renderer& renderer, Uint32 pixelFormatting, bool smallestFirst = true, Uint16 maxSize = 4096);
 
         // Saves the texture and package data to a PNG format file
-        bool save(Renderer& renderer, Uint32 windowPixelFormat, string path);
+        bool save(Renderer& renderer, Uint32 pixelFormatting, string path);
 
         // Returns a reference to the packed texture
         Image& getPackedTexture();

@@ -1,5 +1,6 @@
 #include "teststuff.h"
 #include "Ossium/window.h"
+#include "Ossium/colours.h"
 
 using namespace Ossium;
 
@@ -38,9 +39,26 @@ void StickFighter::OnInitGraphics(Renderer* renderer)
     stickman = entity->AddComponent<Sprite>(renderer);
     stickman->position = Point(renderer->GetWindow()->getWidth() / 2, renderer->GetWindow()->getHeight() / 2);
     /// We can also load and initialise the animations here.
-    idleAnim.LoadAndInit("stick_idle.osa", *renderer, SDL_GetWindowPixelFormat(renderer->GetWindow()->getWindow()), true);
-    walkAnim.LoadAndInit("stick_walk.osa", *renderer, SDL_GetWindowPixelFormat(renderer->GetWindow()->getWindow()), true);
+    idleAnim.LoadAndInit("stick_idle.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
+    walkAnim.LoadAndInit("stick_walk.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
     stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
+    stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
+    idleAnim.ApplyEffect([](SDL_Color pixelData, SDL_Point pixelPos) {
+        pixelData.r = pixelData.r > 127 ? 127 - (pixelData.r - 128) : 127 + (128 - pixelData.r);
+        pixelData.g = pixelData.g > 127 ? 127 - (pixelData.g - 128) : 127 + (128 - pixelData.g);
+        pixelData.b = pixelData.b > 127 ? 127 - (pixelData.b - 128) : 127 + (128 - pixelData.b);
+        pixelData.a = pixelData.r == 0 && pixelData.g == 0 && pixelData.b == 0 ? 0x00 : 0xFF;
+        return pixelData;
+    });
+    stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
+    stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
+    walkAnim.ApplyEffect([](SDL_Color pixelData, SDL_Point pixelPos) {
+        pixelData.r = pixelData.r > 127 ? 127 - (pixelData.r - 128) : 127 + (128 - pixelData.r);
+        pixelData.g = pixelData.g > 127 ? 127 - (pixelData.g - 128) : 127 + (128 - pixelData.g);
+        pixelData.b = pixelData.b > 127 ? 127 - (pixelData.b - 128) : 127 + (128 - pixelData.b);
+        pixelData.a = pixelData.r == 0 && pixelData.g == 0 && pixelData.b == 0 ? 0x00 : 0xFF;
+        return pixelData;
+    });
 }
 
 void StickFighter::OnDestroy()

@@ -92,15 +92,15 @@ namespace Ossium
         return packedTexture.Load(path + ".png");
     }
 
-    bool TexturePack::init(Renderer& renderer, Uint32 windowPixelFormat)
+    bool TexturePack::init(Renderer& renderer, Uint32 pixelFormatting)
     {
-        return packedTexture.Init(renderer, windowPixelFormat);
+        return packedTexture.Init(renderer, pixelFormatting);
     }
 
-    bool TexturePack::import(string path, Renderer& renderer, Uint32 windowPixelFormat, int minMipMapSize)
+    bool TexturePack::import(string path, Renderer& renderer, Uint32 pixelFormatting, int minMipMapSize)
     {
         Image* importedTexture = new Image();
-        if (!importedTexture->LoadAndInit(path, renderer, windowPixelFormat))
+        if (!importedTexture->LoadAndInit(path, renderer, pixelFormatting))
         {
             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to import texture into texture pack with path '%s'", path.c_str());
             return false;
@@ -108,11 +108,11 @@ namespace Ossium
         bool mipmapped = false;
         SDL_Rect src = {0, 0, importedTexture->GetWidth(), importedTexture->GetHeight()};
         // If a pixel format is provided, we will try and generate a mipmap for the imported texture
-        if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
+        if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN)
         {
             SDL_Texture* mipmappedTexture = NULL;
             SDL_Renderer* tarGetRendererSDL = renderer.GetRendererSDL();
-            mipmappedTexture = SDL_CreateTexture(tarGetRendererSDL, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, (src.w / 2) * 3, src.h);
+            mipmappedTexture = SDL_CreateTexture(tarGetRendererSDL, pixelFormatting, SDL_TEXTUREACCESS_TARGET, (src.w / 2) * 3, src.h);
             // Cache original renderer target
             SDL_Texture* originalTarget = SDL_GetRenderTarget(tarGetRendererSDL);
             // Configure the renderer so it renders to the mipmapped texture
@@ -154,13 +154,13 @@ namespace Ossium
         return true;
     }
 
-    int TexturePack::packImported(Renderer& renderer, Uint32 windowPixelFormat, bool smallestFirst, Uint16 maxSize)
+    int TexturePack::packImported(Renderer& renderer, Uint32 pixelFormatting, bool smallestFirst, Uint16 maxSize)
     {
         // Free current pack texture and it's meta data
         freePack();
         // Sort the imported textures. Small textures are first, big textures last
         // as small textures are likely to be reused more than large textures
-        if (importedData.empty() || windowPixelFormat == SDL_PIXELFORMAT_UNKNOWN)
+        if (importedData.empty() || pixelFormatting == SDL_PIXELFORMAT_UNKNOWN)
         {
             return 0;
         }
@@ -189,7 +189,7 @@ namespace Ossium
         int numAdded = 0;
         SDL_Renderer* render = renderer.GetRendererSDL();
         // Max size is used for dimensions for time being, but any leftover space will be removed
-        packedTexture.texture = SDL_CreateTexture(render, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, maxSize, maxSize);
+        packedTexture.texture = SDL_CreateTexture(render, pixelFormatting, SDL_TEXTUREACCESS_TARGET, maxSize, maxSize);
         packedTexture.width = maxSize;
         packedTexture.height = maxSize;
         SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
@@ -244,7 +244,7 @@ namespace Ossium
         return numAdded;
     }
 
-    bool TexturePack::save(Renderer& renderer, Uint32 windowPixelFormat, string path)
+    bool TexturePack::save(Renderer& renderer, Uint32 pixelFormatting, string path)
     {
         // Saves the texture pack as a PNG image with meta file containing clip information
         if (packedTexture.texture != NULL)
@@ -259,7 +259,7 @@ namespace Ossium
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create surface during TexturePack save process!");
                 return false;
             }
-            SDL_Texture* renderTarget = SDL_CreateTexture(render, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, targetRect.w, targetRect.h);
+            SDL_Texture* renderTarget = SDL_CreateTexture(render, pixelFormatting, SDL_TEXTUREACCESS_TARGET, targetRect.w, targetRect.h);
             if (renderTarget == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create render target texture during TexturePack save process!");

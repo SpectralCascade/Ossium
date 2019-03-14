@@ -123,6 +123,7 @@ namespace Ossium
                 {
                     width = tempSurface->w;
                     height = tempSurface->h;
+                    tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
                     outlineTexture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
                     SDL_FreeSurface(tempSurface);
                     tempSurface = NULL;
@@ -164,6 +165,7 @@ namespace Ossium
                     width = tempSurface->w;
                     height = tempSurface->h;
                 }
+                tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
                 texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
                 SDL_FreeSurface(tempSurface);
                 tempSurface = NULL;
@@ -180,25 +182,25 @@ namespace Ossium
             return texture != NULL;
         }
 
-        bool Image::Init(Renderer& renderer, Uint32 windowPixelFormat, bool cache)
+        bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, bool cache)
         {
             Free();
-            format = windowPixelFormat;
+            format = pixelFormatting;
             if (tempSurface == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "NULL surface, cannot initialise Image!");
             }
-            else if (windowPixelFormat != SDL_PIXELFORMAT_UNKNOWN)
+            else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN)
             {
                 SDL_Surface* formattedSurface = NULL;
-                formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, windowPixelFormat, 0);
+                formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
                 if (formattedSurface == NULL)
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to format surface! SDL_Error: %s", SDL_GetError());
                 }
                 else
                 {
-                    texture = SDL_CreateTexture(renderer.GetRendererSDL(), windowPixelFormat, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
+                    texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormatting, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
                     if (texture == NULL)
                     {
                         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Image from surface! SDL_Error: %s", SDL_GetError());
@@ -219,6 +221,7 @@ namespace Ossium
             }
             else
             {
+                tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
                 texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
                 if (texture == NULL)
                 {
@@ -238,9 +241,9 @@ namespace Ossium
             return texture != NULL;
         }
 
-        bool Image::LoadAndInit(string guid_path, Renderer& renderer, Uint32 windowPixelFormat, bool cache)
+        bool Image::LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting, bool cache)
         {
-            return Load(guid_path) && Init(renderer, windowPixelFormat, cache);
+            return Load(guid_path) && Init(renderer, pixelFormatting, cache);
         }
 
         bool Image::Initialised()
@@ -365,22 +368,39 @@ namespace Ossium
                 clip.h = src->height;
             }
         }
-        void Texture::SetBlendMode(SDL_BlendMode blend)
+        void Texture::SetBlendMode(SDL_BlendMode blend, bool immediate)
         {
+            if (immediate)
+            {
+                SDL_SetTextureBlendMode(source->texture, blend);
+            }
             blending = blend;
         }
-        void Texture::SetAlphaMod(Uint8 a)
+        void Texture::SetAlphaMod(Uint8 a, bool immediate)
         {
+            if (immediate)
+            {
+                SDL_SetTextureAlphaMod(source->texture, a);
+            }
             modulation.a = a;
         }
-        void Texture::SetColourMod(Uint8 r, Uint8 g, Uint8 b)
+        void Texture::SetColourMod(Uint8 r, Uint8 g, Uint8 b, bool immediate)
         {
+            if (immediate)
+            {
+                SDL_SetTextureColorMod(source->texture, r, g, b);
+            }
             modulation.r = r;
             modulation.g = g;
             modulation.b = b;
         }
-        void Texture::SetMod(SDL_Color mod)
+        void Texture::SetMod(SDL_Color mod, bool immediate)
         {
+            if (immediate)
+            {
+                SDL_SetTextureColorMod(source->texture, mod.r, mod.g, mod.b);
+                SDL_SetTextureAlphaMod(source->texture, mod.a);
+            }
             modulation = mod;
         }
         void Texture::SetRenderWidth(float percent)

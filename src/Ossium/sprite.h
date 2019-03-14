@@ -39,7 +39,7 @@ namespace Ossium
             SpriteKeyframe GetSample(AnimatorClip* clip);
 
             /// Overrides Image method of the same name.
-            bool LoadAndInit(string path, Renderer& renderer, Uint32 windowPixelFormat = SDL_PIXELFORMAT_UNKNOWN, bool cache = false);
+            bool LoadAndInit(string path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN, bool cache = false);
 
         private:
             using Image::CreateFromText;
