@@ -148,8 +148,8 @@ int main(int argc, char* argv[])
 
         Font font;
         int ptsizes[3] = {2, 24, 36};
-        font.load("Orkney Regular.ttf", &ptsizes[0]);
-        font.init("Orkney Regular.ttf");
+        font.load("assets/Orkney Regular.ttf", &ptsizes[0]);
+        font.init("assets/Orkney Regular.ttf");
 
         Entity gameObject(&entitySystem);
         gameObject.SetName("Test Entity");
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 
         SpriteAnimation spriteAnim;
         /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
-        spriteAnim.LoadAndInit("sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
+        spriteAnim.LoadAndInit("assets/sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
         Entity other(&entitySystem);
         other.AddComponent<Sprite>();
@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
         AudioBus sfx;
 
         SoundStream.Link(&master);
-        SoundStream.Play("test_stream.wav", 0.5f, -1);
+        SoundStream.Play("assets/test_stream.wav", 0.5f, -1);
 
         master.Mute();
         /// Source goes into sfx bus
@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
         /// The sfx bus goes into the master bus
         sfx.Link(&master);
         sfx.SetVolume(0);
-        if (!sound.load("test_audio.wav"))
+        if (!sound.load("assets/test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
         }

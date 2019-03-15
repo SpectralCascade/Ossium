@@ -39,8 +39,8 @@ void StickFighter::OnInitGraphics(Renderer* renderer)
     stickman = entity->AddComponent<Sprite>(renderer);
     stickman->position = Point(renderer->GetWindow()->GetWidth() / 2, renderer->GetWindow()->GetHeight() / 2);
     /// We can also load and initialise the animations here.
-    idleAnim.LoadAndInit("stick_idle.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
-    walkAnim.LoadAndInit("stick_walk.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
+    idleAnim.LoadAndInit("assets/stick_idle.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
+    walkAnim.LoadAndInit("assets/stick_walk.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
     stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
     stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
     idleAnim.ApplyEffect([](SDL_Color pixelData, SDL_Point pixelPos) {

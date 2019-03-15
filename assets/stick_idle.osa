@@ -1,4 +1,4 @@
-name=idle,spritesheet=stick_idle.png,loopable=true,duration=800,tween=true
+name=idle,spritesheet=assets/stick_idle.png,loopable=true,duration=800,tween=true
 Time position (ms),cliparea x:,cliparea y:,cliparea w:,cliparea h:,position x:,position y:,render width:,render height:,origin x:,origin y:,angle:
 0,0,0,64,92,0,0,2,2,0,0,0
 200,64,0,64,92,0,0,2,2,0,0,0
