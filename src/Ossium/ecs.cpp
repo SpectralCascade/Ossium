@@ -129,7 +129,7 @@ namespace Ossium
     {
     }
 
-    void Component::OnInitGraphics(Renderer* renderer)
+    void Component::OnInitGraphics(Renderer* renderer, int layer)
     {
     }
 
@@ -206,8 +206,9 @@ namespace Ossium
         {
         }
 
-        void GraphicComponent::OnInitGraphics(Renderer* renderer)
+        void GraphicComponent::OnInitGraphics(Renderer* renderer, int layer)
         {
+            renderLayer = layer >= 0 ? layer : renderLayer;
             rendererInstance = renderer;
             if (renderer != nullptr)
             {

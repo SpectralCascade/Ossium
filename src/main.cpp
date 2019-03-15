@@ -17,6 +17,7 @@
 #include "Ossium/colours.h"
 #include "Ossium/statesprite.h"
 #include "Ossium/sprite.h"
+#include "Ossium/pixeleffects.h"
 #include "teststuff.h"
 
 #ifdef UNIT_TESTS
@@ -153,7 +154,7 @@ int main(int argc, char* argv[])
 
         Entity gameObject(&entitySystem);
         gameObject.SetName("Test Entity");
-        gameObject.AddComponent<Text>();
+        gameObject.AddComponent<Text>(&mainRenderer, 2);
 
         tarGetText = gameObject.GetComponent<Text>();
         if (tarGetText != nullptr)
@@ -164,10 +165,9 @@ int main(int argc, char* argv[])
             tarGetText->SetOutline(1);
             tarGetText->SetBackgroundColor(colours::GREEN);
             tarGetText->textToTexture(mainRenderer, &font);
-            mainRenderer.Register(tarGetText);
         }
 
-        gameObject.AddComponent<Text>();
+        gameObject.AddComponent<Text>(&mainRenderer, 2);
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
@@ -175,7 +175,6 @@ int main(int argc, char* argv[])
             compList[1]->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             compList[1]->textToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
-            mainRenderer.Register(compList[1]);
         }
 
         ///
@@ -192,21 +191,14 @@ int main(int argc, char* argv[])
         spriteAnim.LoadAndInit("assets/sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
         Entity other(&entitySystem);
-        other.AddComponent<Sprite>();
+        other.AddComponent<Sprite>(&mainRenderer);
 
         Sprite* sprite = other.GetComponent<Sprite>();
         if (sprite != nullptr)
         {
-            //sprite->PlayAnimation(timeline, &spriteAnim, 0, -1, false);
+            sprite->PlayAnimation(timeline, &spriteAnim, 0, -1, false);
             sprite->position.x = (float)(mainRenderer.GetWidth() / 2);
             sprite->position.y = (float)(mainRenderer.GetHeight() / 2);
-            mainRenderer.Register(sprite);
-            /// Grayscale effect
-            /*spriteAnim.ApplyEffect([] (SDL_Color c, SDL_Point p) {
-                Uint8 grayscale = (Uint8)(((float)c.r * 0.3f) + ((float)c.g * 0.59f) + ((float)c.b * 0.11f));
-                c = Colour(grayscale, grayscale, grayscale, c.a);
-                return c;
-            });*/
         }
 
         ///

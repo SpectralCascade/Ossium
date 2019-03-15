@@ -95,12 +95,12 @@ namespace Ossium
 
         /// Instantiates and attaches a component to this entity
         template<class T>
-        T* AddComponent(Renderer* renderer = nullptr)
+        T* AddComponent(Renderer* renderer = nullptr, int layer = -1)
         {
             T* component = new T();
             component->entity = this;
             component->OnCreate();
-            component->OnInitGraphics(renderer);
+            component->OnInitGraphics(renderer, layer);
             auto itr = components.find(getComponentType<T>());
             if (itr != components.end())
             {
@@ -266,7 +266,7 @@ namespace Ossium
         virtual void OnDestroy();
 
         /// This follows up the OnCreate() call, allowing a component to initialise and register graphics with the provided renderer.
-        virtual void OnInitGraphics(Renderer* renderer);
+        virtual void OnInitGraphics(Renderer* renderer, int layer = -1);
         /// This is called just before the OnDestroy() method is called. Use this to unregister graphics from the renderer if necessary.
         virtual void OnRemoveGraphics();
 
@@ -318,7 +318,7 @@ namespace Ossium
             virtual void OnDestroy();
 
             /// Automatically registers this graphic on the bottom layer of the provided renderer instance.
-            virtual void OnInitGraphics(Renderer* renderer);
+            virtual void OnInitGraphics(Renderer* renderer, int layer = -1);
 
             /// Automatically unregisters this graphic from the bottom layer of the provided renderer instance.
             virtual void OnRemoveGraphics();

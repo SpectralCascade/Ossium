@@ -1,6 +1,6 @@
 #include "teststuff.h"
 #include "Ossium/window.h"
-#include "Ossium/colours.h"
+#include "Ossium/pixeleffects.h"
 
 using namespace Ossium;
 
@@ -33,7 +33,7 @@ void StickFighter::OnCreate()
     SDL_Log("Created a stickfighter instance.");
 }
 
-void StickFighter::OnInitGraphics(Renderer* renderer)
+void StickFighter::OnInitGraphics(Renderer* renderer, int layer)
 {
     /// We add the sprite component here so it automagically gets registered with the renderer.
     stickman = entity->AddComponent<Sprite>(renderer);
@@ -43,22 +43,10 @@ void StickFighter::OnInitGraphics(Renderer* renderer)
     walkAnim.LoadAndInit("assets/stick_walk.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
     stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
     stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
-    idleAnim.ApplyEffect([](SDL_Color pixelData, SDL_Point pixelPos) {
-        pixelData.r = pixelData.r > 127 ? 127 - (pixelData.r - 128) : 127 + (128 - pixelData.r);
-        pixelData.g = pixelData.g > 127 ? 127 - (pixelData.g - 128) : 127 + (128 - pixelData.g);
-        pixelData.b = pixelData.b > 127 ? 127 - (pixelData.b - 128) : 127 + (128 - pixelData.b);
-        pixelData.a = pixelData.r == 0 && pixelData.g == 0 && pixelData.b == 0 ? 0x00 : 0xFF;
-        return pixelData;
-    });
+    idleAnim.ApplyEffect(graphics::InvertColour);
     stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
     stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
-    walkAnim.ApplyEffect([](SDL_Color pixelData, SDL_Point pixelPos) {
-        pixelData.r = pixelData.r > 127 ? 127 - (pixelData.r - 128) : 127 + (128 - pixelData.r);
-        pixelData.g = pixelData.g > 127 ? 127 - (pixelData.g - 128) : 127 + (128 - pixelData.g);
-        pixelData.b = pixelData.b > 127 ? 127 - (pixelData.b - 128) : 127 + (128 - pixelData.b);
-        pixelData.a = pixelData.r == 0 && pixelData.g == 0 && pixelData.b == 0 ? 0x00 : 0xFF;
-        return pixelData;
-    });
+    walkAnim.ApplyEffect(graphics::InvertColour);
 }
 
 void StickFighter::OnDestroy()
