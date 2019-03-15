@@ -74,6 +74,7 @@ namespace Ossium
 
             if (data.type != MOUSE_UNKNOWN)
             {
+                UpdateState(data.type, data.state);
                 return CallAction(data, data.type);
             }
             return ActionOutcome::Ignore;

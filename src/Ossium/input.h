@@ -23,13 +23,17 @@ namespace Ossium
         enum ActionOutcome
         {
             /// Other actions within a context will continue to be evaluated regardless.
+            /// If in doubt, return this from your actions.
             Ignore = 0,
             /// Other actions within the local context will NO LONGER be evaluated,
             /// but actions and states associated with the input will still be evaluated in other contexts.
             ClaimContext = 1,
             /// Other actions associated with the input will NOT be evaluated again this frame, regardless of context.
+            /// It's recommended that you avoid returning this in your actions as it prevents associated states updating in other contexts,
+            /// though in some cases it might be useful (e.g. when the player sets custom input bindings).
             ClaimGlobal = 2,
             /// NO other actions will be evaluated this frame, EVEN if they are not associated with the input!
+            /// Don't return this in your actions unless you want to stop handling all inputs for the current Update().
             ClaimFinal = 3
         };
 
@@ -214,6 +218,17 @@ namespace Ossium
             }
 
         protected:
+            /// Updates the state of the associated input ident, if it finds it.
+            void UpdateState(const InputIdent& ident, bool state)
+            {
+                /// Set relevant state
+                auto itr = _state_map.find(ident);
+                if (itr != _state_map.end())
+                {
+                    itr->second = state;
+                }
+            }
+
             /// Call the action associated with an input; returns true if successful
             ActionOutcome CallAction(const InputData& data, const InputIdent& ident)
             {
@@ -266,7 +281,7 @@ namespace Ossium
         };
 
         /// A game might have multiple input contexts; for example, button X closes a dialog box when talking to NPCs,
-        /// but the X button opens the player's inventory in another context
+        /// but the X button opens the player's inventory in normal gameplay.
         class InputContext
         {
         public:
