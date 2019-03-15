@@ -212,7 +212,7 @@ namespace Ossium
             rendererInstance = renderer;
             if (renderer != nullptr)
             {
-                rendererInstance->Register(this, renderLayer);
+                renderLayer = rendererInstance->Register(this, renderLayer);
             }
         }
 

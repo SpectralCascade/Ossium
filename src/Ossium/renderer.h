@@ -42,8 +42,8 @@ namespace Ossium
             ~Renderer();
 
             /// Registers a graphic for rendering. Note that you cannot change the layer or forceCull parameter once registered;
-            /// to do so you must unregister the graphic and re-register it with the modified arguments.
-            void Register(Graphic* graphic, int layer = 0);
+            /// to do so you must unregister the graphic and re-register it with the modified arguments. Returns the layer used.
+            int Register(Graphic* graphic, int layer = 0);
             /// Unregisters a graphic so it no longer renders.
             void Unregister(Graphic* graphic, int layer = 0);
 
@@ -53,8 +53,8 @@ namespace Ossium
             /// Clears the render queue
             void ClearQueue();
 
-            /// Enqueues a graphic to be rendered in the next frame only.
-            void Enqueue(Graphic* graphic, int layer = 0);
+            /// Enqueues a graphic to be rendered in the next frame only. Returns the layer used.
+            int Enqueue(Graphic* graphic, int layer = 0);
 
             /// Renders all registered and enqueued graphics in the current frame.
             /// Note that enqueued graphics are rendered last in each layer,
