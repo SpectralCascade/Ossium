@@ -20,7 +20,7 @@ namespace Ossium
             #ifdef DEBUG
             SDL_assert(window != NULL);
             #endif // DEBUG
-            renderer = SDL_CreateRenderer(window->getWindow(), driver, flags);
+            renderer = SDL_CreateRenderer(window->GetWindow(), driver, flags);
             if (renderer == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer! SDL_Error: %s", SDL_GetError());
@@ -34,7 +34,7 @@ namespace Ossium
                 }
                 SDL_Log("Available render drivers are: %s", drivers_available.c_str());
                 SDL_Log("Falling back to software renderer by default.");
-                renderer = SDL_CreateRenderer(window->getWindow(), driver, SDL_RENDERER_SOFTWARE);
+                renderer = SDL_CreateRenderer(window->GetWindow(), driver, SDL_RENDERER_SOFTWARE);
                 if (renderer == NULL)
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Fallback software renderer could not be created! SDL_Error: %s", SDL_GetError());
@@ -160,13 +160,13 @@ namespace Ossium
 
         int Renderer::GetWidth()
         {
-            SDL_Rect view = renderWindow != nullptr ? renderWindow->getViewportRect() : (SDL_Rect){0, 0, 0, 0};
+            SDL_Rect view = renderWindow != nullptr ? renderWindow->GetViewportRect() : (SDL_Rect){0, 0, 0, 0};
             return view.w;
         }
         /// Returns the viewport height of this renderer
         int Renderer::GetHeight()
         {
-            SDL_Rect view = renderWindow != nullptr ? renderWindow->getViewportRect() : (SDL_Rect){0, 0, 0, 0};
+            SDL_Rect view = renderWindow != nullptr ? renderWindow->GetViewportRect() : (SDL_Rect){0, 0, 0, 0};
             return view.h;
         }
 

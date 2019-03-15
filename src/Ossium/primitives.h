@@ -30,6 +30,19 @@ namespace Ossium
             float x;
             float y;
             float r;
+
+            /// Whether or not this rect is intersecting a circle
+            bool Intersects(Circle circle);
+            /// Whether or not this rect is intersecting an infinite line
+            bool Intersects(InfiniteLine infiniteLine);
+            /// Whether or not this rect is intersecting a line
+            bool Intersects(Line line);
+            /// Whether or not this rect is intersecting a ray
+            bool Intersects(Ray ray);
+            /// Whether or not this rect is intersecting a rect
+            bool Intersects(Rect rect);
+            /// Whether or not a point is inside this rect
+            bool Contains(Point point);
         };
 
         struct Point : public Vector
@@ -86,6 +99,9 @@ namespace Ossium
         /// Floating point rectangle; if you want an integer based rectangle, use SDL_Rect instead
         struct Rect
         {
+            Rect();
+            Rect(float xpos, float ypos, float width, float height);
+
             float x;
             float y;
             float w;
@@ -96,6 +112,19 @@ namespace Ossium
 
             void DrawFilled(Renderer& renderer);
             void DrawFilled(Renderer& renderer, SDL_Color colour);
+
+            /// Whether or not this rect is intersecting a circle
+            bool Intersects(Circle circle);
+            /// Whether or not this rect is intersecting an infinite line
+            bool Intersects(InfiniteLine infiniteLine);
+            /// Whether or not this rect is intersecting a line
+            bool Intersects(Line line);
+            /// Whether or not this rect is intersecting a ray
+            bool Intersects(Ray ray);
+            /// Whether or not this rect is intersecting a rect
+            bool Intersects(Rect rect);
+            /// Whether or not a point is inside this rect
+            bool Contains(Point point);
 
             inline int xmax()
             {
@@ -143,62 +172,6 @@ namespace Ossium
         };
 
     }
-
-    /*
-     *    TODO: put these intersection tests inside their respective structs/classes and actually implement them!
-     */
-    /*
-    bool Intersect(Point point, Triangle triangle);
-
-    /// Circle intersection tests
-    bool Intersect(Circle circleA, Circle circleB);
-    bool Intersect(Circle circle, Line line);
-    bool Intersect(Circle circle, LineSegment segment);
-    bool Intersect(Circle circle, Ray ray);
-    bool Intersect(Circle circle, Rectangle rect);
-    bool Intersect(Circle circle, Triangle triangle);
-
-    /// Line intersection tests
-    bool Intersect(Line lineA, Line lineB);
-    bool Intersect(Line line, Circle circle);
-    bool Intersect(Line line, LineSegment segment);
-    bool Intersect(Line line, Ray ray);
-    bool Intersect(Line line, Rectangle rect);
-    bool Intersect(Line line, Triangle triangle);
-
-    /// Line segment intersection tests
-    bool Intersect(LineSegment segmentA, LineSegment segmentB);
-    bool Intersect(LineSegment segment, Circle circle);
-    bool Intersect(LineSegment segment, Line line);
-    bool Intersect(LineSegment segment, Ray ray);
-    bool Intersect(LineSegment segment, Rectangle rect);
-    bool Intersect(LineSegment segment, Triangle triangle);
-
-    /// Ray intersection tests
-    bool Intersect(Ray rayA, Ray rayB);
-    bool Intersect(Ray ray, Circle circle);
-    bool Intersect(Ray ray, Line line);
-    bool Intersect(Ray ray, LineSegment segment);
-    bool Intersect(Ray ray, Rectangle rect);
-    bool Intersect(Ray ray, Triangle triangle);
-*/
-    /// Rectangle intersection tests, AABB only
-    bool Intersect(Rect rectA, Rect rectB);
-/*
-    bool Intersect(Rectangle rect, Circle circle);
-    bool Intersect(Rectangle rect, Line line);
-    bool Intersect(Rectangle rect, LineSegment segment);
-    bool Intersect(Rectangle rect, Ray ray);
-    bool Intersect(Rectangle rect, Triangle triangle);
-
-    /// Triangle intersection tests
-    bool Intersect(Triangle triangleA, Triangle triangleB);
-    bool Intersect(Triangle triangle, Circle circle);
-    bool Intersect(Triangle triangle, Line line);
-    bool Intersect(Triangle triangle, LineSegment segment);
-    bool Intersect(Triangle triangle, Ray ray);
-    bool Intersect(Triangle triangle, Rectangle rect);
-    */
 
 }
 

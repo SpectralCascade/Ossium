@@ -18,18 +18,18 @@ namespace Ossium
         void handle_events(SDL_Event &event);
 
         /// Get/Set specifiers
-        SDL_Window* getWindow();
-        int getWidth();
-        int getHeight();
-        int getAspectWidth();
-        int getAspectHeight();
-        SDL_Rect getViewportRect();
-        void setWidth(int newWidth);
-        void setHeight(int newHeight);
-        void setFullScreen();
-        void setWindowed();
-        void setBordered();
-        void setBorderless();
+        SDL_Window* GetWindow();
+        int GetWidth();
+        int GetHeight();
+        int GetAspectWidth();
+        int GetAspectHeight();
+        SDL_Rect GetViewportRect();
+        void SetWidth(int newWidth);
+        void SetHeight(int newHeight);
+        void SetFullscreen();
+        void SetWindowed();
+        void SetBordered();
+        void SetBorderless();
         /// Attempts to set the window's renderer viewport dimensions to the input target width and height in pixels
         /// If the window is bigger in both width and height than the target dimension arguments, the viewport will remain
         /// at the target dimensions and remaining space in the window will be filled with black bars on all sides.
@@ -37,15 +37,15 @@ namespace Ossium
         /// if the window dimensions do not match the target aspect, or else the viewport will be cropped on the left and right side
         /// when the window dimensions do not match the target aspect.
         /// If fixed == true, the viewport matches the argument dimensions if window dimensions >= argument dimensions
-        void setAspectRatio(int aspect_w, int aspect_h, bool fixed = false);
+        void SetAspectRatio(int aspect_w, int aspect_h, bool fixed = false);
 
         /// Updates the renderer viewport dimensions according to the current aspect
-        void updateViewport();
+        void UpdateViewport();
 
         /// Return active flags
-        bool isMinimized();
-        bool isFullscreen();
-        bool isFocus();
+        bool IsMinimised();
+        bool IsFullscreen();
+        bool IsFocus();
 
     private:
         /// Prohibited copying of windows

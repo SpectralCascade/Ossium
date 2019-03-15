@@ -62,7 +62,7 @@ namespace Ossium
             {
                 width = event.window.data1;
                 height = event.window.data2;
-                updateViewport();
+                UpdateViewport();
                 break;
             }
             case SDL_WINDOWEVENT_MINIMIZED:
@@ -88,77 +88,77 @@ namespace Ossium
         }
     }
 
-    SDL_Window* Window::getWindow()
+    SDL_Window* Window::GetWindow()
     {
         return window;
     }
 
-    int Window::getWidth()
+    int Window::GetWidth()
     {
         SDL_GetWindowSize(window, &width, &height);
         return width;
     }
 
-    int Window::getHeight()
+    int Window::GetHeight()
     {
         SDL_GetWindowSize(window, &width, &height);
         return height;
     }
 
-    int Window::getAspectWidth()
+    int Window::GetAspectWidth()
     {
         return aspect_width;
     }
 
-    int Window::getAspectHeight()
+    int Window::GetAspectHeight()
     {
         return aspect_height;
     }
 
-    SDL_Rect Window::getViewportRect()
+    SDL_Rect Window::GetViewportRect()
     {
         return viewportRect;
     }
 
-    void Window::setWidth(int newWidth)
+    void Window::SetWidth(int newWidth)
     {
         width = newWidth;
         SDL_SetWindowSize(window, width, height);
     }
 
-    void Window::setHeight(int newHeight)
+    void Window::SetHeight(int newHeight)
     {
         height = newHeight;
         SDL_SetWindowSize(window, width, height);
     }
 
-    void Window::setFullScreen()
+    void Window::SetFullscreen()
     {
         SDL_SetWindowFullscreen(window, SDL_TRUE);
-        updateViewport();
+        UpdateViewport();
         fullscreen = true;
     }
 
-    void Window::setWindowed()
+    void Window::SetWindowed()
     {
         SDL_SetWindowFullscreen(window, SDL_FALSE);
-        updateViewport();
+        UpdateViewport();
         fullscreen = false;
     }
 
-    void Window::setBordered()
+    void Window::SetBordered()
     {
         SDL_SetWindowBordered(window, SDL_TRUE);
         border = true;
     }
 
-    void Window::setBorderless()
+    void Window::SetBorderless()
     {
         SDL_SetWindowBordered(window, SDL_FALSE);
         border = false;
     }
 
-    void Window::setAspectRatio(int aspect_w, int aspect_h, bool fixed)
+    void Window::SetAspectRatio(int aspect_w, int aspect_h, bool fixed)
     {
         fixed_aspect = fixed;
         if (aspect_w < 1)
@@ -171,10 +171,10 @@ namespace Ossium
         }
         aspect_width = aspect_w;
         aspect_height = aspect_h;
-        updateViewport();
+        UpdateViewport();
     }
 
-    void Window::updateViewport()
+    void Window::UpdateViewport()
     {
         SDL_Renderer* renderer = SDL_GetRenderer(window);
         if (renderer == NULL)
@@ -234,17 +234,17 @@ namespace Ossium
         viewportRect = viewRect;
     }
 
-    bool Window::isMinimized()
+    bool Window::IsMinimised()
     {
         return minimized;
     }
 
-    bool Window::isFullscreen()
+    bool Window::IsFullscreen()
     {
         return fullscreen;
     }
 
-    bool Window::isFocus()
+    bool Window::IsFocus()
     {
         return focus;
     }

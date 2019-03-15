@@ -81,7 +81,7 @@ namespace Ossium
         }
     }
 
-    void Text::setStyling(int textStyle, int textOutline, int textHinting, SDL_Color textColor)
+    void Text::SetStyling(int textStyle, int textOutline, int textHinting, SDL_Color textColor)
     {
         style = textStyle;
         outline = textOutline;
@@ -96,72 +96,72 @@ namespace Ossium
 
     /// GET METHODS
 
-    string Text::getText()
+    string Text::GetText()
     {
         return textData;
     }
-    SDL_Color Text::getColor()
+    SDL_Color Text::GetColor()
     {
         return color;
     }
-    SDL_Color Text::getBackgroundColor()
+    SDL_Color Text::GetBackgroundColor()
     {
         return bgColor;
     }
-    int Text::getWidth()
+    int Text::GetWidth()
     {
         return width + ((int)box * boxPadWidth * 2);
     }
-    int Text::getHeight()
+    int Text::GetHeight()
     {
         return height + ((int)box * boxPadHeight * 2);
     }
-    int Text::getOutline()
+    int Text::GetOutline()
     {
         return outline;
     }
-    int Text::getStyle()
+    int Text::GetStyle()
     {
         return style;
     }
-    int Text::getHinting()
+    int Text::GetHinting()
     {
         return hinting;
     }
-    int Text::getRenderMode()
+    int Text::GetRenderMode()
     {
         return renderMode;
     }
-    int Text::getBoxPaddingWidth()
+    int Text::GetBoxPaddingWidth()
     {
         return boxPadWidth;
     }
-    int Text::getBoxPaddingHeight()
+    int Text::GetBoxPaddingHeight()
     {
         return boxPadHeight;
     }
-    bool Text::isKerning()
+    bool Text::IsKerning()
     {
         return kerning;
     }
-    bool Text::isBoxed()
+    bool Text::IsBoxed()
     {
         return box;
     }
 
     /// SET METHODS
 
-    void Text::setText(string text)
+    void Text::SetText(string text)
     {
         textData = text;
         update = true;
     }
-    void Text::setColor(SDL_Color textColor)
+    void Text::SetColor(SDL_Color textColor)
     {
         color = textColor;
         update = true;
     }
-    void Text::setBackgroundColor(SDL_Color textBackgroundColor)
+    void Text::SetBackgroundColor(SDL_Color textBackgroundColor)
     {
         bgColor = textBackgroundColor;
         if (renderMode == RENDERTEXT_SHADED || box || outline > 0)
@@ -169,40 +169,40 @@ namespace Ossium
             update = true;
         }
     }
-    void Text::setOutline(int textOutine)
+    void Text::SetOutline(int textOutine)
     {
         outline = textOutine;
         update = true;
     }
-    void Text::setStyle(int textStyle)
+    void Text::SetStyle(int textStyle)
     {
         style = textStyle;
         update = true;
     }
-    void Text::setHinting(int textHinting)
+    void Text::SetHinting(int textHinting)
     {
         hinting = textHinting;
         update = true;
     }
-    void Text::setRenderMode(int textRenderMode)
+    void Text::SetRenderMode(int textRenderMode)
     {
         renderMode = textRenderMode;
         update = true;
     }
-    void Text::setBoxPaddingWidth(int padWidth)
+    void Text::SetBoxPaddingWidth(int padWidth)
     {
         boxPadWidth = padWidth;
     }
-    void Text::setBoxPaddingHeight(int padHeight)
+    void Text::SetBoxPaddingHeight(int padHeight)
     {
         boxPadHeight = padHeight;
     }
-    void Text::setKerning(bool enabled)
+    void Text::SetKerning(bool enabled)
     {
         kerning = enabled;
         update = true;
     }
-    void Text::setBox(bool enabled)
+    void Text::SetBox(bool enabled)
     {
         box = enabled;
     }

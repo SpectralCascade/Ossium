@@ -27,7 +27,7 @@ using namespace Ossium::test;
 using namespace std;
 using namespace Ossium;
 
-Text* targetText = nullptr;
+Text* tarGetText = nullptr;
 Text* mainText = nullptr;
 int posx = 0;
 int posy = 0;
@@ -55,8 +55,8 @@ ActionOutcome MouseClickActionOutcome(const MouseInput& data)
     {
         if (data.state == MOUSE_RELEASED)
         {
-            mainText->setColor(colours::GREEN);
-            mainText->setText("Press any key to bind to action TOGGLE AUDIO");
+            mainText->SetColor(colours::GREEN);
+            mainText->SetText("Press any key to bind to action TOGGLE AUDIO");
             check_for_key = true;
             return ActionOutcome::ClaimContext;
         }
@@ -71,8 +71,8 @@ ActionOutcome GetKey(const KeyboardInput& data)
         if (data.state == KEY_UP)
         {
             currentKey = data.key;
-            mainText->setColor(colours::RED);
-            mainText->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
+            mainText->SetColor(colours::RED);
+            mainText->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             check_for_key = false;
             update_binding = true;
         }
@@ -83,23 +83,23 @@ ActionOutcome GetKey(const KeyboardInput& data)
 
 ActionOutcome KeyActionOutcome(const KeyboardInput& data)
 {
-    if (targetText != nullptr)
+    if (tarGetText != nullptr)
     {
         if (data.state == KEY_DOWN)
         {
-            targetText->setBackgroundColor(colours::YELLOW);
+            tarGetText->SetBackgroundColor(colours::YELLOW);
         }
         else if (data.state == KEY_UP)
         {
             if (!master.IsMuted())
             {
-                targetText->setBackgroundColor(colours::RED);
+                tarGetText->SetBackgroundColor(colours::RED);
                 master.Mute();
             }
             else
             {
                 master.Unmute();
-                targetText->setBackgroundColor(colours::GREEN);
+                tarGetText->SetBackgroundColor(colours::GREEN);
             }
         }
         return ActionOutcome::ClaimContext;
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 
         /// Create renderer
         Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
-        mainWindow.setAspectRatio(16, 9);
+        mainWindow.SetAspectRatio(16, 9);
 
         /// Create an EntityComponentSystem
         EntityComponentSystem entitySystem;
@@ -155,24 +155,24 @@ int main(int argc, char* argv[])
         gameObject.SetName("Test Entity");
         gameObject.AddComponent<Text>();
 
-        targetText = gameObject.GetComponent<Text>();
-        if (targetText != nullptr)
+        tarGetText = gameObject.GetComponent<Text>();
+        if (tarGetText != nullptr)
         {
-            targetText->setText("FPS: 0");
-            targetText->setColor(colours::BLUE);
-            //targetText->setBox(true);
-            targetText->setOutline(1);
-            targetText->setBackgroundColor(colours::GREEN);
-            targetText->textToTexture(mainRenderer, &font);
-            mainRenderer.Register(targetText);
+            tarGetText->SetText("FPS: 0");
+            tarGetText->SetColor(colours::BLUE);
+            //tarGetText->SetBox(true);
+            tarGetText->SetOutline(1);
+            tarGetText->SetBackgroundColor(colours::GREEN);
+            tarGetText->textToTexture(mainRenderer, &font);
+            mainRenderer.Register(tarGetText);
         }
 
         gameObject.AddComponent<Text>();
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
-            compList[1]->setColor(colours::RED);
-            compList[1]->setText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
+            compList[1]->SetColor(colours::RED);
+            compList[1]->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             compList[1]->textToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
             mainRenderer.Register(compList[1]);
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 
         SpriteAnimation spriteAnim;
         /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
-        spriteAnim.LoadAndInit("sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
+        spriteAnim.LoadAndInit("sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
         Entity other(&entitySystem);
         other.AddComponent<Sprite>();
@@ -287,7 +287,7 @@ int main(int argc, char* argv[])
                 mainInput.HandleEvent(e);
             }
 
-            SDL_Rect viewrect = mainWindow.getViewportRect();
+            SDL_Rect viewrect = mainWindow.GetViewportRect();
 
             int mx, my;
             SDL_GetMouseState(&mx, &my);
@@ -318,7 +318,7 @@ int main(int argc, char* argv[])
             entitySystem.UpdateComponents();
             //SDL_Log("dtime is %f after update", global::delta.time());
             /// Note: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
-            //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.getWindow()), true);
+            //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
             /// Pixel-precise lighting effect that stays constant despite sprite size changes
             //SDL_Rect area = sprite->GetClip();
@@ -336,12 +336,12 @@ int main(int argc, char* argv[])
             {
                 for (int i = 0, counti = handyComponents.size(); i < counti; i++)
                 {
-                    handyComponents[i]->position.x = (handyComponents[i]->getWidth() / 2) + posx;
-                    handyComponents[i]->position.y = (handyComponents[i]->getHeight() / 2) + (i * 50) + posy;
+                    handyComponents[i]->position.x = (handyComponents[i]->GetWidth() / 2) + posx;
+                    handyComponents[i]->position.y = (handyComponents[i]->GetHeight() / 2) + (i * 50) + posy;
                 }
                 if (fpsTimer.GetTicks() > 250)
                 {
-                    handyComponents[0]->setText("FPS: " + ToString((int)(countedFrames / (fpsTimer.GetTicks() / 1000.0f))));
+                    handyComponents[0]->SetText("FPS: " + ToString((int)(countedFrames / (fpsTimer.GetTicks() / 1000.0f))));
                     countedFrames = 0;
                     fpsTimer.Start();
                 }

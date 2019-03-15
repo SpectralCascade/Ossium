@@ -33,40 +33,40 @@ namespace Ossium
         void Render(Renderer& renderer);
 
         /// Sets some of the more general text style properties
-        void setStyling(int textStyle = TTF_STYLE_NORMAL, int textOutline = 0, int textHinting = TTF_HINTING_NORMAL, SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF});
+        void SetStyling(int textStyle = TTF_STYLE_NORMAL, int textOutline = 0, int textHinting = TTF_HINTING_NORMAL, SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF});
 
         /// Oh boy, here come the get-set methods!
         /// I added these because if a member is set, the current text texture should be updated
         /// with the new text styling accordingly
-        string getText();
-        SDL_Color getColor();
-        SDL_Color getBackgroundColor();
+        string GetText();
+        SDL_Color GetColor();
+        SDL_Color GetBackgroundColor();
 
         /// Returns the dimensions of the text, or the dimensions of the box
         /// if the box is enabled
-        int getWidth();
-        int getHeight();
+        int GetWidth();
+        int GetHeight();
 
-        int getOutline();
-        int getStyle();
-        int getHinting();
-        int getRenderMode();
-        int getBoxPaddingWidth();
-        int getBoxPaddingHeight();
-        bool isKerning();
-        bool isBoxed();
+        int GetOutline();
+        int GetStyle();
+        int GetHinting();
+        int GetRenderMode();
+        int GetBoxPaddingWidth();
+        int GetBoxPaddingHeight();
+        bool IsKerning();
+        bool IsBoxed();
         /// Set methods follow:
-        void setText(string text);
-        void setColor(SDL_Color textColor);
-        void setBackgroundColor(SDL_Color textBackgroundColor);
-        void setOutline(int textOutine);
-        void setStyle(int textStyle);
-        void setHinting(int textHinting);
-        void setRenderMode(int textRenderMode);
-        void setBoxPaddingWidth(int padWidth);
-        void setBoxPaddingHeight(int padHeight);
-        void setKerning(bool enabled);
-        void setBox(bool enabled);
+        void SetText(string text);
+        void SetColor(SDL_Color textColor);
+        void SetBackgroundColor(SDL_Color textBackgroundColor);
+        void SetOutline(int textOutine);
+        void SetStyle(int textStyle);
+        void SetHinting(int textHinting);
+        void SetRenderMode(int textRenderMode);
+        void SetBoxPaddingWidth(int padWidth);
+        void SetBoxPaddingHeight(int padHeight);
+        void SetKerning(bool enabled);
+        void SetBox(bool enabled);
 
     private:
         /// If true, render box behind text in the background colour

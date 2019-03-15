@@ -40,6 +40,11 @@ namespace Ossium
             return output;
         }
 
+        Rect GetRect()
+        {
+            return Rect(position.x - (width * 0.5f), position.y - (height * 0.5f), width, height);
+        }
+
     };
 
 }

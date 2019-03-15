@@ -8,7 +8,63 @@ namespace Ossium
     inline namespace structs
     {
 
-        /// Note: Everything does integer truncation when rendering. Should rounding be used instead?
+        ///
+        /// Circle
+        ///
+
+        bool Circle::Intersects(Circle circle)
+        {
+            float totalRadius = (r * circle.r);
+            return Point(x, y).DistanceSquared(Point(circle.x, circle.y)) < totalRadius * totalRadius;
+        }
+        bool Circle::Intersects(InfiniteLine infiniteLine)
+        {
+            /// TODO
+            return false;
+        }
+        bool Circle::Intersects(Line line)
+        {
+            /// TODO
+            return false;
+        }
+        bool Circle::Intersects(Ray ray)
+        {
+            /// TODO
+            return false;
+        }
+        bool Circle::Intersects(Rect rect)
+        {
+            Point offset;
+            if (x < rect.x)
+            {
+                offset.x = rect.x;
+            }
+            else if (x > rect.xmax())
+            {
+                offset.x = rect.xmax();
+            }
+            else
+            {
+                offset.x = x;
+            }
+            if (y < rect.y)
+            {
+                offset.y = rect.y;
+            }
+            else if (y > rect.ymax())
+            {
+                offset.y = rect.ymax();
+            }
+            else
+            {
+                offset.y = y;
+            }
+            return (Point(x, y).DistanceSquared(offset) < r * r);
+        }
+        bool Circle::Contains(Point point)
+        {
+            return point.Intersects(*this);
+        }
 
         ///
         /// Point
@@ -32,7 +88,7 @@ namespace Ossium
 
         void Point::Draw(Renderer& renderer)
         {
-            SDL_RenderDrawPoint(renderer.GetRendererSDL(), x, y);
+            SDL_RenderDrawPoint(renderer.GetRendererSDL(), round(x), round(y));
         }
 
         void Point::Draw(Renderer& renderer, SDL_Color colour)
@@ -70,8 +126,7 @@ namespace Ossium
         {
             /// Similar to above, but within a limited range
             InfiniteLine infLine = {line.a, (Vector)line.b};
-            return Intersects(infLine) &&
-             line.a.DistanceSquared(*this) <= line.a.DistanceSquared(line.b);
+            return Intersects(infLine) && line.a.DistanceSquared(*this) <= line.a.DistanceSquared(line.b);
         }
         bool Point::Intersects(Ray ray)
         {
@@ -90,13 +145,29 @@ namespace Ossium
 
         void Line::Draw(Renderer& renderer)
         {
-            SDL_RenderDrawLine(renderer.GetRendererSDL(), a.x, a.y, b.x, b.y);
+            SDL_RenderDrawLine(renderer.GetRendererSDL(), round(a.x), round(a.y), round(b.x), round(b.y));
         }
 
         void Line::Draw(Renderer& renderer, SDL_Color colour)
         {
             renderer.SetDrawColour(colour);
             Draw(renderer);
+        }
+
+        ///
+        /// Rect
+        ///
+
+        Rect::Rect()
+        {
+        }
+
+        Rect::Rect(float xpos, float ypos, float width, float height)
+        {
+            x = xpos;
+            y = ypos;
+            w = width;
+            h = height;
         }
 
         void Rect::DrawFilled(Renderer& renderer)
@@ -123,10 +194,42 @@ namespace Ossium
             Draw(renderer);
         }
 
+        bool Rect::Intersects(Circle circle)
+        {
+            return Point(x, y).Intersects(circle) || Point(x, ymax()).Intersects(circle) || Point(xmax(), y).Intersects(circle) || Point(xmax(), ymax()).Intersects(circle);
+        }
+        bool Rect::Intersects(InfiniteLine infiniteLine)
+        {
+            /// TODO
+            return false;
+        }
+        bool Rect::Intersects(Line line)
+        {
+            /// TODO
+            return false;
+        }
+        bool Rect::Intersects(Ray ray)
+        {
+            /// TODO
+            return false;
+        }
+        bool Rect::Intersects(Rect rect)
+        {
+            return !((x > rect.xmax() || xmax() < rect.x) && (y > rect.ymax() || ymax() < rect.y));
+        }
+        bool Rect::Contains(Point point)
+        {
+            return point.Intersects(*this);
+        }
+
         SDL_Rect Rect::SDL()
         {
             return (SDL_Rect){(int)round(x), (int)round(y), (int)round(w), (int)round(h)};
         }
+
+        ///
+        /// Polygon
+        ///
 
         void Polygon::DrawFilled(Renderer& renderer)
         {
@@ -159,72 +262,6 @@ namespace Ossium
             }
         }
 
-    }
-
-    /*
-    bool Intersect(Vector point, Triangle triangle);
-
-    /// Circle intersection tests
-    bool Intersect(Circle circleA, Circle circleB);
-    bool Intersect(Circle circle, Line line);
-    bool Intersect(Circle circle, LineSegment segment);
-    bool Intersect(Circle circle, Ray ray);
-    bool Intersect(Circle circle, Rectangle rect);
-    bool Intersect(Circle circle, Triangle triangle);
-
-    /// Line intersection tests
-    bool Intersect(Line lineA, Line lineB);
-    bool Intersect(Line line, Circle circle);
-    bool Intersect(Line line, LineSegment segment);
-    bool Intersect(Line line, Ray ray);
-    bool Intersect(Line line, Rectangle rect);
-    bool Intersect(Line line, Triangle triangle);
-
-    /// Line segment intersection tests
-    bool Intersect(LineSegment segmentA, LineSegment segmentB);
-    bool Intersect(LineSegment segment, Circle circle);
-    bool Intersect(LineSegment segment, Line line);
-    bool Intersect(LineSegment segment, Ray ray);
-    bool Intersect(LineSegment segment, Rectangle rect);
-    bool Intersect(LineSegment segment, Triangle triangle);
-
-    /// Ray intersection tests
-    bool Intersect(Ray rayA, Ray rayB);
-    bool Intersect(Ray ray, Circle circle);
-    bool Intersect(Ray ray, Line line);
-    bool Intersect(Ray ray, LineSegment segment);
-    bool Intersect(Ray ray, Rectangle rect);
-    bool Intersect(Ray ray, Triangle triangle);
-*/
-    /// Rectangle intersection tests, AABB only
-    bool Intersect(Rect rectA, Rect rectB)
-    {
-        return !((rectA.x > rectB.xmax() || rectA.xmax() < rectB.x) && (rectA.y > rectB.ymax() || rectA.ymax() < rectB.y));
-    }
-/*
-    bool Intersect(Rectangle rect, Circle circle);
-    bool Intersect(Rectangle rect, Line line);
-    bool Intersect(Rectangle rect, LineSegment segment);
-    bool Intersect(Rectangle rect, Ray ray);
-    bool Intersect(Rectangle rect, Triangle triangle);
-
-    /// Triangle intersection tests
-    bool Intersect(Triangle triangleA, Triangle triangleB);
-    bool Intersect(Triangle triangle, Circle circle);
-    bool Intersect(Triangle triangle, Line line);
-    bool Intersect(Triangle triangle, LineSegment segment);
-    bool Intersect(Triangle triangle, Ray ray);
-    bool Intersect(Triangle triangle, Rectangle rect);
-    */
-
-    /// Intersection tests for basic SDL data types
-    bool IntersectSDL(SDL_Rect rectA, SDL_Rect rectB)
-    {
-        return !((rectA.x > rectB.x + rectB.w || rectA.x + rectA.w < rectB.x) && (rectA.y > rectB.y + rectB.h || rectA.y + rectA.h < rectB.y));
-    }
-    bool IntersectSDL(SDL_Point point, SDL_Rect rect)
-    {
-        return point.x >= rect.x && point.x <= rect.x + rect.w && point.y >= rect.y && point.y <= rect.y + rect.h;
     }
 
 }

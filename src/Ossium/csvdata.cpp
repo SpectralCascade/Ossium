@@ -21,6 +21,7 @@ namespace Ossium
         data.clear();
         ifstream file(path.c_str());
         string line;
+        unsigned int numColumns = 0;
         while (getline(file, line))
         {
             vector<string> row;
@@ -85,13 +86,15 @@ namespace Ossium
                     }
                 }
             }
+            unsigned int rowLength = data.back().empty() ? 0 : data.back().size();
+            numColumns = numColumns < rowLength ? rowLength : numColumns;
         }
         if (data.empty() || data[0].empty())
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to import CSV '%s' but no data was loaded.", path.c_str());
             return false;
         }
-        SDL_Log("Imported CSV '%s' with %d rows and %d columns.", path.c_str(), (int)data.size(), (int)data[0].size());
+        SDL_Log("Imported CSV '%s' with %d rows and %d columns.", path.c_str(), (int)data.size(), numColumns);
         return true;
     }
 
