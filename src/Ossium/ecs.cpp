@@ -172,9 +172,8 @@ namespace Ossium
             if (rendererInstance != nullptr)
             {
                 rendererInstance->Unregister(this, renderLayer);
-                rendererInstance->Register(this, layer);
+                renderLayer = rendererInstance->Register(this, layer);
             }
-            renderLayer = layer;
         }
 
         int GraphicComponent::GetRenderLayer()
