@@ -6,6 +6,7 @@
 #include <SDL.h>
 
 #include "vector.h"
+#include "helpermacros.h"
 
 using namespace std;
 
@@ -22,8 +23,9 @@ namespace Ossium
     class SerialInterface
     {
     public:
-        virtual void SerialRead(Serialiser* serial) = 0;
-        virtual void SerialWrite(Serialiser* serial) = 0;
+        virtual void SerialRead(Serialiser& serial) = 0;
+        virtual void SerialWrite(Serialiser& serial) = 0;
+
     };
 
     // Performs reading/writing of data, both in software and physically
@@ -46,7 +48,7 @@ namespace Ossium
 
         //  File I/O read and write methods for basic data types
         template<typename T>
-        void read(T &data)
+        void Read(T &data)
         {
             if (file != NULL)
             {
@@ -61,7 +63,7 @@ namespace Ossium
         }
 
         template<typename T>
-        void write(T &data)
+        void Write(T &data)
         {
             if (file != NULL)
             {
@@ -76,20 +78,18 @@ namespace Ossium
         }
 
         // Read and write strings
-        void readString(string &data);
-        void writeString(string &data);
+        void ReadString(string &data);
+        void WriteString(string &data);
 
         // Read and write serial objects
-        void readInterface(SerialInterface &obj);
-        void writeInterface(SerialInterface &obj);
+        void ReadInterface(SerialInterface &obj);
+        void WriteInterface(SerialInterface &obj);
 
         // Returns number of sectors read/written so far
-        unsigned int getTotalSectors();
+        unsigned int GetTotalSectors();
 
     private:
-        // Prohibit copying
-        Serialiser(Serialiser &thisCopy);
-        Serialiser operator=(Serialiser &thisCopy);
+        NOCOPY(Serialiser);
 
         // File streaming reference
         SDL_RWops* file;

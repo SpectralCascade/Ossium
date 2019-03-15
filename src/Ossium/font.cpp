@@ -17,10 +17,10 @@ namespace Ossium
 
     Font::~Font()
     {
-        free();
+        Free();
     }
 
-    void Font::free()
+    void Font::Free()
     {
         font = NULL;
         for (map<int, TTF_Font*>::iterator i = fontBank.begin(); i != fontBank.end(); i++)
@@ -34,9 +34,9 @@ namespace Ossium
         }
     }
 
-    bool Font::load(string guid_path, int* pointSizes)
+    bool Font::Load(string guid_path, int* pointSizes)
     {
-        free();
+        Free();
         if (pointSizes == NULL)
         {
             /// Default (single) point size
@@ -89,12 +89,12 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::init(string guid_path)
+    bool Font::Init(string guid_path)
     {
         return true;
     }
 
-    TTF_Font* Font::getFont(int pointSize)
+    TTF_Font* Font::GetFont(int pointSize)
     {
         if (pointSize > 0)
         {

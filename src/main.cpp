@@ -82,7 +82,7 @@ ActionOutcome GetKey(const KeyboardInput& data)
     return ActionOutcome::Ignore;
 }
 
-ActionOutcome KeyActionOutcome(const KeyboardInput& data)
+ActionOutcome KeyAction(const KeyboardInput& data)
 {
     if (tarGetText != nullptr)
     {
@@ -149,8 +149,8 @@ int main(int argc, char* argv[])
 
         Font font;
         int ptsizes[3] = {2, 24, 36};
-        font.load("assets/Orkney Regular.ttf", &ptsizes[0]);
-        font.init("assets/Orkney Regular.ttf");
+        font.Load("assets/Orkney Regular.ttf", &ptsizes[0]);
+        font.Init("assets/Orkney Regular.ttf");
 
         Entity gameObject(&entitySystem);
         gameObject.SetName("Test Entity");
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
             //tarGetText->SetBox(true);
             tarGetText->SetOutline(1);
             tarGetText->SetBackgroundColor(colours::GREEN);
-            tarGetText->textToTexture(mainRenderer, &font);
+            tarGetText->TextToTexture(mainRenderer, &font);
         }
 
         gameObject.AddComponent<Text>(&mainRenderer, 2);
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
         {
             compList[1]->SetColor(colours::RED);
             compList[1]->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
-            compList[1]->textToTexture(mainRenderer, &font, 36);
+            compList[1]->TextToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
         }
 
@@ -208,16 +208,16 @@ int main(int argc, char* argv[])
         InputContext mainContext;
         KeyboardHandler& keyboard = *mainContext.AddHandler<KeyboardHandler>();
 
-        keyboard.AddActionOutcome("TOGGLE MUTE", *KeyActionOutcome);
-        keyboard.Bind("TOGGLE MUTE", SDLK_m);
-        keyboard.AddBindlessActionOutcome(*GetKey);
+        keyboard.AddAction("TOGGLE MUTE", *KeyAction);
+        keyboard.BindAction("TOGGLE MUTE", SDLK_m);
+        keyboard.AddBindlessAction(*GetKey);
 
         MouseHandler& mouse = *mainContext.AddHandler<MouseHandler>();
 
-        mouse.AddActionOutcome("mouseclick", *MouseClickActionOutcome);
-        mouse.AddActionOutcome("scroll", *MouseScrollActionOutcome);
-        mouse.Bind("mouseclick", MOUSE_BUTTON_LEFT);
-        mouse.Bind("scroll", MOUSE_WHEEL);
+        mouse.AddAction("mouseclick", *MouseClickActionOutcome);
+        mouse.AddAction("scroll", *MouseScrollActionOutcome);
+        mouse.BindAction("mouseclick", MOUSE_BUTTON_LEFT);
+        mouse.BindAction("scroll", MOUSE_WHEEL);
 
         InputController mainInput;
 
@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
         /// The sfx bus goes into the master bus
         sfx.Link(&master);
         sfx.SetVolume(0);
-        if (!sound.load("assets/test_audio.wav"))
+        if (!sound.Load("assets/test_audio.wav"))
         {
             SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
         }
@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
         int countedFrames = 0;
 
         /// Initialise the global delta time and FPS controller
-        global::delta.init(settings);
+        global::delta.Init(settings);
 
         Point lightSpot(0.0f, 0.0f);
 
@@ -288,7 +288,7 @@ int main(int argc, char* argv[])
 
             lightSpot = sprite->ScreenToLocalPoint(Point((float)mx, (float)my));
 
-            timeline.Update(global::delta.time());
+            timeline.Update(global::delta.Time());
 
             /// Logic update phase
             if (volume_change)
@@ -297,18 +297,18 @@ int main(int argc, char* argv[])
                 volume_change = false;
             }
 
-            sfx.FadeIn(global::delta.time(), 3.0f);
+            sfx.FadeIn(global::delta.Time(), 3.0f);
             /// Demo dynamic key binding
             if (update_binding)
             {
                 /// Rebind the key
-                keyboard.Bind("TOGGLE MUTE", currentKey);
+                keyboard.BindAction("TOGGLE MUTE", currentKey);
                 update_binding = false;
             }
 
-            //SDL_Log("dtime is %f before update", global::delta.time());
+            //SDL_Log("dtime is %f before update", global::delta.Time());
             entitySystem.UpdateComponents();
-            //SDL_Log("dtime is %f after update", global::delta.time());
+            //SDL_Log("dtime is %f after update", global::delta.Time());
             /// Note: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
             //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
@@ -350,7 +350,7 @@ int main(int argc, char* argv[])
 
             /// Update timer and FPS count
             countedFrames++;
-            global::delta.update();
+            global::delta.Update();
         }
     }
     TerminateOssium();

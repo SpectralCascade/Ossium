@@ -260,10 +260,10 @@ namespace Ossium
             AudioClip();
             ~AudioClip();
 
-            void free();
+            void Free();
 
-            bool load(string guid_path, int* loadArgs = nullptr);
-            bool init();
+            bool Load(string guid_path, int* loadArgs = nullptr);
+            bool Init();
 
             /// Returns the audio chunk
             Mix_Chunk* GetChunk();

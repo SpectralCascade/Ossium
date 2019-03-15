@@ -14,16 +14,16 @@ namespace Ossium
         Delta();
 
         /// Get the change in time between calls to Update()
-        float time();
+        float Time();
 
         /// Updates values in the class each time it is called
-        void update();
+        void Update();
 
         /// Applies FPS capping configuration and initialises previousTicks to current ticks
-        void init(Config& config);
+        void Init(Config& config);
 
         /// Resets previousTicks to current ticks
-        void reset();
+        void Reset();
 
     private:
         Uint32 previousTicks;

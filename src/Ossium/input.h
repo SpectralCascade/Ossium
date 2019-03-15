@@ -126,14 +126,26 @@ namespace Ossium
                 _state_map[stateIdent] = false;
             }
 
+            /// Returns the input ident bound to the specified input
+            const InputIdent* GetStateBind(string name)
+            {
+                auto itr = _input_state_bindings.find(name);
+                if (itr != _input_state_bindings.end())
+                {
+                    return &((*itr).second);
+                }
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find binding value for state '%s'.", name.c_str());
+                return nullptr;
+            }
+
             /// This method adds a callback for a specific game action
-            void AddActionOutcome(string name, InputAction action)
+            void AddAction(string name, InputAction action)
             {
                 _action_bindings[name] = action;
             }
 
             /// Removes the specified action. Returns false if the action does not exist.
-            void RemoveActionOutcome(string name)
+            void RemoveAction(string name)
             {
                 auto actionbind = _action_bindings.find(name);
                 if (actionbind != _action_bindings.end())
@@ -153,14 +165,14 @@ namespace Ossium
             }
 
             /// Adds an action that is not bound to an identifier
-            void AddBindlessActionOutcome(InputAction action)
+            void AddBindlessAction(InputAction action)
             {
                 /// No duplicates checks, but why would you add multiple identical actions?!
                 _any_actions.push_back(action);
             }
 
             /// Removes a bindless action
-            void RemoveBindlessActionOutcome(InputAction action)
+            void RemoveBindlessAction(InputAction action)
             {
                 for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
                 {
@@ -173,7 +185,7 @@ namespace Ossium
             }
 
             /// Binds an action to a specified input condition
-            void Bind(string action, InputIdent condition)
+            void BindAction(string action, InputIdent condition)
             {
                 auto itr = _action_bindings.find(action);
                 if (itr == _action_bindings.end())
@@ -197,7 +209,7 @@ namespace Ossium
                 }
             }
 
-            const InputIdent* GetActionOutcomeBind(string action)
+            const InputIdent* GetActionBind(string action)
             {
                 auto itr = _action_bindings.find(action);
                 if (itr != _action_bindings.end())

@@ -19,10 +19,10 @@ namespace Ossium
 
         AudioClip::~AudioClip()
         {
-            free();
+            Free();
         }
 
-        void AudioClip::free()
+        void AudioClip::Free()
         {
             if (audioChunk != NULL)
             {
@@ -31,9 +31,9 @@ namespace Ossium
             }
         }
 
-        bool AudioClip::load(string guid_path, int* loadArgs)
+        bool AudioClip::Load(string guid_path, int* loadArgs)
         {
-            free();
+            Free();
             audioChunk = Mix_LoadWAV(guid_path.c_str());
             if (audioChunk == NULL)
             {
@@ -43,7 +43,7 @@ namespace Ossium
             return true;
         }
 
-        bool AudioClip::init()
+        bool AudioClip::Init()
         {
             return audioChunk != NULL;
         }

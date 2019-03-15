@@ -12,12 +12,12 @@ namespace Ossium
         fpscap = 0;
     }
 
-    float Delta::time()
+    float Delta::Time()
     {
         return deltaTime;
     }
 
-    void Delta::update()
+    void Delta::Update()
     {
         deltaTime = ((float)SDL_GetTicks() - (float)previousTicks) / 1000.0f;
         if (fpscap > 0)
@@ -31,14 +31,14 @@ namespace Ossium
         previousTicks = SDL_GetTicks();
     }
 
-    void Delta::init(Config& config)
+    void Delta::Init(Config& config)
     {
         /// If the fps cap has a value of <= 0, no capping is applied
         fpscap = config.fpscap;
         previousTicks = SDL_GetTicks();
     }
 
-    void Delta::reset()
+    void Delta::Reset()
     {
         previousTicks = SDL_GetTicks();
     }

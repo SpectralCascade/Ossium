@@ -114,7 +114,7 @@ namespace Ossium
         }
     }
 
-    void Serialiser::readString(string &data)
+    void Serialiser::ReadString(string &data)
     {
         if (file != NULL)
         {
@@ -137,7 +137,7 @@ namespace Ossium
         }
     }
 
-    void Serialiser::writeString(string &data)
+    void Serialiser::WriteString(string &data)
     {
         if (file != NULL)
         {
@@ -154,17 +154,17 @@ namespace Ossium
         }
     }
 
-    void Serialiser::readInterface(SerialInterface &obj)
+    void Serialiser::ReadInterface(SerialInterface &obj)
     {
-        obj.SerialRead(this);
+        obj.SerialRead(*this);
     }
 
-    void Serialiser::writeInterface(SerialInterface &obj)
+    void Serialiser::WriteInterface(SerialInterface &obj)
     {
-        obj.SerialWrite(this);
+        obj.SerialWrite(*this);
     }
 
-    unsigned int Serialiser::getTotalSectors()
+    unsigned int Serialiser::GetTotalSectors()
     {
         return totalSectors;
     }

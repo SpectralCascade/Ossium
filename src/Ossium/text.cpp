@@ -19,7 +19,7 @@ namespace Ossium
         update = true;
     }
 
-    bool Text::textToTexture(Renderer& renderer, Font* fontToUse, int pointSize)
+    bool Text::TextToTexture(Renderer& renderer, Font* fontToUse, int pointSize)
     {
         if (update)
         {
@@ -59,7 +59,7 @@ namespace Ossium
     {
         if (update && font != nullptr)
         {
-            textToTexture(renderer, font);
+            TextToTexture(renderer, font);
         }
         if (box)
         {

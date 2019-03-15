@@ -21,19 +21,19 @@ namespace Ossium
         };
 
         /// Loads a resource and adds it to the registry
-        bool load(string guid_path, int* loadArgs = NULL)
+        bool Load(string guid_path, int* loadArgs = NULL)
         {
             bool success = true;
             resourceType* resource = new resourceType();
             /// Load arguments aren't always necessary - allow resources that don't accept additional load arguments
             if (loadArgs != NULL)
             {
-                if (!resource->load(guid_path, loadArgs))
+                if (!resource->Load(guid_path, loadArgs))
                 {
                     success = false;
                 }
             }
-            else if (!resource->load(guid_path))
+            else if (!resource->Load(guid_path))
             {
                 success = false;
             }
@@ -50,12 +50,12 @@ namespace Ossium
         };
 
         /// Post-load initialisation method for general resources
-        bool initialise(string guid_path)
+        bool Initialise(string guid_path)
         {
-            resourceType* resource = find(guid_path);
+            resourceType* resource = Find(guid_path);
             if (resource != NULL)
             {
-                if (resource->init())
+                if (resource->Init())
                 {
                     return true;
                 }
@@ -68,12 +68,12 @@ namespace Ossium
         };
 
         /// Overload for textures
-        bool initialise(string guid_path, Renderer* renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN)
+        bool Initialise(string guid_path, Renderer* renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN)
         {
-            resourceType* resource = find(guid_path);
+            resourceType* resource = Find(guid_path);
             if (resource != NULL)
             {
-                if (resource->init(renderer, pixelFormatting))
+                if (resource->Init(renderer, pixelFormatting))
                 {
                     return true;
                 }
@@ -86,7 +86,7 @@ namespace Ossium
         };
 
         /// Destroys a resource and removes it from the registry
-        void free(string guid_path)
+        void Free(string guid_path)
         {
             if (registry.find(guid_path) != registry.end())
             {
@@ -99,7 +99,7 @@ namespace Ossium
         };
 
         /// Returns pointer to a resource, or NULL if the GUID doesn't exist in the registry
-        resourceType* find(string guid_path)
+        resourceType* Find(string guid_path)
         {
             if (registry.find(guid_path) == registry.end())
             {
@@ -110,7 +110,7 @@ namespace Ossium
         };
 
         /// Destroys all resources and clears the registry
-        void freeAll()
+        void FreeAll()
         {
             /// Iterate through registry and delete everything
             for (typename map<string, resourceType*>::iterator i = registry.begin(); i != registry.end(); i++)

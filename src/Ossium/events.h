@@ -39,7 +39,7 @@ namespace Ossium
         variant<string, int, float>* GetValue(string key);
 
         /// Returns a reference to this event's category type
-        const string& getCategory();
+        const string& GetCategory();
 
         friend bool operator<(const Event& first, const Event& second);
 

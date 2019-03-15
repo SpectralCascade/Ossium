@@ -50,7 +50,7 @@ namespace Ossium
         ~PoseAnimationClip();
 
         /// Frees all keyframes
-        void free();
+        void Free();
 
         /// Adds a single pose animation keyframe
         void addKeyframe(Pose pose, Uint32 time);
@@ -81,13 +81,13 @@ namespace Ossium
         ~Skeleton();
 
         /// Load resource method
-        bool load(string guid_path);
+        bool Load(string guid_path);
 
         /// Post-load initialisation
-        bool init();
+        bool Init();
 
         /// Frees all data accumulated by this skeleton
-        void free();
+        void Free();
 
         /// Frees all the animation clips, but not the joints
         void freeClips();
@@ -105,7 +105,7 @@ namespace Ossium
         void loop(string clipName, float transitionTime = 0.1f);
 
         /// Updates the skeleton's current pose of animation
-        void update(Uint32 time);
+        void Update(Uint32 time);
 
         /// Returns number of joints in the skeleton
         int getJointCount();

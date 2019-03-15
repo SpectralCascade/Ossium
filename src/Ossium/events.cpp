@@ -69,7 +69,7 @@ namespace Ossium
         return nullptr;
     }
 
-    const string& Event::getCategory()
+    const string& Event::GetCategory()
     {
         return category;
     }
@@ -130,7 +130,7 @@ namespace Ossium
 
     void EventController::Broadcast(Event event, Uint32 delay)
     {
-        EventCategoryInfo& info = registry[event.getCategory()];
+        EventCategoryInfo& info = registry[event.GetCategory()];
         if (delay == 0)
         {
             /// Broadcast event immediately to all subscribers
@@ -161,7 +161,7 @@ namespace Ossium
         }
         else
         {
-            EventCategoryInfo& info = registry[event.getCategory()];
+            EventCategoryInfo& info = registry[event.GetCategory()];
             /// Put the event in the dispatch queue
             if (info.category_clock == nullptr)
             {

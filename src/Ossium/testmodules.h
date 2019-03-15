@@ -235,7 +235,7 @@ namespace Ossium
         public:
             void HandleEvent(Event event)
             {
-                if (event.getCategory() == "state change")
+                if (event.GetCategory() == "state change")
                 {
                     try
                     {
@@ -263,7 +263,7 @@ namespace Ossium
                         }
                     }
                 }
-                SDL_Log("HANDLED EVENT in category '%s'.", event.getCategory().c_str());
+                SDL_Log("HANDLED EVENT in category '%s'.", event.GetCategory().c_str());
             }
         };
 
@@ -368,7 +368,7 @@ namespace Ossium
                 TEST_ASSERT(csv.GetCell(2, 0) == "Name");
                 Event myevent;
                 myevent.Init(csv);
-                TEST_ASSERT(myevent.getCategory() == "npc_talk_question_rhetorical");
+                TEST_ASSERT(myevent.GetCategory() == "npc_talk_question_rhetorical");
                 TEST_ASSERT(get<string>(*(myevent.GetValue("Name"))) == "Bob");
             }
 

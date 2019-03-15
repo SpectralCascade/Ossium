@@ -42,36 +42,36 @@ namespace Ossium
         ~TexturePack();
 
         // Frees the texture package
-        void freePack();
+        void FreePack();
         // Frees imported data
-        void freeImported();
+        void FreeImported();
         // Frees everything
-        void freeAll();
+        void FreeAll();
 
         // TexturePack is a resource, so it needs these methods for loading and initialising
         // Loads a texture pack (image + meta data)
-        bool load(string path, int* args = NULL);
+        bool Load(string path, int* args = NULL);
         // Initialises the texture
-        bool init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN);
+        bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN);
 
         // Loads up a single texture ready to be packed and generates mip maps for it if required
-        bool import(string path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
+        bool Import(string path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
 
         // Packs all imported textures into one single texture; returns number of textures packed
         // Smallest first means textures are sorted smallest to largest when true, or largest to smallest when false
         // Max size determines the maximum size of the final texture
-        int packImported(Renderer& renderer, Uint32 pixelFormatting, bool smallestFirst = true, Uint16 maxSize = 4096);
+        int PackImported(Renderer& renderer, Uint32 pixelFormatting, bool smallestFirst = true, Uint16 maxSize = 4096);
 
         // Saves the texture and package data to a PNG format file
-        bool save(Renderer& renderer, Uint32 pixelFormatting, string path);
+        bool Save(Renderer& renderer, Uint32 pixelFormatting, string path);
 
         // Returns a reference to the packed texture
-        Image& getPackedTexture();
+        Image& GetPackedTexture();
 
         // Returns a clip rect for a given texture
-        SDL_Rect getClip(string textureId);
+        SDL_Rect GetClip(string textureId);
         // Overload returns a mipmap, if the texture has a generated mipmap
-        SDL_Rect getClip(string textureId, int mipmapLevel);
+        SDL_Rect GetClip(string textureId, int mipmapLevel);
 
     private:
         NOCOPY(TexturePack);

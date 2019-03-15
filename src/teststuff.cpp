@@ -18,7 +18,7 @@ void StickFighter::OnCreate()
     keyboard->BindState("right", SDLK_RIGHT);
     keyboard->BindState("up", SDLK_UP);
     keyboard->BindState("down", SDLK_DOWN);
-    keyboard->AddActionOutcome("squish", [&](const KeyboardInput& data) {
+    keyboard->AddAction("squish", [&](const KeyboardInput& data) {
         if (data.state)
         {
             this->stickman->SetRenderHeight(0.5f);
@@ -29,7 +29,7 @@ void StickFighter::OnCreate()
         }
         return ActionOutcome::ClaimContext;
     });
-    keyboard->Bind("squish", SDLK_LCTRL);
+    keyboard->BindAction("squish", SDLK_LCTRL);
     SDL_Log("Created a stickfighter instance.");
 }
 
@@ -58,7 +58,7 @@ void StickFighter::OnDestroy()
 
 void StickFighter::Update()
 {
-    timeline.Update(global::delta.time());
+    timeline.Update(global::delta.Time());
     bool moving = false;
     if (keyboard->GetState("up"))
     {

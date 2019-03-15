@@ -32,7 +32,6 @@ namespace Ossium
         static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
-    /// Also defines an empty constructor (using the default keyword results in an ill-formed constructor).
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE)                                                    \
     Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                    \
@@ -222,16 +221,13 @@ namespace Ossium
         /// Returns this entity's ID
         const int GetID();
 
-        /// Transform data for this entity
-        Transform transform;
-
         /// This effectively replaces the copy constructor; entities can only be explicitly copied
         Entity& Clone();
 
         /// Returns pointer to first found instance of an entity
-        Entity* find(string name);
+        Entity* Find(string name);
         /// Ditto, but searches only for entities below the parent
-        Entity* find(string name, Entity* parent);
+        Entity* Find(string name, Entity* parent);
 
     private:
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary

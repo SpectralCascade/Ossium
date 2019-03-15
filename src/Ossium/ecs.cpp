@@ -21,12 +21,10 @@ namespace Ossium
         string name = "Entity";
         if (parent != nullptr)
         {
-            transform = parent->transform;
             self = controller->entityTree.add(name, this, parent->self);
         }
         else
         {
-            transform = {{0, 0}, {0, 0}, {1, 1}};
             self = controller->entityTree.add(name, this);
         }
         controller->entities[self->id] = self;
@@ -105,13 +103,13 @@ namespace Ossium
         }
     }
 
-    Entity* Entity::find(string name)
+    Entity* Entity::Find(string name)
     {
         Node<Entity*>* node = controller->entityTree.find(name);
         return node != nullptr ? node->data : nullptr;
     }
 
-    Entity* Entity::find(string name, Entity* parent)
+    Entity* Entity::Find(string name, Entity* parent)
     {
         Node<Entity*>* node = controller->entityTree.find(name, parent->self);
         return node != nullptr ? node->data : nullptr;

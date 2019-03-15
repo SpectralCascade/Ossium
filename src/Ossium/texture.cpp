@@ -84,7 +84,7 @@ namespace Ossium
             {
                 pointSize = 1;
             }
-            TTF_Font* actualFont = font.getFont(pointSize);
+            TTF_Font* actualFont = font.GetFont(pointSize);
             if (actualFont == NULL)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create text. Failure obtaining the font!");

@@ -27,7 +27,7 @@ namespace Ossium
         virtual void OnClone();
 
         /// Renders textData to a texture using a TrueType Font
-        bool textToTexture(Renderer& renderer, Font* fontToUse, int pointSize = 0);
+        bool TextToTexture(Renderer& renderer, Font* fontToUse, int pointSize = 0);
 
         /// Graphic override
         void Render(Renderer& renderer);
@@ -76,7 +76,7 @@ namespace Ossium
         int boxPadWidth = 4;
         int boxPadHeight = 2;
 
-        /// If true, next time render() is called, the text is rerendered to texture first with textToTexture()
+        /// If true, next time render() is called, the text is rerendered to texture first with TextToTexture()
         bool update = true;
 
         /// The text string
