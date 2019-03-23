@@ -150,7 +150,6 @@ int main(int argc, char* argv[])
         Font font;
         int ptsizes[3] = {2, 24, 36};
         font.Load("assets/Orkney Regular.ttf", &ptsizes[0]);
-        font.Init("assets/Orkney Regular.ttf");
 
         Entity& gameObject = *entitySystem.CreateEntity();
         gameObject.SetName("Test Entity");
