@@ -29,7 +29,6 @@ namespace Ossium
         {
             nextHandle++;
             callees.insert(pair<int, RegisteredCallback>(nextHandle, callee));
-            SDL_Log("Added listener [%d]", nextHandle);
             return nextHandle;
         }
         /// Unregisters a listener from this callback. The argument should match the value returned from a previous,
@@ -43,7 +42,6 @@ namespace Ossium
                 return;
             }
             callees.erase(itr);
-            SDL_Log("Removed listener [%d]", handle);
         }
 
     private:
