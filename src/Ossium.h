@@ -21,3 +21,4 @@
 #include "Ossium/resourcecontroller.h"
 #include "Ossium/events.h"
 #include "Ossium/curves.h"
+#include "Ossium/callback.h"
