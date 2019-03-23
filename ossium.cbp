@@ -41,6 +41,7 @@
 		<Unit filename="src/Ossium/audio.h" />
 		<Unit filename="src/Ossium/basics.cpp" />
 		<Unit filename="src/Ossium/basics.h" />
+		<Unit filename="src/Ossium/callback.h" />
 		<Unit filename="src/Ossium/circularbuffer.h" />
 		<Unit filename="src/Ossium/colours.cpp" />
 		<Unit filename="src/Ossium/colours.h" />
