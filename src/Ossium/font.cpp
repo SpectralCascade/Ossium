@@ -22,13 +22,16 @@ namespace Ossium
         font = NULL;
         if (!fontBank.empty())
         {
-            for (auto i = fontBank.begin(); i != fontBank.end(); i++)
+            if (TTF_WasInit() > 0)
             {
-                TTF_Font* tempFont = i->second;
-                if (tempFont != NULL)
+                for (auto i = fontBank.begin(); i != fontBank.end(); i++)
                 {
-                    TTF_CloseFont(tempFont);
-                    tempFont = NULL;
+                    TTF_Font* tempFont = i->second;
+                    if (tempFont != NULL)
+                    {
+                        TTF_CloseFont(tempFont);
+                        tempFont = NULL;
+                    }
                 }
             }
             fontBank.clear();
