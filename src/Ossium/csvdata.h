@@ -12,8 +12,6 @@ namespace Ossium
     class CSV
     {
     public:
-        ~CSV();
-
         /// Import a CSV file; set quoted to false if importing a csv file that doesn't wrap each cell in "" characters
         bool Import(string path, bool quoted = true);
         /// Export data to a CSV file

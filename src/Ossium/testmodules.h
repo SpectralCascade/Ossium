@@ -9,6 +9,7 @@
 #include "fsm.h"
 #include "events.h"
 #include "csvdata.h"
+#include "jsondata.h"
 #include "basics.h"
 #include "time.h"
 #include "delta.h"
@@ -372,6 +373,19 @@ namespace Ossium
                 TEST_ASSERT(get<string>(*(myevent.GetValue("Name"))) == "Bob");
             }
 
+        };
+
+        class JSON_Tests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                JSON json;
+                TEST_ASSERT(json.Import("assets/test.json"));
+                TEST_ASSERT(json.data_strings["Key"] == "Value");
+                TEST_ASSERT(json.data_strings["Wow"] == "Nice");
+                TEST_ASSERT(json.data_numbers["Number"] == 15.0f);
+            }
         };
 
         class ClockTests : public UnitTest

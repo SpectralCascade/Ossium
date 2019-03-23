@@ -123,7 +123,8 @@ int main(int argc, char* argv[])
         TEST_RUN(TreeTests);
         TEST_RUN(FSM_Tests);
         TEST_RUN(EventSystemTests);
-        TEST_RUN(CSV_Tests);
+        //TEST_RUN(CSV_Tests);
+        TEST_RUN(JSON_Tests);
         TEST_RUN(ClockTests);
         TEST_EVALUATE();
         return 0;

@@ -11,11 +11,6 @@ using namespace std;
 namespace Ossium
 {
 
-    CSV::~CSV()
-    {
-        data.clear();
-    }
-
     bool CSV::Import(string path, bool quoted)
     {
         data.clear();

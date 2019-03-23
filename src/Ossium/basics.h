@@ -36,9 +36,11 @@ namespace Ossium
         /// Converts numerical values to strings using stringstream.
         string ToString(float n);
         string ToString(int n);
+        /// Turns an entire file stream into a string.
+        string ToString(ifstream& fileStream);
 
-        /// Removes spaces from either end of an input string and returns a new string.
-        string strip(string data);
+        /// Removes white space and optionally newline characters from both ends of a string.
+        string strip(string data, char optionalChar = ' ');
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
         /// If an error occurs, these functions return the string outputOnError, or the data string if using the default value for outputOnError.

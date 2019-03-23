@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <cstdio>
 #include <string>
+#include <fstream>
 
 #include "basics.h"
 
@@ -92,11 +93,18 @@ namespace Ossium
             return strStream.str();
         }
 
-        string strip(string data)
+        string ToString(ifstream& fileStream)
+        {
+            stringstream conversionStream;
+            conversionStream << fileStream.rdbuf();
+            return conversionStream.str();
+        }
+
+        string strip(string data, char optionalChar)
         {
             for (int i = 0, counti = data.length(); i < counti; i++)
             {
-                if (data[i] != ' ')
+                if (data[i] != ' ' && data[i] != optionalChar)
                 {
                     data = data.substr(i, counti - i);
                     break;
@@ -104,7 +112,7 @@ namespace Ossium
             }
             for (int i = data.length(); i > 0; i--)
             {
-                if (data[i - 1] != ' ')
+                if (data[i - 1] != ' ' && data[i - 1] != optionalChar)
                 {
                     data = data.substr(0, i);
                     break;
