@@ -40,6 +40,7 @@ namespace Ossium
             if (itr == callees.end())
             {
                 SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to unregister callback! Provided handle = [%d]", handle);
+                return;
             }
             callees.erase(itr);
             SDL_Log("Removed listener [%d]", handle);

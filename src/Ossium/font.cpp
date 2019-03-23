@@ -30,6 +30,7 @@ namespace Ossium
             {
                 TTF_CloseFont(tempFont);
                 tempFont = NULL;
+                fontBank.erase(i);
             }
         }
     }
@@ -77,10 +78,13 @@ namespace Ossium
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to open font '%s' with point size '%d'! TTF_Error: %s", guid_path.c_str(), pointSizes[i], TTF_GetError());
                     continue;
                 }
+                if (font == NULL)
+                {
+                    /// Default to first provided point size
+                    font = tempFont;
+                }
                 fontBank[pointSizes[i]] = tempFont;
             }
-            /// Default to first provided pointsize
-            font = fontBank[pointSizes[1]];
         }
         if (font == NULL)
         {
@@ -99,7 +103,11 @@ namespace Ossium
         if (pointSize > 0)
         {
             TTF_Font* temp = NULL;
-            temp = fontBank[pointSize];
+            auto i = fontBank.find(pointSize);
+            if (i != fontBank.end())
+            {
+                temp = i->second;
+            }
             if (temp != NULL)
             {
                 font = temp;
