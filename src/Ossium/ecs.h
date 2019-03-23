@@ -64,7 +64,17 @@ namespace Ossium
         /// Iterates through all components that implement the Update() method and calls it for each one
         void UpdateComponents();
 
-        /// Removes ALL entities and their components
+        /// Creates a new entity within this system and returns a reference to it.
+        Entity* CreateEntity();
+
+        /// Overload that accepts a parent entity reference, and if the parent exists within this system,
+        /// the new entity will be added as a child of the parent.
+        Entity* CreateEntity(Entity* parent);
+
+        /// Destroys a single entity and all it's components. Logs a warning if the entity does not exist within this system.
+        void DestroyEntity(Entity* entity);
+
+        /// Destroys ALL entities and their components
         void Clear();
 
         /// Returns the total number of entities
@@ -84,13 +94,10 @@ namespace Ossium
 
     };
 
-    class Entity final
+    class Entity
     {
     public:
         friend class EntityComponentSystem;
-
-        Entity(EntityComponentSystem* entity_system, Entity* parent = nullptr);
-        ~Entity();
 
         /// Instantiates and attaches a component to this entity
         template<class T>
@@ -222,7 +229,7 @@ namespace Ossium
         const int GetID();
 
         /// This effectively replaces the copy constructor; entities can only be explicitly copied
-        Entity& Clone();
+        Entity* Clone();
 
         /// Returns pointer to first found instance of an entity
         Entity* Find(string name);
@@ -230,6 +237,11 @@ namespace Ossium
         Entity* Find(string name, Entity* parent);
 
     private:
+        /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
+        /// or by calling CreateEntity() on an EntityComponentSystem instance
+        Entity(EntityComponentSystem* entity_system, Entity* parent = nullptr);
+        ~Entity();
+
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary
         Entity(Entity& copySource);
         Entity(const Entity& copySource);

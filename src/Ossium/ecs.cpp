@@ -33,7 +33,7 @@ namespace Ossium
         SetName(name);
     }
 
-    Entity& Entity::Clone()
+    Entity* Entity::Clone()
     {
         Entity* entityCopy = new Entity(controller, self->parent != nullptr ? self->parent->data : nullptr);
         entityCopy->self->name = self->name + " (copy)";
@@ -49,7 +49,7 @@ namespace Ossium
             }
             entityCopy->components.insert({i->first, copiedComponents});
         }
-        return *entityCopy;
+        return entityCopy;
     }
 
     Entity::~Entity()
@@ -244,6 +244,37 @@ namespace Ossium
         }
     }
 
+    Entity* EntityComponentSystem::CreateEntity()
+    {
+        Entity* created = new Entity(this);
+        return created;
+    }
+
+    Entity* EntityComponentSystem::CreateEntity(Entity* parent)
+    {
+        Entity* created = new Entity(this, parent);
+        return created;
+    }
+
+    void EntityComponentSystem::DestroyEntity(Entity* entity)
+    {
+        if (entity != nullptr)
+        {
+            if (entity->controller == this)
+            {
+                delete entity;
+            }
+            else
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but the entity does not exist in this system instance!");
+            }
+        }
+        else
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but the entity was already destroyed.");
+        }
+    }
+
     void EntityComponentSystem::Clear()
     {
         /// Delete all entities
@@ -252,6 +283,7 @@ namespace Ossium
         {
             if (*i != nullptr && (*i)->data != nullptr)
             {
+
                 delete (*i)->data;
                 (*i)->data = nullptr;
             }

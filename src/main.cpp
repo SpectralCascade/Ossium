@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
         font.Load("assets/Orkney Regular.ttf", &ptsizes[0]);
         font.Init("assets/Orkney Regular.ttf");
 
-        Entity gameObject(&entitySystem);
+        Entity& gameObject = *entitySystem.CreateEntity();
         gameObject.SetName("Test Entity");
         gameObject.AddComponent<Text>(&mainRenderer, 2);
 
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
         /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
         spriteAnim.LoadAndInit("assets/sprite_test.osa", mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
-        Entity other(&entitySystem);
+        Entity& other = *entitySystem.CreateEntity();
         other.AddComponent<Sprite>(&mainRenderer);
 
         Sprite* sprite = other.GetComponent<Sprite>();
