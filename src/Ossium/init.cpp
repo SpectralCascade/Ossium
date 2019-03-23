@@ -74,7 +74,7 @@ namespace Ossium
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();
-        printf("INFO: Successfully terminated Ossium.");
+        printf("INFO: Successfully terminated Ossium.\n");
     }
 
 }

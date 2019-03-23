@@ -1,6 +1,3 @@
-#include <string>
-#include <map>
-
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -23,15 +20,18 @@ namespace Ossium
     void Font::Free()
     {
         font = NULL;
-        for (map<int, TTF_Font*>::iterator i = fontBank.begin(); i != fontBank.end(); i++)
+        if (!fontBank.empty())
         {
-            TTF_Font* tempFont = i->second;
-            if (tempFont != NULL)
+            for (auto i = fontBank.begin(); i != fontBank.end(); i++)
             {
-                TTF_CloseFont(tempFont);
-                tempFont = NULL;
-                fontBank.erase(i);
+                TTF_Font* tempFont = i->second;
+                if (tempFont != NULL)
+                {
+                    TTF_CloseFont(tempFont);
+                    tempFont = NULL;
+                }
             }
+            fontBank.clear();
         }
     }
 
@@ -42,7 +42,10 @@ namespace Ossium
         {
             /// Default (single) point size
             font = TTF_OpenFont(guid_path.c_str(), 24);
-            fontBank[24] = font;
+            if (font != NULL)
+            {
+                fontBank[24] = font;
+            }
         }
         else if (pointSizes[0] <= 0)
         {
