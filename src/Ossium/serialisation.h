@@ -17,23 +17,23 @@ namespace Ossium
     const bool WRITE = 1;
 
     // Forward declaration
-    class Serialiser;
+    class BinarySerialiser;
 
     // Any object that is serialised should inherit from this 'interface' class
     class SerialInterface
     {
     public:
-        virtual void SerialRead(Serialiser& serial) = 0;
-        virtual void SerialWrite(Serialiser& serial) = 0;
+        virtual void SerialRead(BinarySerialiser& serial) = 0;
+        virtual void SerialWrite(BinarySerialiser& serial) = 0;
 
     };
 
     // Performs reading/writing of data, both in software and physically
-    class Serialiser
+    class BinarySerialiser
     {
     public:
-        Serialiser();
-        ~Serialiser();
+        BinarySerialiser();
+        ~BinarySerialiser();
 
         // Starts a new sector for reading or writing; calls to this method can be nested
         void OpenSector(string name, string filePath, bool mode = READ);
@@ -89,7 +89,7 @@ namespace Ossium
         unsigned int GetTotalSectors();
 
     private:
-        NOCOPY(Serialiser);
+        NOCOPY(BinarySerialiser);
 
         // File streaming reference
         SDL_RWops* file;

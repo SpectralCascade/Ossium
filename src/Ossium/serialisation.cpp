@@ -10,7 +10,7 @@ using namespace std;
 namespace Ossium
 {
 
-    Serialiser::Serialiser()
+    BinarySerialiser::BinarySerialiser()
     {
         file = NULL;
         path = "";
@@ -20,13 +20,13 @@ namespace Ossium
         fileSize = 0;
     }
 
-    Serialiser::~Serialiser()
+    BinarySerialiser::~BinarySerialiser()
     {
         // If the file or any sectors are still open, close them all
         Close();
     }
 
-    void Serialiser::Close(bool mode)
+    void BinarySerialiser::Close(bool mode)
     {
         if (!openSectors.empty())
         {
@@ -55,7 +55,7 @@ namespace Ossium
         index = 0;
     }
 
-    void Serialiser::OpenSector(string name, string filePath, bool mode)
+    void BinarySerialiser::OpenSector(string name, string filePath, bool mode)
     {
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Opening new sector '%s' in file '%s' with mode '%s'.", name.c_str(), filePath.c_str(), mode == WRITE ? "binary write" : "binary read");
         if (file == NULL)
@@ -95,7 +95,7 @@ namespace Ossium
         totalSectors++;
     }
 
-    void Serialiser::CloseSector(bool mode)
+    void BinarySerialiser::CloseSector(bool mode)
     {
         if (!openSectors.empty())
         {
@@ -114,7 +114,7 @@ namespace Ossium
         }
     }
 
-    void Serialiser::ReadString(string &data)
+    void BinarySerialiser::ReadString(string &data)
     {
         if (file != NULL)
         {
@@ -137,7 +137,7 @@ namespace Ossium
         }
     }
 
-    void Serialiser::WriteString(string &data)
+    void BinarySerialiser::WriteString(string &data)
     {
         if (file != NULL)
         {
@@ -154,17 +154,17 @@ namespace Ossium
         }
     }
 
-    void Serialiser::ReadInterface(SerialInterface &obj)
+    void BinarySerialiser::ReadInterface(SerialInterface &obj)
     {
         obj.SerialRead(*this);
     }
 
-    void Serialiser::WriteInterface(SerialInterface &obj)
+    void BinarySerialiser::WriteInterface(SerialInterface &obj)
     {
         obj.SerialWrite(*this);
     }
 
-    unsigned int Serialiser::GetTotalSectors()
+    unsigned int BinarySerialiser::GetTotalSectors()
     {
         return totalSectors;
     }

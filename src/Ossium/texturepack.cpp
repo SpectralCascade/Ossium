@@ -72,7 +72,7 @@ namespace Ossium
     {
         FreePack();
         // Load meta data first
-        Serialiser metaStream;
+        BinarySerialiser metaStream;
         metaStream.OpenSector("Ossium TexturePack Meta Data", path + ".tpm", READ);
         int packSize = 0;
         metaStream.Read(packSize);
@@ -285,7 +285,7 @@ namespace Ossium
             renderSurface = NULL;
 
             // Now save the meta data
-            Serialiser metaStream;
+            BinarySerialiser metaStream;
             metaStream.OpenSector("Ossium TexturePack Meta Data", path + ".tpm", WRITE);
             int packSize = packData.empty() ? 0 : (int)packData.size();
             metaStream.Write(packSize);
