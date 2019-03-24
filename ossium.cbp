@@ -65,6 +65,8 @@
 		<Unit filename="src/Ossium/init.h" />
 		<Unit filename="src/Ossium/input.cpp" />
 		<Unit filename="src/Ossium/input.h" />
+		<Unit filename="src/Ossium/jsondata.cpp" />
+		<Unit filename="src/Ossium/jsondata.h" />
 		<Unit filename="src/Ossium/keyboard.cpp" />
 		<Unit filename="src/Ossium/keyboard.h" />
 		<Unit filename="src/Ossium/mathconsts.h" />

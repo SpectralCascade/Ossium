@@ -385,6 +385,7 @@ namespace Ossium
                 TEST_ASSERT(json.data_strings["Key"] == "Value");
                 TEST_ASSERT(json.data_strings["Wow"] == "Nice");
                 TEST_ASSERT(json.data_numbers["Number"] == 15.0f);
+                TEST_ASSERT(json.data_arrays["Array"][2] == "{\"fake\" : 0, \"obj\" : false}");
             }
         };
 

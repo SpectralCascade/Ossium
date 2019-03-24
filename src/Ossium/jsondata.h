@@ -11,9 +11,6 @@ using namespace std;
 namespace Ossium
 {
 
-    /// Forward declaration
-    class ArrayJSON;
-
     class JSON
     {
     public:
@@ -36,28 +33,14 @@ namespace Ossium
         unordered_map<string, string> data_strings;
         unordered_map<string, float> data_numbers;
         unordered_map<string, JSON*> data_objects;
-        unordered_map<string, ArrayJSON*> data_arrays;
+        unordered_map<string, vector<string>> data_arrays;
         unordered_map<string, bool> data_boolean;
         /// Empty values or values that are specified as null
         unordered_set<string> data_null;
 
     private:
-        unsigned int ParseArray(string& json, unsigned int index, JSON* jsonObj = nullptr);
+        unsigned int ParseArray(string& json, unsigned int index, vector<string>& data);
 
-    };
-
-    class ArrayJSON
-    {
-    public:
-        ~ArrayJSON();
-
-        void Clear();
-
-        vector<string> data_strings;
-        vector<float> data_numbers;
-        vector<JSON*> data_objects;
-        vector<ArrayJSON*> data_arrays;
-        vector<bool> data_boolean;
     };
 
 }
