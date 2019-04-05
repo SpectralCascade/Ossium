@@ -13,6 +13,7 @@
 #include "basics.h"
 #include "time.h"
 #include "delta.h"
+#include "schemamodel.h"
 
 using namespace std;
 
@@ -417,6 +418,48 @@ namespace Ossium
                 c.Update(0.200f);
                 TEST_ASSERT(c.GetTime() == 201);
             }
+
+        };
+
+        class SchemaTests : public UnitTest
+        {
+            void RunTest()
+            {
+                SDL_Log("Iterating over %d members:", MemberData::Count());
+                TEST_ASSERT(MemberData::Count() == 3);
+                for (unsigned int i = 0; i < MemberData::Count(); i++)
+                {
+                    SDL_Log("Found member '%s' of type '%s'", MemberData::GetMemberName(i), MemberData::GetMemberType(i));
+                    if (MemberData::GetMemberType(i) == SID("float")::str)
+                    {
+                        TEST_ASSERT(i == 0);
+                        SDL_Log("Member value is: %f", *((float*)GetMember(i)));
+                        TEST_ASSERT(*((float*)GetMember(i)) == 3.25f);
+                    }
+                    else if (MemberData::GetMemberType(i) == SID("int")::str)
+                    {
+                        TEST_ASSERT(i == 2);
+                        SDL_Log("Member value is: %d", *((int*)GetMember(i)));
+                        TEST_ASSERT(*((int*)GetMember(i)) == 17);
+                    }
+                    else if (MemberData::GetMemberType(i) == SID("const char*")::str)
+                    {
+                        TEST_ASSERT(i == 1);
+                        SDL_Log("Member value is: %s", *((const char**)GetMember(i)));
+                        TEST_ASSERT(strcmp(*((const char**)GetMember(i)), "Hello from schema!") == 0);
+                        *((const char**)GetMember(i)) = "wow nice";
+                        TEST_ASSERT(strcmp(*((const char**)GetMember(i)), "wow nice") == 0);
+                    }
+                }
+            }
+
+            StartSchema(SchemaTests)
+            {
+                m(float, foo) = 3.25f;
+                m(const char*, message) = "Hello from schema!";
+                m(int, bar) = 17;
+            }
+            EndSchema(SchemaTests)
 
         };
 

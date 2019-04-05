@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <iostream>
 
+#include "stringintern.h"
 #include "basics.h"
 
 using namespace std;
@@ -98,11 +99,21 @@ namespace Ossium
     public:
         MemberInfo()
         {
+            index = SchemaType::Count();
             SchemaType::Add(StrType::str, StrName::str, sizeof(T) );
         }
 
         inline static const char* type = StrType::str;
         inline static const char* name = StrName::str;
+
+        static unsigned int GetIndex()
+        {
+            return index;
+        }
+
+    private:
+        inline static unsigned int index = 0;
+
     };
 
     #define StartSchema(TYPE) private: typedef Schema< TYPE > MemberData; \
@@ -114,10 +125,10 @@ namespace Ossium
     #define m(TYPE, NAME) inline static MemberInfo<MemberData, TYPE , SID(#TYPE ), SID(#NAME ) > schema_m_##NAME ; \
             TYPE NAME
 
-    #define EndSchema(TYPE) schema_##TYPE;                                                  \
-            void* GetMember(unsigned int index)                                             \
-            {                                                                               \
-                return (void*)&(this->schema_##TYPE) + MemberData::GetByteOffset(index);    \
+    #define EndSchema(TYPE) schema_##TYPE;                                                              \
+            void* GetMember(unsigned int index)                                                         \
+            {                                                                                           \
+                return (void*)((long long)&(this->schema_##TYPE) + MemberData::GetByteOffset(index));   \
             }
 
     class Example

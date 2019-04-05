@@ -126,6 +126,7 @@ int main(int argc, char* argv[])
         //TEST_RUN(CSV_Tests);
         TEST_RUN(JSON_Tests);
         TEST_RUN(ClockTests);
+        TEST_RUN(SchemaTests);
         TEST_EVALUATE();
         return 0;
         #endif // UNIT_TESTS
