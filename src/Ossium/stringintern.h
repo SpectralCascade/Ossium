@@ -21,7 +21,7 @@ namespace Ossium
         return index < Length ? string_id[index] : '\0';
     }
 
-    #define SID(STR) InternedString<ch(STR, 0), ch(STR, 1), ch(STR, 2), ch(STR, 3), ch(STR, 4), ch(STR, 5), ch(STR, 6), ch(STR, 7), ch(STR, 8), ch(STR, 9)>
+    #define SID(STR) InternedString<ch(STR, 0), ch(STR, 1), ch(STR, 2), ch(STR, 3), ch(STR, 4), ch(STR, 5), ch(STR, 6), ch(STR, 7), ch(STR, 8), ch(STR, 9), ch(STR, 10)>
 
     typedef const char* StrID;
 
