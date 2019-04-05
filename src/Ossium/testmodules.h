@@ -423,6 +423,7 @@ namespace Ossium
 
         class SchemaTests : public UnitTest
         {
+        public:
             void RunTest()
             {
                 SDL_Log("Iterating over %d members:", MemberData::Count());
