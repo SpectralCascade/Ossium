@@ -116,18 +116,15 @@ namespace Ossium
     {
         Schema(BaseType* controller)
         {
-            cout << "Instantiating schema" << endl;
             controller->AddSchema(this);
         }
 
         static unsigned int AddMember(const char* type, const char* name, size_t mem_size)
         {
-            cout << "Adding member '" << name << "' to schema." << endl;
             member_names[count] = name;
             member_types[count] = type;
             member_byte_sizes[count] = mem_size;
             count++;
-            cout << "Count is now " << count << endl;
             return SchemaController<BaseType>::AddMember();
         }
 
@@ -192,7 +189,6 @@ namespace Ossium
         MemberInfo(unsigned short& m_count)
         {
             ++m_count;
-            cout << "Instantiating member info" << endl;
             index = SchemaType::AddMember(strType::str, strName::str, sizeof(Type));
         }
 
@@ -236,9 +232,9 @@ namespace Ossium
             public:                                                                                                     \
             constexpr static unsigned int GetMemberCount()                                                              \
             {                                                                                                           \
-                return (unsigned int)schema_local_count + BASE_SCHEMA_TYPE::GetMemberCount();                           \
+                return (unsigned int)schema_local_count + BaseSchemaType::GetMemberCount();                             \
             }                                                                                                           \
-            TYPE (BaseType* controller) : BASE_SCHEMA_TYPE (controller) {cout << "created schema with " << GetMemberCount() << " members." << endl;}
+            TYPE (BaseType* controller) : BaseSchemaType(controller) {}
 
     #define m(TYPE, NAME) inline static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) > schema_m_##NAME = {schema_local_count};   \
             TYPE NAME = schema_m_##NAME
