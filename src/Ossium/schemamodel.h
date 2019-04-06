@@ -12,167 +12,273 @@ using namespace std;
 namespace Ossium
 {
 
-    template<class SourceClass, unsigned int MaxMembers = 20>
-    class Schema
+    ///
+    /// SchemaController
+    ///
+
+    /// Forward declaration
+    template<class BaseType>
+    struct Schema;
+
+    template<class BaseType>
+    struct SchemaController
     {
     public:
-        static void Add(const char* m_type, const char* member, size_t byteLen)
+        static unsigned int MemberCount()
         {
-            types[num] = m_type;
-            members[num] = member;
-            bytes[num] = byteLen;
-            num++;
+            return m_count;
         }
 
-        static unsigned int Count()
+        static unsigned int AddMember()
         {
-            return num;
+            m_count++;
+            return m_count - 1;
         }
 
-        static unsigned int MaxSize()
+        static void IncrementDepth()
         {
-            return MaxMembers;
+            depth++;
+        }
+
+        static unsigned char GetDepth()
+        {
+            return depth;
+        }
+
+        static unsigned int GetMemberCount(unsigned int depth = 0)
+        {
+            return 0;
         }
 
         static const char* GetMemberName(unsigned int index)
         {
-            if (index >= MaxMembers || members[index] == NULL)
-            {
-                return "MEMBER INDEX ERROR";
-            }
-            return members[index];
+            return "SCHEMA ERROR";
         }
 
         static const char* GetMemberType(unsigned int index)
         {
-            if (index >= MaxMembers || members[index] == NULL)
-            {
-                return "MEMBER INDEX ERROR";
-            }
-            return types[index];
+            return "SCHEMA ERROR";
         }
 
-        static size_t GetByteOffset(unsigned int index)
+        constexpr static unsigned int GetSchemaDepth()
         {
-            if (index >= MaxMembers)
-            {
-                return 0;
-            }
-            size_t byte_size = 0;
-            for (unsigned int i = 0; i < index; i++)
-            {
-                byte_size += bytes[i];
-            }
-            return byte_size;
+            return 0;
         }
+
+        void* GetMember(unsigned int index)
+        {
+            return nullptr;
+        }
+
+        void AddSchema(Schema<BaseType>* schema)
+        {
+            schemas[schema_count] = schema;
+            schema_count++;
+        }
+
+        typedef BaseType base;
 
     private:
-        /// Array of member types
-        static const char* types[MaxMembers];
+        static unsigned char depth;
 
-        /// Array of member names
-        static const char* members[MaxMembers];
+        static unsigned int m_count;
 
-        /// Byte offsets
-        static size_t bytes[MaxMembers];
+        static const char* names[20];
+        static const char* types[20];
 
-        /// Total members of the source type
-        static unsigned int num;
+        Schema<BaseType>* schemas[20];
+
+        static unsigned int schema_count;
 
     };
 
-    template<class SourceClass, unsigned int MaxMembers>
-    unsigned int Schema<SourceClass, MaxMembers>::num = 0;
+    template<typename BaseType>
+    unsigned int SchemaController<BaseType>::m_count = 0;
 
-    template<class SourceClass, unsigned int MaxMembers>
-    const char* Schema<SourceClass, MaxMembers>::types[MaxMembers];
+    template<typename BaseType>
+    unsigned char SchemaController<BaseType>::depth = 0;
 
-    template<class SourceClass, unsigned int MaxMembers>
-    const char* Schema<SourceClass, MaxMembers>::members[MaxMembers];
+    template<typename BaseType>
+    const char* SchemaController<BaseType>::names[20] = {'\0'};
 
-    template<class SourceClass, unsigned int MaxMembers>
-    size_t Schema<SourceClass, MaxMembers>::bytes[MaxMembers] = {0};
+    template<typename BaseType>
+    const char* SchemaController<BaseType>::types[20] = {'\0'};
 
-    template<class SchemaType, typename T, typename StrType, typename StrName>
-    class MemberInfo
+    template<typename BaseType>
+    unsigned int SchemaController<BaseType>::schema_count = 0;
+
+    ///
+    /// Schema
+    ///
+
+    template<class BaseType>
+    struct Schema
     {
-    public:
-        MemberInfo()
+        Schema(BaseType* controller)
         {
-            index = SchemaType::Count();
-            SchemaType::Add(StrType::str, StrName::str, sizeof(T) );
+            cout << "Instantiating schema" << endl;
+            controller->AddSchema(this);
         }
 
-        inline static const char* type = StrType::str;
-        inline static const char* name = StrName::str;
+        static unsigned int AddMember(const char* type, const char* name, size_t mem_size)
+        {
+            cout << "Adding member '" << name << "' to schema." << endl;
+            member_names[count] = name;
+            member_types[count] = type;
+            member_byte_sizes[count] = mem_size;
+            count++;
+            cout << "Count is now " << count << endl;
+            return SchemaController<BaseType>::AddMember();
+        }
+
+        static size_t GetMemberOffset(unsigned int index)
+        {
+            return member_byte_sizes[index];
+        }
+
+        static unsigned int GetMemberCount()
+        {
+            return 0;
+        }
+
+        static const char* GetMemberType(unsigned int index)
+        {
+            return member_types[index];
+        }
+
+        static const char* GetMemberName(unsigned int index)
+        {
+            return member_names[index];
+        }
+
+        void* GetMember(unsigned int index)
+        {
+            size_t offset = 0;
+            for (unsigned int i = 0; i < index; i++)
+            {
+                offset += member_byte_sizes[i];
+            }
+            return (void*)((size_t)((void*)this) + offset);
+        }
+
+    private:
+        static size_t member_byte_sizes[20];
+        static const char* member_names[20];
+        static const char* member_types[20];
+        /// Total members altogether
+        static unsigned int count;
+
+    };
+
+    template<class T>
+    size_t Schema<T>::member_byte_sizes[20] = {0};
+
+    template<class T>
+    const char* Schema<T>::member_names[20];
+
+    template<class T>
+    const char* Schema<T>::member_types[20];
+
+    template<class T>
+    unsigned int Schema<T>::count = 0;
+
+    ///
+    /// MemberInfo
+    ///
+
+    template<typename SchemaType, typename Type, typename strType, typename strName>
+    struct MemberInfo
+    {
+        MemberInfo(unsigned short& m_count)
+        {
+            ++m_count;
+            cout << "Instantiating member info" << endl;
+            index = SchemaType::AddMember(strType::str, strName::str, sizeof(Type));
+        }
+
+        inline static const char* type = strType::str;
+        inline static const char* name = strName::str;
 
         static unsigned int GetIndex()
         {
             return index;
         }
 
+        Type operator=(const Type& setDefault)
+        {
+            default_value = setDefault;
+            return default_value;
+        }
+
+        Type GetDefaultValue()
+        {
+            return default_value;
+        }
+
+        operator Type()
+        {
+            return default_value;
+        }
+
     private:
-        inline static unsigned int index = 0;
+        static unsigned int index;
+
+        /// The default value of the member
+        Type default_value;
 
     };
 
-    #define StartSchema(TYPE) private: typedef Schema< TYPE > MemberData; \
-            public: struct TypeScheme_##TYPE
+    template<typename SchemaType, typename Type, typename strType, typename strName>
+    unsigned int MemberInfo<SchemaType, Type, strType, strName>::index = 0;
 
-    #define StartSchemaEx(TYPE, LENGTH) private: typedef Schema< TYPE , LENGTH > MemberData; \
-            public: struct TypeScheme_##TYPE
+    #define DECLARE_SCHEMA(TYPE, BASE_SCHEMA_TYPE) private: typedef BASE_SCHEMA_TYPE BaseSchemaType;                    \
+            inline static unsigned short schema_local_count = 0;                                                        \
+            public:                                                                                                     \
+            constexpr static unsigned int GetMemberCount()                                                              \
+            {                                                                                                           \
+                return (unsigned int)schema_local_count + BASE_SCHEMA_TYPE::GetMemberCount();                           \
+            }                                                                                                           \
+            TYPE (BaseType* controller) : BASE_SCHEMA_TYPE (controller) {cout << "created schema with " << GetMemberCount() << " members." << endl;}
 
-    #define m(TYPE, NAME) inline static MemberInfo<MemberData, TYPE , SID(#TYPE ), SID(#NAME ) > schema_m_##NAME ; \
-            TYPE NAME
+    #define m(TYPE, NAME) inline static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) > schema_m_##NAME = {schema_local_count};   \
+            TYPE NAME = schema_m_##NAME
 
-    #define EndSchema(TYPE) schema_##TYPE;                                                              \
-            void* GetMember(unsigned int index)                                                         \
-            {                                                                                           \
-                return (void*)((long long)&(this->schema_##TYPE) + MemberData::GetByteOffset(index));   \
-            }
-
-    class Example
-    {
-    public:
-        void SomeMethod()
-        {
-            SDL_Log("Iterating over %d members:", MemberData::Count());
-            for (unsigned int i = 0; i < MemberData::Count(); i++)
-            {
-                SDL_Log("Found member '%s' of type '%s'", MemberData::GetMemberName(i), MemberData::GetMemberType(i));
-                if (MemberData::GetMemberType(i) == SID("float")::str)
-                {
-                    cout << "Member value is: " << *((float*)GetMember(i)) << endl;
-                }
-                else if (MemberData::GetMemberType(i) == SID("int")::str)
-                {
-                    cout << "Member value is: " << *((int*)GetMember(i)) << endl;
-                }
-                else if (MemberData::GetMemberType(i) == SID("const char*")::str)
-                {
-                    cout << "Member value is: " << *((const char**)GetMember(i)) << endl;
-                }
-            }
-        }
-
-        StartSchema(Example)
-        {
-            m(int, foo) = 16;
-
-            m(int, bar) = 888;
-
-            m(const char*, hello) = "hello world!";
-
-            m(float, age) = 19.02f;
-
-            m(int, oh) = 999;
-
-            m(float, more) = 555.3f;
-
-        }
-        EndSchema(Example);
-
-    };
+    #define CONSTRUCT_SCHEMA(TYPE, BASETYPE, SCHEMA_TYPE)                                                               \
+            private: inline const static unsigned int schema_depth = BASETYPE::GetSchemaDepth() + 1;                    \
+            public:                                                                                                     \
+            constexpr static unsigned int GetSchemaDepth()                                                              \
+            {                                                                                                           \
+                return schema_depth;                                                                                    \
+            }                                                                                                           \
+            static unsigned int GetMemberCount()                                                                        \
+            {                                                                                                           \
+                return SCHEMA_TYPE::GetMemberCount() + BASETYPE::GetMemberCount();                                      \
+            }                                                                                                           \
+            static const char* GetMemberName(unsigned int index)                                                        \
+            {                                                                                                           \
+                if (index >= BASETYPE::GetMemberCount())                                                                \
+                {                                                                                                       \
+                    return SCHEMA_TYPE::GetMemberName(index);                                                           \
+                }                                                                                                       \
+                return BASETYPE::GetMemberName(index);                                                                  \
+            }                                                                                                           \
+            static const char* GetMemberType(unsigned int index)                                                        \
+            {                                                                                                           \
+                if (index >= BASETYPE::GetMemberCount())                                                                \
+                {                                                                                                       \
+                    return SCHEMA_TYPE::GetMemberType(index);                                                           \
+                }                                                                                                       \
+                return BASETYPE::GetMemberType(index);                                                                  \
+            }                                                                                                           \
+            void* GetMember(unsigned int index)                                                                         \
+            {                                                                                                           \
+                if (index >= BASETYPE::GetMemberCount())                                                                \
+                {                                                                                                       \
+                    return SCHEMA_TYPE::GetMember(index - BASETYPE::GetMemberCount());                                  \
+                }                                                                                                       \
+                return BASETYPE::GetMember(index);                                                                      \
+            }                                                                                                           \
+            TYPE () : SCHEMA_TYPE (this)
 
 }
 

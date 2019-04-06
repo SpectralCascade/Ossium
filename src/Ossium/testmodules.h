@@ -421,46 +421,126 @@ namespace Ossium
 
         };
 
-        class SchemaTests : public UnitTest
+        ///
+        /// Type schema tests/demo
+        ///
+
+        template<class BaseType>
+        struct SchemaExample : public Schema<BaseType>
+        {
+            DECLARE_SCHEMA(SchemaExample, Schema<BaseType>);
+
+            m(int, foo) = 16;
+
+            m(int, bar) = 888;
+
+            m(float, age) = 19.02f;
+
+            m(const char*, hello) = "hello world!";
+
+            m(int, oh) = 999;
+
+            m(float, more) = 555.3f;
+        };
+
+        class Example : public SchemaController<Example>, public SchemaExample<Example>
         {
         public:
-            void RunTest()
+            CONSTRUCT_SCHEMA(Example, SchemaController<Example>, SchemaExample<Example>)
             {
-                SDL_Log("Iterating over %d members:", MemberData::Count());
-                TEST_ASSERT(MemberData::Count() == 3);
-                for (unsigned int i = 0; i < MemberData::Count(); i++)
+                cout << "Constructed object with schema depth == " << GetSchemaDepth() << endl;
+            }
+
+            void SomeMethod()
+            {
+                SDL_Log("Iterating over %d members:", GetMemberCount());
+                for (unsigned int i = 0; i < GetMemberCount(); i++)
                 {
-                    SDL_Log("Found member '%s' of type '%s'", MemberData::GetMemberName(i), MemberData::GetMemberType(i));
-                    if (MemberData::GetMemberType(i) == SID("float")::str)
+                    SDL_Log("Found member '%s' of type '%s'", GetMemberName(i), GetMemberType(i));
+                    if (GetMemberType(i) == SID("float")::str)
                     {
-                        TEST_ASSERT(i == 0);
-                        SDL_Log("Member value is: %f", *((float*)GetMember(i)));
-                        TEST_ASSERT(*((float*)GetMember(i)) == 3.25f);
+                        cout << "Member value is: " << *((float*)GetMember(i)) << endl;
                     }
-                    else if (MemberData::GetMemberType(i) == SID("int")::str)
+                    else if (GetMemberType(i) == SID("int")::str)
                     {
-                        TEST_ASSERT(i == 2);
-                        SDL_Log("Member value is: %d", *((int*)GetMember(i)));
-                        TEST_ASSERT(*((int*)GetMember(i)) == 17);
+                        cout << "Member value is: " << *((int*)GetMember(i)) << endl;
                     }
-                    else if (MemberData::GetMemberType(i) == SID("const char*")::str)
+                    else if (GetMemberType(i) == SID("const char*")::str)
                     {
-                        TEST_ASSERT(i == 1);
-                        SDL_Log("Member value is: %s", *((const char**)GetMember(i)));
-                        TEST_ASSERT(strcmp(*((const char**)GetMember(i)), "Hello from schema!") == 0);
-                        *((const char**)GetMember(i)) = "wow nice";
-                        TEST_ASSERT(strcmp(*((const char**)GetMember(i)), "wow nice") == 0);
+                        cout << "Member value is: " << *((const char**)GetMember(i)) << endl;
                     }
                 }
             }
 
-            StartSchema(SchemaTests)
+        };
+
+        template<class BaseType>
+        struct OtherSchema : public Schema<BaseType>
+        {
+            DECLARE_SCHEMA(OtherSchema, Schema<BaseType>);
+
+            m(int, freshFoo) = 1920;
+
+            m(const char*, freshHello) = "HELLO FROM DERIVED CLASS SCHEMA :D";
+
+            m(float, wow) = -0.75f;
+        };
+
+        class InheritanceExample : public Example, public OtherSchema<Example::base>
+        {
+        public:
+            CONSTRUCT_SCHEMA(InheritanceExample, Example, OtherSchema<Example::base>)
             {
-                m(float, foo) = 3.25f;
-                m(const char*, message) = "Hello from schema!";
-                m(int, bar) = 17;
+                cout << "Constructed object with schema depth == " << GetSchemaDepth() << endl;
             }
-            EndSchema(SchemaTests)
+
+            void SomeOtherMethod()
+            {
+                SDL_Log("Iterating over %d fresh derived members:", GetMemberCount());
+                for (unsigned int i = 0; i < GetMemberCount(); i++)
+                {
+                    SDL_Log("Found member '%s' of type '%s'", GetMemberName(i), GetMemberType(i));
+                    if (GetMemberType(i) == SID("float")::str)
+                    {
+                        cout << "Member value is: " << *((float*)GetMember(i)) << endl;
+                    }
+                    else if (GetMemberType(i) == SID("int")::str)
+                    {
+                        cout << "Member value is: " << *((int*)GetMember(i)) << endl;
+                    }
+                    else if (GetMemberType(i) == SID("const char*")::str)
+                    {
+                        cout << "Member value is: " << *((const char**)GetMember(i)) << endl;
+                    }
+                }
+            }
+
+        };
+
+        class SchemaTests : public UnitTest, public InheritanceExample
+        {
+        public:
+            void RunTest()
+            {
+                SDL_Log("Iterating over %d members:", GetMemberCount());
+                TEST_ASSERT(GetMemberCount() == 9);
+                for (unsigned int i = 0; i < GetMemberCount(); i++)
+                {
+                    SDL_Log("Found member '%s' of type '%s'", GetMemberName(i), GetMemberType(i));
+                    if (GetMemberType(i) == SID("float")::str)
+                    {
+                        SDL_Log("Member value is: %f", *((float*)GetMember(i)));
+                    }
+                    else if (GetMemberType(i) == SID("int")::str)
+                    {
+                        SDL_Log("Member value is: %d", *((int*)GetMember(i)));
+                    }
+                    else if (GetMemberType(i) == SID("const char*")::str)
+                    {
+                        SDL_Log("Member value is: %s", *((const char**)GetMember(i)));
+                    }
+                }
+            }
 
         };
 
