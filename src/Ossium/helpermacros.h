@@ -14,6 +14,7 @@ namespace Ossium
     /// Turns a code snippet into a string
     #define STRINGIFY(CODE) "CODE"
 
+    #ifdef DEBUG
     #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)                       \
             if (!(CONDITION))                                           \
             {                                                           \
@@ -21,6 +22,9 @@ namespace Ossium
                 SDL_assert(false);                                      \
             }                                                           \
             SDL_assert(true)
+    #else
+    #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)
+    #endif
 
 
 }

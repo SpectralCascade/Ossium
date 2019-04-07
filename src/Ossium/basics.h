@@ -88,6 +88,10 @@ namespace Ossium
     template<class Derived>
     Derived Singleton<Derived>::singleInstance;
 
+    ///
+    /// TypeRegistry
+    ///
+
     namespace typesys
     {
 
