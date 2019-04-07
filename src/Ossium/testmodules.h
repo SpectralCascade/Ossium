@@ -502,7 +502,6 @@ namespace Ossium
         public:
             CONSTRUCT_SCHEMA(InheritanceExample, Example, OtherOtherSchema<Example::base>)
             {
-                cout << "Constructed object with schema depth == " << GetSchemaDepth() << endl;
             }
 
             void SomeOtherMethod()

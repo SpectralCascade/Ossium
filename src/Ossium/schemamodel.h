@@ -186,7 +186,6 @@ namespace Ossium
         {
             ++m_count;
             index = SchemaType::AddMember(strType::str, strName::str, sizeof(Type));
-            cout << "Initialised member '" << strName::str << "'." << endl;
         }
 
         inline static const char* type = strType::str;
@@ -234,7 +233,6 @@ namespace Ossium
             }                                                                                                   \
             void* GetMember(unsigned int index, unsigned int depth_count)                                       \
             {                                                                                                   \
-                cout << "Getting member at index " << index << endl;                                            \
                 if (index - depth_count >= BaseSchemaType::GetMemberCount())                                    \
                 {                                                                                               \
                     size_t offset = 0;                                                                          \
@@ -242,12 +240,11 @@ namespace Ossium
                     {                                                                                           \
                         offset += BaseSchemaType::member_byte_sizes[i];                                         \
                     }                                                                                           \
-                    cout << "Offset is " << offset << endl;                                                     \
                     return (void*)((size_t)((void*)this) + offset);                                             \
                 }                                                                                               \
                 return BaseSchemaType::GetMember(index, depth_count);                                           \
             }                                                                                                   \
-            TYPE (BaseType* controller) : BaseSchemaType(controller) {cout << "Schema member count = " << GetMemberCount() << endl;}
+            TYPE (BaseType* controller) : BaseSchemaType(controller) {}
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
     #define m(TYPE, NAME)                                                                                                                                                                       \
