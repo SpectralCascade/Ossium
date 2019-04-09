@@ -426,10 +426,9 @@ namespace Ossium
         /// Type schema tests/demo
         ///
 
-        template<class BaseType>
-        struct SchemaExample : public Schema<BaseType>
+        struct SchemaExample : public Schema<SchemaExample>
         {
-            DECLARE_SCHEMA(SchemaExample, Schema<BaseType>);
+            DECLARE_SCHEMA(SchemaExample, Schema<SchemaExample>);
 
             m(int, foo) = 16;
 
@@ -444,16 +443,10 @@ namespace Ossium
             m(float, more) = 555.3f;
         };
 
-        class Deferred : public SchemaController<Deferred, 10>
-        {
-        };
-
-        class Example : public Deferred, public SchemaExample<Deferred>
+        class Example : public SchemaRoot, public SchemaExample
         {
         public:
-            CONSTRUCT_SCHEMA(Example, Deferred, SchemaExample<Deferred>)
-            {
-            }
+            CONSTRUCT_SCHEMA(SchemaRoot, SchemaExample);
 
             void SomeMethod()
             {
@@ -478,31 +471,28 @@ namespace Ossium
 
         };
 
-        template<class BaseType>
-        struct OtherSchema : public Schema<BaseType>
+        struct OtherSchema : public Schema<OtherSchema>
         {
-            DECLARE_SCHEMA(OtherSchema, Schema<BaseType>);
+            DECLARE_SCHEMA(OtherSchema, Schema<OtherSchema>);
 
             m(int, freshFoo) = 1920;
-
-            m(const char*, freshHello) = "HELLO FROM DERIVED CLASS SCHEMA :D";
 
             m(float, wow) = -0.75f;
         };
 
-        template<class BaseType>
-        struct OtherOtherSchema : public OtherSchema<BaseType>
+        struct OtherOtherSchema : public OtherSchema
         {
-            DECLARE_SCHEMA(OtherOtherSchema, OtherSchema<BaseType>);
+            DECLARE_SCHEMA(OtherOtherSchema, OtherSchema);
+
             m(const char*, degree) = "Computer Science";
+
+            m(const char*, freshHello) = "HELLO FROM DERIVED SCHEMA :D";
         };
 
-        class InheritanceExample : public Example, public OtherOtherSchema<Example::base>
+        class InheritanceExample : public Example, public OtherOtherSchema
         {
         public:
-            CONSTRUCT_SCHEMA(InheritanceExample, Example, OtherOtherSchema<Example::base>)
-            {
-            }
+            CONSTRUCT_SCHEMA(Example, OtherOtherSchema);
 
             void SomeOtherMethod()
             {
@@ -532,24 +522,8 @@ namespace Ossium
         public:
             void RunTest()
             {
-                SDL_Log("Iterating over %d members:", GetMemberCount());
-                //TEST_ASSERT(GetMemberCount() == 9);
-                for (unsigned int i = 0; i < GetMemberCount(); i++)
-                {
-                    SDL_Log("Found member '%s' of type '%s'", GetMemberName(i), GetMemberType(i));
-                    if (GetMemberType(i) == SID("float")::str)
-                    {
-                        SDL_Log("Member value is: %f", *((float*)GetMember(i)));
-                    }
-                    else if (GetMemberType(i) == SID("int")::str)
-                    {
-                        SDL_Log("Member value is: %d", *((int*)GetMember(i)));
-                    }
-                    else if (GetMemberType(i) == SID("const char*")::str)
-                    {
-                        SDL_Log("Member value is: %s", *((const char**)GetMember(i)));
-                    }
-                }
+                TEST_ASSERT(GetMemberCount() == 10);
+                SomeOtherMethod();
             }
 
         };
