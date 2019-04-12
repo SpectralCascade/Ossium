@@ -6,30 +6,129 @@
 namespace Ossium
 {
 
-    JSON::~JSON()
+    ///
+    /// JString
+    ///
+
+    bool JString::IsInt()
     {
-        Clear();
+        return functions::IsInt((string)(*this));
+    }
+    bool JString::IsFloat()
+    {
+        return functions::IsFloat((string)(*this));
+    }
+    bool JString::IsNumber()
+    {
+        return functions::IsNumber((string)(*this));
+    }
+    bool JString::IsBool()
+    {
+        return functions::IsBool((string)(*this));
+    }
+    bool JString::IsArray()
+    {
+        return ((string)(*this)).length() > 0 && ((string)(*this))[0] == '[' && ((string)(*this))[((string)(*this)).length() - 1] == ']';
+    }
+    bool JString::IsJSON()
+    {
+        return ((string)(*this)).length() > 0 && ((string)(*this))[0] == '{' && ((string)(*this))[((string)(*this)).length() - 1] == '}';
+    }
+    bool JString::IsString()
+    {
+        return !IsNumber() && !IsBool() && !IsArray() && !IsJSON();
     }
 
-    void JSON::Clear()
+    float JString::ToFloat()
     {
-        data_strings.clear();
-        data_numbers.clear();
-        for (auto i : data_objects)
+        return functions::ToFloat((string)(*this));
+    }
+    int JString::ToInt()
+    {
+        return functions::ToInt((string)(*this));
+    }
+    bool JString::ToBool()
+    {
+        return functions::ToBool((string)(*this));
+    }
+    vector<JString> JString::ToArray()
+    {
+        vector<JString> dataArray;
+        if (IsArray())
         {
-            delete i.second;
+            int objCount = 0;
+            int arrayCount = 0;
+            bool parsingString = false;
+            JString value;
+            for (unsigned int i = 0, counti = length(); i < counti; i++)
+            {
+                if ((*this)[i] == '"' && (!parsingString || (i < 1 || (*this)[i - 1] != '\\')))
+                {
+                    parsingString = !parsingString;
+                }
+                if (!parsingString)
+                {
+                    if ((*this)[i] == ',' && arrayCount == 1 && objCount == 0)
+                    {
+                        value = strip(value, '\n');
+                        value = strip(value);
+                        dataArray.push_back(value);
+                        value = (string)"";
+                        continue;
+                    }
+                    else if ((*this)[i] == '[')
+                    {
+                        arrayCount++;
+                    }
+                    else if ((*this)[i] == ']')
+                    {
+                        arrayCount--;
+                        if (arrayCount < 1)
+                        {
+                            break;
+                        }
+                    }
+                    else if ((*this)[i] == '{')
+                    {
+                        objCount++;
+                    }
+                    else if ((*this)[i] == '}')
+                    {
+                        objCount--;
+                    }
+                }
+                value += (*this)[i];
+            }
         }
-        data_objects.clear();
-        data_boolean.clear();
-        data_arrays.clear();
-        data_null.clear();
+        else
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to convert JString value into array, but the value is not an array!");
+        }
+        return dataArray;
+    }
+    JSON* JString::ToJSON()
+    {
+        return new JSON((string)(*this));
+    }
+
+    ///
+    /// JSON
+    ///
+
+    JSON::JSON()
+    {
+    }
+
+    JSON::JSON(string raw, unsigned int startIndex)
+    {
+        Parse(raw, startIndex);
     }
 
     bool JSON::Import(string path)
     {
-        Clear();
         ifstream file(path.c_str());
-        string toParse = ToString(file);
+        string toParse = functions::ToString(file);
+        file.close();
         if (!Parse(toParse))
         {
             SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load JSON file '%s'!", path.c_str());
@@ -41,22 +140,49 @@ namespace Ossium
 
     void JSON::Export(string path)
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "JSON export has not been implemented (yet).");
-        SDL_assert(false);
+        ofstream file(path.c_str());
+        file << ToString();
+        file.close();
     }
 
-    bool JSON::Parse(string& json, unsigned int index, JSON* jsonObj)
+    string JSON::ToString()
     {
-        if (jsonObj == nullptr)
+        stringstream jsonStream;
+        jsonStream.str("");
+        string json;
+        jsonStream << "{";
+        if (!empty())
         {
-            jsonObj = this;
+            for (auto itr = begin(); itr != end();)
+            {
+                jsonStream << endl;
+                if (itr->second.IsString())
+                {
+                    jsonStream << "    " << "\"" << itr->first << "\"" << " : " << "\"" << itr->second << "\"";
+                }
+                else
+                {
+                    jsonStream << "    " << "\"" << itr->first << "\"" << " : " << itr->second;
+                }
+                if (++itr != end())
+                {
+                    jsonStream << ",";
+                }
+            }
         }
+        jsonStream << endl << "}" << endl;
+        return jsonStream.str();
+    }
+
+    bool JSON::Parse(string& json, unsigned int startIndex)
+    {
         bool open = false;
         bool keymode = false;
         bool parsingString = false;
+        bool isJson = false;
         string key = "";
         string value = "";
-        for (unsigned int i = index, counti = json.length(); i < counti; i++)
+        for (unsigned int i = startIndex, counti = json.length(); i < counti; i++)
         {
             if (!open)
             {
@@ -64,6 +190,7 @@ namespace Ossium
                 {
                     open = true;
                     keymode = true;
+                    isJson = true;
                 }
             }
             else
@@ -72,7 +199,7 @@ namespace Ossium
                 {
                     if (parsingString)
                     {
-                        if (json[i] == '"' && (json[i - 1] != '\\' || json[i - 2] == '\\'))
+                        if (json[i] == '"' && ((i > 0 && json[i - 1] != '\\') || (i > 1 && json[i - 2] == '\\')))
                         {
                             parsingString = false;
                         }
@@ -89,61 +216,79 @@ namespace Ossium
                     {
                         keymode = false;
                     }
+                    else if (json[i] == '}')
+                    {
+                        open = false;
+                    }
                 }
                 else if (parsingString)
                 {
-                    if (json[i] == '"' && (json[i - 1] != '\\' || json[i - 2] == '\\'))
+                    if (json[i] == '"' && ((i > 0 && json[i - 1] != '\\') || (i > 1 && json[i - 2] == '\\')))
                     {
                         parsingString = false;
                     }
-                    value += json[i];
+                    else
+                    {
+                        value += json[i];
+                    }
                 }
                 else if (json[i] == '"')
                 {
                     parsingString = true;
-                    value += '"';
                 }
                 else if (json[i] == '{')
                 {
-                    JSON* recursiveObj = new JSON();
-                    if (!Parse(json, i, recursiveObj))
+                    /// Parse JSON into a single string
+                    int objDepth = 0;
+                    for (; i < counti; i++)
                     {
-                        return false;
+                        if (json[i] == '{')
+                        {
+                            objDepth++;
+                        }
+                        else if (json[i] == '}')
+                        {
+                            objDepth--;
+                            if (objDepth < 1)
+                            {
+                                value += json[i];
+                                break;
+                            }
+                        }
+                        value += json[i];
                     }
-                    jsonObj->data_objects[key] = recursiveObj;
                 }
                 else if (json[i] == '[')
                 {
-                    i = jsonObj->ParseArray(json, i, data_arrays[key]);
-                    value = "";
+                    /// Parse array into a single string
+                    int arrayDepth = 0;
+                    for (; i < counti; i++)
+                    {
+                        if (json[i] == '[')
+                        {
+                            arrayDepth++;
+                        }
+                        else if (json[i] == ']')
+                        {
+                            arrayDepth--;
+                            if (arrayDepth < 1)
+                            {
+                                value += json[i];
+                                break;
+                            }
+                        }
+                        value += json[i];
+                    }
                 }
                 else if (json[i] != ' ')
                 {
                     if (json[i] == ',' || json[i] == '}')
                     {
                         value = strip(value, '\n');
-                        /// Evaluate the value type and add it to the data
-                        if (value.length() == 0 || value == "null")
-                        {
-                            jsonObj->data_null.insert(key);
-                        }
-                        if (value[0] == '"')
-                        {
-                            value = value.length() > 2 ? (value[value.length() - 1] == '"' ? value.substr(1, value.length() - 2) : value.substr(1, value.length() - 1)) : "";
-                            jsonObj->data_strings[key] = value;
-                        }
-                        else if (value == "true")
-                        {
-                            jsonObj->data_boolean[key] = true;
-                        }
-                        else if (value == "false")
-                        {
-                            jsonObj->data_boolean[key] = false;
-                        }
-                        else if (IsFloat(value))
-                        {
-                            jsonObj->data_numbers[key] = ToFloat(value);
-                        }
+                        value = strip(value);
+                        value = strip(value, '"');
+                        /// Add to data lookup
+                        (*this)[key] = value;
                         /// Reset temporary values
                         key = "";
                         value = "";
@@ -161,51 +306,12 @@ namespace Ossium
                 }
             }
         }
-        return !open && !keymode;
-    }
-
-    unsigned int JSON::ParseArray(string& json, unsigned int index, vector<string>& data)
-    {
-        int arrayDepth = 0;
-        int objDepth = 1;
-        string value = "";
-        for (unsigned int i = index, counti = json.length(); i < counti; i++)
+        if (open || !isJson)
         {
-            if (json[i] == '[')
-            {
-                arrayDepth++;
-                continue;
-            }
-            else if (json[i] == '{')
-            {
-                objDepth++;
-            }
-            else if (json[i] == '}')
-            {
-                objDepth--;
-                if (objDepth < 1)
-                {
-                    return i;
-                }
-            }
-            else if (arrayDepth >= objDepth && (json[i] == ',' || json[i] == ']'))
-            {
-                value = strip(value, '\n');
-                data.push_back(value);
-                value = "";
-                if (json[i] == ']')
-                {
-                    arrayDepth--;
-                    if (arrayDepth < 1)
-                    {
-                        return i;
-                    }
-                }
-                continue;
-            }
-            value += json[i];
+            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to parse JSON correctly due to bad formatting.");
+            return false;
         }
-        return json.length();
+        return true;
     }
 
 }

@@ -104,7 +104,7 @@ namespace Ossium
         {
             for (int i = 0, counti = data.length(); i < counti; i++)
             {
-                if (data[i] != ' ' && data[i] != optionalChar)
+                if (data[i] != optionalChar)
                 {
                     data = data.substr(i, counti - i);
                     break;
@@ -112,7 +112,7 @@ namespace Ossium
             }
             for (int i = data.length(); i > 0; i--)
             {
-                if (data[i - 1] != ' ' && data[i - 1] != optionalChar)
+                if (data[i - 1] != optionalChar)
                 {
                     data = data.substr(0, i);
                     break;
@@ -206,6 +206,16 @@ namespace Ossium
             return IsInt(data) || IsFloat(data);
         }
 
+        bool IsBool(const string& data)
+        {
+            return data == "true" || data == "false" || data == "True" || data == "False";
+        }
+
+        bool IsString(const string& data)
+        {
+            return data.length() > 0 && data[0] == '"' && data[data.length() - 1] == '"';
+        }
+
         int ToInt(const string& data)
         {
             stringstream str;
@@ -234,6 +244,11 @@ namespace Ossium
                 #endif
             }
             return value;
+        }
+
+        bool ToBool(const string& data)
+        {
+            return data == "true" || data == "True" ? true : false;
         }
 
     }

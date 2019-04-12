@@ -39,7 +39,7 @@ namespace Ossium
         /// Turns an entire file stream into a string.
         string ToString(ifstream& fileStream);
 
-        /// Removes white space and optionally newline characters from both ends of a string.
+        /// Removes white space or some other specified character from both ends of a string
         string strip(string data, char optionalChar = ' ');
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
@@ -48,16 +48,27 @@ namespace Ossium
         /// Ditto but returns the first half instead.
         string splitPairFirst(string data, char delimiter = ' ', string outputOnError = "%s");
 
-        /// Determine whether a stripped ASCII string is an integer.
-        bool IsInt(const string& data);
-        /// Determine whether a stripped ASCII string is a float.
-        bool IsFloat(const string& data);
-        /// Convenient method to check whether a string is numerical at all.
-        bool IsNumber(const string& data);
+        ///
+        /// Type query functions (for converting strings to specific data types).
+        ///
 
-        /// Convert a string to int or float using stringstream.
+        /// Does this string represent a integer value?
+        bool IsInt(const string& data);
+        /// Does this string represent a floating point value?
+        bool IsFloat(const string& data);
+        /// Does this string represent a numerical value?
+        bool IsNumber(const string& data);
+        /// Does this string represent a boolean value?
+        bool IsBool(const string& data);
+        /// Does this string represent a string value?
+        bool IsString(const string& data);
+
+        /// Convert a string to an int
         int ToInt(const string& data);
+        /// Convert a string to a float
         float ToFloat(const string& data);
+        /// Convert a string to a bool
+        bool ToBool(const string& data);
 
     }
 

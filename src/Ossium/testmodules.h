@@ -384,10 +384,16 @@ namespace Ossium
             {
                 JSON json;
                 TEST_ASSERT(json.Import("assets/test.json"));
-                TEST_ASSERT(json.data_strings["Key"] == "Value");
-                TEST_ASSERT(json.data_strings["Wow"] == "Nice");
-                TEST_ASSERT(json.data_numbers["Number"] == 15.0f);
-                TEST_ASSERT(json.data_arrays["Array"][2] == "{\"fake\" : 0, \"obj\" : false}");
+                TEST_ASSERT(json["Key"] == "Value");
+                TEST_ASSERT(json["Wow"] == "Nice");
+                TEST_ASSERT(json["Number"].ToFloat() == 15.0f);
+                TEST_ASSERT(json["Array"].IsArray());
+                TEST_ASSERT(json["Array"].ToArray()[2] == "{\"fake\" : 0, \"obj\" : false}");
+                json["new key"] = ToString(14);
+                json.Export("assets/test_out.json");
+                json.clear();
+                json.Import("assets/test_out.json");
+                TEST_ASSERT(json["new key"] == "14");
             }
         };
 
