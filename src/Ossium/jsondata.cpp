@@ -106,6 +106,74 @@ namespace Ossium
         }
         return dataArray;
     }
+    JString JString::ToElement(unsigned int arrayIndex)
+    {
+        JString value;
+        if (IsArray())
+        {
+            unsigned int element_index = 0;
+            int objCount = 0;
+            int arrayCount = 1;
+            bool parsingString = false;
+            for (unsigned int i = 1, counti = length(); i < counti; i++)
+            {
+                if ((*this)[i] == '"' && (!parsingString || (i < 1 || (*this)[i - 1] != '\\')))
+                {
+                    parsingString = !parsingString;
+                }
+                if (!parsingString)
+                {
+                    if ((*this)[i] == ',' && arrayCount == 1 && objCount == 0)
+                    {
+                        value = strip(value, '\n');
+                        value = strip(value);
+                        value = strip(value, '"');
+                        if (element_index == arrayIndex)
+                        {
+                            return value;
+                        }
+                        element_index++;
+                        value = string("");
+                        continue;
+                    }
+                    else if ((*this)[i] == '[')
+                    {
+                        arrayCount++;
+                    }
+                    else if ((*this)[i] == ']')
+                    {
+                        arrayCount--;
+                        if (arrayCount < 1)
+                        {
+                            value = strip(value, '\n');
+                            value = strip(value);
+                            value = strip(value, '"');
+                            if (element_index == arrayIndex)
+                            {
+                                return value;
+                            }
+                            break;
+                        }
+                    }
+                    else if ((*this)[i] == '{')
+                    {
+                        objCount++;
+                    }
+                    else if ((*this)[i] == '}')
+                    {
+                        objCount--;
+                    }
+                }
+                value += (*this)[i];
+            }
+        }
+        else
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get element from JSON array, but this JString instance is not an array!");
+        }
+        /// Exceeded bounds special value
+        return JString("\\!EB!\\");
+    }
     JSON* JString::ToJSON()
     {
         return new JSON((string)(*this));
@@ -127,7 +195,7 @@ namespace Ossium
     bool JSON::Import(string path)
     {
         ifstream file(path.c_str());
-        string toParse = functions::ToString(file);
+        string toParse = functions::FileToString(file);
         file.close();
         if (!Parse(toParse))
         {
@@ -145,24 +213,46 @@ namespace Ossium
         file.close();
     }
 
-    string JSON::ToString()
+    string JSON::ToString(unsigned int indent_depth)
     {
         stringstream jsonStream;
         jsonStream.str("");
         string json;
+        for (unsigned int i = 0, counti = indent_depth; i < counti; i++)
+        {
+            jsonStream << "    ";
+        }
         jsonStream << "{";
         if (!empty())
         {
             for (auto itr = begin(); itr != end();)
             {
                 jsonStream << endl;
+                for (unsigned int i = 0, counti = indent_depth + 1; i < counti; i++)
+                {
+                    jsonStream << "    ";
+                }
+                jsonStream << "\"" << itr->first << "\"" << " : ";
                 if (itr->second.IsString())
                 {
-                    jsonStream << "    " << "\"" << itr->first << "\"" << " : " << "\"" << itr->second << "\"";
+                     jsonStream << "\"" << itr->second << "\"";
+                }
+                else if (itr->second.IsJSON())
+                {
+                    /// Add indents
+                    for (unsigned int i = 0; i < itr->second.length(); i++)
+                    {
+                        if (itr->second[i] == '\n')
+                        {
+                            itr->second.insert(i + 1, string("    "));
+                            i += 4;
+                        }
+                    }
+                    jsonStream << itr->second;
                 }
                 else
                 {
-                    jsonStream << "    " << "\"" << itr->first << "\"" << " : " << itr->second;
+                    jsonStream << itr->second;
                 }
                 if (++itr != end())
                 {
@@ -170,7 +260,12 @@ namespace Ossium
                 }
             }
         }
-        jsonStream << endl << "}" << endl;
+        jsonStream << endl;
+        for (unsigned int i = 0, counti = indent_depth; i < counti; i++)
+        {
+            jsonStream << "    ";
+        }
+        jsonStream << "}";
         return jsonStream.str();
     }
 

@@ -3,14 +3,54 @@
 
 #include <string>
 #include <sstream>
+#include <type_traits>
+#include <any>
 #include <SDL.h>
 
 #include "helpermacros.h"
+#include "jsondata.h"
 
 using namespace std;
 
 namespace Ossium
 {
+
+    ///
+    /// TypeRegistry
+    ///
+
+    namespace typesys
+    {
+
+        template<class BaseType>
+        class TypeRegistry
+        {
+        private:
+            static BaseType nextTypeIdent;
+            BaseType typeIdent;
+
+        public:
+            TypeRegistry()
+            {
+                typeIdent = nextTypeIdent;
+                nextTypeIdent++;
+            }
+
+            const BaseType getType()
+            {
+                return typeIdent;
+            }
+
+            static Uint32 GetTotalTypes()
+            {
+                return (Uint32)nextTypeIdent;
+            }
+        };
+
+        template<class BaseType>
+        BaseType TypeRegistry<BaseType>::nextTypeIdent = 0;
+
+    }
 
     inline namespace functions
     {
@@ -37,7 +77,232 @@ namespace Ossium
         string ToString(float n);
         string ToString(int n);
         /// Turns an entire file stream into a string.
-        string ToString(ifstream& fileStream);
+        string FileToString(ifstream& fileStream);
+
+        ///
+        /// SFINAE method/type detection
+        /// Based primarily on work by Jean Guegant
+        /// http://jguegant.github.io/blogs/tech/sfinae-introduction.html
+        ///
+
+        inline namespace memberdetection
+        {
+
+            #define DETECT_METHOD(METHOD_NAME)                                                                                                                      \
+            template<class T>                                                                                                                                       \
+            struct has_##METHOD_NAME                                                                                                                                \
+            {                                                                                                                                                       \
+                template<typename TypeToCheck>                                                                                                                      \
+                /** decltype() returns a bool type if the type to check has the method, otherwise substitution fails and the alternative method is used instead. **/\
+                static constexpr decltype(declval<TypeToCheck>().METHOD_NAME(), bool())                                                                             \
+                check(int)                                                                                                                                          \
+                {                                                                                                                                                   \
+                    return true;                                                                                                                                    \
+                }                                                                                                                                                   \
+                                                                                                                                                                    \
+                /** If SFINAE takes place, this is the ultimate fallback method as it takes any type. **/                                                           \
+                template<typename SubstitutionFailedType>                                                                                                           \
+                static constexpr bool check(...)                                                                                                                    \
+                {                                                                                                                                                   \
+                    return false;                                                                                                                                   \
+                }                                                                                                                                                   \
+                                                                                                                                                                    \
+                /** We have to pass something to the check() method such that it takes precedence over the variadic method, hence passing an int. **/               \
+                static constexpr bool value = check<T>(int());                                                                                                      \
+                                                                                                                                                                    \
+            }
+
+            #define DETECT_METHOD_P(METHOD_NAME, PARAMTYPE)                                                                                                         \
+            template<class T>                                                                                                                                       \
+            struct has_##METHOD_NAME                                                                                                                                \
+            {                                                                                                                                                       \
+                template<typename TypeToCheck>                                                                                                                      \
+                static constexpr decltype(declval<TypeToCheck>().METHOD_NAME(declval<PARAMTYPE>()), bool())                                                         \
+                check(int)                                                                                                                                          \
+                {                                                                                                                                                   \
+                    return true;                                                                                                                                    \
+                }                                                                                                                                                   \
+                                                                                                                                                                    \
+                template<typename SubstitutionFailedType>                                                                                                           \
+                static constexpr bool check(...)                                                                                                                    \
+                {                                                                                                                                                   \
+                    return false;                                                                                                                                   \
+                }                                                                                                                                                   \
+                                                                                                                                                                    \
+                static constexpr bool value = check<T>(int());                                                                                                      \
+                                                                                                                                                                    \
+            }
+
+            template<class T>
+            struct is_range_erasable
+            {
+                template<typename TypeToCheck>
+                static constexpr decltype(declval<TypeToCheck>().erase(declval<typename TypeToCheck::iterator>(), declval<typename TypeToCheck::iterator>()), bool())
+                check(int)
+                {
+                    return true;
+                }
+
+                template<typename SubstitutionFailedType>
+                static constexpr bool check(...)
+                {
+                    return false;
+                }
+
+                static constexpr bool value = check<T>(int());
+
+            };
+
+            typedef char DoesNotHave;
+            typedef char DoesHave[2];
+
+            DoesNotHave operator<<(const ostream&, const any&);
+            DoesNotHave operator>>(const ostream&, const any&);
+
+            DoesHave& CheckInsertionOp(ostream&);
+            DoesNotHave CheckInsertionOp(DoesNotHave);
+
+            template<typename T>
+            struct is_insertable
+            {
+                static ostream& s;
+                const static T& t;
+                const static bool value = sizeof(CheckInsertionOp(s << t)) == sizeof(DoesHave);
+            };
+
+            template<typename T>
+            struct is_streamable
+            {
+                static ostream& s;
+                const static T& t;
+                const static bool value = sizeof(CheckInsertionOp(s >> t)) == sizeof(DoesHave);
+            };
+
+            DETECT_METHOD(ToString);
+
+            DETECT_METHOD_P(FromString, string);
+
+            DETECT_METHOD(c_str);
+
+        }
+
+        ///
+        /// FromString() functions
+        ///
+
+        void FromString(...);
+
+        template<typename T>
+        typename enable_if<has_FromString<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            obj.FromString(data);
+        }
+
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && !has_c_str<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            stringstream str;
+            str.str("");
+            str.str(data);
+            if (!(str >> obj))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert data from string.");
+            }
+        }
+
+        /// Overload for string types (insertion operator breaks up strings by spaces)
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && has_c_str<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            /// Must be a string if it implements c_str(), right...? Not very foolproof. Actually, most of the SFINAE code is not foolproof. Suggestions for improving are welcome.
+            obj = data;
+        }
+
+        /// Converts string version of an iterable object into said object,
+        /// except for types implementing the c_str() method (i.e. strings).
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && is_range_erasable<T>::value && !has_c_str<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            unsigned int index = 0;
+            JString jdata = JString(data);
+            for (auto itr = obj.begin(); itr != obj.end(); itr++)
+            {
+                string strValue = "";
+                JString element = jdata.ToElement(index);
+                if (element == "\\!EB!\\" && ++itr != obj.end())
+                {
+                    obj.erase(--itr, obj.end());
+                    break;
+                }
+                FromString(*itr, element);
+                index++;
+            }
+        }
+
+        ///
+        /// ToString() functions
+        ///
+
+        template<typename T>
+        typename enable_if<has_ToString<T>::value, string>::type
+        ToString(T& obj)
+        {
+            return obj.ToString();
+        }
+
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && is_insertable<T>::value, string>::type
+        ToString(T& obj)
+        {
+            stringstream str;
+            str.str("");
+            if (!(str << obj))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string to data.");
+            }
+            return str.str();
+        }
+
+        /// Converts data of objects implementing simple iterators into a string format array (such as vector<int>),
+        /// except for types implementing the c_str() method (i.e. strings).
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && !has_c_str<T>::value, string>::type
+        ToString(T& data, typename T::iterator* start = nullptr)
+        {
+            stringstream dataStream;
+            dataStream.str("");
+            if (start == nullptr || !(*start >= data.begin() && *start < data.end()))
+            {
+                for (auto i = data.begin(); i != data.end();)
+                {
+                    dataStream << (*i);
+                    if (++i != data.end())
+                    {
+                        dataStream << ", ";
+                    }
+                }
+            }
+            else
+            {
+                for (auto i = *start; i != data.end();)
+                {
+                    dataStream << *i;
+                    if (++i != data.end())
+                    {
+                        dataStream << ", ";
+                    }
+                }
+            }
+            string converted = string("[") + dataStream.str() + string("]");
+            return converted;
+        }
+
+        /// Sinkhole for types that ToString() is not implemented for.
+        string ToString(...);
 
         /// Removes white space or some other specified character from both ends of a string
         string strip(string data, char optionalChar = ' ');
@@ -98,43 +363,6 @@ namespace Ossium
 
     template<class Derived>
     Derived Singleton<Derived>::singleInstance;
-
-    ///
-    /// TypeRegistry
-    ///
-
-    namespace typesys
-    {
-
-        template<class BaseType>
-        class TypeRegistry
-        {
-        private:
-            static BaseType nextTypeIdent;
-            BaseType typeIdent;
-
-        public:
-            TypeRegistry()
-            {
-                typeIdent = nextTypeIdent;
-                nextTypeIdent++;
-            }
-
-            const BaseType getType()
-            {
-                return typeIdent;
-            }
-
-            static Uint32 GetTotalTypes()
-            {
-                return (Uint32)nextTypeIdent;
-            }
-        };
-
-        template<class BaseType>
-        BaseType TypeRegistry<BaseType>::nextTypeIdent = 0;
-
-    }
 
 }
 

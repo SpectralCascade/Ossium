@@ -5,8 +5,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "basics.h"
-
 using namespace std;
 
 namespace Ossium
@@ -39,6 +37,7 @@ namespace Ossium
         int ToInt();
         bool ToBool();
         vector<JString> ToArray();
+        JString ToElement(unsigned int arrayIndex);
         JSON* ToJSON();
 
     };
@@ -60,7 +59,7 @@ namespace Ossium
         bool Parse(string& json, unsigned int startIndex = 0);
 
         /// Converts this JSON object into a string format representation.
-        string ToString();
+        string ToString(unsigned int indent_depth = 0);
 
     };
 

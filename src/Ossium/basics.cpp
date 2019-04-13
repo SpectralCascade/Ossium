@@ -93,11 +93,20 @@ namespace Ossium
             return strStream.str();
         }
 
-        string ToString(ifstream& fileStream)
+        string FileToString(ifstream& fileStream)
         {
             stringstream conversionStream;
             conversionStream << fileStream.rdbuf();
             return conversionStream.str();
+        }
+
+        string ToString(...)
+        {
+            return "(ToString() not implemented for type)";
+        }
+
+        void FromString(...)
+        {
         }
 
         string strip(string data, char optionalChar)
@@ -224,9 +233,7 @@ namespace Ossium
             int value = 0;
             if (!(str >> value))
             {
-                #ifdef DEBUG
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
-                #endif // DEBUG
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
             }
             return value;
         }
@@ -239,9 +246,7 @@ namespace Ossium
             float value = 0;
             if (!(str >> value))
             {
-                #ifdef DEBUG
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
-                #endif
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
             }
             return value;
         }

@@ -442,7 +442,7 @@ namespace Ossium
 
             m(float, age) = 19.02f;
 
-            m(const char*, hello) = "hello world!";
+            m(string, hello) = "hello world!";
 
             m(int, oh) = 999;
 
@@ -453,27 +453,6 @@ namespace Ossium
         {
         public:
             CONSTRUCT_SCHEMA(SchemaRoot, SchemaExample);
-
-            void SomeMethod()
-            {
-                SDL_Log("Iterating over %d members:", GetMemberCount());
-                for (unsigned int i = 0; i < GetMemberCount(); i++)
-                {
-                    SDL_Log("Found member '%s' of type '%s'", GetMemberName(i), GetMemberType(i));
-                    if (GetMemberType(i) == SID("float")::str)
-                    {
-                        cout << "Member value is: " << *((float*)GetMember(i)) << endl;
-                    }
-                    else if (GetMemberType(i) == SID("int")::str)
-                    {
-                        cout << "Member value is: " << *((int*)GetMember(i)) << endl;
-                    }
-                    else if (GetMemberType(i) == SID("const char*")::str)
-                    {
-                        cout << "Member value is: " << *((const char**)GetMember(i)) << endl;
-                    }
-                }
-            }
 
         };
 
@@ -490,9 +469,12 @@ namespace Ossium
         {
             DECLARE_SCHEMA(OtherOtherSchema, OtherSchema);
 
-            m(const char*, degree) = "Computer Science";
+            m(string, degree) = "Computer Science";
 
-            m(const char*, freshHello) = "HELLO FROM DERIVED SCHEMA :D";
+            m(string, freshHello) = "HELLO FROM DERIVED SCHEMA :D";
+
+            m(vector<int>, testVector) = {15, 20, 25, 30, 0, -1};
+
         };
 
         class InheritanceExample : public Example, public OtherOtherSchema
@@ -514,9 +496,9 @@ namespace Ossium
                     {
                         cout << "Member value is: " << *((int*)GetMember(i)) << endl;
                     }
-                    else if (GetMemberType(i) == SID("const char*")::str)
+                    else if (GetMemberType(i) == SID("string")::str)
                     {
-                        cout << "Member value is: " << *((const char**)GetMember(i)) << endl;
+                        cout << "Member value is: " << *((string*)GetMember(i)) << endl;
                     }
                 }
             }
@@ -528,8 +510,19 @@ namespace Ossium
         public:
             void RunTest()
             {
-                TEST_ASSERT(GetMemberCount() == 10);
-                SomeOtherMethod();
+                TEST_ASSERT(GetMemberCount() == 11);
+                //SomeOtherMethod();
+                JSON data;
+                data.Import("assets/test_serialised_in.json");
+                cout << endl << "Before serialising, foo == " << foo << " and degree == " << degree << endl;
+                SerialiseSchema(&data);
+                cout << "After serialising, foo == " << foo << " and degree == " << degree << endl << endl;
+
+                cout << "Serialising OUT file 'assets/test_serialise_out.json'..." << endl << endl;
+                JSON* output = SerialiseSchema();
+                output->Export("assets/test_serialise_out.json");
+                delete output;
+                output = nullptr;
             }
 
         };
