@@ -2,18 +2,19 @@
 Ossium is a bare-bones 2D game engine being built with C++ and SDL 2. The aim of this project is to create a simple, lightweight 2D game engine which is easy to use and simultaneously acts as a nice wrapper for SDL 2.
 
 # Features
-* Extendable animation system based around timelines and animator clips
+* Low number of dependencies (SDL 2 with basic extension libraries)
+* Extendable input system with action bindings, states and input claiming
+* Flexible Entity Component System
 * Game event system with delay-based queuing
-* Flexible input system with action bindings, states and input claiming
-* Rendering with layer support
-* Easy audio playback and mixing
-* Serialisation support
+* Basic class serialisation support via completely code-based schemas
+* Animation system based around timelines and animator clips
+* Built-in CSV import/export and JSON parsing
 * Basic texture packer with mipmap generator
 * Resource controller for simple resource management
-* Basic vector maths functions and various intersection tests
-* Simple Entity Component System
-* Simplistic test framework
-* Straightforward CSV file import/export
+* Audio playback and mixing
+* Vector maths functions and various intersection tests for primitive shapes
+* Simple unit testing framework
+* Rendering with layer support
 
 # Pre-requisites
 All SDL libraries are listed on the [main SDL 2 webpage](https://www.libsdl.org/download-2.0.php) and the [SDL 2 projects page](https://www.libsdl.org/projects).
