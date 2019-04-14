@@ -21,7 +21,7 @@ namespace Ossium
         };
 
         /// Loads a resource and adds it to the registry
-        bool Load(string guid_path, int* loadArgs = NULL)
+        resourceType* Load(string guid_path, int* loadArgs = NULL)
         {
             bool success = true;
             resourceType* resource = new resourceType();
@@ -44,9 +44,11 @@ namespace Ossium
             }
             else
             {
+                delete resource;
+                resource = nullptr;
                 SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to load resource '%s'.", guid_path.c_str());
             }
-            return success;
+            return resource;
         };
 
         /// Post-load initialisation method for general resources

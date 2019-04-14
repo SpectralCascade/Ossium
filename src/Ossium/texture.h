@@ -11,6 +11,7 @@
 #include "primitives.h"
 #include "metarect.h"
 #include "font.h"
+#include "resourcecontroller.h"
 
 using namespace std;
 
@@ -77,6 +78,9 @@ namespace Ossium
             int GetWidth();
             /// Returns the height of the image
             int GetHeight();
+
+            /// Returns the name of the loaded image, if it has one.
+            string GetPathName();
 
             /// Applies a pixel manipulation function to the image. The argument function accepts pixel data as an SDL_Color
             /// in addition to an SDL_Point which indicates which pixel is being modified relative to the top left of the image.
@@ -145,6 +149,9 @@ namespace Ossium
             bool LockPixels();
             /// Unlocks the texture so the raw pixels can no longer be modified
             bool UnlockPixels();
+
+            /// The path used to load the current image.
+            string pathname = "";
 
             /// The image prior to being converted to an SDL_Texture
             SDL_Surface* tempSurface = NULL;

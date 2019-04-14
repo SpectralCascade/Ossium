@@ -272,17 +272,22 @@ namespace Ossium
 
         class FSM_TestState : public StateInterface<FSM_TestMachine>
         {
-            void EnterState(FSM_TestMachine* machine = nullptr)
+        public:
+            FSM_TestState(FSM_TestMachine* machine) : StateInterface(machine)
+            {
+            }
+
+            void EnterState()
             {
                 SDL_Log("EnterState() called on state '%s'.", name.c_str());
             }
 
-            void ExecuteState(FSM_TestMachine* machine = nullptr)
+            void ExecuteState()
             {
                 SDL_Log("ExecuteState() called on state '%s'.", name.c_str());
             }
 
-            void ExitState(FSM_TestMachine* machine = nullptr)
+            void ExitState()
             {
                 SDL_Log("ExitState() called on state '%s'.", name.c_str());
             }

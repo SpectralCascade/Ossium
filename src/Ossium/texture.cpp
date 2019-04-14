@@ -75,6 +75,10 @@ namespace Ossium
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! SDL_Error: %s", guid_path.c_str(), SDL_GetError());
             }
             #endif // SDL_IMAGE_H_
+            else
+            {
+                pathname = guid_path;
+            }
             return tempSurface != NULL;
         }
 
@@ -173,6 +177,10 @@ namespace Ossium
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
                 }
+                else
+                {
+                    pathname = "";
+                }
             }
             else
             {
@@ -258,6 +266,11 @@ namespace Ossium
         int Image::GetHeight()
         {
             return height;
+        }
+
+        string Image::GetPathName()
+        {
+            return pathname;
         }
 
         bool Image::LockPixels()

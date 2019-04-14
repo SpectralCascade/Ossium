@@ -17,15 +17,23 @@ namespace Ossium
     class StateInterface
     {
     public:
-        virtual void EnterState(StateMachineType* machine = nullptr) = 0;
-        virtual void ExecuteState(StateMachineType* machine = nullptr) = 0;
-        virtual void ExitState(StateMachineType* machine = nullptr) = 0;
+        StateInterface(StateMachineType* machine)
+        {
+            stateMachine = machine;
+        }
+
+        virtual void EnterState() = 0;
+        virtual void ExecuteState() = 0;
+        virtual void ExitState() = 0;
 
         virtual ~StateInterface()
         {
         }
 
         string name;
+
+    protected:
+        StateMachineType* stateMachine;
 
     };
 
@@ -69,15 +77,15 @@ namespace Ossium
         {
             if (pre_current_state != nullptr)
             {
-                pre_current_state->ExecuteState(DerivedMachine());
+                pre_current_state->ExecuteState();
             }
             if (current_state_index >= 0)
             {
-                (*history)[current_state_index]->ExecuteState(DerivedMachine());
+                (*history)[current_state_index]->ExecuteState();
             }
             if (post_current_state != nullptr)
             {
-                post_current_state->ExecuteState(DerivedMachine());
+                post_current_state->ExecuteState();
             }
         }
 
@@ -120,10 +128,13 @@ namespace Ossium
         /// Adds a state to the state machine; typically,
         /// this should be used on construction or loading of DerivedMachine()
         template<class StateType>
-        void AddState(string name = "Default State")
+        void AddState(string name = "")
         {
-            StateInterface<Derived>* newState = static_cast<StateInterface<Derived>*>(new StateType());
-            newState->name = name;
+            StateInterface<Derived>* newState = static_cast<StateInterface<Derived>*>(new StateType(DerivedMachine()));
+            if (name.length() > 0)
+            {
+                newState->name = name;
+            }
             states.push_back(newState);
         }
 
@@ -143,16 +154,16 @@ namespace Ossium
         {
             if (current_state_index > 0)
             {
-                (*history)[current_state_index]->ExitState(DerivedMachine());
+                (*history)[current_state_index]->ExitState();
                 current_state_index--;
-                (*history)[current_state_index]->EnterState(DerivedMachine());
+                (*history)[current_state_index]->EnterState();
                 /// Execute the 'enter' logic of the state we've switched back to
-                history->peek_back()->EnterState(DerivedMachine());
+                history->peek_back()->EnterState();
                 return true;
             }
             else if (current_state_index == 0)
             {
-                (*history)[current_state_index]->ExitState(DerivedMachine());
+                (*history)[current_state_index]->ExitState();
                 current_state_index = -1;
             }
             return false;
@@ -162,38 +173,39 @@ namespace Ossium
         {
             if (current_state_index >= 0 && current_state_index < history->size() - 1)
             {
-                (*history)[current_state_index]->ExitState(DerivedMachine());
+                (*history)[current_state_index]->ExitState();
                 current_state_index++;
-                (*history)[current_state_index]->EnterState(DerivedMachine());
+                (*history)[current_state_index]->EnterState();
                 return true;
             }
             else if (current_state_index < 0 && history->size() > 0)
             {
                 current_state_index = 0;
-                (*history)[current_state_index]->EnterState(DerivedMachine());
+                (*history)[current_state_index]->EnterState();
                 return true;
             }
             return false;
         }
 
     private:
+        /// TODO: what's going on with global, pre and post states???
         template<class StateType>
         void SetGlobalState(StateInterface<Derived>* &global_state)
         {
             if (global_state != nullptr)
             {
-                global_state->ExitState(DerivedMachine());
+                global_state->ExitState();
                 delete global_state;
                 global_state = nullptr;
             }
-            global_state = static_cast<StateInterface<Derived>*>(new StateType());
+            global_state = static_cast<StateInterface<Derived>*>(new StateType(DerivedMachine()));
         }
 
         void SwitchState(StateInterface<Derived>* nextState)
         {
             if (current_state_index >= 0)
             {
-                (*history)[current_state_index]->ExitState(DerivedMachine());
+                (*history)[current_state_index]->ExitState();
             }
             current_state_index++;
             if (current_state_index < history->size() - 1)
@@ -201,7 +213,7 @@ namespace Ossium
                 history->drop_back_to(current_state_index - 1);
             }
             history->push_back(nextState);
-            nextState->EnterState(DerivedMachine());
+            nextState->EnterState();
         }
 
         Derived* DerivedMachine()

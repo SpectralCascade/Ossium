@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "resourcecontroller.h"
 #include "renderer.h"
+#include "schemamodel.h"
 
 using namespace std;
 
@@ -22,11 +23,45 @@ namespace Ossium
     inline namespace graphics
     {
 
+        /// Key = state, pair first = pointer to texture resource, pair second = clipping info
+        /// First 15 bits of clipping info = number of segments
+        /// Final bit decides whether clipping along horizontal or vertical
+        /// This is in a separate class so it can implement the ToString() and FromString methods,
+        /// which are required for schema serialisation because maps and pairs are not supported at the time of writing
+        class StateSpriteTable : public map<string, pair<Image*, Uint16>>
+        {
+        public:
+            string ToString();
+            void FromString(string& data);
+        };
+
+        struct StateSpriteSchema : public Schema<StateSpriteSchema>
+        {
+            DECLARE_SCHEMA(StateSpriteSchema, Schema<StateSpriteSchema>);
+
+            /// Current state key
+            m(string, currentState) = "";
+
+            /// Current substate
+            m(Uint16, currentSubState) = 0;
+
+            /// Current horizontal flag
+            m(bool, horizontalFlag) = true;
+
+            /// Current number of segments
+            m(Uint16, totalCurrentSegments) = 1;
+
+            /// Multiple states, multiple textures
+            m(StateSpriteTable, states);
+
+        };
+
         /// Can be switched between different textures/texture clips
-        class StateSprite : public Texture
+        class StateSprite : public Texture, protected StateSpriteSchema
         {
         public:
             DECLARE_COMPONENT(StateSprite);
+            CONSTRUCT_SCHEMA(SchemaRoot, StateSpriteSchema);
 
             /// Adds a state to the sprite; horizontal specifies whether the image should be sliced horizontally or vertically,
             /// and segments specifies how many substates the image should be sliced up into.
@@ -50,24 +85,6 @@ namespace Ossium
         protected:
             /// Original addState method - this one does worry about bit masks, hence why it's abstracted away
             bool AddState(string state, Image* image, Uint16 clipData = 1 | STATE_HORIZONTAL);
-
-            /// Multiple states, multiple textures
-            /// Key = state, pair first = pointer to texture resource, pair second = clipping info
-            /// First 15 bits of clipping info = number of segments
-            /// Final bit decides whether clipping along horizontal or vertical
-            map<string, pair<Image*, Uint16>> states;
-
-            /// Current state key
-            string currentState = "";
-
-            /// Current substate
-            Uint16 currentSubState = 0;
-
-            /// Current horizontal flag
-            bool horizontalFlag = true;
-
-            /// Current number of segments
-            Uint16 totalCurrentSegments = 1;
 
         };
 

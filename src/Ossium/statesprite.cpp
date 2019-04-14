@@ -13,6 +13,70 @@ namespace Ossium
     inline namespace graphics
     {
 
+        ///
+        /// StateSpriteTable
+        ///
+
+        string StateSpriteTable::ToString()
+        {
+            stringstream data;
+            data.str("");
+            data << "(";
+            for (auto itr = begin(); itr != end(); itr++)
+            {
+                if (itr->second.first != nullptr)
+                {
+                    /// TODO: proper pointer serialisation
+                    data << itr->first << " [" << itr->second.first->GetPathName() << ", " << itr->second.second << "]," << endl;
+                }
+            }
+            data << ")";
+            return data.str();
+        }
+
+        void StateSpriteTable::FromString(string& data)
+        {
+            bool keymode = false;
+            string valueStr;
+            string key = "";
+            pair<Image*, Uint16> value;
+            for (int i = 1, counti = data.length(); i < counti - 1; i++)
+            {
+                if (data[i] == '[')
+                {
+                    if (keymode)
+                    {
+                        key = valueStr;
+                    }
+                    keymode = false;
+                    valueStr = "";
+                }
+                else if (data[i] != ',' && data[i] != ']')
+                {
+                    valueStr += data[i];
+                }
+                else if (!keymode)
+                {
+                    if (data[i] == ',')
+                    {
+                        /// TODO: serialise pointer references rather than pathname and actually grab or load the image.
+                        Image* loadedImage = nullptr;
+                        value.first = loadedImage;
+                    }
+                    else
+                    {
+                        functions::FromString(value.second, valueStr);
+                        ((*this)[key]) = value;
+                    }
+                    valueStr = "";
+                }
+            }
+        }
+
+        ///
+        /// StateSprite
+        ///
+
         REGISTER_COMPONENT(StateSprite);
 
         bool StateSprite::AddState(string state, Image* image, Uint16 clipData)
