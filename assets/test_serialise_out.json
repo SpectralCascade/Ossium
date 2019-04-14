@@ -1,17 +1,17 @@
 {
     "OtherOtherSchema" : {
-        "vector<int> testVector" : [111, 220, 53, -63],
-        "string freshHello" : "SUP :P",
-        "string degree" : "English lit.",
-        "int freshFoo" : 77,
-        "float wow" : -0.99
+        "testVector" : [111, 220, 53, -63],
+        "freshHello" : "SUP :P",
+        "degree" : "English lit.",
+        "freshFoo" : 77,
+        "wow" : -0.99
     },
     "SchemaExample" : {
-        "float more" : 32.6,
-        "int oh" : 9,
-        "string hello" : "g'day mate",
-        "float age" : 25.4,
-        "int foo" : -747,
-        "int bar" : 12345
+        "more" : 32.6,
+        "hello" : "g'day mate",
+        "age" : 25.4,
+        "foo" : -747,
+        "oh" : 9,
+        "bar" : 12345
     }
 }

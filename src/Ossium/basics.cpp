@@ -77,6 +77,21 @@ namespace Ossium
             return value;
         }
 
+        inline namespace memberdetection
+        {
+
+            DoesNotHave operator>>(const ostream&, const any&)
+            {
+                return DoesNotHave();
+            }
+
+            DoesNotHave operator<<(const ostream&, const any&)
+            {
+                return DoesNotHave();
+            }
+
+        }
+
         string ToString(float n)
         {
             stringstream strStream;

@@ -71,9 +71,7 @@ namespace Ossium
             for (unsigned int i = 0; i < count; i++)
             {
                 /// Key consists of type and member name
-                string key = member_types[i];
-                key += " ";
-                key += member_names[i];
+                string key = member_names[i];
                 /// Value is obtained directly from the member
                 string value;
                 void* member = GetMember(i);
@@ -96,7 +94,7 @@ namespace Ossium
         {
             for (unsigned int i = 0; i < count; i++)
             {
-                string key = string(member_types[i]) + string(" ") + string(member_names[i]);
+                string key = string(member_names[i]);
                 auto itr = data->find(key);
                 if (itr != data->end())
                 {

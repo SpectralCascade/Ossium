@@ -208,7 +208,7 @@ namespace Ossium
             str.str(data);
             if (!(str >> obj))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert data from string.");
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to object data.", data.c_str());
             }
         }
 
