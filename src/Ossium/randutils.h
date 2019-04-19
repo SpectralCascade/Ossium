@@ -9,7 +9,7 @@ namespace Ossium
 {
 
     template<class T>
-    T* Pick(vector<T> data, function<bool(T&)> picker)
+    T* Pick(vector<T>& data, function<bool(T&)> picker)
     {
         for (auto item : data)
         {
