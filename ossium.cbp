@@ -77,6 +77,7 @@
 		<Unit filename="src/Ossium/pixeleffects.h" />
 		<Unit filename="src/Ossium/primitives.cpp" />
 		<Unit filename="src/Ossium/primitives.h" />
+		<Unit filename="src/Ossium/randutils.cpp" />
 		<Unit filename="src/Ossium/randutils.h" />
 		<Unit filename="src/Ossium/renderer.cpp" />
 		<Unit filename="src/Ossium/renderer.h" />
