@@ -20,6 +20,11 @@ namespace Ossium
             #ifdef DEBUG
             SDL_assert(window != NULL);
             #endif // DEBUG
+
+            aspect_width = 0;
+            aspect_height = 0;
+            fixed_aspect = false;
+
             renderer = SDL_CreateRenderer(window->GetWindow(), driver, flags);
             if (renderer == NULL)
             {
@@ -47,18 +52,42 @@ namespace Ossium
             registeredGraphics = new set<Graphic*>[numLayers];
             queuedGraphics = new queue<Graphic*>[numLayers];
 
+            callbackIds[0] = window->OnFullscreen += [&] (Window& win) { this->UpdateViewport(win); };
+            callbackIds[1] = window->OnSizeChanged += [&] (Window& win) { this->UpdateViewport(win); };
+            callbackIds[2] = window->OnWindowed += [&] (Window& win) { this->UpdateViewport(win); };
+            /// No need to store id as the OnDestroyed callback is automatically freed after being called.
+            window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
+
             numLayersActive = numLayers;
             renderWindow = window;
         }
 
         Renderer::~Renderer()
         {
+            if (renderWindow != nullptr)
+            {
+                renderWindow->OnFullscreen -= callbackIds[0];
+                renderWindow->OnSizeChanged -= callbackIds[1];
+                renderWindow->OnWindowed -= callbackIds[2];
+                renderWindow = nullptr;
+            }
+
             SDL_RenderClear(renderer);
             SDL_DestroyRenderer(renderer);
             renderer = NULL;
 
             delete[] registeredGraphics;
             delete[] queuedGraphics;
+        }
+
+        void Renderer::OnWindowDestroyed(Window& windowCaller)
+        {
+            renderWindow = nullptr;
+            for (unsigned int i = 0; i < 3; i++)
+            {
+                callbackIds[i] = -1;
+            }
+            /// No need to actually unregister the callbacks as the window will destroy it's callback objects.
         }
 
         int Renderer::Register(Graphic* graphic, int layer)
@@ -170,14 +199,104 @@ namespace Ossium
 
         int Renderer::GetWidth()
         {
-            SDL_Rect view = renderWindow != nullptr ? renderWindow->GetViewportRect() : (SDL_Rect){0, 0, 0, 0};
-            return view.w;
+            return viewportRect.w;
         }
         /// Returns the viewport height of this renderer
         int Renderer::GetHeight()
         {
-            SDL_Rect view = renderWindow != nullptr ? renderWindow->GetViewportRect() : (SDL_Rect){0, 0, 0, 0};
-            return view.h;
+            return viewportRect.h;
+        }
+
+        int Renderer::GetAspectWidth()
+        {
+            return aspect_width;
+        }
+
+        int Renderer::GetAspectHeight()
+        {
+            return aspect_height;
+        }
+
+        SDL_Rect Renderer::GetViewportRect()
+        {
+            return viewportRect;
+        }
+
+        void Renderer::UpdateViewport(Window& windowCaller)
+        {
+            SDL_Rect viewRect;
+            float percent_width = 1.0f;
+            float percent_height = 1.0f;
+            int width = windowCaller.GetWidth();
+            int height = windowCaller.GetHeight();
+            int display_width = windowCaller.GetDisplayWidth();
+            int display_height = windowCaller.GetDisplayHeight();
+            if (windowCaller.IsFullscreen())
+            {
+                percent_width = (float)display_width / (float)aspect_width;
+                percent_height = (float)display_height / (float)aspect_height;
+            }
+            else
+            {
+                percent_width = (float)width / (float)aspect_width;
+                percent_height = (float)height / (float)aspect_height;
+            }
+            /// Get the smallest percent and use that to scale dimensions
+            float smallest_percent;
+            if (percent_width < percent_height)
+            {
+                smallest_percent = percent_width;
+            }
+            else
+            {
+                smallest_percent = percent_height;
+            }
+            if (fixed_aspect)
+            {
+                smallest_percent = clamp(smallest_percent, 0.0f, 1.0f);
+            }
+            viewRect.h = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_height : (float)display_height));
+            viewRect.w = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_width : (float)display_width));
+            /// Calculate viewport anchor position
+            int deltaw = (width - viewRect.w);
+            int deltah = (height - viewRect.h);
+            if (deltaw > 0)
+            {
+                viewRect.x = deltaw / 2;
+            }
+            else
+            {
+                viewRect.x = 0;
+            }
+            if (deltah > 0)
+            {
+                viewRect.y = deltah / 2;
+            }
+            else
+            {
+                viewRect.y = 0;
+            }
+            SDL_RenderSetViewport(renderer, &viewRect);
+            viewportRect = viewRect;
+        }
+
+        void Renderer::SetAspectRatio(int aspect_w, int aspect_h, bool fixed)
+        {
+            fixed_aspect = fixed;
+            if (aspect_w < 1)
+            {
+                aspect_w = 1;
+            }
+            if (aspect_h < 1)
+            {
+                aspect_h = 1;
+            }
+            aspect_width = aspect_w;
+            aspect_height = aspect_h;
+            if (renderWindow != nullptr)
+            {
+                UpdateViewport(*renderWindow);
+            }
         }
 
         void Renderer::ReallocateLayers(int numLayers)

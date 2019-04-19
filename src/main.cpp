@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 
         /// Create renderer
         Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
-        mainWindow.SetAspectRatio(16, 9);
+        mainRenderer.SetAspectRatio(16, 9);
 
         /// Create an EntityComponentSystem
         EntityComponentSystem entitySystem;
@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
                 mainInput.HandleEvent(e);
             }
 
-            SDL_Rect viewrect = mainWindow.GetViewportRect();
+            SDL_Rect viewrect = mainRenderer.GetViewportRect();
 
             int mx, my;
             SDL_GetMouseState(&mx, &my);

@@ -4,6 +4,8 @@
 #include <string>
 #include <SDL.h>
 
+#include "callback.h"
+
 namespace Ossium
 {
     /// Wrapper class for SDL_Window
@@ -21,31 +23,30 @@ namespace Ossium
         SDL_Window* GetWindow();
         int GetWidth();
         int GetHeight();
-        int GetAspectWidth();
-        int GetAspectHeight();
-        SDL_Rect GetViewportRect();
+        int GetDisplayWidth();
+        int GetDisplayHeight();
         void SetWidth(int newWidth);
         void SetHeight(int newHeight);
         void SetFullscreen();
         void SetWindowed();
         void SetBordered();
         void SetBorderless();
-        /// Attempts to set the window's renderer viewport dimensions to the input target width and height in pixels
-        /// If the window is bigger in both width and height than the target dimension arguments, the viewport will remain
-        /// at the target dimensions and remaining space in the window will be filled with black bars on all sides.
-        /// The letterbox parameter specifies whether the viewport should use black bars along the bottom and top
-        /// if the window dimensions do not match the target aspect, or else the viewport will be cropped on the left and right side
-        /// when the window dimensions do not match the target aspect.
-        /// If fixed == true, the viewport matches the argument dimensions if window dimensions >= argument dimensions
-        void SetAspectRatio(int aspect_w, int aspect_h, bool fixed = false);
-
-        /// Updates the renderer viewport dimensions according to the current aspect
-        void UpdateViewport();
 
         /// Return active flags
         bool IsMinimised();
         bool IsFullscreen();
         bool IsFocus();
+
+        /// Callbacks for window state changes
+        Callback<Window> OnSizeChanged;
+        Callback<Window> OnFullscreen;
+        Callback<Window> OnWindowed;
+        Callback<Window> OnMinimise;
+        Callback<Window> OnMaximise;
+        Callback<Window> OnFocusGained;
+        Callback<Window> OnFocusLost;
+        /// Called when the window is destroyed so any associated renderers can null their window pointers.
+        Callback<Window> OnDestroyed;
 
     private:
         /// Prohibited copying of windows
@@ -59,19 +60,9 @@ namespace Ossium
         int width;
         int height;
 
-        /// The maximum dimensions of the window
+        /// The dimensions of the main display
         int display_width;
         int display_height;
-
-        /// Renderer viewport target width/height or aspect ratio
-        int aspect_width;
-        int aspect_height;
-        /// Whether or not the renderer viewport uses a fixed aspect or dynamic aspect ratio
-        bool fixed_aspect;
-        /// Whether to use black bars or simply crop the left and right edges of the renderer to fit the target aspect
-        bool letterbox_bars;
-        /// The viewport rect, set when the viewport updates
-        SDL_Rect viewportRect;
 
         /// Active flags
         bool minimized;

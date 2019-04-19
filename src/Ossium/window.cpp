@@ -13,11 +13,8 @@ namespace Ossium
         fullscreen = fullscrn;
         focus = true;
         border = true;
-        fixed_aspect = false;
         width = w;
         height = h;
-        aspect_width = 0;
-        aspect_height = 0;
 
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
         if (window == NULL)
@@ -29,6 +26,7 @@ namespace Ossium
         if (fullscreen)
         {
             SDL_SetWindowFullscreen(window, SDL_TRUE);
+            OnFullscreen(*this);
         }
 
         /// Get max display size
@@ -50,6 +48,7 @@ namespace Ossium
 
     Window::~Window()
     {
+        OnDestroyed(*this);
         SDL_DestroyWindow(window);
         window = NULL;
     }
@@ -62,27 +61,31 @@ namespace Ossium
             {
                 width = event.window.data1;
                 height = event.window.data2;
-                UpdateViewport();
+                OnSizeChanged(*this);
                 break;
             }
             case SDL_WINDOWEVENT_MINIMIZED:
             {
                 minimized = true;
+                OnMinimise(*this);
                 break;
             }
             case SDL_WINDOWEVENT_MAXIMIZED:
             {
                 minimized = false;
+                OnMaximise(*this);
                 break;
             }
             case SDL_WINDOWEVENT_FOCUS_GAINED:
             {
                 focus = true;
+                OnFocusGained(*this);
                 break;
             }
             case SDL_WINDOWEVENT_FOCUS_LOST:
             {
                 focus = false;
+                OnFocusLost(*this);
                 break;
             }
         }
@@ -105,44 +108,41 @@ namespace Ossium
         return height;
     }
 
-    int Window::GetAspectWidth()
+    int Window::GetDisplayWidth()
     {
-        return aspect_width;
+        return display_width;
     }
 
-    int Window::GetAspectHeight()
+    int Window::GetDisplayHeight()
     {
-        return aspect_height;
-    }
-
-    SDL_Rect Window::GetViewportRect()
-    {
-        return viewportRect;
+        return display_height;
     }
 
     void Window::SetWidth(int newWidth)
     {
         width = newWidth;
         SDL_SetWindowSize(window, width, height);
+        OnSizeChanged(*this);
     }
 
     void Window::SetHeight(int newHeight)
     {
         height = newHeight;
         SDL_SetWindowSize(window, width, height);
+        OnSizeChanged(*this);
     }
 
     void Window::SetFullscreen()
     {
         SDL_SetWindowFullscreen(window, SDL_TRUE);
-        UpdateViewport();
+        OnFullscreen(*this);
         fullscreen = true;
     }
 
     void Window::SetWindowed()
     {
         SDL_SetWindowFullscreen(window, SDL_FALSE);
-        UpdateViewport();
+        OnWindowed(*this);
         fullscreen = false;
     }
 
@@ -156,82 +156,6 @@ namespace Ossium
     {
         SDL_SetWindowBordered(window, SDL_FALSE);
         border = false;
-    }
-
-    void Window::SetAspectRatio(int aspect_w, int aspect_h, bool fixed)
-    {
-        fixed_aspect = fixed;
-        if (aspect_w < 1)
-        {
-            aspect_w = 1;
-        }
-        if (aspect_h < 1)
-        {
-            aspect_h = 1;
-        }
-        aspect_width = aspect_w;
-        aspect_height = aspect_h;
-        UpdateViewport();
-    }
-
-    void Window::UpdateViewport()
-    {
-        SDL_Renderer* renderer = SDL_GetRenderer(window);
-        if (renderer == NULL)
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Cannot update viewport; window has no associated renderer! SDL_Error: %s", SDL_GetError());
-            return;
-        }
-        SDL_Rect viewRect;
-        float percent_width = 1.0f;
-        float percent_height = 1.0f;
-        if (fullscreen)
-        {
-            percent_width = (float)display_width / (float)aspect_width;
-            percent_height = (float)display_height / (float)aspect_height;
-        }
-        else
-        {
-            percent_width = (float)width / (float)aspect_width;
-            percent_height = (float)height / (float)aspect_height;
-        }
-        /// Get the smallest percent and use that to scale dimensions
-        float smallest_percent;
-        if (percent_width < percent_height)
-        {
-            smallest_percent = percent_width;
-        }
-        else
-        {
-            smallest_percent = percent_height;
-        }
-        if (fixed_aspect)
-        {
-            smallest_percent = clamp(smallest_percent, 0.0f, 1.0f);
-        }
-        viewRect.h = (int)(smallest_percent * (!fullscreen ? (float)aspect_height : (float)display_height));
-        viewRect.w = (int)(smallest_percent * (!fullscreen ? (float)aspect_width : (float)display_width));
-        /// Calculate viewport anchor position
-        int deltaw = (width - viewRect.w);
-        int deltah = (height - viewRect.h);
-        if (deltaw > 0)
-        {
-            viewRect.x = deltaw / 2;
-        }
-        else
-        {
-            viewRect.x = 0;
-        }
-        if (deltah > 0)
-        {
-            viewRect.y = deltah / 2;
-        }
-        else
-        {
-            viewRect.y = 0;
-        }
-        SDL_RenderSetViewport(renderer, &viewRect);
-        viewportRect = viewRect;
     }
 
     bool Window::IsMinimised()
