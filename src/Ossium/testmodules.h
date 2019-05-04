@@ -516,6 +516,13 @@ namespace Ossium
             void RunTest()
             {
                 TEST_ASSERT(GetMemberCount() == 11);
+
+                /// Output member offsets information
+                for (int i = 0; i < GetMemberCount(); i++)
+                {
+                    cout << "Offset of member " << GetMemberName(i) << " is " << (size_t)GetMember(i) - (size_t)this << endl;
+                }
+
                 //SomeOtherMethod();
                 JSON data;
                 data.Import("assets/test_serialised_in.json");
@@ -528,6 +535,7 @@ namespace Ossium
                 output->Export("assets/test_serialise_out.json");
                 delete output;
                 output = nullptr;
+
             }
 
         };
