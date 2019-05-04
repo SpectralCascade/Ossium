@@ -518,7 +518,7 @@ namespace Ossium
                 TEST_ASSERT(GetMemberCount() == 11);
 
                 /// Output member offsets information
-                for (int i = 0; i < GetMemberCount(); i++)
+                for (unsigned int i = 0; i < GetMemberCount(); i++)
                 {
                     cout << "Offset of member " << GetMemberName(i) << " is " << (size_t)GetMember(i) - (size_t)this << endl;
                 }

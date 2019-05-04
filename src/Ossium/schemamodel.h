@@ -30,7 +30,7 @@ namespace Ossium
             DEBUG_ASSERT(count < MaximumMembers, "Exceeded maximum number of members. Please allocate a higher maximum in the Schema.");
             member_names[count] = name;
             member_types[count] = type;
-            member_byte_sizes[count] = mem_size;
+            member_byte_offsets[count] = mem_size;
             member_from_string[count] = lambdaFromString;
             member_to_string[count] = lambdaToString;
             schema_name = ultimate_name;
@@ -56,12 +56,7 @@ namespace Ossium
 
         void* GetMember(unsigned int index)
         {
-            size_t offset = 0;
-            for (unsigned int i = 0; i < index; i++)
-            {
-                offset += member_byte_sizes[i];
-            }
-            return (void*)((size_t)((void*)this) + offset);
+            return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
         /// Creates a JSON object representation of this schema using all members of the local schema hierarchy.
@@ -118,7 +113,7 @@ namespace Ossium
         }
 
     protected:
-        static size_t member_byte_sizes[MaximumMembers];
+        static size_t member_byte_offsets[MaximumMembers];
 
     private:
         static function<bool(void*, const char*, string)> member_from_string[MaximumMembers];
@@ -139,7 +134,7 @@ namespace Ossium
     function<string(void*, const char*)> Schema<BaseType, MaximumMembers>::member_to_string[MaximumMembers];
 
     template<class BaseType, unsigned int MaximumMembers>
-    size_t Schema<BaseType, MaximumMembers>::member_byte_sizes[MaximumMembers];
+    size_t Schema<BaseType, MaximumMembers>::member_byte_offsets[MaximumMembers];
 
     template<class BaseType, unsigned int MaximumMembers>
     const char* Schema<BaseType, MaximumMembers>::member_names[MaximumMembers];
@@ -209,10 +204,10 @@ namespace Ossium
     template<typename SchemaType, typename Type, typename strType, typename strName>
     struct MemberInfo
     {
-        MemberInfo(unsigned int& m_count, function<bool(void*, const char*, string)> lambdaFromString, function<string(void*, const char*)> lambdaToString, const char* ultimate_name)
+        MemberInfo(unsigned int& m_count, function<bool(void*, const char*, string)> lambdaFromString, function<string(void*, const char*)> lambdaToString, const char* ultimate_name, size_t member_offset)
         {
             ++m_count;
-            index = SchemaType::AddMember(strType::str, strName::str, sizeof(Type), lambdaFromString, lambdaToString, ultimate_name);
+            index = SchemaType::AddMember(strType::str, strName::str, member_offset, lambdaFromString, lambdaToString, ultimate_name);
         }
 
         inline static const char* type = strType::str;
@@ -253,26 +248,13 @@ namespace Ossium
     #define DECLARE_SCHEMA(TYPE, BASE_SCHEMA_TYPE)                                                              \
             private: typedef BASE_SCHEMA_TYPE BaseSchemaType;                                                   \
             inline static unsigned int schema_local_count;                                                      \
+            inline static TYPE* schema_layout_ref;                                                              \
             constexpr static const char* schema_local_typename = SID(#TYPE)::str;                               \
             public:                                                                                             \
             static unsigned int GetMemberCount()                                                                \
             {                                                                                                   \
                 return schema_local_count + BaseSchemaType::GetMemberCount();                                   \
-            }                                                                                                   \
-            void* GetMember(unsigned int index)                                                                 \
-            {                                                                                                   \
-                if (index >= BaseSchemaType::GetMemberCount())                                                  \
-                {                                                                                               \
-                    size_t offset = 0;                                                                          \
-                    for (unsigned int i = 0; i < index; i++)                                                    \
-                    {                                                                                           \
-                        offset += BaseSchemaType::member_byte_sizes[i];                                         \
-                    }                                                                                           \
-                    return (void*)((size_t)((void*)this) + offset);                                             \
-                }                                                                                               \
-                return BaseSchemaType::GetMember(index);                                                        \
             }
-
 
     ///
     /// Lambda definitions for serialising a particular member in a string format
@@ -300,13 +282,14 @@ namespace Ossium
     }
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
-    #define m(TYPE, NAME)                                                                                                                                                                                           \
-            MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                                             \
-            {                                                                                                                                                                           \
-                static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info =                                                                                 \
-                    new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count, MEMBER_FROM_STRING( TYPE ), MEMBER_TO_STRING( TYPE ), schema_local_typename);  \
-                return *initialised_info;                                                                                                                                               \
-            }                                                                                                                                                                           \
+    #define m(TYPE, NAME)                                                                                                                                       \
+            MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                     \
+            {                                                                                                                                                   \
+                static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info =                                                         \
+                    new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count,                                                        \
+                                    MEMBER_FROM_STRING( TYPE ), MEMBER_TO_STRING( TYPE ), schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME));    \
+                return *initialised_info;                                                                                                                       \
+            }                                                                                                                                                   \
             TYPE NAME = schema_m_##NAME()
 
     #define CONSTRUCT_SCHEMA(BASETYPE, SCHEMA_TYPE)                                                     \
