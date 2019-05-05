@@ -93,6 +93,13 @@ namespace Ossium
                 _input_state_bindings[name] = junk;
             }
 
+            /// Simplifies adding states.
+            void AddState(string name, InputIdent binding)
+            {
+                AddState(name);
+                BindState(name, binding);
+            }
+
             bool GetState(string name)
             {
                 auto itr = _input_state_bindings.find(name);
@@ -142,6 +149,13 @@ namespace Ossium
             void AddAction(string name, InputAction action)
             {
                 _action_bindings[name] = action;
+            }
+
+            /// Simplifies adding actions.
+            void AddAction(string name, InputAction action, InputIdent binding)
+            {
+                AddAction(name, action);
+                BindAction(name, binding);
             }
 
             /// Removes the specified action. Returns false if the action does not exist.
@@ -387,8 +401,6 @@ namespace Ossium
 
             /// When true, the input system will pass input data to this context
             bool active;
-
-            NOCOPY(InputContext);
 
         };
 
