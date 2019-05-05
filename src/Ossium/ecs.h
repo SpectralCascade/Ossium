@@ -303,6 +303,33 @@ namespace Ossium
 
     };
 
+    #define DECLARE_ABSTRACT_COMPONENT(TYPE)                                    \
+            TYPE();                                                             \
+            virtual ~TYPE();                                                    \
+                                                                                \
+            virtual void OnCreate();                                            \
+            virtual void OnDestroy();                                           \
+                                                                                \
+            virtual void OnInitGraphics(Renderer* renderer, int layer = -1);    \
+                                                                                \
+            virtual void OnRemoveGraphics();                                    \
+                                                                                \
+            virtual void OnClone();                                             \
+                                                                                \
+            virtual void Update();                                              \
+                                                                                \
+            virtual TYPE* Clone() = 0;
+
+    #define REGISTER_ABSTRACT_COMPONENT(TYPE)                           \
+        TYPE::TYPE() {}                                                 \
+        TYPE::~TYPE() {}                                                \
+        void TYPE::OnCreate() {}                                        \
+        void TYPE::OnDestroy() {}                                       \
+        void TYPE::OnClone() {}                                         \
+        void TYPE::Update(){}                                           \
+        void TYPE::OnInitGraphics(Renderer* renderer, int layer){}      \
+        void TYPE::OnRemoveGraphics(){}
+
     inline namespace graphics
     {
 
@@ -319,25 +346,9 @@ namespace Ossium
             int GetRenderLayer();
 
         protected:
-            GraphicComponent();
-            virtual ~GraphicComponent();
-
-            virtual void OnCreate();
-            virtual void OnDestroy();
-
-            /// Automatically registers this graphic on the bottom layer of the provided renderer instance.
-            virtual void OnInitGraphics(Renderer* renderer, int layer = -1);
-
-            /// Automatically unregisters this graphic from the bottom layer of the provided renderer instance.
-            virtual void OnRemoveGraphics();
-
-            virtual void OnClone();
-
-            virtual void Update();
+            DECLARE_ABSTRACT_COMPONENT(GraphicComponent);
 
             virtual void Render(Renderer& renderer) = 0;
-
-            virtual GraphicComponent* Clone() = 0;
 
             /// Pointer to the renderer instance this graphic component is registered to.
             Renderer* rendererInstance = nullptr;

@@ -8,22 +8,24 @@ namespace Ossium
     inline namespace UI
     {
 
-        void OnHoverBegin()
+        REGISTER_ABSTRACT_COMPONENT(InteractableGUI);
+
+        void InteractableGUI::OnHoverBegin()
         {
         }
-        void OnHoverEnd()
+        void InteractableGUI::OnHoverEnd()
         {
         }
-        void OnPointerDown()
+        void InteractableGUI::OnPointerDown()
         {
         }
-        void OnPointerUp()
+        void InteractableGUI::OnPointerUp()
         {
         }
-        void OnDrag(const MouseInput& data)
+        void InteractableGUI::OnDrag(const MouseInput& data)
         {
         }
-        void OnScroll(const MouseInput& data)
+        void InteractableGUI::OnScroll(const MouseInput& data)
         {
         }
 
@@ -37,14 +39,25 @@ namespace Ossium
             return hovered;
         }
 
-        bool InteractableGUI::ContainsPointer(const MouseInput& data)
+        bool InteractableGUI::ContainsPointer(Point position)
         {
-            return hitbox.Contains(Point(data.x, data.y));
+            return hitbox.Contains(position);
         }
 
         void InteractableGUI::OnPointerEvent(const MouseInput& data)
         {
-            if (ContainsPointer(data))
+            Point mpos;
+            if (rendererInstance != nullptr)
+            {
+                /// Offsets to account for the aspect ratio / viewport of the window
+                SDL_Rect vrect = rendererInstance->GetViewportRect();
+                mpos = Point((float)(data.x - vrect.x), (float)(data.y - vrect.y));
+            }
+            else
+            {
+                mpos = Point((float)data.x, (float)data.y);
+            }
+            if (ContainsPointer(mpos))
             {
                if (!hovered)
                {
@@ -124,6 +137,12 @@ namespace Ossium
                 contextOrder.push_back(context);
             }
             contextLookup[context].first.push_back(&element);
+            if (currentContext == nullptr)
+            {
+                /// Set as the default context
+                currentContext = context;
+                contextLookup[context].second = 0;
+            }
         }
 
         bool InputGUI::RemoveInteractable(StrID context, InteractableGUI& element)
@@ -171,6 +190,7 @@ namespace Ossium
         void InputGUI::RemoveAll()
         {
             contextLookup.clear();
+            contextOrder.clear();
             currentContext = nullptr;
             currentContextIndex = 0;
         }
@@ -239,7 +259,10 @@ namespace Ossium
                     if (!itr->second.first.empty())
                     {
                         /// TODO: wrapping support?
+                        itr->second.first[itr->second.second]->OnHoverEnd();
                         itr->second.second = clamp(itr->second.second + 1, 0, itr->second.first.size() - 1);
+                        itr->second.first[itr->second.second]->OnHoverBegin();
+                        itr->second.first[itr->second.second]->hovered = true;
                         return ClaimContext;
                     }
                 }
@@ -256,7 +279,10 @@ namespace Ossium
                 {
                     if (!itr->second.first.empty())
                     {
+                        itr->second.first[itr->second.second]->OnHoverEnd();
                         itr->second.second = clamp(itr->second.second - 1, 0, itr->second.first.size() - 1);
+                        itr->second.first[itr->second.second]->OnHoverBegin();
+                        itr->second.first[itr->second.second]->hovered = true;
                         return ClaimContext;
                     }
                 }

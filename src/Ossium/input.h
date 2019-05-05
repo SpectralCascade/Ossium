@@ -311,10 +311,6 @@ namespace Ossium
         class InputContext
         {
         public:
-            InputContext()
-            {
-                active = true;
-            }
             ~InputContext()
             {
                 Clear();
@@ -400,7 +396,7 @@ namespace Ossium
             unordered_map<InputHandlerType, BaseInputHandler*> inputs;
 
             /// When true, the input system will pass input data to this context
-            bool active;
+            bool active = true;
 
         };
 
