@@ -241,7 +241,17 @@ namespace Ossium
                     unsigned int index = itr->second.second;
                     if (!itr->second.first.empty() && index < itr->second.first.size())
                     {
-                        itr->second.first[index]->OnClick();
+                        if (itr->second.first[index]->IsHovered())
+                        {
+                            itr->second.first[index]->OnClick();
+                        }
+                        else
+                        {
+                            /// Highlight the selected GUI element before actually carrying out the OnClick() action,
+                            /// to indicate which element is selected.
+                            itr->second.first[index]->hovered = true;
+                            itr->second.first[index]->OnHoverBegin();
+                        }
                         return ClaimContext;
                     }
                 }
@@ -259,8 +269,11 @@ namespace Ossium
                     if (!itr->second.first.empty())
                     {
                         /// TODO: wrapping support?
-                        itr->second.first[itr->second.second]->OnHoverEnd();
-                        itr->second.second = clamp(itr->second.second + 1, 0, itr->second.first.size() - 1);
+                        if (itr->second.first[itr->second.second]->IsHovered())
+                        {
+                            itr->second.first[itr->second.second]->OnHoverEnd();
+                            itr->second.second = clamp(itr->second.second + 1, 0, itr->second.first.size() - 1);
+                        }
                         itr->second.first[itr->second.second]->OnHoverBegin();
                         itr->second.first[itr->second.second]->hovered = true;
                         return ClaimContext;
@@ -279,8 +292,11 @@ namespace Ossium
                 {
                     if (!itr->second.first.empty())
                     {
-                        itr->second.first[itr->second.second]->OnHoverEnd();
-                        itr->second.second = clamp(itr->second.second - 1, 0, itr->second.first.size() - 1);
+                        if (itr->second.first[itr->second.second]->IsHovered())
+                        {
+                            itr->second.first[itr->second.second]->OnHoverEnd();
+                            itr->second.second = clamp(itr->second.second - 1, 0, itr->second.first.size() - 1);
+                        }
                         itr->second.first[itr->second.second]->OnHoverBegin();
                         itr->second.first[itr->second.second]->hovered = true;
                         return ClaimContext;
@@ -292,12 +308,12 @@ namespace Ossium
 
         ActionOutcome InputGUI::SelectUp(const KeyboardInput& data)
         {
-            return SelectRight(data);
+            return SelectLeft(data);
         }
 
         ActionOutcome InputGUI::SelectDown(const KeyboardInput& data)
         {
-            return SelectLeft(data);
+            return SelectRight(data);
         }
 
         ActionOutcome InputGUI::SwitchContextForward(const KeyboardInput& data)
@@ -333,8 +349,9 @@ namespace Ossium
             if (data.state)
             {
                 OnBack(*this);
+                return ClaimContext;
             }
-            return ClaimContext;
+            return Ignore;
         }
 
     }

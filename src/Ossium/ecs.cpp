@@ -45,6 +45,7 @@ namespace Ossium
                 Component* copyComponent = (*itr)->Clone();
                 copyComponent->entity = entityCopy;
                 copyComponent->OnClone();
+                copyComponent->OnInitGraphics(nullptr);
                 copiedComponents.push_back(copyComponent);
             }
             entityCopy->components.insert({i->first, copiedComponents});
@@ -206,8 +207,8 @@ namespace Ossium
         void GraphicComponent::OnInitGraphics(Renderer* renderer, int layer)
         {
             renderLayer = layer >= 0 ? layer : renderLayer;
-            rendererInstance = renderer;
-            if (renderer != nullptr)
+            rendererInstance = renderer != nullptr ? renderer : rendererInstance;
+            if (rendererInstance != nullptr)
             {
                 renderLayer = rendererInstance->Register(this, renderLayer);
             }

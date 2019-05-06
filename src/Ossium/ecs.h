@@ -11,6 +11,7 @@
 #include "renderer.h"
 #include "transform.h"
 #include "tree.h"
+#include "stringintern.h"
 
 using namespace std;
 
@@ -28,13 +29,21 @@ namespace Ossium
                                                                                         \
         TYPE(){};                                                                       \
                                                                                         \
+        static StrID __component_type;                                                  \
+                                                                                        \
     public:                                                                             \
+        StrID GetTypeName()                                                             \
+        {                                                                               \
+            return __component_type;                                                    \
+        }                                                                               \
+                                                                                        \
         static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE)                                                    \
     Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                    \
+    StrID TYPE::__component_type = SID(#TYPE)::str;                                     \
                                                                                         \
     TYPE* TYPE::Clone()                                                                 \
     {                                                                                   \
@@ -292,6 +301,8 @@ namespace Ossium
         /// This is implemented automagically by the REGISTER_COMPONENT(TYPE) macro.
         virtual Component* Clone() = 0;
 
+        virtual StrID GetTypeName() = 0;
+
         virtual ~Component();
 
         /// Only friend class Entity can instantiate components
@@ -318,7 +329,9 @@ namespace Ossium
                                                                                 \
             virtual void Update();                                              \
                                                                                 \
-            virtual TYPE* Clone() = 0;
+            virtual TYPE* Clone() = 0;                                          \
+                                                                                \
+            virtual StrID GetTypeName() = 0;
 
     #define REGISTER_ABSTRACT_COMPONENT(TYPE)                           \
         TYPE::TYPE() {}                                                 \
