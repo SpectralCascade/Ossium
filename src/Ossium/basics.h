@@ -5,6 +5,7 @@
 #include <sstream>
 #include <type_traits>
 #include <any>
+#include <functional>
 #include <SDL.h>
 
 #include "helpermacros.h"
@@ -334,6 +335,20 @@ namespace Ossium
         float ToFloat(const string& data);
         /// Convert a string to a bool
         bool ToBool(const string& data);
+
+        /// Picks an object from a vector if it meets the specified condition function.
+        template<class T>
+        T* Pick(vector<T>& data, function<bool(T&)> picker)
+        {
+            for (auto& item : data)
+            {
+                if (picker(item))
+                {
+                    return &item;
+                }
+            }
+            return nullptr;
+        }
 
     }
 
