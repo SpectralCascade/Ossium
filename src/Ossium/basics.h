@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <any>
 #include <functional>
+#include <utility>
 #include <SDL.h>
 
 #include "helpermacros.h"
@@ -250,9 +251,9 @@ namespace Ossium
 
         template<typename T>
         typename enable_if<has_ToString<T>::value, string>::type
-        ToString(T& obj)
+        ToString(T&& obj)
         {
-            return obj.ToString();
+            return forward<T>(obj).ToString();
         }
 
         template<typename T>

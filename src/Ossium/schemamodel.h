@@ -282,7 +282,7 @@ namespace Ossium
     }
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
-    #define m(TYPE, NAME)                                                                                                                                       \
+    #define M(TYPE, NAME)                                                                                                                                       \
             MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                     \
             {                                                                                                                                                   \
                 static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info =                                                         \

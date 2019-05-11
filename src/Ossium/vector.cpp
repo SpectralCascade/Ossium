@@ -90,6 +90,26 @@ namespace Ossium
             y = SDL_cosf(radians) * length;
         }
 
+        string Vector::ToString()
+        {
+            return "(" + functions::ToString(x) + ", " + functions::ToString(y) + ")";
+        }
+
+        void Vector::FromString(string str)
+        {
+            unsigned int len = str.length();
+            if (len > 4)
+            {
+                /// Remove brackets
+                str = str.substr(1, len - 2);
+                /// Split and get the individual values
+                string xhalf = splitPairFirst(str, ',');
+                string yhalf = splitPair(str, ',');
+                x = ToFloat(xhalf);
+                y = ToFloat(yhalf);
+            }
+        }
+
     }
 
     Vector operator+(const Vector& vec_a, const Vector& vec_b)

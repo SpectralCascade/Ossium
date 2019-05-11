@@ -15,6 +15,7 @@
 #include "time.h"
 #include "delta.h"
 #include "schemamodel.h"
+#include "randutils.h"
 
 using namespace std;
 
@@ -441,17 +442,17 @@ namespace Ossium
         {
             DECLARE_SCHEMA(SchemaExample, Schema<SchemaExample>);
 
-            m(int, foo) = 16;
+            M(int, foo) = 16;
 
-            m(int, bar) = 888;
+            M(int, bar) = 888;
 
-            m(float, age) = 19.02f;
+            M(float, age) = 19.02f;
 
-            m(string, hello) = "hello world!";
+            M(string, hello) = "hello world!";
 
-            m(int, oh) = 999;
+            M(int, oh) = 999;
 
-            m(float, more) = 555.3f;
+            M(float, more) = 555.3f;
         };
 
         class Example : public SchemaRoot, public SchemaExample
@@ -465,20 +466,20 @@ namespace Ossium
         {
             DECLARE_SCHEMA(OtherSchema, Schema<OtherSchema>);
 
-            m(int, freshFoo) = 1920;
+            M(int, freshFoo) = 1920;
 
-            m(float, wow) = -0.75f;
+            M(float, wow) = -0.75f;
         };
 
         struct OtherOtherSchema : public OtherSchema
         {
             DECLARE_SCHEMA(OtherOtherSchema, OtherSchema);
 
-            m(string, degree) = "Computer Science";
+            M(string, degree) = "Computer Science";
 
-            m(string, freshHello) = "HELLO FROM DERIVED SCHEMA :D";
+            M(string, freshHello) = "HELLO FROM DERIVED SCHEMA :D";
 
-            m(vector<int>, testVector) = {15, 20, 25, 30, 0, -1};
+            M(vector<int>, testVector) = {15, 20, 25, 30, 0, -1};
 
         };
 
@@ -538,6 +539,26 @@ namespace Ossium
 
             }
 
+        };
+
+        class RandTests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                Rand rng(12345);
+                TEST_ASSERT(rng.Int(-55, 142) == 129);
+                TEST_ASSERT(rng.Int(2, 4) == 4)
+                TEST_ASSERT(ToString(rng.Vector()) == "(0.316376, 0.130707)");
+                TEST_ASSERT(ToString(rng.UnitVector()) == "(0.915036, 0.403373)");
+                TEST_ASSERT(rng.UnitVector().Magnitude() == 1.0f);
+                cout << "Testing RNG values after seeding again..." << endl;
+                rng.Seed(12345);
+                TEST_ASSERT(rng.Int(-55, 142) == 129);
+                TEST_ASSERT(rng.Int(2, 4) == 4)
+                TEST_ASSERT(ToString(rng.Vector()) == "(0.316376, 0.130707)");
+                TEST_ASSERT(ToString(rng.UnitVector()) == "(0.915036, 0.403373)");
+            }
         };
 
     }

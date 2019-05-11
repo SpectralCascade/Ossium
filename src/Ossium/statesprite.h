@@ -40,19 +40,19 @@ namespace Ossium
             DECLARE_SCHEMA(StateSpriteSchema, Schema<StateSpriteSchema>);
 
             /// Current state key
-            m(string, currentState) = "";
+            M(string, currentState) = "";
 
             /// Current substate
-            m(Uint16, currentSubState) = 0;
+            M(Uint16, currentSubState) = 0;
 
             /// Current horizontal flag
-            m(bool, horizontalFlag) = true;
+            M(bool, horizontalFlag) = true;
 
             /// Current number of segments
-            m(Uint16, totalCurrentSegments) = 1;
+            M(Uint16, totalCurrentSegments) = 1;
 
             /// Multiple states, multiple textures
-            m(StateSpriteTable, states);
+            M(StateSpriteTable, states);
 
         };
 

@@ -2,8 +2,11 @@
 #define VECTOR_H
 
 #include <SDL.h>
+#include <string>
 
 #include "mathconsts.h"
+
+using namespace std;
 
 namespace Ossium
 {
@@ -62,6 +65,10 @@ namespace Ossium
             void Rotate(float degrees);
             /// Rotates the vector in radians
             void RotateRad(float radians);
+
+            /// String conversion methods
+            string ToString();
+            void FromString(string str);
 
         };
 
