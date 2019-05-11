@@ -29,6 +29,10 @@ namespace Ossium
                                                                                         \
         TYPE(){};                                                                       \
                                                                                         \
+    protected:                                                                          \
+        TYPE& operator=(const Entity& src) = delete;                                    \
+        TYPE(const TYPE& src) = default;                                                \
+                                                                                        \
         static StrID __component_type;                                                  \
                                                                                         \
     public:                                                                             \
@@ -252,9 +256,9 @@ namespace Ossium
         ~Entity();
 
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary
-        Entity(Entity& copySource);
-        Entity(const Entity& copySource);
-        Entity& operator=(const Entity& source);
+        Entity(Entity& copySource) = delete;
+        Entity(const Entity& copySource) = delete;
+        Entity& operator=(const Entity& source) = delete;
 
         /// Hashtable of components attached to this entity by type
         unordered_map<ComponentType, vector<Component*>> components;
