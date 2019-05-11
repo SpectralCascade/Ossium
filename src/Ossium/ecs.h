@@ -29,10 +29,10 @@ namespace Ossium
                                                                                         \
         TYPE(){};                                                                       \
                                                                                         \
-    protected:                                                                          \
         TYPE& operator=(const Entity& src) = delete;                                    \
         TYPE(const TYPE& src) = default;                                                \
                                                                                         \
+    private:                                                                            \
         static StrID __component_type;                                                  \
                                                                                         \
     public:                                                                             \

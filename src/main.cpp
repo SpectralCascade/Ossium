@@ -310,7 +310,7 @@ int main(int argc, char* argv[])
             //SDL_Log("dtime is %f before update", global::delta.Time());
             entitySystem.UpdateComponents();
             //SDL_Log("dtime is %f after update", global::delta.Time());
-            /// Note: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
+            /// TODO: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
             //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 
             /// Pixel-precise lighting effect that stays constant despite sprite size changes
