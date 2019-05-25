@@ -31,12 +31,30 @@ namespace Ossium
         void Init(CSV& event_data);
 
         /// Sets the value of data associated with a specified key
-        /// e.g. AddKeyField("ChangePlayerHealth", -30);
+        /// e.g. Add("ChangePlayerHealth", -30);
         /// If the key already exists, this method overwrites the current value
-        void AddKeyField(string key, variant<string, int, float> value = (string)"");
+        void Add(string key, variant<string, int, float> value = (string)"");
 
-        /// Returns pointer to the value associated with a given key; returns null if no such key exists!
-        variant<string, int, float>* GetValue(string key);
+        /// Returns a pointer to the value associated with the specified key, or null on failure (e.g. type mismatch or non-existent key).
+        template<typename T>
+        T* Get(string key)
+        {
+            try
+            {
+                return &get<T>(*GetValue(key));
+            }
+            catch (bad_variant_access&)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Bad variant access in event! Key used was \"%s\".", key.c_str());
+            }
+            return nullptr;
+        }
+
+        /// Returns a value for a given key as a string (no matter it's type), or an empty string if the key does not exist.
+        string Get(string key);
+
+        /// Returns true if this event contains the specified key.
+        bool Contains(string key);
 
         /// Returns a reference to this event's category type
         const string& GetCategory();
@@ -47,6 +65,8 @@ namespace Ossium
         bool operator<(const Event& other);
 
     protected:
+        variant<string, int, float>* GetValue(string key);
+
         /// No need for copy constructors as we are not dealing with pointers,
         /// thus it's safe to copy events using the default copy constructor and assignment operator
         /// I've tried to keep the class fairly lightweight so that it copies easily

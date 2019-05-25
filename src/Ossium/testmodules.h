@@ -241,30 +241,19 @@ namespace Ossium
             {
                 if (event.GetCategory() == "state change")
                 {
-                    try
+                    if (event.Contains("Health"))
                     {
-                        SDL_Log("State change event! Health is set to %d", get<int>(*(event.GetValue("Health"))));
+                        SDL_Log("State change event! Health is set to %d", *(event.Get<int>("Health")));
                         AddState<FSM_TestState>("meh");
                         SwitchState("meh");
-                    }
-                    catch (bad_variant_access&)
-                    {
-                        SDL_Log("VARIANT EXPLOSION");
                     }
                 }
                 else
                 {
-                    if (event.GetValue("Name") != nullptr)
+                    if (event.Contains("Name"))
                     {
-                        try
-                        {
-                            string f = get<string>(*(event.GetValue("Name")));
-                            SDL_Log("Hello from event '%s'!", f.c_str());
-                        }
-                        catch (bad_variant_access&)
-                        {
-                            SDL_Log("VARIANT EXPLOSION");
-                        }
+                        string f = *(event.Get<string>("Name"));
+                        SDL_Log("Hello from event '%s'!", f.c_str());
                     }
                 }
                 SDL_Log("HANDLED EVENT in category '%s'.", event.GetCategory().c_str());
@@ -328,8 +317,8 @@ namespace Ossium
 
                 Event myevent;
                 myevent.Init("Bob events");
-                myevent.AddKeyField("Name", (string)"bob event");
-                myevent.AddKeyField("Health", 100);
+                myevent.Add("Name", (string)"bob event");
+                myevent.Add("Health", 100);
 
                 test_obj.DispatchEvent(myevent, &test_obj);
 
@@ -378,7 +367,7 @@ namespace Ossium
                 Event myevent;
                 myevent.Init(csv);
                 TEST_ASSERT(myevent.GetCategory() == "npc_talk_question_rhetorical");
-                TEST_ASSERT(get<string>(*(myevent.GetValue("Name"))) == "Bob");
+                TEST_ASSERT(*(myevent.Get<string>("Name")) == "Bob");
             }
 
         };

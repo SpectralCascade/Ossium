@@ -40,21 +40,21 @@ namespace Ossium
                 /// Add the key-value pair to the event
                 if (IsInt((*i)[1]))
                 {
-                    AddKeyField((*i)[0], ToInt((*i)[1]));
+                    Add((*i)[0], ToInt((*i)[1]));
                 }
                 else if (IsFloat((*i)[1]))
                 {
-                    AddKeyField((*i)[0], ToFloat((*i)[1]));
+                    Add((*i)[0], ToFloat((*i)[1]));
                 }
                 else
                 {
-                    AddKeyField((*i)[0], (*i)[1]);
+                    Add((*i)[0], (*i)[1]);
                 }
             }
         }
     }
 
-    void Event::AddKeyField(string key, variant<string, int, float> value)
+    void Event::Add(string key, variant<string, int, float> value)
     {
         data[key] = value;
     }
@@ -64,9 +64,42 @@ namespace Ossium
         auto value = data.find(key);
         if (value != data.end())
         {
-            return &data[key];
+            return &value->second;
         }
         return nullptr;
+    }
+
+    string Event::Get(string key)
+    {
+        auto value = GetValue(key);
+        if (value != nullptr)
+        {
+            try
+            {
+                if (holds_alternative<int>(*value))
+                {
+                    return ToString(get<int>(*value));
+                }
+                else if (holds_alternative<float>(*value))
+                {
+                    return ToString(get<float>(*value));
+                }
+                else
+                {
+                    return get<string>(*value);
+                }
+            }
+            catch (bad_variant_access&)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Bad variant access in event! Key used was \"%s\".", key.c_str());
+            }
+        }
+        return "null";
+    }
+
+    bool Event::Contains(string key)
+    {
+        return data.find(key) != data.end();
     }
 
     const string& Event::GetCategory()
