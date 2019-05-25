@@ -59,7 +59,12 @@ namespace Ossium
         bool Parse(string& json, unsigned int startIndex = 0);
 
         /// Converts this JSON object into a string format representation.
-        string ToString(unsigned int indent_depth = 0);
+        string ToString(unsigned int indent_depth);
+        /// Ditto but defaults indent_depth to 0 and can be used for schema serialisation.
+        string ToString();
+
+        /// Same as Parse, but this one actually does clear the data first.
+        void FromString(string& str);
 
     };
 

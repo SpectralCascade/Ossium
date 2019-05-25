@@ -78,11 +78,11 @@ namespace Ossium
             {
                 if (holds_alternative<int>(*value))
                 {
-                    return ToString(get<int>(*value));
+                    return functions::ToString(get<int>(*value));
                 }
                 else if (holds_alternative<float>(*value))
                 {
-                    return ToString(get<float>(*value));
+                    return functions::ToString(get<float>(*value));
                 }
                 else
                 {
@@ -115,6 +115,68 @@ namespace Ossium
     bool Event::operator<(const Event& other)
     {
         return sendTime < other.sendTime;
+    }
+
+    string Event::ToString()
+    {
+        stringstream jsonStream;
+        jsonStream.str("");
+        jsonStream << "{";
+        if (!data.empty())
+        {
+            for (auto itr = data.begin(); itr != data.end();)
+            {
+                jsonStream << endl << "    \"" << itr->first << "\"" << " : ";
+                if (holds_alternative<string>(itr->second))
+                {
+                    string str = get<string>(itr->second);
+                    jsonStream << "\"" << str << "\"";
+                }
+                else if (holds_alternative<int>(itr->second))
+                {
+                    jsonStream << get<int>(itr->second);
+                }
+                else
+                {
+                    jsonStream << get<float>(itr->second);
+                }
+                if (++itr != data.end())
+                {
+                    jsonStream << ",";
+                }
+            }
+        }
+        jsonStream << endl;
+        jsonStream << "}";
+        return jsonStream.str();
+    }
+
+    void Event::FromString(string& str)
+    {
+        data.clear();
+        JSON json;
+        if (json.Parse(str))
+        {
+            for (auto itr = json.begin(); itr != json.end(); itr++)
+            {
+                if (itr->second.IsInt())
+                {
+                    Add(itr->first, itr->second.ToInt());
+                }
+                else if (itr->second.IsFloat())
+                {
+                    Add(itr->first, itr->second.ToFloat());
+                }
+                else
+                {
+                    Add(itr->first, (string)itr->second);
+                }
+            }
+        }
+        else
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to serialise event from a JSON string.");
+        }
     }
 
     ///

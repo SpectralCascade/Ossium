@@ -64,6 +64,12 @@ namespace Ossium
         /// For sorting when this event is queued
         bool operator<(const Event& other);
 
+        /// Converts this whole event into a JSON string.
+        string ToString();
+
+        /// Wipes all event fields and converts a JSON string into this event.
+        void FromString(string& str);
+
     protected:
         variant<string, int, float>* GetValue(string key);
 

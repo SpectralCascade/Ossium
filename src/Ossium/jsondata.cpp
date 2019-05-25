@@ -217,7 +217,6 @@ namespace Ossium
     {
         stringstream jsonStream;
         jsonStream.str("");
-        string json;
         for (unsigned int i = 0, counti = indent_depth; i < counti; i++)
         {
             jsonStream << "    ";
@@ -267,6 +266,17 @@ namespace Ossium
         }
         jsonStream << "}";
         return jsonStream.str();
+    }
+
+    string JSON::ToString()
+    {
+        return ToString(0);
+    }
+
+    void JSON::FromString(string& str)
+    {
+        clear();
+        Parse(str);
     }
 
     bool JSON::Parse(string& json, unsigned int startIndex)
