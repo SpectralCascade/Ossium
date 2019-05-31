@@ -62,6 +62,7 @@ namespace Ossium
             {
                 if (itr->second[i] != nullptr)
                 {
+                    itr->second[i]->OnRemoveGraphics();
                     itr->second[i]->OnDestroy();
                     delete itr->second[i];
                     itr->second[i] = nullptr;
