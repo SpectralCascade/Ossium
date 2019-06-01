@@ -143,6 +143,12 @@ namespace Ossium
         /// Line
         ///
 
+        Line::Line(Point start, Point end)
+        {
+            a = start;
+            b = end;
+        }
+
         void Line::Draw(Renderer& renderer)
         {
             SDL_RenderDrawLine(renderer.GetRendererSDL(), round(a.x), round(a.y), round(b.x), round(b.y));

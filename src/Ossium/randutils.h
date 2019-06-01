@@ -40,12 +40,12 @@ namespace Ossium
     };
 
     template<class T>
-    T& PickRandom(vector<T>& data, Rand* rng = nullptr)
+    T* PickRandom(vector<T>& data, Rand* rng = nullptr)
     {
         if (!data.empty())
         {
             unsigned int index = rng != nullptr ? rng->Int(0, data.size() - 1) : Rand().Int(0, data.size() - 1);
-            return data[index];
+            return &data[index];
         }
         return nullptr;
     }

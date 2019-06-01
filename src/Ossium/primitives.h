@@ -88,6 +88,9 @@ namespace Ossium
 
         struct Line
         {
+            Line() = default;
+            Line(Point start, Point end);
+
             Point a;
             Point b;
 

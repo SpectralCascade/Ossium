@@ -371,14 +371,25 @@ namespace Ossium
         void Texture::SetSource(Image* src, bool configureDimensions)
         {
             source = src;
-            if (configureDimensions && src != nullptr)
+            if (configureDimensions)
             {
-                width = src->width;
-                height = src->height;
                 clip.x = 0;
                 clip.y = 0;
-                clip.w = src->width;
-                clip.h = src->height;
+                if (src != nullptr)
+                {
+                    width = src->width;
+                    height = src->height;
+                    clip.w = src->width;
+                    clip.h = src->height;
+                }
+                else
+                {
+                    /// Make invisible if the source is null
+                    width = 0;
+                    height = 0;
+                    clip.w = 0;
+                    clip.h = 0;
+                }
             }
         }
         void Texture::SetBlendMode(SDL_BlendMode blend, bool immediate)
