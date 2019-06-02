@@ -37,7 +37,15 @@ namespace Ossium
                 }
                 else
                 {
-                    time -= changeInTime;
+                    /// Clamping is applied to reversed timers
+                    if (changeInTime > time)
+                    {
+                        time = 0;
+                    }
+                    else
+                    {
+                        time -= changeInTime;
+                    }
                 }
             }
             else
@@ -135,6 +143,10 @@ namespace Ossium
 
     float Clock::GetDeltaTime()
     {
+        if (paused)
+        {
+            return 0;
+        }
         if (overflow != 0)
         {
             return (float)((int)time - overflow) / 1000.0f;
