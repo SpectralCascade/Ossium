@@ -117,10 +117,12 @@ namespace Ossium
                     case RENDERTEXT_BLEND:
                     {
                         tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), bgColour);
+                        break;
                     }
                     default:
                     {
                         tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), bgColour);
+                        break;
                     }
                 }
                 if (tempSurface != NULL)
@@ -148,18 +150,22 @@ namespace Ossium
                 case RENDERTEXT_SOLID:
                 {
                     tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), colour);
+                    break;
                 }
                 case RENDERTEXT_SHADED:
                 {
                     tempSurface = TTF_RenderText_Shaded(actualFont, text.c_str(), colour, bgColour);
+                    break;
                 }
                 case RENDERTEXT_BLEND:
                 {
                     tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), colour);
+                    break;
                 }
                 default:
                 {
                     tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), colour);
+                    break;
                 }
             }
             if (tempSurface != NULL)

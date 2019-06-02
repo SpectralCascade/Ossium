@@ -153,8 +153,11 @@ namespace Ossium
 
     void Text::SetText(string text)
     {
-        textData = text;
-        update = true;
+        if (text != textData)
+        {
+            textData = text;
+            update = true;
+        }
     }
     void Text::SetColor(SDL_Color textColor)
     {
