@@ -161,6 +161,18 @@ namespace Ossium
             return false;
         }
 
+        /// Returns the front index
+        int GetFrontIndex()
+        {
+            return front;
+        }
+
+        /// Returns the back index
+        int GetBackIndex()
+        {
+            return back;
+        }
+
         /// Returns a reference to the front and back of the buffer respectively
         const T& peek_back()
         {

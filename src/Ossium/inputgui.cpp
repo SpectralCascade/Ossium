@@ -180,6 +180,7 @@ namespace Ossium
                 {
                     /// Move to a different context
                     KeyboardInput junkData;
+                    junkData.state = true;
                     SwitchContextBack(junkData);
                 }
                 return true;
@@ -334,9 +335,9 @@ namespace Ossium
         {
             if (data.state)
             {
-                if (contextOrder.empty())
+                if (!contextOrder.empty())
                 {
-                    currentContextIndex = wrap(currentContextIndex, -1, 0, contextOrder.size() - 1);
+                    currentContextIndex = wrap(currentContextIndex, -1, 0, !contextOrder.size() - 1);
                     currentContext = contextOrder[currentContextIndex];
                     return ClaimContext;
                 }

@@ -117,6 +117,15 @@ namespace Ossium
         return node != nullptr ? node->data : nullptr;
     }
 
+    Entity* Entity::CreateChild()
+    {
+        return controller->CreateEntity(this);
+    }
+
+    ///
+    /// Component
+    ///
+
     Component::~Component()
     {
     }

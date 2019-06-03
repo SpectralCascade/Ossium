@@ -66,19 +66,12 @@ namespace Ossium
             SDL_Rect boxDest = GetSDL();
             boxDest.x -= boxPadWidth;
             boxDest.y -= boxPadHeight;
-            boxDest.w += 2 * boxPadWidth;
-            boxDest.h += 2 * boxPadHeight;
+            boxDest.w = GetWidth();
+            boxDest.h = GetHeight();
             SDL_SetRenderDrawColor(renderer.GetRendererSDL(), bgColor.r, bgColor.g, bgColor.b, bgColor.a);
             SDL_RenderFillRect(renderer.GetRendererSDL(), &boxDest);
-            position.x += boxPadWidth;
-            position.y += boxPadHeight;
         }
         Texture::Render(renderer);
-        if (box)
-        {
-            position.x -= boxPadWidth;
-            position.y -= boxPadHeight;
-        }
     }
 
     void Text::SetStyling(int textStyle, int textOutline, int textHinting, SDL_Color textColor)

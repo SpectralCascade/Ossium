@@ -249,6 +249,9 @@ namespace Ossium
         /// Ditto, but searches only for entities below the parent
         Entity* Find(string name, Entity* parent);
 
+        /// Creates a child entity of this entity
+        Entity* CreateChild();
+
     private:
         /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
         /// or by calling CreateEntity() on an EntityComponentSystem instance
