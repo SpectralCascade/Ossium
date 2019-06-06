@@ -62,8 +62,18 @@ namespace Ossium
             {
                 if (itr->second[i] != nullptr)
                 {
-                    itr->second[i]->OnRemoveGraphics();
-                    itr->second[i]->OnDestroy();
+                    vector<Component*>& ecs_components = controller->components[itr->second[i]->GetType()];
+                    for (auto j = ecs_components.begin(); j != ecs_components.end(); j++)
+                    {
+                        if (*j == itr->second[i])
+                        {
+                            ecs_components.erase(j);
+                            break;
+                        }
+                    }
+                    /// Now remove the component pointer from this entity's components hash and delete it
+                    itr->second[0]->OnRemoveGraphics();
+                    itr->second[0]->OnDestroy();
                     delete itr->second[i];
                     itr->second[i] = nullptr;
                 }
@@ -273,17 +283,26 @@ namespace Ossium
         {
             if (entity->controller == this)
             {
-                delete entity;
+                pendingDestruction.push_back(entity);
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but the entity does not exist in this system instance!");
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but it is not managed by this entity component system instance!");
             }
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but the entity was already destroyed.");
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but it was already destroyed.");
         }
+    }
+
+    void EntityComponentSystem::DestroyPending()
+    {
+        for (auto entity : pendingDestruction)
+        {
+            delete entity;
+        }
+        pendingDestruction.clear();
     }
 
     void EntityComponentSystem::Clear()

@@ -36,9 +36,9 @@ namespace Ossium
         static StrID __component_type;                                                  \
                                                                                         \
     public:                                                                             \
-        StrID GetTypeName()                                                             \
+        Uint32 GetType()                                                                \
         {                                                                               \
-            return __component_type;                                                    \
+            return __ecs_entry_.getType();                                              \
         }                                                                               \
                                                                                         \
         static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_
@@ -85,7 +85,12 @@ namespace Ossium
         Entity* CreateEntity(Entity* parent);
 
         /// Destroys a single entity and all it's components. Logs a warning if the entity does not exist within this system.
+        /// Note that this does not take immediate effect - the entity is destroyed at the end of a frame, prior to a RenderPresent call.
+        /// Also note that you should only ever call this once on an entity, or you'll end up crashing (as you would with multiple `delete` calls).
         void DestroyEntity(Entity* entity);
+
+        /// Actually deletes all entities pending destruction. This should only be called at the end of a frame once all components have been updated and/or rendered.
+        void DestroyPending();
 
         /// Destroys ALL entities and their components
         void Clear();
@@ -98,6 +103,10 @@ namespace Ossium
         /// This is maintained because it's more efficient when updating or rendering lots of components
         /// of a specific type each frame
         vector<Component*>* components;
+
+        /// All entities currently pending destruction. These will be destroyed at the end of the frame.
+        /// They cannot be removed once added until they are destroyed.
+        vector<Entity*> pendingDestruction;
 
         /// Entity tree hierarchy
         Tree<Entity*> entityTree;
@@ -308,7 +317,7 @@ namespace Ossium
         /// This is implemented automagically by the REGISTER_COMPONENT(TYPE) macro.
         virtual Component* Clone() = 0;
 
-        virtual StrID GetTypeName() = 0;
+        virtual Uint32 GetType() = 0;
 
         virtual ~Component();
 
@@ -338,7 +347,7 @@ namespace Ossium
                                                                                 \
             virtual TYPE* Clone() = 0;                                          \
                                                                                 \
-            virtual StrID GetTypeName() = 0;
+            virtual Uint32 GetType() = 0;
 
     #define REGISTER_ABSTRACT_COMPONENT(TYPE)                           \
         TYPE::TYPE() {}                                                 \
