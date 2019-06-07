@@ -29,7 +29,7 @@ At some stage I intend to write up documentation for Ossium (once I've cleaned u
 
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on Windows 10 64-bit currently (and sometimes on (arm) Linux 64-bit)
-with the GNU GCC/G++ compiler. The engine is easily portable to Linux or Mac (you may need to change SDL 2 includes by find and replace of initial `<SDL` to `<SDL2/SDL` for Linux builds) and I intend it to be as crossplatform as SDL 2 at all times, so you it's possible to make mobile builds and so on.
+with the GNU GCC/G++ compiler. The engine is easily portable to Linux or Mac (you may need to change SDL 2 includes by find and replace of initial `<SDL` to `<SDL2/SDL` for Linux builds) and I intend it to be as crossplatform as SDL 2 at all times, so it's possible to make mobile builds and so on with some appropriate tweaks to the code.
 
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
 
