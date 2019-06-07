@@ -347,6 +347,7 @@ int main(int argc, char* argv[])
             viewrect.y = 0;
             SDL_RenderDrawRect(mainRenderer.GetRendererSDL(), &viewrect);
 
+            entitySystem.DestroyPending();
             mainRenderer.SetDrawColour(colours::BLACK);
             SDL_RenderPresent(mainRenderer.GetRendererSDL());
 
