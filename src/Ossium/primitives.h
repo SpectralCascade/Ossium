@@ -52,7 +52,7 @@ namespace Ossium
             Point(const Vector& vec);
 
             void Draw(Renderer& renderer);
-            void Draw(Renderer& renderer, SDL_Color colour);
+            void Draw(Renderer& renderer, SDL_Color color);
 
             /// Calculates a point on a line (where this is the start and p is the end of the line). A.K.A. linear interpolation
             Point Lerp(Point p, float w);
@@ -95,7 +95,7 @@ namespace Ossium
             Point b;
 
             void Draw(Renderer& renderer);
-            void Draw(Renderer& renderer, SDL_Color colour);
+            void Draw(Renderer& renderer, SDL_Color color);
 
         };
 
@@ -111,10 +111,10 @@ namespace Ossium
             float h;
 
             void Draw(Renderer& renderer);
-            void Draw(Renderer& renderer, SDL_Color colour);
+            void Draw(Renderer& renderer, SDL_Color color);
 
             void DrawFilled(Renderer& renderer);
-            void DrawFilled(Renderer& renderer, SDL_Color colour);
+            void DrawFilled(Renderer& renderer, SDL_Color color);
 
             /// Whether or not this rect is intersecting a circle
             bool Intersects(Circle circle);
@@ -150,10 +150,10 @@ namespace Ossium
             Point c;
 
             void Draw(Renderer& renderer);
-            void Draw(Renderer& renderer, SDL_Color colour);
+            void Draw(Renderer& renderer, SDL_Color color);
 
             void DrawFilled(Renderer& renderer);
-            void DrawFilled(Renderer& renderer, SDL_Color colour);
+            void DrawFilled(Renderer& renderer, SDL_Color color);
 
         };
 
@@ -163,11 +163,11 @@ namespace Ossium
             /// Renders the edges of the polygon
             void Draw(Renderer& renderer);
 
-            /// Renders the polygon in a solid colour
+            /// Renders the polygon in a solid color
             void DrawFilled(Renderer& renderer);
 
-            void Draw(Renderer& renderer, SDL_Color colour);
-            void DrawFilled(Renderer& renderer, SDL_Color colour);
+            void Draw(Renderer& renderer, SDL_Color color);
+            void DrawFilled(Renderer& renderer, SDL_Color color);
 
             /// The vertices of the polygon
             vector<Point> vertices;

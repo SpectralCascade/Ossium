@@ -69,7 +69,7 @@ namespace Ossium
         void SetBox(bool enabled);
 
     private:
-        /// If true, render box behind text in the background colour
+        /// If true, render box behind text in the background color
         bool box = false;
 
         /// Box padding, in pixels
@@ -94,10 +94,10 @@ namespace Ossium
         /// GUID of font to use:
         string font_guid;
 
-        /// Text colour
+        /// Text color
         SDL_Color color = {0xFF, 0xFF, 0xFF, 0xFF};
 
-        /// Background colour for outlines or shaded rendering box
+        /// Background color for outlines or shaded rendering box
         SDL_Color bgColor = {0x00, 0x00, 0x00, 0xFF};
 
         /// Text outline thickness in pixels

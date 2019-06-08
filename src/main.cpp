@@ -14,7 +14,7 @@
 #include "Ossium/keyboard.h"
 #include "Ossium/mouse.h"
 #include "Ossium/audio.h"
-#include "Ossium/colours.h"
+#include "Ossium/colors.h"
 #include "Ossium/statesprite.h"
 #include "Ossium/sprite.h"
 #include "Ossium/pixeleffects.h"
@@ -56,7 +56,7 @@ ActionOutcome MouseClickActionOutcome(const MouseInput& data)
     {
         if (data.state == MOUSE_RELEASED)
         {
-            mainText->SetColor(colours::GREEN);
+            mainText->SetColor(colors::GREEN);
             mainText->SetText("Press any key to bind to action TOGGLE AUDIO");
             check_for_key = true;
             return ActionOutcome::ClaimContext;
@@ -72,7 +72,7 @@ ActionOutcome GetKey(const KeyboardInput& data)
         if (data.state == KEY_UP)
         {
             currentKey = data.key;
-            mainText->SetColor(colours::RED);
+            mainText->SetColor(colors::RED);
             mainText->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             check_for_key = false;
             update_binding = true;
@@ -88,19 +88,19 @@ ActionOutcome KeyAction(const KeyboardInput& data)
     {
         if (data.state == KEY_DOWN)
         {
-            tarGetText->SetBackgroundColor(colours::YELLOW);
+            tarGetText->SetBackgroundColor(colors::YELLOW);
         }
         else if (data.state == KEY_UP)
         {
             if (!master.IsMuted())
             {
-                tarGetText->SetBackgroundColor(colours::RED);
+                tarGetText->SetBackgroundColor(colors::RED);
                 master.Mute();
             }
             else
             {
                 master.Unmute();
-                tarGetText->SetBackgroundColor(colours::GREEN);
+                tarGetText->SetBackgroundColor(colors::GREEN);
             }
         }
         return ActionOutcome::ClaimContext;
@@ -162,10 +162,10 @@ int main(int argc, char* argv[])
         if (tarGetText != nullptr)
         {
             tarGetText->SetText("FPS: 0");
-            tarGetText->SetColor(colours::BLUE);
+            tarGetText->SetColor(colors::BLUE);
             //tarGetText->SetBox(true);
             tarGetText->SetOutline(1);
-            tarGetText->SetBackgroundColor(colours::GREEN);
+            tarGetText->SetBackgroundColor(colors::GREEN);
             tarGetText->TextToTexture(mainRenderer, &font);
         }
 
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
-            compList[1]->SetColor(colours::RED);
+            compList[1]->SetColor(colors::RED);
             compList[1]->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             compList[1]->TextToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
@@ -318,7 +318,7 @@ int main(int argc, char* argv[])
             //SDL_Rect area = sprite->GetClip();
             /*spriteAnim.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
                 float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
-                c = Colour((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
+                c = Color((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
                 return c;
             });*/
 
@@ -342,13 +342,13 @@ int main(int argc, char* argv[])
             }
             mainRenderer.RenderPresent(true);
 
-            mainRenderer.SetDrawColour(colours::RED);
+            mainRenderer.SetDrawColor(colors::RED);
             viewrect.x = 0;
             viewrect.y = 0;
             SDL_RenderDrawRect(mainRenderer.GetRendererSDL(), &viewrect);
 
             entitySystem.DestroyPending();
-            mainRenderer.SetDrawColour(colours::BLACK);
+            mainRenderer.SetDrawColor(colors::BLACK);
             SDL_RenderPresent(mainRenderer.GetRendererSDL());
 
             /// Update timer and FPS count

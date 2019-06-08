@@ -7,7 +7,7 @@
 
 #include <SDL.h>
 
-#include "colours.h"
+#include "colors.h"
 #include "helpermacros.h"
 
 using namespace std;
@@ -64,11 +64,11 @@ namespace Ossium
             /// SDL_RenderClear() and SDL_RenderPresent!
             void RenderPresent(bool manualMode = false);
 
-            /// Sets the rendering colour for drawn points, lines and rects
-            void SetDrawColour(SDL_Color colour);
+            /// Sets the rendering color for drawn points, lines and rects
+            void SetDrawColor(SDL_Color color);
 
             /// Overload takes individual values for convenience
-            void SetDrawColour(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 0xFF);
+            void SetDrawColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 0xFF);
 
             /// Sets the renderer blend mode. By default the renderer is set to SDL_BLENDMODE_BLEND.
             void SetBlendmode(SDL_BlendMode blending);

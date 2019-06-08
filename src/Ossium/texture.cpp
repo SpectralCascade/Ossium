@@ -6,7 +6,7 @@
 
 #include "texture.h"
 #include "primitives.h"
-#include "colours.h"
+#include "colors.h"
 
 using namespace std;
 
@@ -82,7 +82,7 @@ namespace Ossium
             return tempSurface != NULL;
         }
 
-        bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color colour, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColour)
+        bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor)
         {
             if (pointSize <= 0)
             {
@@ -116,12 +116,12 @@ namespace Ossium
                 {
                     case RENDERTEXT_BLEND:
                     {
-                        tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), bgColour);
+                        tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), bgColor);
                         break;
                     }
                     default:
                     {
-                        tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), bgColour);
+                        tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), bgColor);
                         break;
                     }
                 }
@@ -149,22 +149,22 @@ namespace Ossium
             {
                 case RENDERTEXT_SOLID:
                 {
-                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), colour);
+                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), color);
                     break;
                 }
                 case RENDERTEXT_SHADED:
                 {
-                    tempSurface = TTF_RenderText_Shaded(actualFont, text.c_str(), colour, bgColour);
+                    tempSurface = TTF_RenderText_Shaded(actualFont, text.c_str(), color, bgColor);
                     break;
                 }
                 case RENDERTEXT_BLEND:
                 {
-                    tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), colour);
+                    tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), color);
                     break;
                 }
                 default:
                 {
-                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), colour);
+                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), color);
                     break;
                 }
             }
@@ -414,7 +414,7 @@ namespace Ossium
             }
             modulation.a = a;
         }
-        void Texture::SetColourMod(Uint8 r, Uint8 g, Uint8 b, bool immediate)
+        void Texture::SetColorMod(Uint8 r, Uint8 g, Uint8 b, bool immediate)
         {
             if (immediate)
             {

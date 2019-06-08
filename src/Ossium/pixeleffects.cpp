@@ -1,5 +1,5 @@
 #include "pixeleffects.h"
-#include "colours.h"
+#include "colors.h"
 
 namespace Ossium
 {
@@ -10,10 +10,10 @@ namespace Ossium
         SDL_Color Grayscale(SDL_Color c, SDL_Point p)
         {
             Uint8 grayscale = (Uint8)(((float)c.r * 0.3f) + ((float)c.g * 0.59f) + ((float)c.b * 0.11f));
-            return Colour(grayscale, grayscale, grayscale, c.a);
+            return Color(grayscale, grayscale, grayscale, c.a);
         }
 
-        SDL_Color InvertColour(SDL_Color c, SDL_Point p)
+        SDL_Color InvertColor(SDL_Color c, SDL_Point p)
         {
             c.r = c.r > 127 ? 127 - (c.r - 128) : 127 + (128 - c.r);
             c.g = c.g > 127 ? 127 - (c.g - 128) : 127 + (128 - c.g);

@@ -1,5 +1,5 @@
-#ifndef COLOURS_H
-#define COLOURS_H
+#ifndef COLORS_H
+#define COLORS_H
 
 #include <SDL.h>
 
@@ -8,7 +8,7 @@ namespace Ossium
 
     typedef Uint32 HexCode;
 
-    namespace colours
+    namespace colors
     {
 
         const SDL_Color WHITE   = {255,     255,    255,    255};
@@ -27,17 +27,17 @@ namespace Ossium
     }
 
     /// Converts raw pixel data into an SDL_Colour. Effectively the opposite of the SDL_MapRGBA() function
-    SDL_Color ConvertToColour(Uint32 pixel, SDL_PixelFormat* pixelFormat);
+    SDL_Color ConvertToColor(Uint32 pixel, SDL_PixelFormat* pixelFormat);
 
     ///
     /// Convenience functions
     ///
 
     /// Returns an SDL_Color from raw values
-    SDL_Color Colour(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
+    SDL_Color Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
     /// Returns an SDL_Color from a 24 bit hex code
-    SDL_Color Colour(HexCode rgb);
+    SDL_Color Color(HexCode rgb);
 
 }
 
-#endif // COLOURS_H
+#endif // COLORS_H

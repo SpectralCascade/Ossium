@@ -43,10 +43,10 @@ void StickFighter::OnInitGraphics(Renderer* renderer, int layer)
     walkAnim.LoadAndInit("assets/stick_walk.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
     stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
     stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
-    idleAnim.ApplyEffect(graphics::InvertColour);
+    idleAnim.ApplyEffect(graphics::InvertColor);
     stickman->PlayAnimation(timeline, &idleAnim, 0, -1);
     stickman->SetBlendMode(SDL_BLENDMODE_BLEND, true);
-    walkAnim.ApplyEffect(graphics::InvertColour);
+    walkAnim.ApplyEffect(graphics::InvertColor);
 }
 
 void StickFighter::OnDestroy()

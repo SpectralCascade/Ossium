@@ -15,8 +15,8 @@ namespace Ossium
         /// Grayscale effect
         DECLARE_PIXEL_EFFECT(Grayscale);
 
-        /// Inverts the colour of a pixel
-        DECLARE_PIXEL_EFFECT(InvertColour);
+        /// Inverts the color of a pixel
+        DECLARE_PIXEL_EFFECT(InvertColor);
 
     }
 

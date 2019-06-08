@@ -7,7 +7,7 @@
 
 #include "vector.h"
 #include "ecs.h"
-#include "colours.h"
+#include "colors.h"
 #include "primitives.h"
 #include "metarect.h"
 #include "font.h"
@@ -58,8 +58,8 @@ namespace Ossium
             bool Load(string guid_path);
 
             /// Creates an image with a text string
-            bool CreateFromText(Renderer& renderer, Font& fontToUse, string text, int pointSize = 12, SDL_Color colour = colours::RED,
-                                int hinting = 0, int kerning = 0, int outline = 0, int style = 0, int renderMode = 0, SDL_Color bgColour = colours::BLACK);
+            bool CreateFromText(Renderer& renderer, Font& fontToUse, string text, int pointSize = 12, SDL_Color color = colors::RED,
+                                int hinting = 0, int kerning = 0, int outline = 0, int style = 0, int renderMode = 0, SDL_Color bgColor = colors::BLACK);
 
             /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
             /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.
@@ -106,11 +106,11 @@ namespace Ossium
                     {
                         for (int i = 0, counti = (pitch / 4) * height; i < counti; i++)
                         {
-                            pixelData = ConvertToColour(pixelArray[i], pixelFormat);
+                            pixelData = ConvertToColor(pixelArray[i], pixelFormat);
                             pixelPos.x = i % width;
                             pixelPos.y = i / width;
-                            SDL_Color outputColour = f(pixelData, pixelPos);
-                            pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColour.r, outputColour.g, outputColour.b, outputColour.a);
+                            SDL_Color outputColor = f(pixelData, pixelPos);
+                            pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColor.r, outputColor.g, outputColor.b, outputColor.a);
                         }
                     }
                     else
@@ -130,11 +130,11 @@ namespace Ossium
                                     break;
                                 }
                             }
-                            pixelData = ConvertToColour(pixelArray[i], pixelFormat);
+                            pixelData = ConvertToColor(pixelArray[i], pixelFormat);
                             pixelPos.x = i % width;
                             pixelPos.y = i / width;
-                            SDL_Color outputColour = f(pixelData, pixelPos);
-                            pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColour.r, outputColour.g, outputColour.b, outputColour.a);
+                            SDL_Color outputColor = f(pixelData, pixelPos);
+                            pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColor.r, outputColor.g, outputColor.b, outputColor.a);
                         }
                     }
                     UnlockPixels();
@@ -191,12 +191,12 @@ namespace Ossium
 
             /// Sets alpha modulation
             void SetAlphaMod(Uint8 a, bool immediate = false);
-            /// Sets colour modulation
-            void SetColourMod(Uint8 r, Uint8 g, Uint8 b, bool immediate = false);
-            /// Sets both colour and alpha modulation
+            /// Sets color modulation
+            void SetColorMod(Uint8 r, Uint8 g, Uint8 b, bool immediate = false);
+            /// Sets both color and alpha modulation
             void SetMod(SDL_Color mod, bool immediate = false);
 
-            /// Returns the colour and alpha modulation values for this texture
+            /// Returns the color and alpha modulation values for this texture
             SDL_Color GetMod();
 
             /// Inherited Graphic::Render() method

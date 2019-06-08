@@ -7,7 +7,7 @@
 #include "Ossium/renderer.h"
 #include "Ossium/delta.h"
 #include "Ossium/audio.h"
-#include "Ossium/colours.h"
+#include "Ossium/colors.h"
 #include "Ossium/statesprite.h"
 #include "Ossium/sprite.h"
 #include "Ossium/pixeleffects.h"

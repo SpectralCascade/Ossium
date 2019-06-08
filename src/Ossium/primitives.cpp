@@ -91,9 +91,9 @@ namespace Ossium
             SDL_RenderDrawPoint(renderer.GetRendererSDL(), round(x), round(y));
         }
 
-        void Point::Draw(Renderer& renderer, SDL_Color colour)
+        void Point::Draw(Renderer& renderer, SDL_Color color)
         {
-            renderer.SetDrawColour(colour);
+            renderer.SetDrawColor(color);
             Draw(renderer);
         }
 
@@ -154,9 +154,9 @@ namespace Ossium
             SDL_RenderDrawLine(renderer.GetRendererSDL(), round(a.x), round(a.y), round(b.x), round(b.y));
         }
 
-        void Line::Draw(Renderer& renderer, SDL_Color colour)
+        void Line::Draw(Renderer& renderer, SDL_Color color)
         {
-            renderer.SetDrawColour(colour);
+            renderer.SetDrawColor(color);
             Draw(renderer);
         }
 
@@ -182,9 +182,9 @@ namespace Ossium
             SDL_RenderFillRect(renderer.GetRendererSDL(), &rect);
         }
 
-        void Rect::DrawFilled(Renderer& renderer, SDL_Color colour)
+        void Rect::DrawFilled(Renderer& renderer, SDL_Color color)
         {
-            renderer.SetDrawColour(colour);
+            renderer.SetDrawColor(color);
             DrawFilled(renderer);
         }
 
@@ -194,9 +194,9 @@ namespace Ossium
             SDL_RenderDrawRect(renderer.GetRendererSDL(), &rect);
         }
 
-        void Rect::Draw(Renderer& renderer, SDL_Color colour)
+        void Rect::Draw(Renderer& renderer, SDL_Color color)
         {
-            renderer.SetDrawColour(colour);
+            renderer.SetDrawColor(color);
             Draw(renderer);
         }
 
@@ -242,15 +242,15 @@ namespace Ossium
             /// TODO: this
         }
 
-        void Polygon::DrawFilled(Renderer& renderer, SDL_Color colour)
+        void Polygon::DrawFilled(Renderer& renderer, SDL_Color color)
         {
-            renderer.SetDrawColour(colour);
+            renderer.SetDrawColor(color);
             DrawFilled(renderer);
         }
 
-        void Polygon::Draw(Renderer& renderer, SDL_Color colour)
+        void Polygon::Draw(Renderer& renderer, SDL_Color color)
         {
-            renderer.SetDrawColour(colour);
+            renderer.SetDrawColor(color);
             Draw(renderer);
         }
 
