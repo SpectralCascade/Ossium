@@ -44,8 +44,8 @@
 		<Unit filename="src/Ossium/basics.h" />
 		<Unit filename="src/Ossium/callback.h" />
 		<Unit filename="src/Ossium/circularbuffer.h" />
-		<Unit filename="src/Ossium/colours.cpp" />
-		<Unit filename="src/Ossium/colours.h" />
+		<Unit filename="src/Ossium/colors.cpp" />
+		<Unit filename="src/Ossium/colors.h" />
 		<Unit filename="src/Ossium/config.cpp" />
 		<Unit filename="src/Ossium/config.h" />
 		<Unit filename="src/Ossium/csvdata.cpp" />
