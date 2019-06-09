@@ -5,7 +5,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace audio
+    inline namespace Audio
     {
 
         ///
@@ -57,7 +57,7 @@ namespace Ossium
         /// ChannelController
         ///
 
-        namespace internals
+        namespace Internals
         {
 
             void OnAnyChannelFinished(int id)
@@ -293,7 +293,7 @@ namespace Ossium
 
         int AudioSource::total_channels = 0;
 
-        internals::ChannelController& AudioSource::_channelController = internals::ChannelController::_Instance();
+        Internals::ChannelController& AudioSource::_channelController = Internals::ChannelController::_Instance();
 
         AudioSource::AudioSource()
         {
@@ -435,7 +435,7 @@ namespace Ossium
         /// AudioStream
         ///
 
-        namespace internals
+        namespace Internals
         {
 
             void MusicFinished()
@@ -614,7 +614,7 @@ namespace Ossium
     inline namespace global
     {
 
-        audio::internals::AudioStream& SoundStream = audio::internals::AudioStream::_Instance();
+        Audio::Internals::AudioStream& SoundStream = Audio::Internals::AudioStream::_Instance();
 
     }
 

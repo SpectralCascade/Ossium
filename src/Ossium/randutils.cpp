@@ -38,14 +38,14 @@ namespace Ossium
         return generator(*rng);
     }
 
-    structs::Vector Rand::Vector(structs::Vector min, structs::Vector max)
+    Structs::Vector Rand::Vector(Structs::Vector min, Structs::Vector max)
     {
-        return (structs::Vector){Float(min.x, max.x), Float(min.y, max.y)};
+        return (Structs::Vector){Float(min.x, max.x), Float(min.y, max.y)};
     }
 
-    structs::Vector Rand::UnitVector()
+    Structs::Vector Rand::UnitVector()
     {
-        structs::Vector u = {1, 0};
+        Structs::Vector u = {1, 0};
         u.Rotate(Float(0, 360));
         return u;
     }

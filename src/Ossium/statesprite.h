@@ -20,7 +20,7 @@ namespace Ossium
     #define STATE_HORIZONTAL        32768
     #define STATE_VERTICAL              0
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         /// Key = state, pair first = pointer to texture resource, pair second = clipping info

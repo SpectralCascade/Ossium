@@ -12,7 +12,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace structs
+    inline namespace Structs
     {
 
         /// Forward declarations

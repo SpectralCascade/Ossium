@@ -15,7 +15,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace audio
+    inline namespace Audio
     {
 
         /// Mix-in class for doing stuff with volume and stereo panning. Requires Derived to implement OnVolumeChanged()
@@ -134,7 +134,7 @@ namespace Ossium
         /// Forward declaration
         class AudioSource;
 
-        namespace internals
+        namespace Internals
         {
 
             void OnAnyChannelFinished(int id);
@@ -185,7 +185,7 @@ namespace Ossium
         public:
             friend class AudioChannel<AudioBus>;
             friend class AudioSource;
-            friend class internals::AudioStream;
+            friend class Internals::AudioStream;
 
             /// Initialise stuff
             AudioBus();
@@ -246,7 +246,7 @@ namespace Ossium
             set<AudioSource*> input_signals;
 
             /// The audio stream coming into this bus; usually null unless the AudioStream has been linked
-            internals::AudioStream* input_stream;
+            Internals::AudioStream* input_stream;
 
             /// Name of this audio bus
             string name;
@@ -283,7 +283,7 @@ namespace Ossium
         {
         public:
             friend class AudioBus;
-            friend class internals::ChannelController;
+            friend class Internals::ChannelController;
 
             AudioSource();
             virtual ~AudioSource();
@@ -342,11 +342,11 @@ namespace Ossium
             static int total_channels;
 
             /// Convenient reference
-            static internals::ChannelController& _channelController;
+            static Internals::ChannelController& _channelController;
 
         };
 
-        namespace internals
+        namespace Internals
         {
 
             /// Callback when the music is finished
@@ -455,7 +455,7 @@ namespace Ossium
     {
 
         /// Convenient global reference for accessing the AudioStream singleton
-        extern audio::internals::AudioStream& SoundStream;
+        extern Audio::Internals::AudioStream& SoundStream;
 
     }
 }

@@ -3,10 +3,10 @@
 namespace Ossium
 {
 
-    inline namespace input
+    inline namespace Input
     {
 /*
-        namespace internals
+        namespace Internals
         {
 
             InputHandlerType TypeRegistry<InputHandlerType>::nextTypeIdent = 0;

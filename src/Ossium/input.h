@@ -14,7 +14,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace input
+    inline namespace Input
     {
 
         /// This enumeration is used to determine how the input system should behave when calling actions during input handling.

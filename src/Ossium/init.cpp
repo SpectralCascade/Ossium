@@ -48,8 +48,8 @@ namespace Ossium
                 }
                 else
                 {
-                    /// Initialise the audio channel subsystem
-                    audio::internals::ChannelController::_Instance().Init(50);
+                    /// Initialise the Audio channel subsystem
+                    Audio::Internals::ChannelController::_Instance().Init(50);
 
                     #ifdef _SDL_TTF_H
                     if (TTF_Init() == -1)

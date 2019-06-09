@@ -6,7 +6,7 @@
 namespace Ossium
 {
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         /// Macro for short hand declarations

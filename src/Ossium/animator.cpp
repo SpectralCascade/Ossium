@@ -5,7 +5,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace animator
+    inline namespace Animator
     {
 
         ///

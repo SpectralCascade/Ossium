@@ -265,7 +265,7 @@ namespace Ossium
     {                                                                       \
         if (strcmp (strtype, SID(#TYPE )::str ) == 0)                       \
         {                                                                   \
-            functions::FromString(*(( TYPE *)member), data);                \
+            Utilities::FromString(*(( TYPE *)member), data);                \
             return true;                                                    \
         }                                                                   \
         return false;                                                       \
@@ -276,7 +276,7 @@ namespace Ossium
     {                                                                       \
         if (strcmp(strtype, SID(#TYPE )::str) == 0)                         \
         {                                                                   \
-            return functions::ToString(*(( TYPE *)member));                 \
+            return Utilities::ToString(*(( TYPE *)member));                 \
         }                                                                   \
         return string("");                                                  \
     }

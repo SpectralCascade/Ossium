@@ -12,7 +12,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         Renderer::Renderer(Window* window, int numLayers, Uint32 flags, int driver)

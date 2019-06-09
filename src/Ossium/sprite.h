@@ -7,7 +7,7 @@
 namespace Ossium
 {
 
-    inline namespace animator
+    inline namespace Animator
     {
 
         class SpriteKeyframe : public BaseKeyframe, public MetaRect

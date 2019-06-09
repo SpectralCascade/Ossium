@@ -78,11 +78,11 @@ namespace Ossium
             {
                 if (holds_alternative<int>(*value))
                 {
-                    return functions::ToString(get<int>(*value));
+                    return Utilities::ToString(get<int>(*value));
                 }
                 else if (holds_alternative<float>(*value))
                 {
-                    return functions::ToString(get<float>(*value));
+                    return Utilities::ToString(get<float>(*value));
                 }
                 else
                 {

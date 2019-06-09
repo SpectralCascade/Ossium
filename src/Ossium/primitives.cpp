@@ -5,7 +5,7 @@
 namespace Ossium
 {
 
-    inline namespace structs
+    inline namespace Structs
     {
 
         ///

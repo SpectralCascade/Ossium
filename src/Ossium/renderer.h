@@ -17,7 +17,7 @@ namespace Ossium
 
     class Window;
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         /// Forward declaration

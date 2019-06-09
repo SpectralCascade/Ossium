@@ -22,7 +22,7 @@ namespace Ossium
     public:
         DECLARE_COMPONENT(Text);
 
-        friend class graphics::Renderer;
+        friend class Graphics::Renderer;
 
         virtual void OnClone();
 

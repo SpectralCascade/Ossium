@@ -183,7 +183,7 @@ namespace Ossium
     /// GraphicComponent
     ///
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         void GraphicComponent::SetRenderLayer(int layer)

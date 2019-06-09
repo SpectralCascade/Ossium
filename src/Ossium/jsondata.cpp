@@ -12,19 +12,19 @@ namespace Ossium
 
     bool JString::IsInt()
     {
-        return functions::IsInt((string)(*this));
+        return Utilities::IsInt((string)(*this));
     }
     bool JString::IsFloat()
     {
-        return functions::IsFloat((string)(*this));
+        return Utilities::IsFloat((string)(*this));
     }
     bool JString::IsNumber()
     {
-        return functions::IsNumber((string)(*this));
+        return Utilities::IsNumber((string)(*this));
     }
     bool JString::IsBool()
     {
-        return functions::IsBool((string)(*this));
+        return Utilities::IsBool((string)(*this));
     }
     bool JString::IsArray()
     {
@@ -41,15 +41,15 @@ namespace Ossium
 
     float JString::ToFloat()
     {
-        return functions::ToFloat((string)(*this));
+        return Utilities::ToFloat((string)(*this));
     }
     int JString::ToInt()
     {
-        return functions::ToInt((string)(*this));
+        return Utilities::ToInt((string)(*this));
     }
     bool JString::ToBool()
     {
-        return functions::ToBool((string)(*this));
+        return Utilities::ToBool((string)(*this));
     }
     vector<JString> JString::ToArray()
     {
@@ -195,7 +195,7 @@ namespace Ossium
     bool JSON::Import(string path)
     {
         ifstream file(path.c_str());
-        string toParse = functions::FileToString(file);
+        string toParse = Utilities::FileToString(file);
         file.close();
         if (!Parse(toParse))
         {

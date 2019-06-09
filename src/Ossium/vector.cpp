@@ -8,7 +8,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace structs
+    inline namespace Structs
     {
 
         float Vector::Dot(Vector vec)
@@ -92,7 +92,7 @@ namespace Ossium
 
         string Vector::ToString()
         {
-            return "(" + functions::ToString(x) + ", " + functions::ToString(y) + ")";
+            return "(" + Utilities::ToString(x) + ", " + Utilities::ToString(y) + ")";
         }
 
         void Vector::FromString(string str)

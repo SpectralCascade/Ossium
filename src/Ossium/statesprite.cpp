@@ -10,7 +10,7 @@
 namespace Ossium
 {
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         ///
@@ -65,7 +65,7 @@ namespace Ossium
                     }
                     else
                     {
-                        functions::FromString(value.second, valueStr);
+                        Utilities::FromString(value.second, valueStr);
                         ((*this)[key]) = value;
                     }
                     valueStr = "";

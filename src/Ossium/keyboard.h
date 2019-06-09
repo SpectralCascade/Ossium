@@ -6,7 +6,7 @@
 namespace Ossium
 {
 
-    inline namespace input
+    inline namespace Input
     {
 
         const bool KEY_DOWN = true;

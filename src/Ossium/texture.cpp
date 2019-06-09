@@ -13,7 +13,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         ///       ///

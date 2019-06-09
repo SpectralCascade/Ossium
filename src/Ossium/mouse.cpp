@@ -3,7 +3,7 @@
 namespace Ossium
 {
 
-    inline namespace input
+    inline namespace Input
     {
 
         REGISTER_INPUT_HANDLER(MouseHandler);

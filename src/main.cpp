@@ -22,7 +22,7 @@
 
 #ifdef UNIT_TESTS
 #include "Ossium/testmodules.h"
-using namespace Ossium::test;
+using namespace Ossium::Test;
 #endif // UNIT_TESTS
 
 using namespace std;

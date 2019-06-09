@@ -7,7 +7,7 @@
 namespace Ossium
 {
 
-    inline namespace input
+    inline namespace Input
     {
 
         enum MouseEvent

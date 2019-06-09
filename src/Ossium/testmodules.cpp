@@ -3,7 +3,7 @@
 namespace Ossium
 {
 #ifdef UNIT_TESTS
-    namespace test
+    namespace Test
     {
 
         UnitTest::UnitTest()

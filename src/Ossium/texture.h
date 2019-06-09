@@ -18,7 +18,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace structs
+    inline namespace Structs
     {
         struct Rect;
         struct Point;
@@ -34,7 +34,7 @@ namespace Ossium
     /// Forward declaration
     class TexturePack;
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         /// Forward declare Texture

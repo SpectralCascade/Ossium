@@ -6,7 +6,7 @@
 namespace Ossium
 {
 
-    inline namespace animator
+    inline namespace Animator
     {
 
         ///

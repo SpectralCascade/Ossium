@@ -11,7 +11,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace functions
+    inline namespace Utilities
     {
 
         float clamp(float n, float min, float max)

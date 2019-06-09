@@ -359,7 +359,7 @@ namespace Ossium
         void TYPE::OnInitGraphics(Renderer* renderer, int layer){}      \
         void TYPE::OnRemoveGraphics(){}
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         /// A type of Component automatically registers and unregisters itself from a renderer instance upon creation.

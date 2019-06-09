@@ -28,10 +28,10 @@ namespace Ossium
         float Float(float min = 0, float max = 1);
 
         /// Returns a random vector within the given range.
-        structs::Vector Vector(structs::Vector min = {0, 0}, structs::Vector max = {1, 1});
+        Structs::Vector Vector(Structs::Vector min = {0, 0}, Structs::Vector max = {1, 1});
 
         /// Returns a random unit vector.
-        structs::Vector UnitVector();
+        Structs::Vector UnitVector();
 
     private:
         random_device rdev;

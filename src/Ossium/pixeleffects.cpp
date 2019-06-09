@@ -4,7 +4,7 @@
 namespace Ossium
 {
 
-    inline namespace graphics
+    inline namespace Graphics
     {
 
         SDL_Color Grayscale(SDL_Color c, SDL_Point p)

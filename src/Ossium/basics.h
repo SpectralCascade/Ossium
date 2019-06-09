@@ -54,7 +54,7 @@ namespace Ossium
 
     }
 
-    inline namespace functions
+    inline namespace Utilities
     {
 
         ///
