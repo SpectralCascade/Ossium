@@ -611,7 +611,7 @@ namespace Ossium
 
     }
 
-    inline namespace global
+    inline namespace Global
     {
 
         Audio::Internals::AudioStream& SoundStream = Audio::Internals::AudioStream::_Instance();

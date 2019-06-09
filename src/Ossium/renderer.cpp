@@ -172,7 +172,7 @@ namespace Ossium
             if (!manualMode)
             {
                 /// Doing this ensures the background is always black
-                SetDrawColor(colors::BLACK);
+                SetDrawColor(Colors::BLACK);
                 SDL_RenderPresent(renderer);
             }
         }

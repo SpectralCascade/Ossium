@@ -8,7 +8,7 @@ namespace Ossium
 
     typedef Uint32 HexCode;
 
-    namespace colors
+    namespace Colors
     {
 
         const SDL_Color WHITE   = {255,     255,    255,    255};

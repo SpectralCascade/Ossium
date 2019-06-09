@@ -34,7 +34,7 @@ namespace Ossium
 
     };
 
-    inline namespace global
+    inline namespace Global
     {
 
         extern Delta delta;

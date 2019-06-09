@@ -451,7 +451,7 @@ namespace Ossium
     }
 
 
-    inline namespace global
+    inline namespace Global
     {
 
         /// Convenient global reference for accessing the AudioStream singleton

@@ -43,7 +43,7 @@ namespace Ossium
         previousTicks = SDL_GetTicks();
     }
 
-    inline namespace global
+    inline namespace Global
     {
 
         Delta delta;
