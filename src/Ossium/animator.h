@@ -61,7 +61,7 @@ namespace Ossium
             /// Returns the name of this animation.
             string GetName();
 
-            /// Whether or not this animation uses tweening Utilities.
+            /// Whether or not this animation uses tweening functions.
             bool CanTween();
 
         protected:
@@ -273,10 +273,10 @@ namespace Ossium
             /// Removes all clips from the timeline.
             void ClearClips();
 
-            /// Adds curve/tweening Utilities to this animator timeline, for interpolating between keyframes.
+            /// Adds curve/tweening functions to this animator timeline, for interpolating between keyframes.
             /// Returns the index at which the argument function pointers start. Note that this is never 0, because 0 is reserved
             /// for stop-motion (no tweening/interpolation is applied to animations with index 0).
-            /// Also note that you may only add up to 255 custom tweening Utilities; any more are simply ignored and a warning is logged.
+            /// Also note that you may only add up to 255 custom tweening functions; any more are simply ignored and a warning is logged.
             Uint8 AddTweeningFuncs(vector<CurveFunction> easingCurves);
 
             /// Returns the tweening function associated with the provided index, or a nullptr if index is out of range (also logs a warning).
