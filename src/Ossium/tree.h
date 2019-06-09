@@ -53,17 +53,17 @@ namespace Ossium
         }
 
         /// Adds data to the tree. If parent is null, adds to root node children. Returns pointer to the node
-        Node<T>* add(string name, T data, Node<T>* parent = nullptr)
+        Node<T>* insert(string name, T data, Node<T>* parent = nullptr)
         {
             Node<T>* node = new Node<T>();
             node->name = name;
             node->data = data;
             node->parent = parent;
-            add(node);
+            insert(node);
             return node;
         }
 
-        void add(Node<T>* node)
+        void insert(Node<T>* node)
         {
             if (node == nullptr)
             {

@@ -80,7 +80,7 @@ namespace Ossium
 
         void Vector::Rotate(float degrees)
         {
-            RotateRad((constants::pi / 180.0f) * degrees);
+            RotateRad((Constants::pi / 180.0f) * degrees);
         }
 
         void Vector::RotateRad(float radians)

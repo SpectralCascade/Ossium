@@ -9,7 +9,7 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace tweening
+    inline namespace Tweening
     {
 
         float Lerp(float start, float end, float percent)
@@ -44,32 +44,32 @@ namespace Ossium
 
         float Sine(float start, float end, float percent)
         {
-            return start + ((end - start) * sin(percent * constants::pi * 2.0f));
+            return start + ((end - start) * sin(percent * Constants::pi * 2.0f));
         }
 
         float SineHalf(float start, float end, float percent)
         {
-            return start + ((end - start) * sin(percent * constants::pi));
+            return start + ((end - start) * sin(percent * Constants::pi));
         }
 
         float SineQuarter(float start, float end, float percent)
         {
-            return start + ((end - start) * sin(percent * constants::pi * 0.5f));
+            return start + ((end - start) * sin(percent * Constants::pi * 0.5f));
         }
 
         float Cosine(float start, float end, float percent)
         {
-            return start + ((end - start) * cos(percent * constants::pi * 2.0f));
+            return start + ((end - start) * cos(percent * Constants::pi * 2.0f));
         }
 
         float CosineHalf(float start, float end, float percent)
         {
-            return start + ((end - start) * cos(percent * constants::pi));
+            return start + ((end - start) * cos(percent * Constants::pi));
         }
 
         float CosineQuarter(float start, float end, float percent)
         {
-            return start + ((end - start) * cos(percent * constants::pi * 0.5f));
+            return start + ((end - start) * cos(percent * Constants::pi * 0.5f));
         }
 
         float Overshoot(float start, float end, float percent)

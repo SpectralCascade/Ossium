@@ -4,7 +4,7 @@
 namespace Ossium
 {
 
-    inline namespace tweening
+    inline namespace Tweening
     {
 
         /// Function pointer type for curve/tweening functions. Takes a range (start, end) and the current value in that range.

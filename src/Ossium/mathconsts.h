@@ -4,7 +4,7 @@
 namespace Ossium
 {
 
-    namespace constants
+    namespace Constants
     {
 
         const float pi = 3.14159265358979f;

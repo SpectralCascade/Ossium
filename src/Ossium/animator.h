@@ -305,7 +305,7 @@ namespace Ossium
 
             /// A list of tweening function pointers to be used for tweening animations on this animator timeline.
             /// The default curves are Ossium's
-            vector<CurveFunction> curves = {nullptr, tweening::Lerp};
+            vector<CurveFunction> curves = {nullptr, Tweening::Lerp};
 
         };
 

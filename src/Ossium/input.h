@@ -52,7 +52,7 @@ namespace Ossium
 
         /// Constant return type id for a specified input handler type
         template<class T>
-        InputHandlerType getInputHandlerType()
+        InputHandlerType GetInputHandlerType()
         {
             return T::__input_type_entry_.getType();
         }
@@ -320,16 +320,16 @@ namespace Ossium
             template<class T>
             T* AddHandler()
             {
-                auto itr = inputs.find(getInputHandlerType<T>());
+                auto itr = inputs.find(GetInputHandlerType<T>());
                 if (itr == inputs.end())
                 {
                     BaseInputHandler* handler = reinterpret_cast<BaseInputHandler*>(new T());
-                    inputs[getInputHandlerType<T>()] = handler;
+                    inputs[GetInputHandlerType<T>()] = handler;
                     return reinterpret_cast<T*>(handler);
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to add an input handler to a context, but the context already has an input handler of type [%d].", getInputHandlerType<T>());
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to add an input handler to a context, but the context already has an input handler of type [%d].", GetInputHandlerType<T>());
                 }
                 return GetHandler<T>();
             }
@@ -338,10 +338,10 @@ namespace Ossium
             template<class T>
             T* GetHandler()
             {
-                auto itr = inputs.find(getInputHandlerType<T>());
+                auto itr = inputs.find(GetInputHandlerType<T>());
                 if (itr == inputs.end())
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get input handler of type [%d] from a context, but it has not been added to the context!", getInputHandlerType<T>());
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get input handler of type [%d] from a context, but it has not been added to the context!", GetInputHandlerType<T>());
                     return nullptr;
                 }
                 return reinterpret_cast<T*>((*itr).second);

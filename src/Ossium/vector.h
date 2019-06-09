@@ -59,7 +59,7 @@ namespace Ossium
             /// Gets the rotation of this vector in degrees
             inline float Rotation()
             {
-                return RotationRad() * (180.0f / constants::pi);
+                return RotationRad() * (180.0f / Constants::pi);
             }
             /// Rotates the vector in degrees
             void Rotate(float degrees);

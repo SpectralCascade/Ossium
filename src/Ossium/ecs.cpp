@@ -21,11 +21,11 @@ namespace Ossium
         string name = "Entity";
         if (parent != nullptr)
         {
-            self = controller->entityTree.add(name, this, parent->self);
+            self = controller->entityTree.insert(name, this, parent->self);
         }
         else
         {
-            self = controller->entityTree.add(name, this);
+            self = controller->entityTree.insert(name, this);
         }
         controller->entities[self->id] = self;
         /// Set the name again, using the generated id
