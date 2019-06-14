@@ -78,7 +78,7 @@ namespace Ossium
         return paused;
     }
 
-    void Clock::Stretch(float scaleFactor)
+    void Clock::Scale(float scaleFactor)
     {
         scale = scaleFactor;
     }

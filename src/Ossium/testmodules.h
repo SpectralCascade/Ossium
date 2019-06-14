@@ -408,10 +408,10 @@ namespace Ossium
                 TEST_ASSERT(c.GetTime() == 400);
                 c.Update(0.002f);
                 TEST_ASSERT(c.GetTime() == 1);
-                c.Stretch(-1.0f);
+                c.Scale(-1.0f);
                 c.Update(0.002f);
                 TEST_ASSERT(c.GetTime() == 400);
-                c.Stretch(-2.0f);
+                c.Scale(-2.0f);
                 c.Update(0.100f);
                 TEST_ASSERT(c.GetTime() == 200);
                 c.Update(0.200f);

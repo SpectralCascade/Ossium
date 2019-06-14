@@ -22,7 +22,7 @@ namespace Ossium
         bool IsPaused();
 
         /// Stretch clock time by some scale factor.
-        void Stretch(float scaleFactor);
+        void Scale(float scaleFactor);
 
         /// Returns the scale factor.
         float GetScaleFactor();

@@ -213,10 +213,10 @@ namespace Ossium
             bool IsPlaying();
 
             /// Stretches the local timeline by some scale factor. Note that a scale factor of 0 has the same effect as pausing the clip.
-            void SetStretch(float sf);
+            void SetScale(float sf);
 
             /// Returns the scale factor applied to the local timeline.
-            float GetStretch();
+            float GetScale();
 
             /// Get the current local time of this clip.
             Uint32 GetTime();

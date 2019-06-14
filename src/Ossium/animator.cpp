@@ -164,12 +164,12 @@ namespace Ossium
             localClock.SetTime(0);
         }
 
-        void AnimatorClip::SetStretch(float sf)
+        void AnimatorClip::SetScale(float sf)
         {
-            localClock.Stretch(sf);
+            localClock.Scale(sf);
         }
 
-        float AnimatorClip::GetStretch()
+        float AnimatorClip::GetScale()
         {
             return localClock.GetScaleFactor();
         }
