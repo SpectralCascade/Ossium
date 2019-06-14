@@ -72,8 +72,8 @@ namespace Ossium
                         }
                     }
                     /// Now remove the component pointer from this entity's components hash and delete it
-                    itr->second[0]->OnRemoveGraphics();
-                    itr->second[0]->OnDestroy();
+                    itr->second[i]->OnRemoveGraphics();
+                    itr->second[i]->OnDestroy();
                     delete itr->second[i];
                     itr->second[i] = nullptr;
                 }
@@ -130,6 +130,11 @@ namespace Ossium
     Entity* Entity::CreateChild()
     {
         return controller->CreateEntity(this);
+    }
+
+    void Entity::Destroy(bool immediate)
+    {
+        controller->DestroyEntity(this, immediate);
     }
 
     ///
@@ -277,13 +282,20 @@ namespace Ossium
         return created;
     }
 
-    void EntityComponentSystem::DestroyEntity(Entity* entity)
+    void EntityComponentSystem::DestroyEntity(Entity* entity, bool immediate)
     {
         if (entity != nullptr)
         {
             if (entity->controller == this)
             {
-                pendingDestruction.push_back(entity);
+                if (immediate)
+                {
+                    delete entity;
+                }
+                else
+                {
+                    pendingDestruction.push_back(entity);
+                }
             }
             else
             {

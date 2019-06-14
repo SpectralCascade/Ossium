@@ -33,7 +33,7 @@ namespace Ossium
             bool IsHovered();
 
         protected:
-            DECLARE_ABSTRACT_COMPONENT(InteractableGUI);
+            DECLARE_ABSTRACT_GRAPHIC_COMPONENT(InteractableGUI);
 
             /// This does nothing, but should be implemented in the child class.
             virtual void Render(Renderer& renderer) = 0;

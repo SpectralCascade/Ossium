@@ -56,7 +56,7 @@ namespace Ossium
 
     /// Constant return type id for a specified component type
     template<class T>
-    ComponentType getComponentType()
+    ComponentType GetComponentType()
     {
         return T::__ecs_entry_.getType();
     }
@@ -85,9 +85,9 @@ namespace Ossium
         Entity* CreateEntity(Entity* parent);
 
         /// Destroys a single entity and all it's components. Logs a warning if the entity does not exist within this system.
-        /// Note that this does not take immediate effect - the entity is destroyed at the end of a frame, prior to a RenderPresent call.
+        /// Note that the entity is destroyed at the end of a frame, prior to a RenderPresent call if 'immediate' is left false.
         /// Also note that you should only ever call this once on an entity, or you'll end up crashing (as you would with multiple `delete` calls).
-        void DestroyEntity(Entity* entity);
+        void DestroyEntity(Entity* entity, bool immediate = false);
 
         /// Actually deletes all entities pending destruction. This should only be called at the end of a frame once all components have been updated and/or rendered.
         void DestroyPending();
@@ -129,7 +129,7 @@ namespace Ossium
             component->entity = this;
             component->OnCreate();
             component->OnInitGraphics(renderer, layer);
-            auto itr = components.find(getComponentType<T>());
+            auto itr = components.find(GetComponentType<T>());
             if (itr != components.end())
             {
                 itr->second.push_back(component);
@@ -138,10 +138,10 @@ namespace Ossium
             {
                 vector<Component*> component_vector;
                 component_vector.push_back(component);
-                components.insert({getComponentType<T>(), component_vector});
+                components.insert({GetComponentType<T>(), component_vector});
             }
             /// Add the component to the ECS controller
-            controller->components[getComponentType<T>()].push_back(component);
+            controller->components[GetComponentType<T>()].push_back(component);
             return component;
         }
 
@@ -149,10 +149,10 @@ namespace Ossium
         template<class T>
         void RemoveComponent()
         {
-            auto itr = components.find(getComponentType<T>());
+            auto itr = components.find(GetComponentType<T>());
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
-                vector<Component*>& ecs_components = controller->components[getComponentType<T>()];
+                vector<Component*>& ecs_components = controller->components[GetComponentType<T>()];
                 /// First, remove the component pointer from the EntityComponentSystem
                 for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
                 {
@@ -169,7 +169,7 @@ namespace Ossium
                 itr->second[0] = nullptr;
                 itr->second.erase(itr->second.begin());
             }
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Could not find any component of type[%d] attached to entity[%d] with name '%s'.", getComponentType<T>(), self->id, self->name.c_str());
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Could not find any component of type[%d] attached to entity[%d] with name '%s'.", GetComponentType<T>(), self->id, self->name.c_str());
         }
 
         /// Returns a pointer the first found instance of a component attached
@@ -177,7 +177,7 @@ namespace Ossium
         template <class T>
         T* GetComponent()
         {
-            auto itr = components.find(getComponentType<T>());
+            auto itr = components.find(GetComponentType<T>());
             if (itr != components.end() && !itr->second.empty())
             {
                 return static_cast<T*>(itr->second[0]);
@@ -190,7 +190,7 @@ namespace Ossium
         template <class T>
         vector<T*> GetComponents()
         {
-            auto itr = components.find(getComponentType<T>());
+            auto itr = components.find(GetComponentType<T>());
             if (itr != components.end())
             {
                 vector<T*> retComponents;
@@ -260,6 +260,8 @@ namespace Ossium
 
         /// Creates a child entity of this entity
         Entity* CreateChild();
+
+        void Destroy(bool immediate = false);
 
     private:
         /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
@@ -358,6 +360,25 @@ namespace Ossium
         void TYPE::Update(){}                                           \
         void TYPE::OnInitGraphics(Renderer* renderer, int layer){}      \
         void TYPE::OnRemoveGraphics(){}
+
+    #define DECLARE_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                    \
+        DECLARE_ABSTRACT_COMPONENT(TYPE)
+
+    #define REGISTER_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                   \
+        TYPE::TYPE() {}                                                 \
+        TYPE::~TYPE() {}                                                \
+        void TYPE::OnCreate() {}                                        \
+        void TYPE::OnDestroy() {}                                       \
+        void TYPE::OnClone() {}                                         \
+        void TYPE::Update(){}                                           \
+        void TYPE::OnInitGraphics(Renderer* renderer, int layer)        \
+        {                                                               \
+            GraphicComponent::OnInitGraphics(renderer, layer);          \
+        }                                                               \
+        void TYPE::OnRemoveGraphics()                                   \
+        {                                                               \
+            GraphicComponent::OnRemoveGraphics();                       \
+        }
 
     inline namespace Graphics
     {

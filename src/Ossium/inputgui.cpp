@@ -8,7 +8,7 @@ namespace Ossium
     inline namespace UI
     {
 
-        REGISTER_ABSTRACT_COMPONENT(InteractableGUI);
+        REGISTER_ABSTRACT_GRAPHIC_COMPONENT(InteractableGUI);
 
         void InteractableGUI::OnHoverBegin()
         {

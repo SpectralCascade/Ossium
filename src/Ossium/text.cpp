@@ -52,7 +52,7 @@ namespace Ossium
         {
             SetSource(&image);
         }
-        return false;
+        return success;
     }
 
     void Text::Render(Renderer& renderer)
