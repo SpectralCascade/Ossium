@@ -17,7 +17,7 @@ namespace Ossium
         ~Window();
 
         /// Handles window events
-        void handle_events(SDL_Event &event);
+        void HandleEvents(SDL_Event &event);
 
         /// Get/Set specifiers
         SDL_Window* GetWindow();

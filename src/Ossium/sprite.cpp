@@ -52,7 +52,7 @@ namespace Ossium
                         keyframe.origin.x = ToFloat(splitPairFirst(csv.GetCell(i, 9), ':'));
                         keyframe.origin.y = ToFloat(splitPairFirst(csv.GetCell(i, 10), ':'));
                         keyframe.angle = ToFloat(splitPairFirst(csv.GetCell(i, 11), ':'));
-                        /// Now the tweening transitions
+                        /// Now the Tweening transitions
                         keyframe.transitions[0] = (Uint8)ToInt(splitPair(csv.GetCell(i, 1), ':', "0"));
                         keyframe.transitions[1] = (Uint8)ToInt(splitPair(csv.GetCell(i, 2), ':', "0"));
                         keyframe.transitions[2] = (Uint8)ToInt(splitPair(csv.GetCell(i, 3), ':', "0"));
@@ -113,7 +113,7 @@ namespace Ossium
                 "spritesheet=" + spriteSheet,
                 "loopable=" + (string)(loop ? "true" : "false"),
                 "duration=" + ToString((int)duration),
-                "tweening=" + (string)(tween ? "true" : "false")
+                "Tweening=" + (string)(tween ? "true" : "false")
             });
             /// Add the headers.
             csv.data.push_back({

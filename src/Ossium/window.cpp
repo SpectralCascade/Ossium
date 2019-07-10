@@ -53,7 +53,7 @@ namespace Ossium
         window = NULL;
     }
 
-    void Window::handle_events(SDL_Event &event)
+    void Window::HandleEvents(SDL_Event &event)
     {
         switch (event.window.event)
         {

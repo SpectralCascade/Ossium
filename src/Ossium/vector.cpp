@@ -72,6 +72,21 @@ namespace Ossium
             y = -cachex;
         }
 
+        Vector Vector::Rotation90AntiClockwise()
+        {
+            Vector output;
+            output.x = -y;
+            output.y = x;
+            return output;
+        }
+
+        void Vector::Rotate90AntiClockwise()
+        {
+            float cachex = x;
+            x = -y;
+            y = cachex;
+        }
+
         Vector Vector::Lerp(Vector vec, float w)
         {
             w = clamp(w, 0.0f, 1.0f);
@@ -88,6 +103,20 @@ namespace Ossium
             float length = Magnitude();
             x = SDL_sinf(radians) * length;
             y = SDL_cosf(radians) * length;
+        }
+
+        Vector Vector::Rotation(float degrees)
+        {
+            Vector v = *this;
+            v.Rotate(degrees);
+            return v;
+        }
+
+        Vector Vector::RotationRad(float radians)
+        {
+            Vector v = *this;
+            v.RotateRad(radians);
+            return v;
         }
 
         string Vector::ToString()

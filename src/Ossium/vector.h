@@ -48,6 +48,11 @@ namespace Ossium
             /// Rotate this vector 90 degrees clockwise
             void Rotate90Clockwise();
 
+            /// Rotate a vector 90 degrees clockwise
+            Vector Rotation90AntiClockwise();
+            /// Rotate this vector 90 degrees clockwise
+            void Rotate90AntiClockwise();
+
             /// Calculate some point between two vectors (LERP - linear interpolation)
             Vector Lerp(Vector vec, float w);
 
@@ -65,6 +70,10 @@ namespace Ossium
             void Rotate(float degrees);
             /// Rotates the vector in radians
             void RotateRad(float radians);
+            /// Returns a vector rotated by degrees
+            Vector Rotation(float degrees);
+            /// Returns a vector rotated by radians
+            Vector RotationRad(float radians);
 
             /// String conversion methods
             string ToString();

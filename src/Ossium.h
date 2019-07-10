@@ -19,3 +19,4 @@
 #include "Ossium/events.h"
 #include "Ossium/curves.h"
 #include "Ossium/inputgui.h"
+#include "Ossium/randutils.h"

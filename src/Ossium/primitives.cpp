@@ -1,6 +1,9 @@
 #include <cmath>
 
+#include "basics.h"
 #include "primitives.h"
+
+using namespace std;
 
 namespace Ossium
 {
@@ -11,6 +14,25 @@ namespace Ossium
         ///
         /// Circle
         ///
+
+        /// TODO: use a more efficient drawing algorithm
+        void Circle::Draw(Renderer& renderer, float smoothness)
+        {
+            int segments = r * r * Utilities::clamp(smoothness);
+            for (int i = 0; i < segments; i++)
+            {
+                SDL_RenderDrawLine(renderer.GetRendererSDL(),
+                                   x + r * sin(((Constants::pi * 2) / segments) * i), y + r * cos(((Constants::pi * 2) / segments) * i),
+                                   x + r * sin(((Constants::pi * 2) / segments) * (i + 1)), y + r * cos(((Constants::pi * 2) / segments) * (i + 1))
+                );
+            }
+        }
+
+        void Circle::Draw(Renderer& renderer, SDL_Color color, float smoothness)
+        {
+            renderer.SetDrawColor(color);
+            Draw(renderer, smoothness);
+        }
 
         bool Circle::Intersects(Circle circle)
         {

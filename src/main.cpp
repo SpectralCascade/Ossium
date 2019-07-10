@@ -56,7 +56,7 @@ ActionOutcome MouseClickActionOutcome(const MouseInput& data)
     {
         if (data.state == MOUSE_RELEASED)
         {
-            mainText->SetColor(colors::GREEN);
+            mainText->SetColor(Colors::GREEN);
             mainText->SetText("Press any key to bind to action TOGGLE AUDIO");
             check_for_key = true;
             return ActionOutcome::ClaimContext;
@@ -72,7 +72,7 @@ ActionOutcome GetKey(const KeyboardInput& data)
         if (data.state == KEY_UP)
         {
             currentKey = data.key;
-            mainText->SetColor(colors::RED);
+            mainText->SetColor(Colors::RED);
             mainText->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             check_for_key = false;
             update_binding = true;
@@ -88,19 +88,19 @@ ActionOutcome KeyAction(const KeyboardInput& data)
     {
         if (data.state == KEY_DOWN)
         {
-            tarGetText->SetBackgroundColor(colors::YELLOW);
+            tarGetText->SetBackgroundColor(Colors::YELLOW);
         }
         else if (data.state == KEY_UP)
         {
             if (!master.IsMuted())
             {
-                tarGetText->SetBackgroundColor(colors::RED);
+                tarGetText->SetBackgroundColor(Colors::RED);
                 master.Mute();
             }
             else
             {
                 master.Unmute();
-                tarGetText->SetBackgroundColor(colors::GREEN);
+                tarGetText->SetBackgroundColor(Colors::GREEN);
             }
         }
         return ActionOutcome::ClaimContext;
@@ -162,10 +162,10 @@ int main(int argc, char* argv[])
         if (tarGetText != nullptr)
         {
             tarGetText->SetText("FPS: 0");
-            tarGetText->SetColor(colors::BLUE);
+            tarGetText->SetColor(Colors::BLUE);
             //tarGetText->SetBox(true);
             tarGetText->SetOutline(1);
-            tarGetText->SetBackgroundColor(colors::GREEN);
+            tarGetText->SetBackgroundColor(Colors::GREEN);
             tarGetText->TextToTexture(mainRenderer, &font);
         }
 
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
         vector<Text*> compList = gameObject.GetComponents<Text>();
         if (!compList.empty() && compList.size() > 1)
         {
-            compList[1]->SetColor(colors::RED);
+            compList[1]->SetColor(Colors::RED);
             compList[1]->SetText("Current master mute key is " + (string)SDL_GetKeyName(currentKey));
             compList[1]->TextToTexture(mainRenderer, &font, 36);
             mainText = compList[1];
@@ -185,8 +185,8 @@ int main(int argc, char* argv[])
 
         AnimatorTimeline timeline;
 
-        timeline.AddTweeningFuncs((vector<CurveFunction>){tweening::Power2, tweening::Power3, tweening::Power4, tweening::Power5, tweening::Sine, tweening::SineHalf, tweening::SineQuarter,
-                                  tweening::Cosine, tweening::CosineHalf, tweening::CosineQuarter, tweening::Overshoot});
+        timeline.AddTweeningFuncs((vector<CurveFunction>){Tweening::Power2, Tweening::Power3, Tweening::Power4, Tweening::Power5, Tweening::Sine, Tweening::SineHalf, Tweening::SineQuarter,
+                                  Tweening::Cosine, Tweening::CosineHalf, Tweening::CosineQuarter, Tweening::Overshoot});
 
         SpriteAnimation spriteAnim;
         /// We also cache the image as we want to revert the texture each frame, which is costly but allows fancy real time effects...
@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
         int countedFrames = 0;
 
         /// Initialise the global delta time and FPS controller
-        global::delta.Init(settings);
+        Global::delta.Init(settings);
 
         Point lightSpot(0.0f, 0.0f);
 
@@ -272,7 +272,7 @@ int main(int argc, char* argv[])
             /// Input handling phase
             while (SDL_PollEvent(&e) != 0)
             {
-                mainWindow.handle_events(e);
+                mainWindow.HandleEvents(e);
                 if (e.type == SDL_QUIT || (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE))
                 {
                     quit = true;
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
 
             lightSpot = sprite->ScreenToLocalPoint(Point((float)mx, (float)my));
 
-            timeline.Update(global::delta.Time());
+            timeline.Update(Global::delta.Time());
 
             /// Logic update phase
             if (volume_change)
@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
                 volume_change = false;
             }
 
-            sfx.FadeIn(global::delta.Time(), 3.0f);
+            sfx.FadeIn(Global::delta.Time(), 3.0f);
             /// Demo dynamic key binding
             if (update_binding)
             {
@@ -308,7 +308,7 @@ int main(int argc, char* argv[])
                 update_binding = false;
             }
 
-            //SDL_Log("dtime is %f before update", global::delta.Time());
+            //SDL_Log("dtime is %f before update", Global::delta.Time());
             entitySystem.UpdateComponents();
             //SDL_Log("dtime is %f after update", global::delta.Time());
             /// TODO: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
@@ -342,18 +342,18 @@ int main(int argc, char* argv[])
             }
             mainRenderer.RenderPresent(true);
 
-            mainRenderer.SetDrawColor(colors::RED);
+            mainRenderer.SetDrawColor(Colors::RED);
             viewrect.x = 0;
             viewrect.y = 0;
             SDL_RenderDrawRect(mainRenderer.GetRendererSDL(), &viewrect);
 
             entitySystem.DestroyPending();
-            mainRenderer.SetDrawColor(colors::BLACK);
+            mainRenderer.SetDrawColor(Colors::BLACK);
             SDL_RenderPresent(mainRenderer.GetRendererSDL());
 
             /// Update timer and FPS count
             countedFrames++;
-            global::delta.Update();
+            Global::delta.Update();
         }
     }
     TerminateOssium();

@@ -62,7 +62,7 @@ namespace Ossium
         ///
 
         /// Clamps a number to maxima/minima.
-        float clamp(float n, float min, float max);
+        float clamp(float n, float min = 0, float max = 1);
         int clamp(int n, int min, int max);
 
         /// Wraps an integer number within a given range. Both min and max are INCLUSIVE.

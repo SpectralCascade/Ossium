@@ -7,11 +7,11 @@ namespace Ossium
     inline namespace Tweening
     {
 
-        /// Function pointer type for curve/tweening functions. Takes a range (start, end) and the current value in that range.
+        /// Function pointer type for curve/Tweening functions. Takes a range (start, end) and the current value in that range.
         /// Should return a normalised floating point number between 0.0f to 1.0f.
         typedef float (*CurveFunction)(float start, float end, float percent);
 
-        /// Declares a curve/tweening function with a specified name. Saves some typing and looks neat.
+        /// Declares a curve/Tweening function with a specified name. Saves some typing and looks neat.
         #define DECLARE_TWEEN(NAME) float NAME(float start, float end, float percent)
 
         /// Linear interpolation.

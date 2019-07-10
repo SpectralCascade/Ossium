@@ -31,6 +31,9 @@ namespace Ossium
             float y;
             float r;
 
+            void Draw(Renderer& renderer, float smoothness = 1.0f);
+            void Draw(Renderer& renderer, SDL_Color color, float smoothness = 1.0f);
+
             /// Whether or not this rect is intersecting a circle
             bool Intersects(Circle circle);
             /// Whether or not this rect is intersecting an infinite line

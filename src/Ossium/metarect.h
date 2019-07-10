@@ -3,15 +3,37 @@
 
 #include <cmath>
 
+#include "schemamodel.h"
 #include "primitives.h"
 
 namespace Ossium
 {
 
+    struct MetaRectSchema : public Schema<MetaRectSchema>
+    {
+        DECLARE_SCHEMA(MetaRectSchema, Schema<MetaRectSchema>);
+
+        /// Position at the centre of the rect
+        M(Point, position);
+
+        /// Dimensions of the rect
+        M(float, width) = 0;
+        M(float, height) = 0;
+
+        /// The angle the rect is rotated by.
+        M(float, angle) = 0;
+
+        /// The origin point around which the rect rotates, as a percentage of the dimensions
+        M(Point, origin);
+
+    };
+
     /// Some sort of magical rectangle with basic positioning and rotation information...
-    class MetaRect
+    class MetaRect : public MetaRectSchema
     {
     public:
+        CONSTRUCT_SCHEMA(SchemaRoot, MetaRectSchema);
+
         MetaRect()
         {
             position.x = 0;
@@ -19,19 +41,6 @@ namespace Ossium
             origin.x = 0.5f;
             origin.y = 0.5f;
         }
-
-        /// Position at the centre of the rect
-        Point position;
-
-        /// Dimensions of the rect
-        float width = 0;
-        float height = 0;
-
-        /// The angle the rect is rotated by.
-        float angle = 0;
-
-        /// The origin point around which the rect rotates, as a percentage of the dimensions
-        Point origin;
 
         /// Returns the SDL_Rect equivalent of the rect
         SDL_Rect GetSDL()

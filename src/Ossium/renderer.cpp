@@ -58,6 +58,11 @@ namespace Ossium
             /// No need to store id as the OnDestroyed callback is automatically freed after being called.
             window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
 
+            viewportRect.x = 0;
+            viewportRect.y = 0;
+            viewportRect.w = window->GetWidth();
+            viewportRect.h = window->GetHeight();
+
             numLayersActive = numLayers;
             renderWindow = window;
         }
