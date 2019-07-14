@@ -275,6 +275,7 @@ namespace Ossium
         Entity& operator=(const Entity& source) = delete;
 
         /// Hashtable of components attached to this entity by type
+        /// TODO: Use a simple array instead for a lower memory footprint?
         unordered_map<ComponentType, vector<Component*>> components;
 
         /// Pointer to the system this entity exists in

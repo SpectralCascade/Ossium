@@ -112,6 +112,9 @@ namespace Ossium
             int GetNumRendered();
             #endif // DEBUG
 
+            /// Returns the number of layers allocated by the renderer
+            int GetNumLayers();
+
         private:
             NOCOPY(Renderer);
 

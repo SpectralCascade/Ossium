@@ -324,6 +324,11 @@ namespace Ossium
         }
         #endif // DEBUG
 
+        int Renderer::GetNumLayers()
+        {
+            return numLayersActive;
+        }
+
         SDL_Renderer* Renderer::GetRendererSDL()
         {
             return renderer;

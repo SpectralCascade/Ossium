@@ -91,6 +91,8 @@
 		<Unit filename="src/Ossium/csvdata.h" />
 		<Unit filename="src/Ossium/curves.cpp" />
 		<Unit filename="src/Ossium/curves.h" />
+		<Unit filename="src/Ossium/debugdraw.cpp" />
+		<Unit filename="src/Ossium/debugdraw.h" />
 		<Unit filename="src/Ossium/delta.cpp" />
 		<Unit filename="src/Ossium/delta.h" />
 		<Unit filename="src/Ossium/ecs.cpp" />

@@ -18,6 +18,7 @@
 #include "Ossium/statesprite.h"
 #include "Ossium/sprite.h"
 #include "Ossium/pixeleffects.h"
+#include "Ossium/debugdraw.h"
 #include "teststuff.h"
 
 #ifdef UNIT_TESTS
@@ -154,6 +155,10 @@ int main(int argc, char* argv[])
         int ptsizes[3] = {2, 24, 36};
         font.Load("assets/Orkney Regular.ttf", &ptsizes[0]);
 
+        Entity& debugDrawEntity = *entitySystem.CreateEntity();
+        debugDrawEntity.SetName("Debug Draw");
+        DebugDraw& debugDraw = *debugDrawEntity.AddComponent<DebugDraw>(&mainRenderer, mainRenderer.GetNumLayers() - 1);
+
         Entity& gameObject = *entitySystem.CreateEntity();
         gameObject.SetName("Test Entity");
         gameObject.AddComponent<Text>(&mainRenderer, 2);
@@ -267,6 +272,8 @@ int main(int argc, char* argv[])
 
         Point lightSpot(0.0f, 0.0f);
 
+        debugDraw.Draw(SID("Test Draw")::str, DebugText("Hello debug draw world!", Point(mainRenderer.GetWidth() / 2, mainRenderer.GetHeight() / 2), &debugDrawEntity, &font, mainRenderer));
+
         while (!quit)
         {
             /// Input handling phase
@@ -287,6 +294,10 @@ int main(int argc, char* argv[])
             SDL_GetMouseState(&mx, &my);
             mx -= viewrect.x;
             my -= viewrect.y;
+
+            debugDraw.Clear(SID("Test lines")::str);
+            debugDraw.Draw(SID("Test lines")::str, DebugLine(Point(mx, 0), Point(mx, mainRenderer.GetHeight())));
+            debugDraw.Draw(SID("Test lines")::str, DebugLine(Point(0, my), Point(mainRenderer.GetWidth(), my), Colors::BLUE));
 
             lightSpot = sprite->ScreenToLocalPoint(Point((float)mx, (float)my));
 
