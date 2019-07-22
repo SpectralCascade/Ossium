@@ -15,6 +15,7 @@
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
 					<Add option="-DDEBUG" />
+					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
 					<Add option="-lmingw32" />
@@ -25,6 +26,8 @@
 					<Add option="-lSDL2_ttf" />
 					<Add option="-lSDL2_net" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
+					<Add library="Box2D/bin/Release/libBox2D.a" />
+					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -35,6 +38,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++1z" />
+					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -46,6 +50,8 @@
 					<Add option="-lSDL2_ttf" />
 					<Add option="-lSDL2_net" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
+					<Add library="Box2D/bin/Release/libBox2D.a" />
+					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
 			<Target title="ossium">
@@ -58,21 +64,29 @@
 				<Compiler>
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
+					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
-					<Add option="-static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
+					<Add option="-static-libstdc++" />
+					<Add option="-static-libgcc" />
+					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
 					<Add library="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib/libSDL2.dll.a" />
 					<Add library="C:/SDL2/SDL2_ttf-2.0.14/i686-w64-mingw32/lib/libSDL2_ttf.dll.a" />
 					<Add library="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib/libSDL2_mixer.dll.a" />
 					<Add library="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib/libSDL2_image.dll.a" />
+					<Add library="Box2D/bin/Release/libBox2D.a" />
+					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++1z" />
+			<Add directory="Box2D/" />
 		</Compiler>
 		<Linker>
 			<Add option="-lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net" />
+			<Add directory="Box2D/bin/Release" />
 		</Linker>
 		<Unit filename="src/Ossium.h" />
 		<Unit filename="src/Ossium/animator.cpp" />
@@ -87,6 +101,8 @@
 		<Unit filename="src/Ossium/colors.h" />
 		<Unit filename="src/Ossium/config.cpp" />
 		<Unit filename="src/Ossium/config.h" />
+		<Unit filename="src/Ossium/coremaths.cpp" />
+		<Unit filename="src/Ossium/coremaths.h" />
 		<Unit filename="src/Ossium/csvdata.cpp" />
 		<Unit filename="src/Ossium/csvdata.h" />
 		<Unit filename="src/Ossium/curves.cpp" />
@@ -145,11 +161,7 @@
 		<Unit filename="src/Ossium/texturepack.h" />
 		<Unit filename="src/Ossium/time.cpp" />
 		<Unit filename="src/Ossium/time.h" />
-		<Unit filename="src/Ossium/transform.cpp" />
-		<Unit filename="src/Ossium/transform.h" />
 		<Unit filename="src/Ossium/tree.h" />
-		<Unit filename="src/Ossium/vector.cpp" />
-		<Unit filename="src/Ossium/vector.h" />
 		<Unit filename="src/Ossium/window.cpp" />
 		<Unit filename="src/Ossium/window.h" />
 		<Unit filename="src/main.cpp">

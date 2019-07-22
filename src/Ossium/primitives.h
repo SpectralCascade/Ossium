@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <vector>
 
-#include "vector.h"
+#include "coremaths.h"
 #include "renderer.h"
 
 using namespace std;
@@ -48,11 +48,11 @@ namespace Ossium
             bool Contains(Point point);
         };
 
-        struct Point : public Vector
+        struct Point : public Vector2
         {
             Point();
             Point(float x, float y);
-            Point(const Vector& vec);
+            Point(const Vector2& vec);
 
             void Draw(Renderer& renderer);
             void Draw(Renderer& renderer, SDL_Color color);
@@ -82,7 +82,7 @@ namespace Ossium
         struct Ray
         {
             Point p;
-            Vector u;
+            Vector2 u;
         };
 
         struct InfiniteLine : public Ray

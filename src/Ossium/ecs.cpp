@@ -6,7 +6,6 @@
 #include <SDL.h>
 
 #include "basics.h"
-#include "transform.h"
 #include "ecs.h"
 #include "delta.h"
 

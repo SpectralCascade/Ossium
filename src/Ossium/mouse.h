@@ -2,7 +2,7 @@
 #define MOUSE_H
 
 #include "input.h"
-#include "vector.h"
+#include "coremaths.h"
 
 namespace Ossium
 {

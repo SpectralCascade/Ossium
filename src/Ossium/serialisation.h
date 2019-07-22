@@ -5,7 +5,7 @@
 #include <stack>
 #include <SDL.h>
 
-#include "vector.h"
+#include "coremaths.h"
 #include "helpermacros.h"
 
 using namespace std;

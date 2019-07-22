@@ -468,7 +468,7 @@ namespace Ossium
 
             M(string, freshHello) = "HELLO FROM DERIVED SCHEMA :D";
 
-            M(vector<int>, testVector) = {15, 20, 25, 30, 0, -1};
+            M(vector<int>, testVector2) = {15, 20, 25, 30, 0, -1};
 
         };
 
@@ -538,15 +538,15 @@ namespace Ossium
                 Rand rng(12345);
                 TEST_ASSERT(rng.Int(-55, 142) == 129);
                 TEST_ASSERT(rng.Int(2, 4) == 4)
-                TEST_ASSERT(ToString(rng.Vector()) == "(0.316376, 0.130707)");
-                TEST_ASSERT(ToString(rng.UnitVector()) == "(0.915036, 0.403373)");
-                TEST_ASSERT(rng.UnitVector().Magnitude() == 1.0f);
+                TEST_ASSERT(ToString(rng.Vector2()) == "(0.316376, 0.130707)");
+                TEST_ASSERT(ToString(rng.UnitVector2()) == "(0.915036, 0.403373)");
+                TEST_ASSERT(rng.UnitVector2().Length() == 1.0f);
                 cout << "Testing RNG values after seeding again..." << endl;
                 rng.Seed(12345);
                 TEST_ASSERT(rng.Int(-55, 142) == 129);
                 TEST_ASSERT(rng.Int(2, 4) == 4)
-                TEST_ASSERT(ToString(rng.Vector()) == "(0.316376, 0.130707)");
-                TEST_ASSERT(ToString(rng.UnitVector()) == "(0.915036, 0.403373)");
+                TEST_ASSERT(ToString(rng.Vector2()) == "(0.316376, 0.130707)");
+                TEST_ASSERT(ToString(rng.UnitVector2()) == "(0.915036, 0.403373)");
             }
         };
 

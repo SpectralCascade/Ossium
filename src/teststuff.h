@@ -25,7 +25,7 @@ public:
     InputContext* context;
 
 private:
-    Vector movement;
+    Vector2 movement;
 
     Sprite* stickman;
 

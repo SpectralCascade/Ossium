@@ -2,7 +2,7 @@
 #include <string.h>
 #include <SDL.h>
 
-#include "vector.h"
+#include "coremaths.h"
 #include "serialisation.h"
 
 using namespace std;

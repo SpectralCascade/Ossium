@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "vector.h"
+#include "coremaths.h"
 #include "ecs.h"
 #include "colors.h"
 #include "primitives.h"

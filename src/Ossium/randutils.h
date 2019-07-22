@@ -4,7 +4,7 @@
 #include <functional>
 #include <random>
 
-#include "vector.h"
+#include "coremaths.h"
 
 using namespace std;
 
@@ -28,10 +28,10 @@ namespace Ossium
         float Float(float min = 0, float max = 1);
 
         /// Returns a random vector within the given range.
-        Structs::Vector Vector(Structs::Vector min = {0, 0}, Structs::Vector max = {1, 1});
+        Structs::Vector2 Vector2(Structs::Vector2 min = {0, 0}, Structs::Vector2 max = {1, 1});
 
         /// Returns a random unit vector.
-        Structs::Vector UnitVector();
+        Structs::Vector2 UnitVector2();
 
     private:
         random_device rdev;

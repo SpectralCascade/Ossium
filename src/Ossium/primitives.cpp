@@ -102,7 +102,7 @@ namespace Ossium
             this->y = y;
         }
 
-        Point::Point(const Vector& vec)
+        Point::Point(const Vector2& vec)
         {
             x = vec.x;
             y = vec.y;
@@ -121,22 +121,22 @@ namespace Ossium
 
         Point Point::Lerp(Point p, float w)
         {
-            return static_cast<Point>(Vector::Lerp(static_cast<Vector>(p), w));
+            return static_cast<Point>(Vector2::Lerp(static_cast<Vector2>(p), w));
         }
 
         float Point::DistanceSquared(Point p)
         {
-            return Vector::DistanceSquared(static_cast<Vector>(p));
+            return Vector2::DistanceSquared(static_cast<Vector2>(p));
         }
 
         float Point::Distance(Point p)
         {
-            return Vector::Distance(static_cast<Vector>(p));
+            return Vector2::Distance(static_cast<Vector2>(p));
         }
 
         bool Point::Intersects(Circle circle)
         {
-            return DistanceSquared((Vector){circle.x, circle.y}) <= circle.r * circle.r;
+            return DistanceSquared((Vector2){circle.x, circle.y}) <= circle.r * circle.r;
         }
         bool Point::Intersects(InfiniteLine infiniteLine)
         {
@@ -147,7 +147,7 @@ namespace Ossium
         bool Point::Intersects(Line line)
         {
             /// Similar to above, but within a limited range
-            InfiniteLine infLine = {line.a, (Vector)line.b};
+            InfiniteLine infLine = {line.a, (Vector2)line.b};
             return Intersects(infLine) && line.a.DistanceSquared(*this) <= line.a.DistanceSquared(line.b);
         }
         bool Point::Intersects(Ray ray)
