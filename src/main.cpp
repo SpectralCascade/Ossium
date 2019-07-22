@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <string.h>
 #include <SDL.h>
+#include <Box2D/Box2D.h>
 
 #include "Ossium/config.h"
 #include "Ossium/init.h"
@@ -19,6 +20,7 @@
 #include "Ossium/sprite.h"
 #include "Ossium/pixeleffects.h"
 #include "Ossium/debugdraw.h"
+#include "Ossium/randutils.h"
 #include "teststuff.h"
 
 #ifdef UNIT_TESTS
@@ -111,6 +113,69 @@ ActionOutcome KeyAction(const KeyboardInput& data)
 
 int main(int argc, char* argv[])
 {
+
+    /// PHYSICS TESTING
+
+    B2_NOT_USED(argc);
+	B2_NOT_USED(argv);
+
+	// Define the gravity vector (upside down for now as SDL inverts the Y axis).
+	b2Vec2 gravity(0.0f, 9.81f);
+
+	// Construct a world object, which will hold and simulate the rigid bodies.
+	b2World world(gravity);
+
+	// Define the ground body.
+	b2BodyDef groundBodyDef;
+	groundBodyDef.position.Set(PTM(1024 / 2), PTM(478.0f));
+
+	// Call the body factory which allocates memory for the ground body
+	// from a pool and creates the ground box shape (also from a pool).
+	// The body is also added to the world.
+	b2Body* groundBody = world.CreateBody(&groundBodyDef);
+
+	// Define the ground box shape.
+	b2PolygonShape groundBox;
+
+	// The extents are the half-widths of the box.
+	groundBox.SetAsBox(PTM(1024 / 2), PTM(1));
+
+	// Add the ground fixture to the ground body.
+	groundBody->CreateFixture(&groundBox, 0.0f);
+
+	// Define the dynamic body. We set its position and call the body factory.
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(PTM(50), PTM(4.0f));
+	bodyDef.angularVelocity = -4;
+	bodyDef.linearVelocity = b2Vec2(PTM(50), 0);
+	b2Body* body = world.CreateBody(&bodyDef);
+
+	// Define another box shape for our dynamic body.
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(PTM(32), PTM(32));
+
+	// Define the dynamic body fixture.
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+
+	// Set the box density to be non-zero, so it will be dynamic.
+	fixtureDef.density = 1.0f;
+
+	// Override the default friction.
+	fixtureDef.friction = 0.2f;
+
+	/// Bounciness!
+	fixtureDef.restitution = 0.6f;
+
+	// Add the shape to the body.
+	body->CreateFixture(&fixtureDef);
+
+	int velocityIterations = 6;
+	int positionIterations = 2;
+
+	/// END PHYSICS SETUP
+
     bool quit = false;
     if (InitialiseOssium() < 0)
     {
@@ -142,10 +207,13 @@ int main(int argc, char* argv[])
 
         /// Create renderer
         Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
-        mainRenderer.SetAspectRatio(16, 9);
+        //mainRenderer.SetAspectRatio(16, 9);
 
         /// Create an EntityComponentSystem
         EntityComponentSystem entitySystem;
+
+        /*b2World physWorld;
+        physWorld.*/
 
         ///
         /// ECS and text rendering demo
@@ -274,6 +342,10 @@ int main(int argc, char* argv[])
 
         debugDraw.Draw(SID("Test Draw")::str, DebugText("Hello debug draw world!", Point(mainRenderer.GetWidth() / 2, mainRenderer.GetHeight() / 2), &debugDrawEntity, &font, mainRenderer));
 
+        world.SetDebugDraw(debugDraw.physics);
+
+        debugDraw.physics->SetFlags(b2Draw::e_shapeBit);
+
         while (!quit)
         {
             /// Input handling phase
@@ -319,6 +391,8 @@ int main(int argc, char* argv[])
                 update_binding = false;
             }
 
+            world.Step(Global::delta.Time(), velocityIterations, positionIterations);
+
             //SDL_Log("dtime is %f before update", Global::delta.Time());
             entitySystem.UpdateComponents();
             //SDL_Log("dtime is %f after update", global::delta.Time());
@@ -351,6 +425,8 @@ int main(int argc, char* argv[])
                     fpsTimer.Start();
                 }
             }
+            world.DrawDebugData();
+
             mainRenderer.RenderPresent(true);
 
             mainRenderer.SetDrawColor(Colors::RED);

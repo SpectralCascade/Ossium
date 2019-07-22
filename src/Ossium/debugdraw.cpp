@@ -70,6 +70,12 @@ namespace Ossium
         /// DebugDraw
         REGISTER_COMPONENT(DebugDraw);
 
+        void DebugDraw::OnInitGraphics(Renderer* renderer, int layer)
+        {
+            GraphicComponent::OnInitGraphics(renderer, layer);
+            physics = new DebugDrawBox2D(renderer);
+        }
+
         void DebugDraw::Render(Renderer& renderer)
         {
             for (auto i : taggedGraphics)
@@ -81,9 +87,9 @@ namespace Ossium
             }
         }
 
-        void DebugDraw::Clear(StrID tag)
+        void DebugDraw::Clear(string tag)
         {
-            if (tag == nullptr)
+            if (tag.length() == 0)
             {
                 for (auto i : taggedGraphics)
                 {
@@ -109,9 +115,69 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_Log("Could not find any graphics with tag %s!", tag);
+                    SDL_Log("Could not find any graphics with tag %s!", tag.c_str());
                 }
             }
+        }
+
+        /// Box2D physics debug drawing
+        DebugDrawBox2D::DebugDrawBox2D(Renderer* renderer)
+        {
+            this->renderer = renderer;
+        }
+
+        void DebugDrawBox2D::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+        {
+            renderer->SetDrawColor(GetColorSDL(color));
+            for (int i = 0, counti = vertexCount - 1; i < counti; i++)
+            {
+                SDL_RenderDrawLine(renderer->GetRendererSDL(), (int)MTP(vertices[i].x), (int)MTP(vertices[i].y), (int)MTP(vertices[i + 1].x), (int)MTP(vertices[i + 1].y));
+            }
+            SDL_RenderDrawLine(renderer->GetRendererSDL(), (int)MTP(vertices[vertexCount - 1].x), (int)MTP(vertices[vertexCount - 1].y), (int)MTP(vertices[0].x), (int)MTP(vertices[0].y));
+        }
+
+        void DebugDrawBox2D::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+        {
+            DrawPolygon(vertices, vertexCount, color);
+        }
+
+        void DebugDrawBox2D::DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color)
+        {
+            Circle c;
+            c.x = MTP(center.x);
+            c.y = MTP(center.y);
+            c.r = MTP(radius);
+            c.Draw(*renderer, GetColorSDL(color));
+        }
+
+        void DebugDrawBox2D::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color)
+        {
+            DrawCircle(center, radius, color);
+        }
+
+        void DebugDrawBox2D::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
+        {
+            Line l(Point(MTP(p1.x), MTP(p1.y)), Point(MTP(p2.x), MTP(p2.y)));
+            l.Draw(*renderer, GetColorSDL(color));
+        }
+
+        void DebugDrawBox2D::DrawTransform(const b2Transform& xf)
+        {
+            Line up(Point(MTP(xf.p.x), MTP(xf.p.y)), Point(MTP(xf.p.x), MTP(xf.p.y - 5)));
+            Line right(Point(MTP(xf.p.x), MTP(xf.p.y)), Point(MTP(xf.p.x + 5), MTP(xf.p.y)));
+            up.Draw(*renderer, Colors::GREEN);
+            right.Draw(*renderer, Colors::RED);
+        }
+
+        void DebugDrawBox2D::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color)
+        {
+            Rect debugPoint(MTP(p.x - size), MTP(p.y - size), MTP(size * 2), MTP(size * 2));
+            debugPoint.DrawFilled(*renderer, GetColorSDL(color));
+        }
+
+        SDL_Color DebugDrawBox2D::GetColorSDL(const b2Color& c)
+        {
+            return {(Uint8)(c.r * 255.0f), (Uint8)(c.g * 255.0f), (Uint8)(c.b * 255.0f), (Uint8)(c.a * 255.0f)};
         }
 
     }
