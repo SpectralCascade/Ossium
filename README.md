@@ -1,16 +1,15 @@
 # About Ossium
-Ossium is a bare-bones 2D game engine being built with C++ and SDL 2. The aim of this project is to create a simple, lightweight 2D game engine which is easy to use and simultaneously acts as a nice wrapper for SDL 2.
+Ossium is a bare-bones 2D game engine being built in C++ with SDL 2 and Box2D. The aim of this project is to create a highly crossplatform, lightweight 2D game engine with minimal dependencies.
 
 # Features
-* Low number of dependencies (SDL 2 with basic extension libraries)
+* Low number of dependencies (SDL 2 with a few small extension libraries and Box2D for physics)
 * Extendable input system with action bindings, states and input claiming
 * Flexible Entity Component System
 * Game event system with delay-based queuing
-* Basic class serialisation support via completely code-based schemas
+* Extendable serialisation support via completely code-based schemas
 * Animation system based around timelines and animator clips
-* Built-in CSV import/export and JSON parsing
+* CSV and JSON parsing
 * Basic texture packer with mipmap generator
-* Resource controller for simple resource management
 * Audio playback and mixing
 * Vector maths functions and various intersection tests for primitive shapes
 * Simple unit testing framework
@@ -23,6 +22,7 @@ All SDL libraries are listed on the [main SDL 2 webpage](https://www.libsdl.org/
 * SDL_Image
 * SDL_Mixer
 * SDL_TTF
+You will also need to build Box2D as a static lib and have that output in `Box2D/bin/Release` as `libBox2D.a`.
 
 # How to Use
 At some stage I intend to write up documentation for Ossium (once I've cleaned up the code a bit). Until then, you can check up on [my website](https://timlanesoftware.com) from time to time for blog posts and articles about Ossium (and other projects I'm working on). Or you can dive into the code to better understand how different parts of the engine work for yourself. Note that the engine is constantly being updated and improved currently, so if you intend to use it for your own games and projects beware of bugs and changes over time.
