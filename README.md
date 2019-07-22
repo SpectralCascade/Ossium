@@ -22,6 +22,7 @@ All SDL libraries are listed on the [main SDL 2 webpage](https://www.libsdl.org/
 * SDL_Image
 * SDL_Mixer
 * SDL_TTF
+
 You will also need to build Box2D as a static lib and have that output in `Box2D/bin/Release` as `libBox2D.a`.
 
 # How to Use
