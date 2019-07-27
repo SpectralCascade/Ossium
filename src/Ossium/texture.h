@@ -18,12 +18,6 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace Structs
-    {
-        struct Rect;
-        struct Point;
-    }
-
     enum TextRenderModes
     {
         RENDERTEXT_SOLID = 0,
