@@ -12,7 +12,6 @@
 #include "Ossium/sprite.h"
 #include "Ossium/pixeleffects.h"
 #include "Ossium/csvdata.h"
-#include "Ossium/primitives.h"
 #include "Ossium/circularbuffer.h"
 #include "Ossium/fsm.h"
 #include "Ossium/resourcecontroller.h"
