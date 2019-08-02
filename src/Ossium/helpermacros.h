@@ -26,6 +26,14 @@ namespace Ossium
     #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)
     #endif
 
+    /// This macro shouldn't be used by mortal souls. But here it is anyway.
+    #define EVIL_CAST(VALUE, TO_TYPE) *(( TO_TYPE *)((void*) & VALUE ))
+
+    template<typename ToType, typename FromType>
+    inline const ToType& EvilCast(const FromType& value)
+    {
+        return EVIL_CAST(value, ToType);
+    }
 
 }
 

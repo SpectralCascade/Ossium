@@ -7,6 +7,7 @@
 
 #include "mathconsts.h"
 #include "renderer.h"
+#include "helpermacros.h"
 
 using namespace std;
 
@@ -142,8 +143,18 @@ namespace Ossium
         Transform() = default;
         Transform(const Vector2& position, const Rotation& rotation) : b2Transform((b2Vec2)position, (b2Rot)rotation) {};
 
-        inline Point& position() { return *(Point*)((void*)(&p)); };
-        inline Rotation& rotation() { return *(Rotation*)((void*)(&q)); };
+        /// Typically using EVIL_CAST would NOT be acceptable,
+        /// but for this specific use case I deem it acceptable as the Point class
+        /// not only inherits from Vector2 (which in turn inherits from b2Vec2),
+        /// but Point is the same size as b2Vec2 and ALWAYS WILL BE. Of course,
+        /// the argument against this would be that "What if someone wants to add more
+        /// members to Point or Vector2 (or make one of them virtual)!?". To which I answer:
+        /// the person who does that doesn't understand the purpose of the Point struct
+        /// and shouldn't be touching the code in such a case. If they really want to
+        /// add some members, they should just inherit from Point and do their own thing.
+        inline Point& position() { return EVIL_CAST(p, Point); };
+        /// Ditto for the Rotation casting code.
+        inline Rotation& rotation() { return EVIL_CAST(q, Rotation); };
 
     protected:
         using b2Transform::p;

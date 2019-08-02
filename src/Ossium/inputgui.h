@@ -4,7 +4,6 @@
 #include "input.h"
 #include "keyboard.h"
 #include "mouse.h"
-#include "primitives.h"
 #include "stringintern.h"
 #include "ecs.h"
 #include "callback.h"

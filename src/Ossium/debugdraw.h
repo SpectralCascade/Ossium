@@ -4,7 +4,6 @@
 #include <Box2D/Common/b2Draw.h>
 
 #include "stringintern.h"
-#include "primitives.h"
 #include "text.h"
 
 namespace Ossium

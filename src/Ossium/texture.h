@@ -8,7 +8,6 @@
 #include "coremaths.h"
 #include "ecs.h"
 #include "colors.h"
-#include "primitives.h"
 #include "metarect.h"
 #include "font.h"
 #include "resourcecontroller.h"

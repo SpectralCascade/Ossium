@@ -133,10 +133,10 @@
 		<Unit filename="src/Ossium/metarect.h" />
 		<Unit filename="src/Ossium/mouse.cpp" />
 		<Unit filename="src/Ossium/mouse.h" />
+		<Unit filename="src/Ossium/physics.cpp" />
+		<Unit filename="src/Ossium/physics.h" />
 		<Unit filename="src/Ossium/pixeleffects.cpp" />
 		<Unit filename="src/Ossium/pixeleffects.h" />
-		<Unit filename="src/Ossium/primitives.cpp" />
-		<Unit filename="src/Ossium/primitives.h" />
 		<Unit filename="src/Ossium/randutils.cpp" />
 		<Unit filename="src/Ossium/randutils.h" />
 		<Unit filename="src/Ossium/renderer.cpp" />

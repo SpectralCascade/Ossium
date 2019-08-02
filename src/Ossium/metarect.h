@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "schemamodel.h"
-#include "primitives.h"
+#include "coremaths.h"
 
 namespace Ossium
 {

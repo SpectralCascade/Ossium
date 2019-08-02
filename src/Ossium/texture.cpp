@@ -5,7 +5,6 @@
 #include <SDL_ttf.h>
 
 #include "texture.h"
-#include "primitives.h"
 #include "colors.h"
 
 using namespace std;

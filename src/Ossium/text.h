@@ -8,7 +8,6 @@
 #include "font.h"
 #include "renderer.h"
 #include "ecs.h"
-#include "primitives.h"
 #include "texture.h"
 #include "helpermacros.h"
 
