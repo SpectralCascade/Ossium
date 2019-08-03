@@ -19,3 +19,5 @@
 #include "Ossium/curves.h"
 #include "Ossium/inputgui.h"
 #include "Ossium/randutils.h"
+#include "Ossium/physics.h"
+#include "Ossium/debugdraw.h"

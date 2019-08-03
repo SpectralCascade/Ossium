@@ -3,24 +3,7 @@
 #include <SDL.h>
 #include <Box2D/Box2D.h>
 
-#include "Ossium/config.h"
-#include "Ossium/init.h"
-#include "Ossium/window.h"
-#include "Ossium/time.h"
-#include "Ossium/font.h"
-#include "Ossium/text.h"
-#include "Ossium/renderer.h"
-#include "Ossium/ecs.h"
-#include "Ossium/delta.h"
-#include "Ossium/keyboard.h"
-#include "Ossium/mouse.h"
-#include "Ossium/audio.h"
-#include "Ossium/colors.h"
-#include "Ossium/statesprite.h"
-#include "Ossium/sprite.h"
-#include "Ossium/pixeleffects.h"
-#include "Ossium/debugdraw.h"
-#include "Ossium/randutils.h"
+#include "Ossium.h"
 #include "teststuff.h"
 
 #ifdef UNIT_TESTS
