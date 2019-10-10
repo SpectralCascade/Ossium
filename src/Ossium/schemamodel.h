@@ -59,7 +59,39 @@ namespace Ossium
             return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
+        void FromString(string& str)
+        {
+            JSON data(str);
+            SerialiseSchema(&data);
+        }
+
+        /// Creates a JSON string with all the schema members.
+        string ToString()
+        {
+            JSON data;
+            for (unsigned int i = 0; i < count; i++)
+            {
+                /// Key consists of type and member name
+                string key = member_names[i];
+                /// Value is obtained directly from the member
+                string value;
+                void* member = GetMember(i);
+                if (member != nullptr)
+                {
+                    value = member_to_string[i](member, member_types[i]);
+                    /// Add the key-value pair to the JSON object
+                    data[key] = value;
+                }
+                else
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Could not get member '%s' at index [%d] during schema ToString()!", key.c_str(), i);
+                }
+            }
+            return Utilities::ToString(data);
+        }
+
         /// Creates a JSON object representation of this schema using all members of the local schema hierarchy.
+        /// WARNING: Creates a new JSON object. You have to delete the JSON object once you're done with it!
         JSON* SerialiseSchema()
         {
             JSON* data = new JSON();
@@ -354,6 +386,14 @@ namespace Ossium
                 delete schemaData;                                                                      \
                 schemaData = nullptr;                                                                   \
                 return data;                                                                            \
+            }                                                                                           \
+            string ToString()                                                                           \
+            {                                                                                           \
+                return SCHEMA_TYPE::ToString();                                                         \
+            }                                                                                           \
+            void FromString(string& str)                                                                \
+            {                                                                                           \
+                SCHEMA_TYPE::FromString(str);                                                           \
             }
 
 }

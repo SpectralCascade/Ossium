@@ -34,23 +34,31 @@ namespace Ossium
     private:                                                                            \
         static StrID __component_type;                                                  \
                                                                                         \
+        static Component* ComponentFactory(void* target_entity);                        \
+                                                                                        \
     public:                                                                             \
         Uint32 GetType()                                                                \
         {                                                                               \
             return __ecs_entry_.getType();                                              \
         }                                                                               \
                                                                                         \
-        static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_
+        static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_;               \
+        static Ossium::typesys::TypeFactory<Component> __ecs_factory_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
-    #define REGISTER_COMPONENT(TYPE)                                                    \
-    Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                    \
-    StrID TYPE::__component_type = SID(#TYPE)::str;                                     \
-                                                                                        \
-    TYPE* TYPE::Clone()                                                                 \
-    {                                                                                   \
-        return new TYPE(*this);                                                         \
+    #define REGISTER_COMPONENT(TYPE)                                                                    \
+    Component* TYPE::ComponentFactory(void* target_entity)                                              \
+    {                                                                                                   \
+        return ((Entity*)target_entity)->AddComponent<TYPE>();                                          \
+    }                                                                                                   \
+    Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                                    \
+    Ossium::typesys::TypeFactory<Component> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
+    StrID TYPE::__component_type = SID(#TYPE)::str;                                                     \
+                                                                                                        \
+    TYPE* TYPE::Clone()                                                                                 \
+    {                                                                                                   \
+        return new TYPE(*this);                                                                         \
     }
 
     /// Constant return type id for a specified component type
@@ -59,6 +67,10 @@ namespace Ossium
     {
         return T::__ecs_entry_.getType();
     }
+
+    /// Dynamic type checking
+    ComponentType GetComponentType(string name);
+    string GetComponentName(ComponentType id);
 
     /// Forward declarations for the controller class
     class Entity;
@@ -126,6 +138,7 @@ namespace Ossium
         {
             T* component = new T();
             component->entity = this;
+            SDL_Log("ADDED COMPONENT '%s' TO ENTITY!", component->__ecs_factory_.GetName().c_str());
             component->OnCreate();
             component->OnInitGraphics(renderer, layer);
             auto itr = components.find(GetComponentType<T>());
@@ -260,6 +273,10 @@ namespace Ossium
         /// Creates a child entity of this entity
         Entity* CreateChild();
 
+        /// String conversion methods get/set with the JSON representation of all attached components.
+        void FromString(string& str);
+        string ToString();
+
         void Destroy(bool immediate = false);
 
     private:
@@ -310,6 +327,12 @@ namespace Ossium
 
         /// Each frame this method is called
         virtual void Update();
+
+        /// Sets up all serialized members from a JSON string representation.
+        virtual void FromString(string& str);
+
+        /// Generates a JSON object representation of this component.
+        virtual string ToString();
 
         /// Pointer to the entity that this component is attached to
         Entity* entity = nullptr;

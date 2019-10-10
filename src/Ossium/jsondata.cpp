@@ -28,17 +28,16 @@ namespace Ossium
     }
     bool JString::IsArray()
     {
-        return ((string)(*this)).length() > 0 && ((string)(*this))[0] == '[' && ((string)(*this))[((string)(*this)).length() - 1] == ']';
+        return length() > 0 && (*this)[0] == '[' && (*this)[length() - 1] == ']';
     }
     bool JString::IsJSON()
     {
-        return ((string)(*this)).length() > 0 && ((string)(*this))[0] == '{' && ((string)(*this))[((string)(*this)).length() - 1] == '}';
+        return length() > 0 && (*this)[0] == '{' && (*this)[length() - 1] == '}';
     }
     bool JString::IsString()
     {
         return !IsNumber() && !IsBool() && !IsArray() && !IsJSON();
     }
-
     float JString::ToFloat()
     {
         return Utilities::ToFloat((string)(*this));
@@ -79,12 +78,19 @@ namespace Ossium
                     else if ((*this)[i] == '[')
                     {
                         arrayCount++;
+                        if (arrayCount <= 1)
+                        {
+                            continue;
+                        }
                     }
                     else if ((*this)[i] == ']')
                     {
                         arrayCount--;
                         if (arrayCount < 1)
                         {
+                            value = strip(value, '\n');
+                            value = strip(value);
+                            dataArray.push_back(value);
                             break;
                         }
                     }

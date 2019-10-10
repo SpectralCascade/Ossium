@@ -1,9 +1,9 @@
 {
     "OtherOtherSchema" : {
-        "testVector" : [111, 220, 53, -63],
         "freshHello" : "SUP :P",
         "degree" : "English lit.",
         "freshFoo" : 77,
+        "testVector2" : [15, 20, 25, 30, 0, -1],
         "wow" : -0.99
     },
     "SchemaExample" : {

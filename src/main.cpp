@@ -177,7 +177,11 @@ int main(int argc, char* argv[])
         TEST_RUN(ClockTests);
         TEST_RUN(SchemaTests);
         TEST_RUN(RandTests);
+        TEST_RUN(EntitySerialisationTests);
         TEST_EVALUATE();
+        /*cout << "Enter any text to quit." << endl;
+        string a;
+        cin >> a;*/
         return 0;
         #endif // UNIT_TESTS
 

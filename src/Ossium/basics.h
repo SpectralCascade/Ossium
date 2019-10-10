@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <any>
 #include <functional>
+#include <map>
 #include <utility>
 #include <SDL.h>
 
@@ -51,6 +52,96 @@ namespace Ossium
 
         template<class BaseType>
         BaseType TypeRegistry<BaseType>::nextTypeIdent = 0;
+
+        template<class CoreType>
+        class TypeFactory
+        {
+        private:
+            typedef function<CoreType*(void*)> FactoryFunc;
+
+            /// Construct-on-first-use idiom to solve static initialisation order fiasco
+            static unordered_map<Uint32, FactoryFunc>& gen_map()
+            {
+                static unordered_map<Uint32, FactoryFunc>* sifmap = new unordered_map<Uint32, FactoryFunc>();
+                return *sifmap;
+            }
+            static unordered_map<string, Uint32>& type_name_map()
+            {
+                static unordered_map<string, Uint32>* sifmap = new unordered_map<string, Uint32>();
+                return *sifmap;
+            }
+            static unordered_map<Uint32, const char*>& type_id_map()
+            {
+                static unordered_map<Uint32, const char*>* sifmap = new unordered_map<Uint32, const char*>();
+                return *sifmap;
+            }
+
+            static Uint32 nextId;
+            Uint32 id;
+            const char* key;
+
+        public:
+            TypeFactory(const char* name, FactoryFunc factory)
+            {
+                id = nextId;
+                nextId++;
+                gen_map()[id] = factory;
+                type_name_map()[name] = id;
+                type_id_map()[id] = name;
+                key = name;
+            }
+
+            static CoreType* Create(Uint32 typeId, void* args)
+            {
+                auto itr = gen_map().find(typeId);
+                if (itr != gen_map().end())
+                {
+                    return itr->second(args);
+                }
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to create target [type id '%d'] with TypeFactory instance!", typeId);
+                return nullptr;
+            }
+
+            static CoreType* Create(string targetType, void* args)
+            {
+                auto itr = type_name_map().find(targetType);
+                if (itr != type_name_map().end())
+                {
+                    return Create(itr->second, args);
+                }
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to create target type '%s' with TypeFactory instance!", targetType.c_str());
+                return nullptr;
+            }
+
+            static string GetName(Uint32 ident)
+            {
+                auto itr = type_id_map().find(ident);
+                if (itr != type_id_map().end())
+                {
+                    return itr->second;
+                }
+                return "";
+            }
+
+            static Uint32 GetId(string name)
+            {
+                auto itr = type_name_map().find(name);
+                if (itr != type_name_map().end())
+                {
+                    return itr->second;
+                }
+                return 0;
+            }
+
+            string GetName()
+            {
+                return key;
+            }
+
+        };
+
+        template<class CoreType>
+        Uint32 TypeFactory<CoreType>::nextId = 0;
 
     }
 

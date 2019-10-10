@@ -14,6 +14,16 @@ using namespace std;
 namespace Ossium
 {
 
+    string GetComponentName(Uint32 id)
+    {
+        return typesys::TypeFactory<Component>::GetName(id);
+    }
+
+    ComponentType GetComponentType(string name)
+    {
+        return typesys::TypeFactory<Component>::GetId(name);
+    }
+
     Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
     {
         controller = entity_system;
@@ -28,7 +38,7 @@ namespace Ossium
         }
         controller->entities[self->id] = self;
         /// Set the name again, using the generated id
-        name = "Entity[" + ToString(self->id) + "]";
+        name = "Entity[" + Ossium::ToString(self->id) + "]";
         SetName(name);
     }
 
@@ -131,6 +141,71 @@ namespace Ossium
         return controller->CreateEntity(this);
     }
 
+    void Entity::FromString(string& str)
+    {
+        JSON data(str);
+        auto entity_itr = data.find("Components");
+        if (entity_itr != data.end())
+        {
+            JSON components_data(entity_itr->second);
+            for (auto component : components_data)
+            {
+                ComponentType compType = 0;
+                /// TODO: map compType to the type id specified in a lookup table within the JSON data
+                /// to ensure component type ids are correct between versions/devices (due to static instantiation order uncertainty).
+                /// NOTE: ideally don't use component type names as these may be changed at any point during project development.
+                Utilities::FromString(compType, component.first);
+                vector<JString> componentData = component.second.ToArray();
+                vector<Component*>& compsOfType = components[compType];
+                unsigned int totalComponents = compsOfType.empty() ? 0 : compsOfType.size();
+                for (unsigned int i = 0, counti = componentData.empty() ? 0 : componentData.size(); i < counti; i++)
+                {
+                    if (i >= totalComponents)
+                    {
+                        if (typesys::TypeFactory<Component>::Create(compType, (void*)this) == nullptr)
+                        {
+                            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component [\"%s\" with id %d] to entity during Entity::FromString()!", GetComponentName(compType).c_str(), compType);
+                            continue;
+                        }
+                    }
+                    compsOfType[i]->FromString(componentData[i]);
+                }
+            }
+        }
+        else
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Invalid JSON string input during entity FromString() call!");
+        }
+    }
+
+    string Entity::ToString()
+    {
+        /// TODO: improve formatting
+        JSON data;
+        string json_components = "{";
+        for (auto itr : components)
+        {
+            if (json_components.length() > 1)
+            {
+                json_components += ", ";
+            }
+            json_components += "\"" + Utilities::ToString(itr.first) + "\"" + " : [";
+            for (int i = 0, counti = itr.second.empty() ? 0 : itr.second.size(); i < counti; i++)
+            {
+                json_components += itr.second[i]->ToString();
+                if (i + 1 < counti)
+                {
+                    json_components += ", ";
+                }
+            }
+            json_components += "]";
+        }
+        json_components += "}";
+        data["Name"] = GetName();
+        data["Components"] = json_components;
+        return data.ToString();
+    }
+
     void Entity::Destroy(bool immediate)
     {
         controller->DestroyEntity(this, immediate);
@@ -166,6 +241,16 @@ namespace Ossium
 
     void Component::Update()
     {
+    }
+
+    void Component::FromString(string& str)
+    {
+    }
+
+    string Component::ToString()
+    {
+        /// Empty JSON object
+        return JSON().ToString();
     }
 
     Component::Component()

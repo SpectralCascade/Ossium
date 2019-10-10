@@ -16,6 +16,8 @@
 #include "delta.h"
 #include "schemamodel.h"
 #include "randutils.h"
+#include "ecs.h"
+#include "text.h"
 
 using namespace std;
 
@@ -204,12 +206,12 @@ namespace Ossium
                 int_tree = new Tree<int>();
                 for (int i = 0; i < 50; i++)
                 {
-                    int_tree->add("TestNode_" + ToString(i), i * 2);
+                    int_tree->insert("TestNode_" + ToString(i), i * 2);
                 }
                 vector<Node<int>*> flat_tree = int_tree->getFlatTree();
                 for (int i = 0; i < 5; i++)
                 {
-                    int_tree->add("TestNode_" + ToString(i + 49), i * 100, flat_tree[49 % (i + 2)]);
+                    int_tree->insert("TestNode_" + ToString(i + 49), i * 100, flat_tree[49 % (i + 2)]);
                     TEST_ASSERT(int_tree->find("TestNode_" + ToString(i + 49))->data == i * 100);
                 }
                 vector<string> test_strings;
@@ -547,6 +549,29 @@ namespace Ossium
                 TEST_ASSERT(rng.Int(2, 4) == 4)
                 TEST_ASSERT(ToString(rng.Vector2()) == "(0.316376, 0.130707)");
                 TEST_ASSERT(ToString(rng.UnitVector2()) == "(0.915036, 0.403373)");
+            }
+        };
+
+        class EntitySerialisationTests : public UnitTest
+        {
+        public:
+            void RunTest()
+            {
+                EntityComponentSystem ecs;
+                Entity* e = ecs.CreateEntity();
+
+                JSON data;
+                data.Import("assets/test_entity_serialise_in.json");
+                string rawData = data.ToString();
+                e->FromString(rawData);
+
+                cout << "Entity width and height after serialisation: " << e->GetComponent<Text>()->width << " x " << e->GetComponent<Text>()->height << endl;
+
+                cout << "Entity ToString(): " << e->ToString() << endl;
+
+                JSON output(e->ToString());
+                output.Export("assets/test_entity_serialise_out.json");
+
             }
         };
 
