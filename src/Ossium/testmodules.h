@@ -565,7 +565,9 @@ namespace Ossium
                 string rawData = data.ToString();
                 e->FromString(rawData);
 
-                cout << "Entity width and height after serialisation: " << e->GetComponent<Text>()->width << " x " << e->GetComponent<Text>()->height << endl;
+                /// Should have been set to 1024x768 upon serialisation
+                TEST_ASSERT(e->GetComponent<Text>()->width == 1024);
+                TEST_ASSERT(e->GetComponent<Text>()->height == 768);
 
                 cout << "Entity ToString(): " << e->ToString() << endl;
 

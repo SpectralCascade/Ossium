@@ -73,12 +73,11 @@ namespace Ossium
             {
                 /// Key consists of type and member name
                 string key = member_names[i];
-                /// Value is obtained directly from the member
-                string value;
                 void* member = GetMember(i);
                 if (member != nullptr)
                 {
-                    value = member_to_string[i](member, member_types[i]);
+                    /// Value is obtained directly from the member
+                    string value = member_to_string[i](member, member_types[i]);
                     /// Add the key-value pair to the JSON object
                     data[key] = value;
                 }
@@ -133,7 +132,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find member '%s' of type '%s' in JSON data during serialisation.", member_names[i], member_types[i]);
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find member '%s' of type '%s' in provided JSON data during serialisation.", member_names[i], member_types[i]);
                 }
             }
         }

@@ -3,7 +3,10 @@
     "Components" : {
         "2" : [{
             "width" : 1024,
-            "height" : 768
+            "height" : 768,
+            "position" : "(512.03, 256.0)",
+            "origin" : "(0.332, 0.223)",
+            "angle" : 257.43
         }]
     }
 }

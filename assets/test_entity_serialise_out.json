@@ -1,5 +1,10 @@
 {
     "Name" : "Entity",
     "Components" : {"2" : [{
+            "origin" : "(0.332, 0.223)",
+            "angle" : 257.43,
+            "height" : 768,
+            "position" : "(512.03, 256)",
+            "width" : 1024
         }]}
 }

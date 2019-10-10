@@ -173,6 +173,7 @@ namespace Ossium
         {
         public:
             DECLARE_COMPONENT(Texture);
+            CONSTRUCT_SCHEMA(SchemaRoot, MetaRect);
 
             virtual ~Texture(){};
 

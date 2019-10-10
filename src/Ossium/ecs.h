@@ -138,7 +138,6 @@ namespace Ossium
         {
             T* component = new T();
             component->entity = this;
-            SDL_Log("ADDED COMPONENT '%s' TO ENTITY!", component->__ecs_factory_.GetName().c_str());
             component->OnCreate();
             component->OnInitGraphics(renderer, layer);
             auto itr = components.find(GetComponentType<T>());
