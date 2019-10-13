@@ -546,7 +546,7 @@ namespace Ossium
                 cout << "Testing RNG values after seeding again..." << endl;
                 rng.Seed(12345);
                 TEST_ASSERT(rng.Int(-55, 142) == 129);
-                TEST_ASSERT(rng.Int(2, 4) == 4)
+                TEST_ASSERT(rng.Int(2, 4) == 4);
                 TEST_ASSERT(ToString(rng.Vector2()) == "(0.316376, 0.130707)");
                 TEST_ASSERT(ToString(rng.UnitVector2()) == "(0.915036, 0.403373)");
             }
@@ -569,7 +569,9 @@ namespace Ossium
                 TEST_ASSERT(e->GetComponent<Text>()->width == 1024);
                 TEST_ASSERT(e->GetComponent<Text>()->height == 768);
 
-                cout << "Entity ToString(): " << e->ToString() << endl;
+                ecs.CreateEntity(e);
+
+                cout << "ECS ToString(): " << ecs.ToString() << endl;
 
                 JSON output(e->ToString());
                 output.Export("assets/test_entity_serialise_out.json");

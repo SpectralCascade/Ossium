@@ -293,6 +293,16 @@ namespace Ossium
             return total;
         }
 
+        void SetGeneration(int generation)
+        {
+            nextId = generation;
+        }
+
+        int GetGeneration()
+        {
+            return nextId;
+        }
+
     private:
         /// Total number of nodes, NOT including the root node
         unsigned int total;

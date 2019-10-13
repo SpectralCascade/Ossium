@@ -148,6 +148,7 @@ namespace Ossium
         if (entity_itr != data.end())
         {
             JSON components_data(entity_itr->second);
+
             for (auto component : components_data)
             {
                 ComponentType compType = 0;
@@ -170,6 +171,29 @@ namespace Ossium
                     }
                     compsOfType[i]->FromString(componentData[i]);
                 }
+            }
+
+            /// This bit of code is needed in case components are dynamically removed,
+            /// in which case the ID generator values may be non-unique unless we serialise the counter.
+            entity_itr = data.find("CID Gen");
+            if (entity_itr != data.end())
+            {
+                componentCounter = Utilities::ToInt(entity_itr->second);
+            }
+            else
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to get component ID generator value. Using total components instead.");
+                componentCounter = components.empty() ? 0 : components.size();
+            }
+
+            entity_itr = data.find("ID");
+            if (entity_itr != data.end())
+            {
+                self->id = Utilities::ToInt(entity_itr->second);
+            }
+            else
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity ID! Identity conflicts may occur.");
             }
         }
         else
@@ -202,7 +226,10 @@ namespace Ossium
         }
         json_components += "}";
         data["Name"] = GetName();
+        data["ID"] = Utilities::ToString(self->id);
+        data["Parent"] = Utilities::ToString(self->parent != nullptr && self->parent->data != nullptr ? self->parent->id : -1);
         data["Components"] = json_components;
+        data["CID Gen"] = Utilities::ToString(componentCounter);
         return data.ToString();
     }
 
@@ -243,16 +270,6 @@ namespace Ossium
     {
     }
 
-    void Component::FromString(string& str)
-    {
-    }
-
-    string Component::ToString()
-    {
-        /// Empty JSON object
-        return JSON().ToString();
-    }
-
     Component::Component()
     {
     }
@@ -266,6 +283,16 @@ namespace Ossium
     Entity* Component::GetEntity()
     {
         return entity;
+    }
+
+    Uint16 Component::GetLocalID()
+    {
+        return localId;
+    }
+
+    string Component::GetID()
+    {
+        return Utilities::ToString(entity->GetID()) + "-" + Utilities::ToString(localId);
     }
 
     ///
@@ -426,6 +453,24 @@ namespace Ossium
     unsigned int EntityComponentSystem::GetTotalEntities()
     {
         return entityTree.size();
+    }
+
+    string EntityComponentSystem::ToString()
+    {
+        JSON serialised;
+        for (auto mappedEntity : entities)
+        {
+            Node<Entity*>* entity = mappedEntity.second;
+            if (entity != nullptr && entity->data != nullptr)
+            {
+                serialised[Utilities::ToString(entity->id)] = entity->data->ToString();
+            }
+        }
+        return "{\n\"Tree Generation\" : " + Utilities::ToString(entityTree.GetGeneration()) + "\n\"Entities\" : " + serialised.ToString() + "\n}";
+    }
+
+    void FromString(string& str)
+    {
     }
 
     EntityComponentSystem::~EntityComponentSystem()

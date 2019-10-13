@@ -386,11 +386,11 @@ namespace Ossium
                 schemaData = nullptr;                                                                   \
                 return data;                                                                            \
             }                                                                                           \
-            string ToString()                                                                           \
+            virtual string ToString()                                                                   \
             {                                                                                           \
                 return SCHEMA_TYPE::ToString();                                                         \
             }                                                                                           \
-            void FromString(string& str)                                                                \
+            virtual void FromString(string& str)                                                        \
             {                                                                                           \
                 SCHEMA_TYPE::FromString(str);                                                           \
             }

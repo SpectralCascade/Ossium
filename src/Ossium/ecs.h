@@ -11,6 +11,7 @@
 #include "renderer.h"
 #include "tree.h"
 #include "stringintern.h"
+#include "schemamodel.h"
 
 using namespace std;
 
@@ -109,6 +110,10 @@ namespace Ossium
         /// Returns the total number of entities
         unsigned int GetTotalEntities();
 
+        /// Serialise everything
+        string ToString();
+        void FromString(string& str);
+
     private:
         /// Vector of pointers to ALL component instances, inside an array ordered by component type.
         /// This is maintained because it's more efficient when updating or rendering lots of components
@@ -153,6 +158,8 @@ namespace Ossium
             }
             /// Add the component to the ECS controller
             controller->components[GetComponentType<T>()].push_back(component);
+            component->localId = componentCounter;
+            componentCounter++;
             return component;
         }
 
@@ -299,17 +306,40 @@ namespace Ossium
         /// Pointer to the node containing this entity
         Node<Entity*>* self;
 
+        /// Local component id generator. No-one should need more than 65536 components per entity, right...?
+        Uint16 componentCounter = 0;
+
+    };
+
+    struct ComponentSchema : public Schema<ComponentSchema, 1>
+    {
+        DECLARE_SCHEMA(ComponentSchema, Schema<ComponentSchema>);
+
+        M(Uint16, localId);
+
+        ///
+        /// Warning: extend max members before adding new members!
+        ///
+
     };
 
     /// Base class for all components
-    class Component
+    class Component : public ComponentSchema
     {
     public:
         friend class Entity;
         friend class EntityComponentSystem;
 
-        /// Returns a pointer to the entity this component is attached to
+        CONSTRUCT_SCHEMA(SchemaRoot, ComponentSchema);
+
+        /// Returns a pointer to the entity this component is attached to.
         Entity* GetEntity();
+
+        /// Returns the ID assigned by the entity this component is attached to.
+        Uint16 GetLocalID();
+
+        /// Returns the composite string ID created from the local ID and the attached entity ID.
+        string GetID();
 
     protected:
         /// These replace the constructor and destructor
@@ -326,12 +356,6 @@ namespace Ossium
 
         /// Each frame this method is called
         virtual void Update();
-
-        /// Sets up all serialized members from a JSON string representation.
-        virtual void FromString(string& str);
-
-        /// Generates a JSON object representation of this component.
-        virtual string ToString();
 
         /// Pointer to the entity that this component is attached to
         Entity* entity = nullptr;
@@ -351,6 +375,10 @@ namespace Ossium
         /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
         Component(const Component& copySource);
         Component& operator=(const Component& copySource) = delete;
+
+    private:
+        /// The local ID of this component assigned by the entity (set up in ComponentSchema)
+        Uint16 ComponentSchema::localId;
 
     };
 
