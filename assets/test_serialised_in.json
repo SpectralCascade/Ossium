@@ -1,17 +1,13 @@
 {
-    "OtherOtherSchema" : {
-        "testVector" : [111, 220, 53, -63],
-        "freshHello" : "SUP :P",
-        "degree" : "English lit.",
-        "freshFoo" : 77,
-        "wow" : -0.99
-    },
-    "SchemaExample" : {
-        "more" : 32.6,
-        "oh" : 9,
-        "hello" : "g'day mate",
-        "age" : 25.4,
-        "foo" : -747,
-        "bar" : 12345
-    }
+    "testVector2" : [111, 220, 53, -63],
+    "freshHello" : "SUP :P",
+    "degree" : "English lit.",
+    "freshFoo" : 77,
+    "wow" : -0.99,
+    "more" : 32.6,
+    "oh" : 9,
+    "hello" : "g'day mate",
+    "age" : 25.4,
+    "foo" : -747,
+    "bar" : 12345
 }

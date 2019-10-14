@@ -1,13 +1,28 @@
 {
     "ID" : 0,
-    "CID Gen" : 1,
+    "CID Gen" : 3,
     "Name" : "Entity",
     "Components" : {"2" : [{
-            "origin" : "(0.332, 0.223)",
             "angle" : 257.43,
             "height" : 768,
-            "position" : "(512.03, 256)",
-            "width" : 1024
+            "origin" : "(0.332, 0.223)",
+            "localId" : 0,
+            "width" : 1024,
+            "position" : "(512.03, 256)"
+        }, {
+            "angle" : 0,
+            "height" : 100,
+            "origin" : "(0.5, 0.5)",
+            "localId" : 1,
+            "width" : 100,
+            "position" : "(0, 0)"
+        }, {
+            "angle" : 0,
+            "height" : 0,
+            "origin" : "(0.5, 0.5)",
+            "localId" : 2,
+            "width" : 0,
+            "position" : "(0, 0)"
         }]},
     "Parent" : -1
 }

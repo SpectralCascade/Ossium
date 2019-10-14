@@ -62,7 +62,7 @@ namespace Ossium
         void FromString(string& str)
         {
             JSON data(str);
-            SerialiseSchema(&data);
+            SerialiseIn(&data);
         }
 
         /// Creates a JSON string with all the schema members.
@@ -89,40 +89,35 @@ namespace Ossium
             return Utilities::ToString(data);
         }
 
-        /// Creates a JSON object representation of this schema using all members of the local schema hierarchy.
-        /// WARNING: Creates a new JSON object. You have to delete the JSON object once you're done with it!
-        JSON* SerialiseSchema()
+        /// Creates key-values pairs using all members of the local schema hierarchy with the provided JSON object.
+        void SerialiseOut(JSON& data)
         {
-            JSON* data = new JSON();
             for (unsigned int i = 0; i < count; i++)
             {
                 /// Key consists of type and member name
                 string key = member_names[i];
                 /// Value is obtained directly from the member
-                string value;
                 void* member = GetMember(i);
                 if (member != nullptr)
                 {
-                    value = member_to_string[i](member, member_types[i]);
                     /// Add the key-value pair to the JSON object
-                    (*data)[key] = value;
+                    data[key] = member_to_string[i](member, member_types[i]);
                 }
                 else
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Could not get member '%s' at index [%d] during serialisation!", key.c_str(), i);
                 }
             }
-            return data;
         }
 
         /// Sets the values of all members in the local schema hierarchy using a JSON object representation of the schema
-        void SerialiseSchema(JSON* data)
+        void SerialiseIn(JSON& data)
         {
             for (unsigned int i = 0; i < count; i++)
             {
                 string key = string(member_names[i]);
-                auto itr = data->find(key);
-                if (itr != data->end())
+                auto itr = data.find(key);
+                if (itr != data.end())
                 {
                     bool success = member_from_string[i](GetMember(i), member_types[i], itr->second);
                     if (!success)
@@ -206,14 +201,12 @@ namespace Ossium
             return "(null)";
         }
 
-        static JSON* SerialiseSchema()
+        static void SerialiseOut(JSON& data)
         {
-            return new JSON();
         }
 
-        static void SerialiseSchema(JSON* data)
+        static void SerialiseIn(JSON& data)
         {
-            /// Do nothing
         }
 
         constexpr static const char* GetSchemaName()
@@ -287,6 +280,20 @@ namespace Ossium
                 return schema_local_count + BaseSchemaType::GetMemberCount();                                   \
             }
 
+    /// When you want to specify the maximum number of members of a base schema, use this macro instead e.g.
+    /// DECLARE_BASE_SCHEMA(ExampleType, 5) will generate schema code for a base type of Schema<ExampleType, 5>
+    /// This is necessary as DECLARE_SCHEMA() can't handle Schema<ExampleType, 5> due to the comma separator.
+    #define DECLARE_BASE_SCHEMA(TYPE, MAX_MEMBERS)                                                              \
+            private: typedef Schema<TYPE, MAX_MEMBERS> BaseSchemaType;                                          \
+            inline static unsigned int schema_local_count;                                                      \
+            inline static TYPE* schema_layout_ref;                                                              \
+            constexpr static const char* schema_local_typename = SID(#TYPE)::str;                               \
+            public:                                                                                             \
+            static unsigned int GetMemberCount()                                                                \
+            {                                                                                                   \
+                return schema_local_count + BaseSchemaType::GetMemberCount();                                   \
+            }
+
     ///
     /// Lambda definitions for serialising a particular member in a string format
     ///
@@ -313,6 +320,7 @@ namespace Ossium
     }
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
+    /// Also checks if the type is a pointer. If so, it gets the custom TO_STRING and FROM_STRING macros.
     #define M(TYPE, NAME)                                                                                                                                       \
             MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                     \
             {                                                                                                                                                   \
@@ -358,41 +366,26 @@ namespace Ossium
                 }                                                                                       \
                 return BASETYPE::GetMember(index);                                                      \
             }                                                                                           \
-            void SerialiseSchema(JSON* data)                                                            \
+            void SerialiseIn(JSON& data)                                                                \
             {                                                                                           \
-                string schema_name = string(SCHEMA_TYPE::GetSchemaName());                              \
-                auto itr = data->find(schema_name);                                                     \
-                if (itr != data->end())                                                                 \
-                {                                                                                       \
-                    if (itr->second.IsJSON())                                                           \
-                    {                                                                                   \
-                        JSON schemaData(static_cast<string>(itr->second));                              \
-                        SCHEMA_TYPE::SerialiseSchema(&schemaData);                                      \
-                    }                                                                                   \
-                }                                                                                       \
-                else                                                                                    \
-                {                                                                                       \
-                    SDL_Log("Warning: could not find key '%s' in JSON.", schema_name.c_str());          \
-                }                                                                                       \
-                BASETYPE::SerialiseSchema(data);                                                        \
+                SCHEMA_TYPE::SerialiseIn(data);                                                         \
+                BASETYPE::SerialiseIn(data);                                                            \
             }                                                                                           \
-            JSON* SerialiseSchema()                                                                     \
+            void SerialiseOut(JSON& data)                                                               \
             {                                                                                           \
-                JSON* data = BASETYPE::SerialiseSchema();                                               \
-                string schema_name = string(SCHEMA_TYPE::GetSchemaName());                              \
-                JSON* schemaData = SCHEMA_TYPE::SerialiseSchema();                                      \
-                (*data)[schema_name] = schemaData->ToString();                                          \
-                delete schemaData;                                                                      \
-                schemaData = nullptr;                                                                   \
-                return data;                                                                            \
+                BASETYPE::SerialiseOut(data);                                                           \
+                SCHEMA_TYPE::SerialiseOut(data);                                                        \
             }                                                                                           \
             virtual string ToString()                                                                   \
             {                                                                                           \
-                return SCHEMA_TYPE::ToString();                                                         \
+                JSON data;                                                                              \
+                SerialiseOut(data);                                                                     \
+                return data.ToString();                                                                 \
             }                                                                                           \
             virtual void FromString(string& str)                                                        \
             {                                                                                           \
-                SCHEMA_TYPE::FromString(str);                                                           \
+                JSON data = JSON(str);                                                                  \
+                SerialiseIn(data);                                                                      \
             }
 
 }

@@ -149,6 +149,16 @@ namespace Ossium
         {
             JSON components_data(entity_itr->second);
 
+            entity_itr = data.find("ID");
+            if (entity_itr != data.end())
+            {
+                self->id = Utilities::ToInt(entity_itr->second);
+            }
+            else
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity ID! Identity conflicts may occur.");
+            }
+
             for (auto component : components_data)
             {
                 ComponentType compType = 0;
@@ -186,15 +196,6 @@ namespace Ossium
                 componentCounter = components.empty() ? 0 : components.size();
             }
 
-            entity_itr = data.find("ID");
-            if (entity_itr != data.end())
-            {
-                self->id = Utilities::ToInt(entity_itr->second);
-            }
-            else
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity ID! Identity conflicts may occur.");
-            }
         }
         else
         {

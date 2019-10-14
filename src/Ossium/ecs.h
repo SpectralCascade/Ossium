@@ -142,6 +142,8 @@ namespace Ossium
         T* AddComponent(Renderer* renderer = nullptr, int layer = -1)
         {
             T* component = new T();
+            component->localId = componentCounter;
+            componentCounter++;
             component->entity = this;
             component->OnCreate();
             component->OnInitGraphics(renderer, layer);
@@ -158,8 +160,6 @@ namespace Ossium
             }
             /// Add the component to the ECS controller
             controller->components[GetComponentType<T>()].push_back(component);
-            component->localId = componentCounter;
-            componentCounter++;
             return component;
         }
 
@@ -313,8 +313,9 @@ namespace Ossium
 
     struct ComponentSchema : public Schema<ComponentSchema, 1>
     {
-        DECLARE_SCHEMA(ComponentSchema, Schema<ComponentSchema>);
+        DECLARE_BASE_SCHEMA(ComponentSchema, 1);
 
+    protected:
         M(Uint16, localId);
 
         ///
@@ -375,10 +376,6 @@ namespace Ossium
         /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
         Component(const Component& copySource);
         Component& operator=(const Component& copySource) = delete;
-
-    private:
-        /// The local ID of this component assigned by the entity (set up in ComponentSchema)
-        Uint16 ComponentSchema::localId;
 
     };
 

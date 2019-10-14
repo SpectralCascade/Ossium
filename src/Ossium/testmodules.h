@@ -519,15 +519,13 @@ namespace Ossium
                 JSON data;
                 data.Import("assets/test_serialised_in.json");
                 cout << endl << "Before serialising, foo == " << foo << " and degree == " << degree << endl;
-                SerialiseSchema(&data);
+                SerialiseIn(data);
                 cout << "After serialising, foo == " << foo << " and degree == " << degree << endl << endl;
 
                 cout << "Serialising OUT file 'assets/test_serialise_out.json'..." << endl << endl;
-                JSON* output = SerialiseSchema();
-                output->Export("assets/test_serialise_out.json");
-                delete output;
-                output = nullptr;
-
+                JSON output;
+                SerialiseOut(output);
+                output.Export("assets/test_serialise_out.json");
             }
 
         };
@@ -569,7 +567,7 @@ namespace Ossium
                 TEST_ASSERT(e->GetComponent<Text>()->width == 1024);
                 TEST_ASSERT(e->GetComponent<Text>()->height == 768);
 
-                ecs.CreateEntity(e);
+                e->AddComponent<Text>();
 
                 cout << "ECS ToString(): " << ecs.ToString() << endl;
 
