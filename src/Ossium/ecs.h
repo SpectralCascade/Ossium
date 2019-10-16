@@ -142,8 +142,6 @@ namespace Ossium
         T* AddComponent(Renderer* renderer = nullptr, int layer = -1)
         {
             T* component = new T();
-            component->localId = componentCounter;
-            componentCounter++;
             component->entity = this;
             component->OnCreate();
             component->OnInitGraphics(renderer, layer);
@@ -223,6 +221,10 @@ namespace Ossium
             return none;
         }
 
+        /// Returns a reference to the Component* array of a specified type.
+        /// Faster than the GetComponents() template but doesn't do any type conversion.
+        vector<Component*>& GetComponents(ComponentType compType);
+
         template <class T>
         bool HasComponent()
         {
@@ -297,7 +299,6 @@ namespace Ossium
         Entity& operator=(const Entity& source) = delete;
 
         /// Hashtable of components attached to this entity by type
-        /// TODO: Use a simple array instead for a lower memory footprint?
         unordered_map<ComponentType, vector<Component*>> components;
 
         /// Pointer to the system this entity exists in
@@ -306,17 +307,11 @@ namespace Ossium
         /// Pointer to the node containing this entity
         Node<Entity*>* self;
 
-        /// Local component id generator. No-one should need more than 65536 components per entity, right...?
-        Uint16 componentCounter = 0;
-
     };
 
-    struct ComponentSchema : public Schema<ComponentSchema, 1>
+    struct ComponentSchema : public Schema<ComponentSchema, 0>
     {
-        DECLARE_BASE_SCHEMA(ComponentSchema, 1);
-
-    protected:
-        M(Uint16, localId);
+        DECLARE_BASE_SCHEMA(ComponentSchema, 0);
 
         ///
         /// Warning: extend max members before adding new members!
@@ -336,11 +331,7 @@ namespace Ossium
         /// Returns a pointer to the entity this component is attached to.
         Entity* GetEntity();
 
-        /// Returns the ID assigned by the entity this component is attached to.
-        Uint16 GetLocalID();
-
-        /// Returns the composite string ID created from the local ID and the attached entity ID.
-        string GetID();
+        virtual Uint32 GetType() = 0;
 
     protected:
         /// These replace the constructor and destructor
@@ -366,8 +357,6 @@ namespace Ossium
         /// This is implemented automagically by the REGISTER_COMPONENT(TYPE) macro.
         virtual Component* Clone() = 0;
 
-        virtual Uint32 GetType() = 0;
-
         virtual ~Component();
 
         /// Only friend class Entity can instantiate components
@@ -377,6 +366,30 @@ namespace Ossium
         Component(const Component& copySource);
         Component& operator=(const Component& copySource) = delete;
 
+    };
+
+    template <class T, class dummy = void>
+    struct is_component
+    {
+        typedef Component type;
+
+        constexpr bool operator()()
+        {
+            return value;
+        }
+        constexpr static bool value = false;
+    };
+
+    template <class T>
+    struct is_component<T, typename enable_if<is_base_of<Component, T>::value, void>::type>
+    {
+        typedef T type;
+
+        constexpr bool operator()()
+        {
+            return value;
+        }
+        constexpr static bool value = true;
     };
 
     #define DECLARE_ABSTRACT_COMPONENT(TYPE)                                    \

@@ -567,8 +567,6 @@ namespace Ossium
                 TEST_ASSERT(e->GetComponent<Text>()->width == 1024);
                 TEST_ASSERT(e->GetComponent<Text>()->height == 768);
 
-                e->AddComponent<Text>();
-
                 cout << "ECS ToString(): " << ecs.ToString() << endl;
 
                 JSON output(e->ToString());

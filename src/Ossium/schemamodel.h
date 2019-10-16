@@ -319,12 +319,64 @@ namespace Ossium
         return string("");                                                  \
     }
 
+    #define REFPTR_FROM_STRING(TYPE)                                        \
+    [](void* member, const char* strtype, string data)                      \
+    {                                                                       \
+        if (strcmp (strtype, SID(#TYPE )::str ) == 0)                       \
+        {                                                                   \
+            Utilities::FromString(*(( TYPE *)member), "0");                 \
+            return true;                                                    \
+        }                                                                   \
+        return false;                                                       \
+    }
+
+    /// TODO: Optimise component id search, maybe store last known index of the component as id
+    /// e.g. upon creation localId = index? Only caveat is if components of the same type are removed,
+    /// the id becomes invalid.
+    #define REFPTR_TO_STRING(TYPE)                                                              \
+    [](void* member, const char* strtype)                                                       \
+    {                                                                                           \
+        if (strcmp(strtype, SID(#TYPE )::str) == 0)                                             \
+        {                                                                                       \
+            if ((*((void**)member)) == nullptr)                                                 \
+            {                                                                                   \
+                return string("0");                                                             \
+            }                                                                                   \
+            else if (is_base_of<Entity, remove_pointer<TYPE>::type>::value)                     \
+            {                                                                                   \
+                return Utilities::ToString((*((Entity**)member))->GetID());                     \
+            }                                                                                   \
+            else if (is_base_of<Component, remove_pointer<TYPE>::type>::value)                  \
+            {                                                                                   \
+                typedef is_component<remove_pointer<TYPE>::type>::type LCompType;               \
+                ComponentType compType = (*((LCompType**)member))->GetType();                   \
+                Entity* parentEntity = (*((LCompType**)member))->GetEntity();                   \
+                vector<Component*>& entComps = parentEntity->GetComponents(compType);           \
+                for (unsigned int i = 0, counti = entComps.empty() ? 0 : entComps.size(); i < counti; i++)      \
+                {                                                                                               \
+                    if (entComps[i] == *((LCompType**)member))                                                  \
+                    {                                                                                           \
+                        return Utilities::ToString(parentEntity->GetID())                                       \
+                                 + ":" + Utilities::ToString(compType) + ":" + Utilities::ToString(i);          \
+                    }                                                                                           \
+                }                                                                                               \
+                return string("0");                                                                             \
+            }                                                                                                   \
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member type \"%s\".", strtype);                \
+            return Utilities::ToString(*(( TYPE *)member));                                                     \
+        }                                                                                                       \
+        return string("0");                                                                                     \
+    }
+
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
     /// Also checks if the type is a pointer. If so, it gets the custom TO_STRING and FROM_STRING macros.
     #define M(TYPE, NAME)                                                                                                                                       \
             MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                     \
             {                                                                                                                                                   \
-                static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info =                                                         \
+                static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info = is_pointer<TYPE>::value ?                               \
+                    new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count,                                                        \
+                                    REFPTR_FROM_STRING( TYPE ), REFPTR_TO_STRING( TYPE ), schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME))     \
+                    :                                                                                                                                           \
                     new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count,                                                        \
                                     MEMBER_FROM_STRING( TYPE ), MEMBER_TO_STRING( TYPE ), schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME));    \
                 return *initialised_info;                                                                                                                       \

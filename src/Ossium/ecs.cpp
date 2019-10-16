@@ -95,6 +95,11 @@ namespace Ossium
         controller->entities.erase(self->id);
     }
 
+    vector<Component*>& Entity::GetComponents(ComponentType compType)
+    {
+        return components[compType];
+    }
+
     const int Entity::GetID()
     {
         return self->id;
@@ -183,19 +188,6 @@ namespace Ossium
                 }
             }
 
-            /// This bit of code is needed in case components are dynamically removed,
-            /// in which case the ID generator values may be non-unique unless we serialise the counter.
-            entity_itr = data.find("CID Gen");
-            if (entity_itr != data.end())
-            {
-                componentCounter = Utilities::ToInt(entity_itr->second);
-            }
-            else
-            {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to get component ID generator value. Using total components instead.");
-                componentCounter = components.empty() ? 0 : components.size();
-            }
-
         }
         else
         {
@@ -230,7 +222,6 @@ namespace Ossium
         data["ID"] = Utilities::ToString(self->id);
         data["Parent"] = Utilities::ToString(self->parent != nullptr && self->parent->data != nullptr ? self->parent->id : -1);
         data["Components"] = json_components;
-        data["CID Gen"] = Utilities::ToString(componentCounter);
         return data.ToString();
     }
 
@@ -284,16 +275,6 @@ namespace Ossium
     Entity* Component::GetEntity()
     {
         return entity;
-    }
-
-    Uint16 Component::GetLocalID()
-    {
-        return localId;
-    }
-
-    string Component::GetID()
-    {
-        return Utilities::ToString(entity->GetID()) + "-" + Utilities::ToString(localId);
     }
 
     ///
