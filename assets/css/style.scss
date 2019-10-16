@@ -4,40 +4,11 @@
 @import "{{ site.theme }}";
 
 body {
-  background-color: #16003d;
+  background-color: white;
 }
 
 p {
-  color: white;
-  background-color: #202020;
-}
-
-a {
-  color: #0090ff;
-}
-
-ul {
-  background-color: #202020;
-}
-
-li {
-  color: white;
-}
-
-h1 {
-  color: white;
-  background-color: #202020;
-  border-color: #606060;
-}
-
-h2 {
-  color: white;
-  background-color: #202020;
-}
-
-code {
-  color: white;
-  background-color: black;
+  color: black;
 }
 
 footer, section, header {
