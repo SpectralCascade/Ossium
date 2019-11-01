@@ -126,8 +126,8 @@ namespace Ossium
             /// Remove brackets
             str = str.substr(1, len - 2);
             /// Split and get the individual values
-            string xhalf = splitPairFirst(str, ',');
-            string yhalf = splitPair(str, ',');
+            string xhalf = splitLeft(str, ',');
+            string yhalf = splitRight(str, ',');
             x = ToFloat(xhalf);
             y = ToFloat(yhalf);
         }

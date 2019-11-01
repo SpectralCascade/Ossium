@@ -145,7 +145,7 @@ namespace Ossium
             return data;
         }
 
-        string splitPair(string data, char delimiter, string outputOnError)
+        string splitRight(string data, char delimiter, string outputOnError)
         {
             int index = data.find(delimiter);
             if (data[index] != delimiter)
@@ -159,7 +159,7 @@ namespace Ossium
             return data.substr(index + 1);
         }
 
-        string splitPairFirst(string data, char delimiter, string outputOnError)
+        string splitLeft(string data, char delimiter, string outputOnError)
         {
             int index = data.find(delimiter);
             if (data[index] != delimiter)

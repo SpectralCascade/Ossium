@@ -69,24 +69,8 @@ namespace Ossium
         string ToString()
         {
             JSON data;
-            for (unsigned int i = 0; i < count; i++)
-            {
-                /// Key consists of type and member name
-                string key = member_names[i];
-                void* member = GetMember(i);
-                if (member != nullptr)
-                {
-                    /// Value is obtained directly from the member
-                    string value = member_to_string[i](member, member_types[i]);
-                    /// Add the key-value pair to the JSON object
-                    data[key] = value;
-                }
-                else
-                {
-                    SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Could not get member '%s' at index [%d] during schema ToString()!", key.c_str(), i);
-                }
-            }
-            return Utilities::ToString(data);
+            SerialiseOut(data);
+            return data.ToString();
         }
 
         /// Creates key-values pairs using all members of the local schema hierarchy with the provided JSON object.
@@ -140,6 +124,11 @@ namespace Ossium
 
     protected:
         static size_t member_byte_offsets[MaximumMembers];
+
+        virtual void MapReference(string identdata, void** member)
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Reference mapping not implemented for a type deriving from schema type \"%s\"", schema_name);
+        }
 
     private:
         static function<bool(void*, const char*, string)> member_from_string[MaximumMembers];
@@ -319,53 +308,68 @@ namespace Ossium
         return string("");                                                  \
     }
 
-    #define REFPTR_FROM_STRING(TYPE)                                        \
-    [](void* member, const char* strtype, string data)                      \
-    {                                                                       \
-        if (strcmp (strtype, SID(#TYPE )::str ) == 0)                       \
-        {                                                                   \
-            Utilities::FromString(*(( TYPE *)member), "0");                 \
-            return true;                                                    \
-        }                                                                   \
-        return false;                                                       \
+    /// This doesn't actually convert ids to valid pointers; it merely attempts to map
+    /// the ids to valid pointers. The relevant ECS object does that once all objects are serialised.
+    /// Note schema members only support pointer types to Entity and Component-derived types, if the type is invalid the member is made null.
+    #define REFPTR_FROM_STRING(TYPE)                                                                                                            \
+    [this](void* member, const char* strtype, string data)                                                                                      \
+    {                                                                                                                                           \
+        if (strcmp(strtype, SID(#TYPE )::str) == 0)                                                                                             \
+        {                                                                                                                                       \
+            if (!data.empty() && data != "null")                                                                                                \
+            {                                                                                                                                   \
+                if (is_base_of<Entity, remove_pointer<TYPE>::type>::value ||                                                                    \
+                    is_base_of<Component, remove_pointer<TYPE>::type>::value)                                                                   \
+                {                                                                                                                               \
+                    MapReference(data, (void**)member);                                                                                         \
+                }                                                                                                                               \
+                else                                                                                                                            \
+                {                                                                                                                               \
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member reference type \"%s\".", strtype);                              \
+                }                                                                                                                               \
+            }                                                                                                                                   \
+            (*((void**)member)) = nullptr;                                                                                                      \
+            return true;                                                                                                                        \
+        }                                                                                                                                       \
+        return false;                                                                                                                           \
     }
 
     /// TODO: Optimise component id search, maybe store last known index of the component as id
     /// e.g. upon creation localId = index? Only caveat is if components of the same type are removed,
     /// the id becomes invalid.
-    #define REFPTR_TO_STRING(TYPE)                                                              \
-    [](void* member, const char* strtype)                                                       \
-    {                                                                                           \
-        if (strcmp(strtype, SID(#TYPE )::str) == 0)                                             \
-        {                                                                                       \
-            if ((*((void**)member)) == nullptr)                                                 \
-            {                                                                                   \
-                return string("0");                                                             \
-            }                                                                                   \
-            else if (is_base_of<Entity, remove_pointer<TYPE>::type>::value)                     \
-            {                                                                                   \
-                return Utilities::ToString((*((Entity**)member))->GetID());                     \
-            }                                                                                   \
-            else if (is_base_of<Component, remove_pointer<TYPE>::type>::value)                  \
-            {                                                                                   \
-                typedef is_component<remove_pointer<TYPE>::type>::type LCompType;               \
-                ComponentType compType = (*((LCompType**)member))->GetType();                   \
-                Entity* parentEntity = (*((LCompType**)member))->GetEntity();                   \
-                vector<Component*>& entComps = parentEntity->GetComponents(compType);           \
-                for (unsigned int i = 0, counti = entComps.empty() ? 0 : entComps.size(); i < counti; i++)      \
-                {                                                                                               \
-                    if (entComps[i] == *((LCompType**)member))                                                  \
-                    {                                                                                           \
-                        return Utilities::ToString(parentEntity->GetID())                                       \
-                                 + ":" + Utilities::ToString(compType) + ":" + Utilities::ToString(i);          \
-                    }                                                                                           \
-                }                                                                                               \
-                return string("0");                                                                             \
-            }                                                                                                   \
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member type \"%s\".", strtype);                \
-            return Utilities::ToString(*(( TYPE *)member));                                                     \
-        }                                                                                                       \
-        return string("0");                                                                                     \
+    #define REFPTR_TO_STRING(TYPE)                                                                          \
+    [](void* member, const char* strtype)                                                                   \
+    {                                                                                                       \
+        if (strcmp(strtype, SID(#TYPE )::str) == 0)                                                         \
+        {                                                                                                   \
+            if ((*((void**)member)) == nullptr)                                                             \
+            {                                                                                               \
+                return string("null");                                                                      \
+            }                                                                                               \
+            else if (is_base_of<Entity, remove_pointer<TYPE>::type>::value)                                 \
+            {                                                                                               \
+                return Utilities::ToString((*((Entity**)member))->GetID());                                 \
+            }                                                                                               \
+            else if (is_base_of<Component, remove_pointer<TYPE>::type>::value)                              \
+            {                                                                                               \
+                typedef is_component<remove_pointer<TYPE>::type>::type LCompType;                           \
+                ComponentType compType = (*((LCompType**)member))->GetType();                               \
+                Entity* parentEntity = (*((LCompType**)member))->GetEntity();                               \
+                vector<Component*>& entComps = parentEntity->GetComponents(compType);                       \
+                for (unsigned int i = 0, counti = entComps.empty() ? 0 : entComps.size(); i < counti; i++)  \
+                {                                                                                           \
+                    if (entComps[i] == *((LCompType**)member))                                              \
+                    {                                                                                       \
+                        return Utilities::ToString(parentEntity->GetID())                                   \
+                                 + ":" + Utilities::ToString(compType) + ":" + Utilities::ToString(i);      \
+                    }                                                                                       \
+                }                                                                                           \
+                return string("null");                                                                      \
+            }                                                                                               \
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member reference type \"%s\".", strtype);  \
+            return Utilities::ToString(*(( TYPE *)member));                                                 \
+        }                                                                                                   \
+        return string("null");                                                                              \
     }
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class

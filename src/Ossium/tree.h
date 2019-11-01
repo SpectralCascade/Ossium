@@ -32,6 +32,27 @@ namespace Ossium
         vector<Node<T>*> children;
         /// Unique identifier
         int id;
+
+        void SetParent(Node<T>* node)
+        {
+            if (parent != nullptr)
+            {
+                for (auto itr = parent->children.begin(); itr != parent->children.end(); itr++)
+                {
+                    if (*itr == this)
+                    {
+                        parent->children.erase(itr);
+                        break;
+                    }
+                }
+            }
+            parent = node;
+            if (parent != nullptr)
+            {
+                parent->children.push_back(this);
+            }
+        }
+
     };
 
     /// A simple hierarchical data structure.
@@ -301,6 +322,11 @@ namespace Ossium
         int GetGeneration()
         {
             return nextId;
+        }
+
+        vector<Node<T>*> GetRoots()
+        {
+            return roots;
         }
 
     private:

@@ -131,10 +131,10 @@ namespace Ossium
                 TEST_ASSERT(strip(" t        ") == "t");
                 TEST_ASSERT(strip("  test again") == "test again");
                 TEST_ASSERT(strip("test    ") == "test");
-                TEST_ASSERT(splitPair("1:2", ':') == "2");
-                TEST_ASSERT(splitPairFirst("1:2", ':') == "1");
-                TEST_ASSERT(splitPairFirst("1111:2", ':') == "1111");
-                TEST_ASSERT(splitPairFirst("-3:55", ':') == "-3");
+                TEST_ASSERT(splitRight("1:2", ':') == "2");
+                TEST_ASSERT(splitLeft("1:2", ':') == "1");
+                TEST_ASSERT(splitLeft("1111:2", ':') == "1111");
+                TEST_ASSERT(splitLeft("-3:55", ':') == "-3");
 
                 SDL_Log("Type conversion tests.");
 
@@ -556,21 +556,26 @@ namespace Ossium
             void RunTest()
             {
                 EntityComponentSystem ecs;
-                Entity* e = ecs.CreateEntity();
 
                 JSON data;
-                data.Import("assets/test_entity_serialise_in.json");
-                string rawData = data.ToString();
-                e->FromString(rawData);
+                if (data.Import("assets/test_ecs_serialise_in.json"))
+                {
+                    string raw = data.ToString();
 
-                /// Should have been set to 1024x768 upon serialisation
-                TEST_ASSERT(e->GetComponent<Text>()->width == 1024);
-                TEST_ASSERT(e->GetComponent<Text>()->height == 768);
+                    cout << "ECS FromString() executing now..." << endl;
 
-                cout << "ECS ToString(): " << ecs.ToString() << endl;
+                    ecs.FromString(raw);
 
-                JSON output(e->ToString());
-                output.Export("assets/test_entity_serialise_out.json");
+                    /*Entity* test = ecs.CreateEntity();
+                    test->AddComponent<Text>()->testEnt = ecs.CreateEntity();
+                    test->GetComponent<Text>()->testEnt->AddComponent<Texture>();
+                    test->GetComponent<Text>()->testComp = test->GetComponent<Text>()->testEnt->GetComponent<Texture>();*/
+
+                    cout << "ECS ToString(): " << ecs.ToString() << endl;
+
+                    JSON output(ecs.ToString());
+                    output.Export("assets/test_ecs_serialise_out.json");
+                }
 
             }
         };

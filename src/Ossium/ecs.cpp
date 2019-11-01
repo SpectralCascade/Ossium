@@ -115,6 +115,11 @@ namespace Ossium
         return self->name;
     }
 
+    void Entity::MapReference(string ident, void** ptr)
+    {
+        controller->serialised_pointers[ident].insert(ptr);
+    }
+
     Entity* Entity::GetParent()
     {
         /// Check if this is the root entity, or the parent is the root entity
@@ -146,23 +151,29 @@ namespace Ossium
         return controller->CreateEntity(this);
     }
 
+    void Entity::SetParent(Entity* parent)
+    {
+        self->SetParent(parent != nullptr ? parent->self : nullptr);
+    }
+
     void Entity::FromString(string& str)
     {
         JSON data(str);
-        auto entity_itr = data.find("Components");
+
+        auto entity_itr = data.find("Name");
+        if (entity_itr != data.end())
+        {
+            SetName(entity_itr->second);
+        }
+        else
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity name!");
+        }
+
+        entity_itr = data.find("Components");
         if (entity_itr != data.end())
         {
             JSON components_data(entity_itr->second);
-
-            entity_itr = data.find("ID");
-            if (entity_itr != data.end())
-            {
-                self->id = Utilities::ToInt(entity_itr->second);
-            }
-            else
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity ID! Identity conflicts may occur.");
-            }
 
             for (auto component : components_data)
             {
@@ -197,31 +208,20 @@ namespace Ossium
 
     string Entity::ToString()
     {
-        /// TODO: improve formatting
         JSON data;
-        string json_components = "{";
+        JSON json_components;
         for (auto itr : components)
         {
-            if (json_components.length() > 1)
-            {
-                json_components += ", ";
-            }
-            json_components += "\"" + Utilities::ToString(itr.first) + "\"" + " : [";
+            vector<JString> component_array;
             for (int i = 0, counti = itr.second.empty() ? 0 : itr.second.size(); i < counti; i++)
             {
-                json_components += itr.second[i]->ToString();
-                if (i + 1 < counti)
-                {
-                    json_components += ", ";
-                }
+                component_array.push_back(itr.second[i]->ToString());
             }
-            json_components += "]";
+            json_components[Utilities::ToString(itr.first)] = Utilities::ToString(component_array);
         }
-        json_components += "}";
         data["Name"] = GetName();
-        data["ID"] = Utilities::ToString(self->id);
         data["Parent"] = Utilities::ToString(self->parent != nullptr && self->parent->data != nullptr ? self->parent->id : -1);
-        data["Components"] = json_components;
+        data["Components"] = json_components.ToString();
         return data.ToString();
     }
 
@@ -448,11 +448,148 @@ namespace Ossium
                 serialised[Utilities::ToString(entity->id)] = entity->data->ToString();
             }
         }
-        return "{\n\"Tree Generation\" : " + Utilities::ToString(entityTree.GetGeneration()) + "\n\"Entities\" : " + serialised.ToString() + "\n}";
+        return serialised.ToString();
     }
 
-    void FromString(string& str)
+    void EntityComponentSystem::FromString(string& str)
     {
+        /// TODO: don't clear..?
+        Clear();
+        JSON serialised(str);
+        /// Map of entities that need to be nested under a parent entity
+        vector<pair<Entity*, int>> parentMap;
+        for (auto itr : serialised)
+        {
+            if (!IsInt(itr.first))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load entity due to invalid ID '%s'!", itr.first.c_str());
+                continue;
+            }
+            int id = ToInt(itr.first);
+            if (id >= entityTree.GetGeneration())
+            {
+                /// TODO: make this more robust?
+                /// Make sure the tree always generates unique ids
+                entityTree.SetGeneration(id + 1);
+            }
+            Entity* entity = CreateEntity();
+
+            /// Replace generated id with serialised id
+            entities.erase(entity->self->id);
+            entity->self->id = id;
+            entities[id] = entity->self;
+
+            entity->FromString(itr.second);
+            JSON serialisedEntity(itr.second);
+            auto parentItr = serialisedEntity.find("Parent");
+            int ident = IsInt(parentItr->second) ? ToInt(parentItr->second) : -1;
+            if (parentItr != serialisedEntity.end())
+            {
+                if (ident >= 0)
+                {
+                    pair<Entity*, int> parentPair(entity, ToInt(parentItr->second));
+                    parentMap.push_back(parentPair);
+                }
+            }
+            else
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity parent!");
+            }
+        }
+        /// Now setup the entity hierarchy
+        for (auto itr : parentMap)
+        {
+            auto entityItr = entities.find(itr.second);
+            if (entityItr != entities.end())
+            {
+                itr.first->SetParent(entityItr->second->data);
+            }
+            else
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Entity with id '%d' does not exist in this ECS!", itr.second);
+            }
+        }
+        /// Finally, hook up the serialised pointers
+        for (auto itr : serialised_pointers)
+        {
+            if (IsInt(itr.first))
+            {
+                auto entityItr = entities.find(ToInt(itr.first));
+                if (entityItr != entities.end())
+                {
+                    for (void** i : itr.second)
+                    {
+                        *i = ((void*)entityItr->second->data);
+                    }
+                }
+                else
+                {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find entity with id '%s'.", itr.first.c_str());
+                }
+            }
+            else
+            {
+                string ent_id = splitLeft(itr.first, ':', "error");
+                if (IsInt(ent_id))
+                {
+                    /// Must be a component pointer
+                    auto entityItr = entities.find(ToInt(ent_id));
+                    if (entityItr != entities.end())
+                    {
+                        string comp_type = splitLeft(splitRight(itr.first, ':', "error"), ':', "error");
+                        if (IsInt(comp_type))
+                        {
+                            vector<Component*>& comps = entityItr->second->data->components[ToInt(comp_type)];
+                            string compid = splitRight(splitRight(itr.first, ':', "error"), ':', "error");
+                            if (IsInt(compid) && !comps.empty())
+                            {
+                                unsigned int id = ToInt(compid);
+                                if (comps.size() >= id)
+                                {
+                                    for (void** i : itr.second)
+                                    {
+                                        *i = ((void*)comps[id]);
+                                    }
+                                }
+                                else
+                                {
+                                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component with id '%s'.", itr.first.c_str());
+                                }
+                            }
+                            else
+                            {
+                                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component with raw id: %s.", compid.c_str());
+                            }
+                        }
+                        else
+                        {
+                            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component due to invalid type '%s'.", comp_type.c_str());
+                        }
+                    }
+                    else
+                    {
+                        SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find entity using component id '%s'.", itr.first.c_str());
+                    }
+                }
+                else
+                {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to extract entity id from key '%s'.", itr.first.c_str());
+                }
+            }
+        }
+        serialised_pointers.clear();
+
+        DEBUG_ASSERT(entities.size() == serialised.size(), "Input entities != created entities!");
+    }
+
+    vector<Entity*> EntityComponentSystem::GetRootEntities()
+    {
+        vector<Entity*> roots;
+        for (auto node : entityTree.GetRoots())
+        {
+            roots.push_back(node->data);
+        }
+        return roots;
     }
 
     EntityComponentSystem::~EntityComponentSystem()

@@ -402,9 +402,9 @@ namespace Ossium
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
         /// If an error occurs, these functions return the string outputOnError, or the data string if using the default value for outputOnError.
-        string splitPair(string data, char delimiter = ' ', string outputOnError = "%s");
+        string splitRight(string data, char delimiter = ' ', string outputOnError = "%s");
         /// Ditto but returns the first half instead.
-        string splitPairFirst(string data, char delimiter = ' ', string outputOnError = "%s");
+        string splitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
 
         ///
         /// Type query functions (for converting strings to specific data types).

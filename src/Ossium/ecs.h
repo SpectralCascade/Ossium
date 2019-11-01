@@ -6,6 +6,8 @@
 #include <vector>
 #include <string.h>
 #include <unordered_map>
+#include <set>
+#include <algorithm>
 #include <SDL.h>
 
 #include "renderer.h"
@@ -17,7 +19,6 @@ using namespace std;
 
 namespace Ossium
 {
-
     typedef Uint32 ComponentType;
 
     /// Declares a component type, declares a virtual copy method and constructor
@@ -31,6 +32,8 @@ namespace Ossium
                                                                                         \
         TYPE& operator=(const Entity& src) = delete;                                    \
         TYPE(const TYPE& src) = default;                                                \
+                                                                                        \
+        virtual void MapReference(string identdata, void** member);                     \
                                                                                         \
     private:                                                                            \
         static StrID __component_type;                                                  \
@@ -52,6 +55,10 @@ namespace Ossium
     Component* TYPE::ComponentFactory(void* target_entity)                                              \
     {                                                                                                   \
         return ((Entity*)target_entity)->AddComponent<TYPE>();                                          \
+    }                                                                                                   \
+    void TYPE::MapReference(string identdata, void** member)                                            \
+    {                                                                                                   \
+        entity->MapReference(identdata, member);                                                        \
     }                                                                                                   \
     Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                                    \
     Ossium::typesys::TypeFactory<Component> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
@@ -110,6 +117,9 @@ namespace Ossium
         /// Returns the total number of entities
         unsigned int GetTotalEntities();
 
+        /// Returns an array of all entities in the root of the hierarchy.
+        vector<Entity*> GetRootEntities();
+
         /// Serialise everything
         string ToString();
         void FromString(string& str);
@@ -129,6 +139,9 @@ namespace Ossium
 
         /// Hash table of entity nodes by id
         unordered_map<int, Node<Entity*>*> entities;
+
+        /// Direct map of ids to reference type members that point to entities or components
+        unordered_map<string, set<void**>> serialised_pointers;
 
     };
 
@@ -265,7 +278,11 @@ namespace Ossium
         string GetName();
         void SetName(string name);
 
+        /// Maps an id to a reference for serialisation.
+        void MapReference(string ident, void** ptr);
+
         Entity* GetParent();
+        void SetParent(Entity* parent);
 
         /// Returns this entity's ID
         const int GetID();
