@@ -87,7 +87,7 @@ namespace Ossium
         public:
             TypeFactory(const char* name, FactoryFunc factory)
             {
-                SDL_Log("Type factory instantiated for type \"%s\" [%d].", name, TypeRegistry<CoreType>::typeIdent);
+                //SDL_Log("Type factory instantiated for type \"%s\" [%d].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
                 type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
                 type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;
