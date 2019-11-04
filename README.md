@@ -1,17 +1,13 @@
 # About Ossium
-Ossium is a bare-bones 2D game engine being built in C++ with SDL 2 and Box2D. I'm developing this project because I want to learn how to create a highly crossplatform, lightweight 2D game engine with minimal dependencies and use it for other personal projects.
+Ossium is a bare-bones, cross-platform 2D game engine being built in C++ with SDL 2 and Box2D.
 
 # Features
 * Low number of dependencies (SDL 2 with a few small extension libraries and Box2D for physics)
-* Extendable input system with action bindings, states and input claiming
-* Flexible Entity Component System
-* Game event system with delay-based queuing
 * Extendable serialisation support via completely code-based schemas
-* Animation system based around timelines and animator clips
+* JSON serialisable Entity-Component System
+* Extendable input system with action bindings, states and input claiming
 * CSV and JSON parsing
-* Basic texture packer with mipmap generator
 * Audio playback and mixing
-* Vector maths functions and various intersection tests for primitive shapes
 * Simple unit testing framework
 * Rendering with layer support
 
@@ -31,7 +27,7 @@ If building from scratch, you will also need to build Box2D as a static lib and 
 
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on Windows 10 64-bit currently (and sometimes on (arm) Linux 64-bit)
-with the GNU GCC/G++ compiler. The engine is easily portable to Linux or Mac (you may need to change SDL 2 includes by find and replace of initial `<SDL` to `<SDL2/SDL` for Linux builds) and I intend it to be as crossplatform as SDL 2 at all times, so it's possible to make mobile builds and so on with some appropriate tweaks to the code.
+with the GNU GCC/G++ compiler. The engine is easily portable to Linux or Mac (you may need to change SDL 2 includes by find and replace of initial `<SDL` to `<SDL2/SDL` for Linux builds), and it should be possible to make mobile builds and so on with some appropriate tweaks to the code due to the cross-platform design around SDL 2 and Box2D.
 
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
 
