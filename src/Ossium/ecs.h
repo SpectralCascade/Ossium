@@ -43,11 +43,9 @@ namespace Ossium
     public:                                                                             \
         Uint32 GetType()                                                                \
         {                                                                               \
-            return __ecs_entry_.getType();                                              \
+            return __ecs_factory_.getType();                                            \
         }                                                                               \
-                                                                                        \
-        static Ossium::typesys::TypeRegistry<ComponentType> __ecs_entry_;               \
-        static Ossium::typesys::TypeFactory<Component> __ecs_factory_
+        static Ossium::typesys::TypeFactory<Component, ComponentType> __ecs_factory_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
@@ -60,8 +58,7 @@ namespace Ossium
     {                                                                                                   \
         entity->MapReference(identdata, member);                                                        \
     }                                                                                                   \
-    Ossium::typesys::TypeRegistry<ComponentType> TYPE::__ecs_entry_;                                    \
-    Ossium::typesys::TypeFactory<Component> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
+    Ossium::typesys::TypeFactory<Component, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
     StrID TYPE::__component_type = SID(#TYPE)::str;                                                     \
                                                                                                         \
     TYPE* TYPE::Clone()                                                                                 \
@@ -73,7 +70,7 @@ namespace Ossium
     template<class T>
     ComponentType GetComponentType()
     {
-        return T::__ecs_entry_.getType();
+        return T::__ecs_factory_.getType();
     }
 
     /// Dynamic type checking

@@ -28,9 +28,9 @@ namespace Ossium
         template<class BaseType>
         class TypeRegistry
         {
-        private:
-            static BaseType nextTypeIdent;
-            BaseType typeIdent;
+        protected:
+            static Uint32 nextTypeIdent;
+            Uint32 typeIdent;
 
         public:
             TypeRegistry()
@@ -39,7 +39,7 @@ namespace Ossium
                 nextTypeIdent++;
             }
 
-            const BaseType getType()
+            const Uint32 getType()
             {
                 return typeIdent;
             }
@@ -48,13 +48,19 @@ namespace Ossium
             {
                 return (Uint32)nextTypeIdent;
             }
+
+            static bool IsValidType(Uint32 id)
+            {
+                return id < GetTotalTypes();
+            }
+
         };
 
         template<class BaseType>
-        BaseType TypeRegistry<BaseType>::nextTypeIdent = 0;
+        Uint32 TypeRegistry<BaseType>::nextTypeIdent = 0;
 
-        template<class CoreType>
-        class TypeFactory
+        template<class CoreType, class IdType>
+        class TypeFactory : public TypeRegistry<CoreType>
         {
         private:
             typedef function<CoreType*(void*)> FactoryFunc;
@@ -76,22 +82,19 @@ namespace Ossium
                 return *sifmap;
             }
 
-            static Uint32 nextId;
-            Uint32 id;
             const char* key;
 
         public:
             TypeFactory(const char* name, FactoryFunc factory)
             {
-                id = nextId;
-                nextId++;
-                gen_map()[id] = factory;
-                type_name_map()[name] = id;
-                type_id_map()[id] = name;
+                SDL_Log("Type factory instantiated for type \"%s\" [%d].", name, TypeRegistry<CoreType>::typeIdent);
+                gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
+                type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
+                type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;
                 key = name;
             }
 
-            static CoreType* Create(Uint32 typeId, void* args)
+            static CoreType* Create(IdType typeId, void* args)
             {
                 auto itr = gen_map().find(typeId);
                 if (itr != gen_map().end())
@@ -113,7 +116,7 @@ namespace Ossium
                 return nullptr;
             }
 
-            static string GetName(Uint32 ident)
+            static string GetName(IdType ident)
             {
                 auto itr = type_id_map().find(ident);
                 if (itr != type_id_map().end())
@@ -123,14 +126,14 @@ namespace Ossium
                 return "";
             }
 
-            static Uint32 GetId(string name)
+            static IdType GetId(string name)
             {
                 auto itr = type_name_map().find(name);
                 if (itr != type_name_map().end())
                 {
                     return itr->second;
                 }
-                return 0;
+                return TypeRegistry<CoreType>::GetTotalTypes();
             }
 
             string GetName()
@@ -139,9 +142,6 @@ namespace Ossium
             }
 
         };
-
-        template<class CoreType>
-        Uint32 TypeFactory<CoreType>::nextId = 0;
 
     }
 

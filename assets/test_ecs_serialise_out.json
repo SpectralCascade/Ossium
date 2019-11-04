@@ -19,8 +19,8 @@
         },
     "5" : {
             "Components" : {
-                "2" : [{
-                "testComp" : "6:1:0",
+                "Texture" : [{
+                "testComp" : "6:Sprite:0",
                 "width" : 0,
                 "position" : "(0, 0)",
                 "height" : 0,
@@ -34,7 +34,7 @@
         },
     "6" : {
             "Components" : {
-                "1" : [{
+                "Sprite" : [{
                 "testComp" : "null",
                 "width" : 0,
                 "position" : "(0, 0)",

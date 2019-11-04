@@ -3,7 +3,7 @@
     "Name" : "Entity",
     "CID Gen" : 2,
     "Components" : {
-        "2" : [{
+        "Sprite" : [{
             "localId" : 0,
             "width" : 1024,
             "height" : 768,

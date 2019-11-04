@@ -16,12 +16,12 @@ namespace Ossium
 
     string GetComponentName(Uint32 id)
     {
-        return typesys::TypeFactory<Component>::GetName(id);
+        return typesys::TypeFactory<Component, ComponentType>::GetName(id);
     }
 
     ComponentType GetComponentType(string name)
     {
-        return typesys::TypeFactory<Component>::GetId(name);
+        return typesys::TypeFactory<Component, ComponentType>::GetId(name);
     }
 
     Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
@@ -180,22 +180,38 @@ namespace Ossium
                 ComponentType compType = 0;
                 /// TODO: map compType to the type id specified in a lookup table within the JSON data
                 /// to ensure component type ids are correct between versions/devices (due to static instantiation order uncertainty).
-                /// NOTE: ideally don't use component type names as these may be changed at any point during project development.
-                Utilities::FromString(compType, component.first);
+                compType = GetComponentType(component.first);
+                if (!typesys::TypeRegistry<Component>::IsValidType(compType))
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] due to invalid type!", component.first.c_str(), compType);
+                    continue;
+                }
+                //SDL_Log("Creating component of type \"%s\" [%d]", component.first.c_str(), compType);
                 vector<JString> componentData = component.second.ToArray();
                 vector<Component*>& compsOfType = components[compType];
                 unsigned int totalComponents = compsOfType.empty() ? 0 : compsOfType.size();
                 for (unsigned int i = 0, counti = componentData.empty() ? 0 : componentData.size(); i < counti; i++)
                 {
+                    Component* comp = nullptr;
                     if (i >= totalComponents)
                     {
-                        if (typesys::TypeFactory<Component>::Create(compType, (void*)this) == nullptr)
+                        comp = typesys::TypeFactory<Component, ComponentType>::Create(compType, (void*)this);
+                        if (comp == nullptr)
                         {
-                            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component [\"%s\" with id %d] to entity during Entity::FromString()!", GetComponentName(compType).c_str(), compType);
+                            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] to entity during Entity::FromString()!", component.first.c_str(), compType);
                             continue;
                         }
+                        else
+                        {
+                            //SDL_Log("Created component of type \"%s\" [%d].", GetComponentName(comp->GetType()).c_str(), comp->GetType());
+                            totalComponents++;
+                        }
                     }
-                    compsOfType[i]->FromString(componentData[i]);
+                    else
+                    {
+                        comp = compsOfType[i];
+                    }
+                    comp->FromString(componentData[i]);
                 }
             }
 
@@ -217,7 +233,7 @@ namespace Ossium
             {
                 component_array.push_back(itr.second[i]->ToString());
             }
-            json_components[Utilities::ToString(itr.first)] = Utilities::ToString(component_array);
+            json_components[GetComponentName((ComponentType)itr.first)] = Utilities::ToString(component_array);
         }
         data["Name"] = GetName();
         data["Parent"] = Utilities::ToString(self->parent != nullptr && self->parent->data != nullptr ? self->parent->id : -1);
@@ -348,7 +364,7 @@ namespace Ossium
 
     EntityComponentSystem::EntityComponentSystem()
     {
-        components = new vector<Component*>[typesys::TypeRegistry<ComponentType>::GetTotalTypes()];
+        components = new vector<Component*>[typesys::TypeRegistry<Component>::GetTotalTypes()];
     }
 
     void EntityComponentSystem::UpdateComponents()
@@ -425,7 +441,7 @@ namespace Ossium
         }
         /// Now we can safely remove all nodes from the tree and remove all components
         entityTree.clear();
-        for (unsigned int i = 0, counti = typesys::TypeRegistry<ComponentType>::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = typesys::TypeRegistry<Component>::GetTotalTypes(); i < counti; i++)
         {
             /// No need to delete components as they are deleted when their parent entity is destroyed
             components[i].clear();
@@ -537,9 +553,10 @@ namespace Ossium
                     if (entityItr != entities.end())
                     {
                         string comp_type = splitLeft(splitRight(itr.first, ':', "error"), ':', "error");
-                        if (IsInt(comp_type))
+                        ComponentType compTypeId = GetComponentType(comp_type);
+                        if (typesys::TypeRegistry<Component>::IsValidType(compTypeId))
                         {
-                            vector<Component*>& comps = entityItr->second->data->components[ToInt(comp_type)];
+                            vector<Component*>& comps = entityItr->second->data->components[compTypeId];
                             string compid = splitRight(splitRight(itr.first, ':', "error"), ':', "error");
                             if (IsInt(compid) && !comps.empty())
                             {
@@ -553,12 +570,12 @@ namespace Ossium
                                 }
                                 else
                                 {
-                                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component with id '%s'.", itr.first.c_str());
+                                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component '%s'.", itr.first.c_str());
                                 }
                             }
                             else
                             {
-                                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component with raw id: %s.", compid.c_str());
+                                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component of type \"%s\" [%d] with index '%s'.", comp_type.c_str(), compTypeId, compid.c_str());
                             }
                         }
                         else
@@ -594,7 +611,7 @@ namespace Ossium
 
     EntityComponentSystem::~EntityComponentSystem()
     {
-        for (Uint32 i = 0, counti = typesys::TypeRegistry<ComponentType>::GetTotalTypes(); i < counti; i++)
+        for (Uint32 i = 0, counti = typesys::TypeRegistry<Component>::GetTotalTypes(); i < counti; i++)
         {
             components[i].clear();
         }

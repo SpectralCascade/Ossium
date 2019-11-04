@@ -361,7 +361,7 @@ namespace Ossium
                     if (entComps[i] == *((LCompType**)member))                                              \
                     {                                                                                       \
                         return Utilities::ToString(parentEntity->GetID())                                   \
-                                 + ":" + Utilities::ToString(compType) + ":" + Utilities::ToString(i);      \
+                                 + ":" + GetComponentName(compType) + ":" + Utilities::ToString(i);         \
                     }                                                                                       \
                 }                                                                                           \
                 return string("null");                                                                      \
