@@ -1,30 +1,23 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "ecs.h"
+
 namespace Ossium
 {
-    const bool CONFIG_DEFAULT_FULLSCREEN = false;
-    const bool CONFIG_DEFAULT_VSYNC = true;
-    const float CONFIG_DEFAULT_FPS_CAP = 0;
-    const char CONFIG_DEFAULT_FILTERING = '1';
-    const unsigned int CONFIG_DEFAULT_MVOLUME = 100;
 
-    /// This struct contains configuration information for Ossium
-    struct Config
+    /// This general configuration information for Ossium
+    struct Config : public Schema<Config, 5>
     {
-        bool fullscreen = CONFIG_DEFAULT_FULLSCREEN;
-        bool vsync = CONFIG_DEFAULT_VSYNC;
-        float fpscap = CONFIG_DEFAULT_FPS_CAP;
-        char filtering = CONFIG_DEFAULT_FILTERING;
-        unsigned int mastervolume = CONFIG_DEFAULT_MVOLUME;
+        DECLARE_BASE_SCHEMA(Config, 5);
+
+        M(bool, fullscreen) = false;
+        M(bool, vsync) = true;
+        M(float, fpscap) = 0;
+        M(char, filtering) = '1';
+        M(unsigned int, mastervolume) = 100;
+
     };
-
-
-    /// Loads configuration settings for Ossium
-    bool LoadConfig(Config* config);
-
-    /// Saves configuration settings for Ossium
-    bool SaveConfig(Config config);
 
 }
 

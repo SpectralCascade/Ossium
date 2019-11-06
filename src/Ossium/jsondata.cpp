@@ -202,10 +202,14 @@ namespace Ossium
     {
         ifstream file(path.c_str());
         string toParse = Utilities::FileToString(file);
+        if (toParse.empty())
+        {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load JSON file '%s'!", path.c_str());
+            return false;
+        }
         file.close();
         if (!Parse(toParse))
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load JSON file '%s'!", path.c_str());
             return false;
         }
         SDL_Log("Imported JSON '%s' successfully.", path.c_str());

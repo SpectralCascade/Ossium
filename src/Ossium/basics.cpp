@@ -110,6 +110,10 @@ namespace Ossium
 
         string FileToString(ifstream& fileStream)
         {
+            if (!fileStream.is_open())
+            {
+                return "";
+            }
             stringstream conversionStream;
             conversionStream << fileStream.rdbuf();
             return conversionStream.str();

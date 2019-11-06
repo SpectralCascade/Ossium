@@ -1,19 +1,18 @@
+#include "window.h"
 #include "enginesystem.h"
 
 namespace Ossium
 {
 
-    EngineSystem::EngineSystem(Renderer* graphicsRenderer, JSON& configData, Window* engineWindow)
+    EngineSystem::EngineSystem(Renderer* graphicsRenderer, JSON& configData)
     {
         renderer = graphicsRenderer;
-        window = engineWindow;
         Init(configData);
     }
 
-    EngineSystem::EngineSystem(Renderer* graphicsRenderer, string configFilePath, Window* engineWindow)
+    EngineSystem::EngineSystem(Renderer* graphicsRenderer, string configFilePath)
     {
         renderer = graphicsRenderer;
-        window = engineWindow;
         if (!configFilePath.empty())
         {
             Init(configFilePath);
@@ -45,10 +44,7 @@ namespace Ossium
         /// Input handling phase
         while (SDL_PollEvent(&currentEvent) != 0)
         {
-            if (window != nullptr)
-            {
-                window->HandleEvents(currentEvent);
-            }
+            renderer->GetWindow()->HandleEvents(currentEvent);
             if (currentEvent.type == SDL_QUIT
                 #ifdef DEBUG
                 || (currentEvent.type == SDL_KEYUP && currentEvent.key.keysym.sym == SDLK_ESCAPE)

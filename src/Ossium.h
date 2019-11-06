@@ -3,6 +3,7 @@
 #include "Ossium/time.h"
 #include "Ossium/font.h"
 #include "Ossium/text.h"
+#include "Ossium/window.h"
 #include "Ossium/renderer.h"
 #include "Ossium/audio.h"
 #include "Ossium/colors.h"

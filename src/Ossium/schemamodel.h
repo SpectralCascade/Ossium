@@ -7,6 +7,7 @@
 #include "stringintern.h"
 #include "basics.h"
 #include "jsondata.h"
+#include <fstream>
 
 using namespace std;
 
@@ -62,7 +63,7 @@ namespace Ossium
         void FromString(string& str)
         {
             JSON data(str);
-            SerialiseIn(&data);
+            SerialiseIn(data);
         }
 
         /// Creates a JSON string with all the schema members.
@@ -71,6 +72,32 @@ namespace Ossium
             JSON data;
             SerialiseOut(data);
             return data.ToString();
+        }
+
+        bool Load(string filePath)
+        {
+            ifstream file(filePath);
+            string data = Utilities::FileToString(file);
+            if (!data.empty())
+            {
+                FromString(data);
+                file.close();
+                return true;
+            }
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load schema from file '%s'!", filePath.c_str());
+            return false;
+        }
+
+        bool Save(string filePath)
+        {
+            ofstream file(filePath);
+            if (file.is_open())
+            {
+                file << ToString();
+                file.close();
+                return true;
+            }
+            return false;
         }
 
         /// Creates key-values pairs using all members of the local schema hierarchy with the provided JSON object.

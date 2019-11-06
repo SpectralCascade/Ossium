@@ -5,7 +5,6 @@
 #include "resourcecontroller.h"
 #include "input.h"
 #include "renderer.h"
-#include "window.h"
 #include "delta.h"
 
 namespace Ossium
@@ -16,8 +15,8 @@ namespace Ossium
     public:
         friend class EntityComponentSystem;
 
-        EngineSystem(Renderer* graphicsRenderer, JSON& configData, Window* engineWindow = nullptr);
-        EngineSystem(Renderer* graphicsRenderer, string configFilePath = "", Window* engineWindow = nullptr);
+        EngineSystem(Renderer* graphicsRenderer, JSON& configData);
+        EngineSystem(Renderer* graphicsRenderer, string configFilePath = "");
         ~EngineSystem() = default;
 
         /// Configures the engine with a JSON file.
@@ -37,9 +36,6 @@ namespace Ossium
 
         /// The graphics renderer.
         Renderer* renderer = nullptr;
-
-        /// The main game window, if any.
-        Window* window = nullptr;
 
         /// All resources by file path.
         ResourceController resources;

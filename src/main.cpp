@@ -194,7 +194,11 @@ int main(int argc, char* argv[])
 
         /// Load configuration settings
         Config settings;
-        LoadConfig(&settings);
+        if (!settings.Load("ossium.cfg"))
+        {
+            SDL_Log("Creating new configuration file...");
+            settings.Save("ossium.cfg");
+        }
 
         /// Create the window
         Window mainWindow("Ossium Engine", 1024, 768, settings.fullscreen, SDL_WINDOW_SHOWN);
@@ -203,7 +207,7 @@ int main(int argc, char* argv[])
         Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
         //mainRenderer.SetAspectRatio(16, 9);
 
-        EngineSystem engine(&mainRenderer, "", &mainWindow);
+        EngineSystem engine(&mainRenderer, "");
 
         while (engine.Update())
         {
