@@ -412,6 +412,7 @@ namespace Ossium
             }                                                                                                                                                   \
             TYPE NAME = schema_m_##NAME()
 
+    /// Defines a bunch of necessary methods and members for the schema hierarchy to work with the inheritance hierarchy.
     #define CONSTRUCT_SCHEMA(BASETYPE, SCHEMA_TYPE)                                                     \
             private: constexpr static unsigned int local_depth = BASETYPE::GetLocalSchemaDepth() + 1;   \
             public:                                                                                     \
