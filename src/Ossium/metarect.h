@@ -27,10 +27,6 @@ namespace Ossium
         /// The origin point around which the rect rotates, as a percentage of the dimensions
         M(Point, origin);
 
-        M(Entity*, testEnt) = nullptr;
-
-        M(Component*, testComp) = nullptr;
-
     };
 
     /// Some sort of magical rectangle with basic positioning and rotation information...

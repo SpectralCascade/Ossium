@@ -6,10 +6,10 @@
 #include "Ossium.h"
 #include "teststuff.h"
 
-#ifdef UNIT_TESTS
+#ifdef DEBUG
 #include "Ossium/testmodules.h"
 using namespace Ossium::Test;
-#endif // UNIT_TESTS
+#endif // DEBUG
 
 using namespace std;
 using namespace Ossium;
@@ -97,93 +97,100 @@ ActionOutcome KeyAction(const KeyboardInput& data)
 int main(int argc, char* argv[])
 {
 
-    /// PHYSICS TESTING
+//    /// PHYSICS TESTING
+//
+//    B2_NOT_USED(argc);
+//	B2_NOT_USED(argv);
+//
+//	// Define the gravity vector (upside down for now as SDL inverts the Y axis).
+//	b2Vec2 gravity(0.0f, 9.81f);
+//
+//	// Construct a world object, which will hold and simulate the rigid bodies.
+//	b2World world(gravity);
+//
+//	// Define the ground body.
+//	b2BodyDef groundBodyDef;
+//	groundBodyDef.position.Set(PTM(1024 / 2), PTM(478.0f));
+//
+//	// Call the body factory which allocates memory for the ground body
+//	// from a pool and creates the ground box shape (also from a pool).
+//	// The body is also added to the world.
+//	b2Body* groundBody = world.CreateBody(&groundBodyDef);
+//
+//	// Define the ground box shape.
+//	b2PolygonShape groundBox;
+//
+//	// The extents are the half-widths of the box.
+//	groundBox.SetAsBox(PTM(1024 / 2), PTM(1));
+//
+//	// Add the ground fixture to the ground body.
+//	groundBody->CreateFixture(&groundBox, 0.0f);
+//
+//	// Define the dynamic body. We set its position and call the body factory.
+//	b2BodyDef bodyDef;
+//	bodyDef.type = b2_dynamicBody;
+//	bodyDef.position.Set(PTM(50), PTM(4.0f));
+//	bodyDef.angularVelocity = -4;
+//	bodyDef.linearVelocity = b2Vec2(PTM(50), 0);
+//	b2Body* body = world.CreateBody(&bodyDef);
+//
+//	// Define another box shape for our dynamic body.
+//	b2PolygonShape dynamicBox;
+//	dynamicBox.SetAsBox(PTM(32), PTM(32));
+//
+//	// Define the dynamic body fixture.
+//	b2FixtureDef fixtureDef;
+//	fixtureDef.shape = &dynamicBox;
+//
+//	// Set the box density to be non-zero, so it will be dynamic.
+//	fixtureDef.density = 1.0f;
+//
+//	// Override the default friction.
+//	fixtureDef.friction = 0.2f;
+//
+//	/// Bounciness!
+//	fixtureDef.restitution = 0.6f;
+//
+//	// Add the shape to the body.
+//	body->CreateFixture(&fixtureDef);
+//
+//	int velocityIterations = 6;
+//	int positionIterations = 2;
+//
+//	/// END PHYSICS SETUP
 
-    B2_NOT_USED(argc);
-	B2_NOT_USED(argv);
-
-	// Define the gravity vector (upside down for now as SDL inverts the Y axis).
-	b2Vec2 gravity(0.0f, 9.81f);
-
-	// Construct a world object, which will hold and simulate the rigid bodies.
-	b2World world(gravity);
-
-	// Define the ground body.
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(PTM(1024 / 2), PTM(478.0f));
-
-	// Call the body factory which allocates memory for the ground body
-	// from a pool and creates the ground box shape (also from a pool).
-	// The body is also added to the world.
-	b2Body* groundBody = world.CreateBody(&groundBodyDef);
-
-	// Define the ground box shape.
-	b2PolygonShape groundBox;
-
-	// The extents are the half-widths of the box.
-	groundBox.SetAsBox(PTM(1024 / 2), PTM(1));
-
-	// Add the ground fixture to the ground body.
-	groundBody->CreateFixture(&groundBox, 0.0f);
-
-	// Define the dynamic body. We set its position and call the body factory.
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(PTM(50), PTM(4.0f));
-	bodyDef.angularVelocity = -4;
-	bodyDef.linearVelocity = b2Vec2(PTM(50), 0);
-	b2Body* body = world.CreateBody(&bodyDef);
-
-	// Define another box shape for our dynamic body.
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(PTM(32), PTM(32));
-
-	// Define the dynamic body fixture.
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-
-	// Set the box density to be non-zero, so it will be dynamic.
-	fixtureDef.density = 1.0f;
-
-	// Override the default friction.
-	fixtureDef.friction = 0.2f;
-
-	/// Bounciness!
-	fixtureDef.restitution = 0.6f;
-
-	// Add the shape to the body.
-	body->CreateFixture(&fixtureDef);
-
-	int velocityIterations = 6;
-	int positionIterations = 2;
-
-	/// END PHYSICS SETUP
-
-    bool quit = false;
+//    bool quit = false;
     if (InitialiseOssium() < 0)
     {
         printf("ERROR: Failed to initialise Ossium engine.\n");
     }
     else
     {
-        #ifdef UNIT_TESTS
-        TEST_RUN(CircularBufferTests);
-        TEST_RUN(BasicUtilsTests);
-        TEST_RUN(TreeTests);
-        TEST_RUN(FSM_Tests);
-        TEST_RUN(EventSystemTests);
-        //TEST_RUN(CSV_Tests);
-        TEST_RUN(JSON_Tests);
-        TEST_RUN(ClockTests);
-        TEST_RUN(SchemaTests);
-        TEST_RUN(RandTests);
-        TEST_RUN(EntitySerialisationTests);
-        TEST_EVALUATE();
-        /*cout << "Enter any text to quit." << endl;
-        string a;
-        cin >> a;*/
-        return 0;
-        #endif // UNIT_TESTS
+        #ifdef DEBUG
+        if (argc > 1 && strcmp(argv[1], "--run-tests") == 0)
+        {
+            TEST_RUN(CircularBufferTests);
+            TEST_RUN(BasicUtilsTests);
+            TEST_RUN(TreeTests);
+            TEST_RUN(FSM_Tests);
+            TEST_RUN(EventSystemTests);
+            //TEST_RUN(CSV_Tests);
+            TEST_RUN(JSON_Tests);
+            TEST_RUN(ClockTests);
+            TEST_RUN(SchemaTests);
+            TEST_RUN(RandTests);
+            TEST_RUN(EntitySerialisationTests);
+            int testResult = 0;
+            if (!TEST_EVALUATE())
+            {
+                SDL_Log("Ono... a test failed :(");
+                testResult = -3;
+            }
+            string a;
+            cin >> a;
+            return testResult;
+        }
+        #endif
 
         /// Load configuration settings
         Config settings;
@@ -196,11 +203,19 @@ int main(int argc, char* argv[])
         Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
         //mainRenderer.SetAspectRatio(16, 9);
 
+        EngineSystem engine(&mainRenderer, "", &mainWindow);
+
+        while (engine.Update())
+        {
+            /// Do nothing
+        }
+/*
         /// Create an EntityComponentSystem
         EntityComponentSystem entitySystem;
 
-        /*b2World physWorld;
-        physWorld.*/
+        //ifstream sceneFile("assets/test_scene.json");
+        //entitySystem.FromString(JSON(Utilities::FileToString(sceneFile)));
+        //sceneFile.close();
 
         ///
         /// ECS and text rendering demo
@@ -323,7 +338,7 @@ int main(int argc, char* argv[])
         int countedFrames = 0;
 
         /// Initialise the global delta time and FPS controller
-        Global::delta.Init(settings);
+        Global::delta.Init();
 
         Point lightSpot(0.0f, 0.0f);
 
@@ -388,11 +403,11 @@ int main(int argc, char* argv[])
 
             /// Pixel-precise lighting effect that stays constant despite sprite size changes
             //SDL_Rect area = sprite->GetClip();
-            /*spriteAnim.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
-                float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
-                c = Color((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
-                return c;
-            });*/
+//            spriteAnim.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
+//                float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
+//                c = Color((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
+//                return c;
+//            });
 
             /// Rendering phase
             SDL_RenderClear(mainRenderer.GetRendererSDL());
@@ -428,7 +443,7 @@ int main(int argc, char* argv[])
             /// Update timer and FPS count
             countedFrames++;
             Global::delta.Update();
-        }
+        }*/
     }
     TerminateOssium();
     return 0;

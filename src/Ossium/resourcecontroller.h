@@ -2,45 +2,71 @@
 #define RESOURCECONTROLLER_H
 
 #include <string.h>
-#include <map>
+#include <unordered_map>
 #include <SDL.h>
 
+#include "basics.h"
 #include "renderer.h"
 
 using namespace std;
 
 namespace Ossium
 {
-    /// Standalone resource controller template class
-    template <class resourceType>
+
+    typedef Uint32 ResourceType;
+
+    /// Forward declaration for Resource class
+    class ResourceController;
+
+    #define DECLARE_RESOURCE(TYPE)                                                                                      \
+    friend class ResourceController;                                                                                    \
+    private:                                                                                                            \
+        static Resource* ResourceFactory(void* target_controller);                                                      \
+    public:                                                                                                             \
+        static Ossium::typesys::TypeFactory<Resource, ResourceType> __resource_factory_
+
+    #define REGISTER_RESOURCE(TYPE)                                                                                     \
+    Resource* TYPE::ResourceFactory(void* target_controller)                                                            \
+    {                                                                                                                   \
+        return ((ResourceController*)target_controller)->Load<TYPE>("");                                                \
+    }                                                                                                                   \
+    Ossium::typesys::TypeFactory<Resource, ResourceType> TYPE::__resource_factory_(SID( #TYPE )::str, ResourceFactory);
+
+    /// All resource classes e.g. images, audio clips etc. should inherit from this base class
+    class Resource
+    {
+    public:
+        Resource() = default;
+        virtual ~Resource() = 0;
+
+        virtual bool Load(string filePath) = 0;
+        virtual bool Init(string args = "");
+
+    protected:
+        ResourceController* controller;
+
+    };
+
+    /// Resource controller that deals with resources of various types e.g. images, audio clips.
     class ResourceController
     {
     public:
-        ResourceController<resourceType>()
-        {
-        };
+        ResourceController();
 
-        /// Loads a resource and adds it to the registry
-        resourceType* Load(string guid_path, int* loadArgs = NULL)
+        /// Attempts to load a resource
+        template<class T>
+        T* Load(string guid_path)
         {
             bool success = true;
-            resourceType* resource = new resourceType();
-            /// Load arguments aren't always necessary - allow resources that don't accept additional load arguments
-            if (loadArgs != NULL)
-            {
-                if (!resource->Load(guid_path, loadArgs))
-                {
-                    success = false;
-                }
-            }
-            else if (!resource->Load(guid_path))
+            T* resource = new T();
+            if (!resource->Load(guid_path))
             {
                 success = false;
             }
             if (success)
             {
                 /// Add to registry
-                registry[guid_path] = resource;
+                registry<T>()[guid_path] = resource;
             }
             else
             {
@@ -51,11 +77,12 @@ namespace Ossium
             return resource;
         };
 
-        /// Post-load initialisation method for general resources
-        bool Initialise(string guid_path)
+        /// Post-load initialisation method for resources.
+        template<class T>
+        bool Init(string guid_path)
         {
-            resourceType* resource = Find(guid_path);
-            if (resource != NULL)
+            T* resource = Find<T>(guid_path);
+            if (resource != nullptr)
             {
                 if (resource->Init())
                 {
@@ -69,69 +96,77 @@ namespace Ossium
             return false;
         };
 
-        /// Overload for textures
-        bool Initialise(string guid_path, Renderer* renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN)
-        {
-            resourceType* resource = Find(guid_path);
-            if (resource != NULL)
-            {
-                if (resource->Init(renderer, pixelFormatting))
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
-            }
-            return false;
-        };
-
         /// Destroys a resource and removes it from the registry
+        template<class T>
         void Free(string guid_path)
         {
-            if (registry.find(guid_path) != registry.end())
+            if (registry<T>().find(guid_path) != registry<T>().end())
             {
-                if (registry[guid_path] != NULL)
+                if (registry<T>()[guid_path] != nullptr)
                 {
-                    delete registry[guid_path];
+                    delete registry<T>()[guid_path];
                 }
-                registry.erase(guid_path);
+                registry<T>().erase(guid_path);
             }
         };
 
-        /// Returns pointer to a resource, or NULL if the GUID doesn't exist in the registry
-        resourceType* Find(string guid_path)
+        /// Returns pointer to a resource, or nullptr if the GUID doesn't exist in the registry
+        template<class T>
+        T* Find(string guid_path)
         {
-            if (registry.find(guid_path) == registry.end())
+            if (registry<T>().find(guid_path) == registry<T>().end())
             {
                 SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to retrieve resource with GUID '%s'!", guid_path.c_str());
-                return NULL;
+                return nullptr;
             }
-            return registry[guid_path];
+            return reinterpret_cast<T*>(registry<T>()[guid_path]);
         };
 
-        /// Destroys all resources and clears the registry
+        /// Destroys all resources of all types
         void FreeAll()
         {
-            /// Iterate through registry and delete everything
-            for (typename map<string, resourceType*>::iterator i = registry.begin(); i != registry.end(); i++)
+            /// Iterate through registries of all types and delete everything
+            for (ResourceType rtype = 0; rtype < typesys::TypeRegistry<Resource>::GetTotalTypes(); rtype++)
             {
-                if (i->second != NULL)
+                auto& reg = registryByType[rtype];
+                for (auto i = reg.begin(); i != reg.end(); i++)
+                {
+                    if (i->second != nullptr)
+                    {
+                        delete i->second;
+                    }
+                }
+                reg.clear();
+            }
+        };
+
+        /// Destroys all resources of a specific type
+        template<class T>
+        void FreeAll()
+        {
+            for (auto i = registry<T>().begin(); i != registry<T>().end(); i++)
+            {
+                if (i->second != nullptr)
                 {
                     delete i->second;
                 }
             }
-            registry.clear();
+            registry<T>().clear();
         };
 
     private:
-        /// We definitely don't want to copy instances of this class, for obvious reasons
-        ResourceController<resourceType>(const ResourceController& thisCopy);
-        ResourceController operator=(const ResourceController& thisCopy);
+        /// We definitely don't want to shallow copy resources
+        NOCOPY(ResourceController);
 
-        /// Lookup registry; key = guid_path, value = pointer to resource
-        map<string, resourceType*> registry;
+        /// Returns a reference to the registry for a particular type.
+        template<class T>
+        unordered_map<string, Resource*>& registry()
+        {
+            return *registryByType[T::__resource_factory::GetType()];
+        }
+
+        /// Lookup registry array, ordered by type id; key = guid_path, value = pointer to resource
+        unordered_map<string, Resource*>* registryByType;
 
     };
 

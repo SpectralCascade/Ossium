@@ -54,7 +54,7 @@ namespace Ossium
         template<class T>
         InputHandlerType GetInputHandlerType()
         {
-            return T::__input_type_entry_.getType();
+            return T::__input_type_entry_.GetType();
         }
 
         /// Interface for accessing InputHandler

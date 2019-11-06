@@ -25,6 +25,7 @@ namespace Ossium
     namespace typesys
     {
 
+        /// Used for statically registering types for checking types at runtime.
         template<class BaseType>
         class TypeRegistry
         {
@@ -39,7 +40,7 @@ namespace Ossium
                 nextTypeIdent++;
             }
 
-            const Uint32 getType()
+            const Uint32 GetType()
             {
                 return typeIdent;
             }
@@ -59,6 +60,7 @@ namespace Ossium
         template<class BaseType>
         Uint32 TypeRegistry<BaseType>::nextTypeIdent = 0;
 
+        /// Similar to the type registry, but also allows instantiation of specific types and registers type names.
         template<class CoreType, class IdType>
         class TypeFactory : public TypeRegistry<CoreType>
         {

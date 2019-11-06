@@ -1,6 +1,7 @@
 #include <SDL.h>
 
 #include "delta.h"
+#include "basics.h"
 
 namespace Ossium
 {
@@ -31,10 +32,16 @@ namespace Ossium
         previousTicks = SDL_GetTicks();
     }
 
-    void Delta::Init(Config& config)
+    void Delta::Init(JSON& config)
     {
         /// If the fps cap has a value of <= 0, no capping is applied
-        fpscap = config.fpscap;
+        string& data = config["FPS Cap"];
+        fpscap = IsFloat(data) ? ToFloat(data) : 0;
+        Init();
+    }
+
+    void Delta::Init()
+    {
         previousTicks = SDL_GetTicks();
     }
 

@@ -23,7 +23,7 @@ using namespace std;
 
 namespace Ossium
 {
-#ifdef UNIT_TESTS
+#ifdef DEBUG
 
     namespace Test
     {
@@ -36,7 +36,7 @@ namespace Ossium
             virtual void RunTest() = 0;
 
             /// Has this module passed the tests or not?
-            bool passed_test;
+            bool passed_test = true;
 
             /// Total test assertions
             static int total_test_asserts;
@@ -54,17 +54,27 @@ namespace Ossium
             /// Used for evaluating test conditions
             static bool assert_result;
 
+
         };
 
         /// Use this macro to run a unit test
-        #define TEST_RUN(MODULE)                                                                                    \
-                MODULE MODULE##_test_obj;                                                                            \
-                SDL_Log("\n\nRunning unit test '" #MODULE "':");                                                    \
-                MODULE##_test_obj.RunTest();                                                                         \
-                if (!MODULE##_test_obj.passed_test)                                                                  \
-                {                                                                                                   \
-                    UnitTest::total_passed_test_modules--;                                                          \
-                }                                                                                                   \
+        #define TEST_RUN(MODULE)                                                                                            \
+                SDL_Log("\n\nRunning unit test '" #MODULE "':");                                                            \
+                MODULE MODULE##_test_obj;                                                                                   \
+                try                                                                                                         \
+                {                                                                                                           \
+                    MODULE##_test_obj.RunTest();                                                                            \
+                }                                                                                                           \
+                catch (exception& e)                                                                                        \
+                {                                                                                                           \
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "\n!!!\nException occurred during test module %s:\n\n%s\n\n!!!",   \
+                                 #MODULE, e.what());                                                                        \
+                    MODULE##_test_obj.passed_test = false;                                                                  \
+                }                                                                                                           \
+                if (!MODULE##_test_obj.passed_test)                                                                         \
+                {                                                                                                           \
+                    UnitTest::total_passed_test_modules--;                                                                  \
+                }                                                                                                           \
                 SDL_Log("Test module '" #MODULE "' %s!\n\n", MODULE##_test_obj.passed_test ? "PASSED" : "FAILED")
 
         /// Use this macro to assert a test condition in a class inheriting from UnitTest
@@ -80,21 +90,22 @@ namespace Ossium
                 {                                                                                               \
                     total_passed_test_asserts++;                                                                \
                 }                                                                                               \
-                SDL_Log("[%s] Test condition '" #TEST_CONDITION "'.", assert_result ? "PASSED" : "!FAILED!" );  \
-                SDL_assert(assert_result);
+                SDL_Log("[%s] Test condition '" #TEST_CONDITION "'.", assert_result ? "PASSED" : "!FAILED!" );
 
         /// When you have finished running all unit tests, use this evaluation macro to log the final results,
         /// pause program execution if any tests failed, and reset the overall unit test results
-        #define TEST_EVALUATE()                                                                                     \
-                SDL_Log("Test evaluation results: %d of %d modules passed tests successfully.",                     \
-                        UnitTest::total_passed_test_modules, UnitTest::total_test_modules);                         \
-                SDL_Log("%d of %d test assertions passed successfully.", UnitTest::total_passed_test_asserts,       \
-                        UnitTest::total_test_asserts);                                                              \
-                SDL_assert(UnitTest::total_passed_test_modules == UnitTest::total_test_modules);                    \
-                UnitTest::total_passed_test_modules = 0;                                                            \
-                UnitTest::total_test_modules = 0;                                                                   \
-                UnitTest::total_test_asserts = 0;                                                                   \
-                UnitTest::total_passed_test_asserts = 0
+        #define TEST_EVALUATE()                                                                                         \
+                [] {                                                                                                    \
+                    SDL_Log("Test evaluation results: %d of %d modules passed tests successfully.",                     \
+                            UnitTest::total_passed_test_modules, UnitTest::total_test_modules);                         \
+                    SDL_Log("%d of %d test assertions passed successfully.", UnitTest::total_passed_test_asserts,       \
+                            UnitTest::total_test_asserts);                                                              \
+                    UnitTest::total_passed_test_modules = 0;                                                            \
+                    UnitTest::total_test_modules = 0;                                                                   \
+                    UnitTest::total_test_asserts = 0;                                                                   \
+                    UnitTest::total_passed_test_asserts = 0;                                                            \
+                    return UnitTest::total_passed_test_modules == UnitTest::total_test_modules;                         \
+                }()
 
         class BasicUtilsTests : public UnitTest
         {

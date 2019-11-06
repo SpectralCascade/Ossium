@@ -29,7 +29,7 @@ namespace Ossium
         template<class T>
         AnimationType getAnimationType()
         {
-            return T::__anim_type_entry_.getType();
+            return T::__anim_type_entry_.GetType();
         }
 
         /// Represents a single key frame in an animation clip (without specific data).

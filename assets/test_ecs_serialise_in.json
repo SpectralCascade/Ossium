@@ -2,14 +2,14 @@
     "5" : {
             "Components" : {
                 "Texture" : [{
-                "testComp" : "6:Sprite:0",
-                "width" : 0,
-                "position" : "(0, 0)",
-                "height" : 0,
-                "angle" : 0,
-                "origin" : "(0.5, 0.5)",
-                "testEnt" : 6
-            }]
+                    "testComp" : "6:Sprite:0",
+                    "width" : 0,
+                    "position" : "(0, 0)",
+                    "height" : 0,
+                    "angle" : 0,
+                    "origin" : "(0.5, 0.5)",
+                    "testEnt" : 6
+                }]
             },
             "Name" : "Entity",
             "Parent" : -1
@@ -17,14 +17,14 @@
     "6" : {
             "Components" : {
                 "Sprite" : [{
-                "testComp" : "null",
-                "width" : 0,
-                "position" : "(0, 0)",
-                "height" : 0,
-                "angle" : 0,
-                "origin" : "(0.5, 0.5)",
-                "testEnt" : "null"
-            }]
+                    "testComp" : "null",
+                    "width" : 0,
+                    "position" : "(0, 0)",
+                    "height" : 0,
+                    "angle" : 0,
+                    "origin" : "(0.5, 0.5)",
+                    "testEnt" : "null"
+                }]
             },
             "Name" : "Entity",
             "Parent" : -1

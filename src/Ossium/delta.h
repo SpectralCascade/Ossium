@@ -3,7 +3,7 @@
 #ifndef DELTA_H
 #define DELTA_H
 
-#include "config.h"
+#include "jsondata.h"
 
 namespace Ossium
 {
@@ -20,7 +20,8 @@ namespace Ossium
         void Update();
 
         /// Applies FPS capping configuration and initialises previousTicks to current ticks
-        void Init(Config& config);
+        void Init(JSON& config);
+        void Init();
 
         /// Resets previousTicks to current ticks
         void Reset();

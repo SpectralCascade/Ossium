@@ -43,7 +43,7 @@ namespace Ossium
     public:                                                                             \
         Uint32 GetType()                                                                \
         {                                                                               \
-            return __ecs_factory_.getType();                                            \
+            return __ecs_factory_.GetType();                                            \
         }                                                                               \
         static Ossium::typesys::TypeFactory<Component, ComponentType> __ecs_factory_
 
@@ -70,7 +70,7 @@ namespace Ossium
     template<class T>
     ComponentType GetComponentType()
     {
-        return T::__ecs_factory_.getType();
+        return T::__ecs_factory_.GetType();
     }
 
     /// Dynamic type checking
