@@ -285,6 +285,21 @@ namespace Ossium
     template<typename SchemaType, typename Type, typename strType, typename strName>
     unsigned int MemberInfo<SchemaType, Type, strType, strName>::index = 0;
 
+    /// Types that can be referenced via pointers should inherit from this CRTP mix-in class.
+    class SchemaReferable
+    {
+    public:
+        virtual ~SchemaReferable() = default;
+
+        virtual string GetReferenceID() = 0;
+
+        Uint32 GetReferableType();
+
+    private:
+        static typesys::TypeRegistry<SchemaReferable> ref_type_registry;
+
+    };
+
     #define DECLARE_SCHEMA(TYPE, BASE_SCHEMA_TYPE)                                                              \
             private: typedef BASE_SCHEMA_TYPE BaseSchemaType;                                                   \
             inline static unsigned int schema_local_count;                                                      \
@@ -345,14 +360,13 @@ namespace Ossium
         {                                                                                                                                       \
             if (!data.empty() && data != "null")                                                                                                \
             {                                                                                                                                   \
-                if (is_base_of<Entity, remove_pointer<TYPE>::type>::value ||                                                                    \
-                    is_base_of<Component, remove_pointer<TYPE>::type>::value)                                                                   \
+                if (is_base_of<SchemaReferable, remove_pointer<TYPE>::type>::value)                                                             \
                 {                                                                                                                               \
                     MapReference(data, (void**)member);                                                                                         \
                 }                                                                                                                               \
                 else                                                                                                                            \
                 {                                                                                                                               \
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member reference type \"%s\".", strtype);                              \
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Type \"%s\" is not SchemaReferable.", strtype);                                       \
                 }                                                                                                                               \
             }                                                                                                                                   \
             (*((void**)member)) = nullptr;                                                                                                      \
@@ -373,25 +387,9 @@ namespace Ossium
             {                                                                                               \
                 return string("null");                                                                      \
             }                                                                                               \
-            else if (is_base_of<Entity, remove_pointer<TYPE>::type>::value)                                 \
+            else if (is_base_of<SchemaReferable, remove_pointer<TYPE>::type>::value)                        \
             {                                                                                               \
-                return Utilities::ToString((*((Entity**)member))->GetID());                                 \
-            }                                                                                               \
-            else if (is_base_of<Component, remove_pointer<TYPE>::type>::value)                              \
-            {                                                                                               \
-                typedef is_component<remove_pointer<TYPE>::type>::type LCompType;                           \
-                ComponentType compType = (*((LCompType**)member))->GetType();                               \
-                Entity* parentEntity = (*((LCompType**)member))->GetEntity();                               \
-                vector<Component*>& entComps = parentEntity->GetComponents(compType);                       \
-                for (unsigned int i = 0, counti = entComps.empty() ? 0 : entComps.size(); i < counti; i++)  \
-                {                                                                                           \
-                    if (entComps[i] == *((LCompType**)member))                                              \
-                    {                                                                                       \
-                        return Utilities::ToString(parentEntity->GetID())                                   \
-                                 + ":" + GetComponentName(compType) + ":" + Utilities::ToString(i);         \
-                    }                                                                                       \
-                }                                                                                           \
-                return string("null");                                                                      \
+                return (*((SchemaReferable**)member))->GetReferenceID();                                    \
             }                                                                                               \
             SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member reference type \"%s\".", strtype);  \
             return Utilities::ToString(*(( TYPE *)member));                                                 \

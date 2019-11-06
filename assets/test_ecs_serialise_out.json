@@ -20,11 +20,11 @@
     "5" : {
             "Components" : {
                 "Texture" : [{
-                "origin" : "(0.5, 0.5)",
-                "angle" : 0,
-                "height" : 0,
+                "width" : 0,
                 "position" : "(0, 0)",
-                "width" : 0
+                "height" : 0,
+                "angle" : 0,
+                "origin" : "(0.5, 0.5)",
             }]
             },
             "Name" : "Entity",
@@ -33,11 +33,11 @@
     "6" : {
             "Components" : {
                 "Sprite" : [{
-                "origin" : "(0.5, 0.5)",
-                "angle" : 0,
-                "height" : 0,
+                "width" : 0,
                 "position" : "(0, 0)",
-                "width" : 0
+                "height" : 0,
+                "angle" : 0,
+                "origin" : "(0.5, 0.5)",
             }]
             },
             "Name" : "Entity",

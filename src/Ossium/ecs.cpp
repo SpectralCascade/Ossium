@@ -105,6 +105,11 @@ namespace Ossium
         return self->id;
     }
 
+    string Entity::GetReferenceID()
+    {
+        return Utilities::ToString(self->id);
+    }
+
     void Entity::SetName(string name)
     {
         self->name == name;
@@ -291,6 +296,22 @@ namespace Ossium
     Entity* Component::GetEntity()
     {
         return entity;
+    }
+
+    string Component::GetReferenceID()
+    {
+        ComponentType compType = GetType();
+        Entity* parentEntity = GetEntity();
+        vector<Component*>& entComps = parentEntity->GetComponents(compType);
+        for (unsigned int i = 0, counti = entComps.empty() ? 0 : entComps.size(); i < counti; i++)
+        {
+            if (entComps[i] == this)
+            {
+                return Utilities::ToString(parentEntity->GetID())
+                         + ":" + GetComponentName(compType) + ":" + Utilities::ToString(i);
+            }
+        }
+        return string("null");
     }
 
     ///

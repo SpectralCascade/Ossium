@@ -186,8 +186,6 @@ int main(int argc, char* argv[])
                 SDL_Log("Ono... a test failed :(");
                 testResult = -3;
             }
-            string a;
-            cin >> a;
             return testResult;
         }
         #endif

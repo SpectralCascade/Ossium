@@ -142,7 +142,7 @@ namespace Ossium
 
     };
 
-    class Entity
+    class Entity : public SchemaReferable
     {
     public:
         friend class EntityComponentSystem;
@@ -284,6 +284,9 @@ namespace Ossium
         /// Returns this entity's ID
         const int GetID();
 
+        /// Ditto but in string form, required by SchemaReferable derived types.
+        string GetReferenceID();
+
         /// This effectively replaces the copy constructor; entities can only be explicitly copied
         Entity* Clone();
 
@@ -334,18 +337,21 @@ namespace Ossium
     };
 
     /// Base class for all components
-    class Component : public ComponentSchema
+    /// WARNING: INHERITANCE ORDER MUST NOT BE CHANGED as it affects the STRUCTURAL LAYOUT which schemas are dependant upon.
+    class Component : public SchemaReferable, public ComponentSchema
     {
     public:
+        CONSTRUCT_SCHEMA(SchemaRoot, ComponentSchema);
+
         friend class Entity;
         friend class EntityComponentSystem;
-
-        CONSTRUCT_SCHEMA(SchemaRoot, ComponentSchema);
 
         /// Returns a pointer to the entity this component is attached to.
         Entity* GetEntity();
 
         virtual Uint32 GetType() = 0;
+
+        string GetReferenceID();
 
     protected:
         /// These replace the constructor and destructor
