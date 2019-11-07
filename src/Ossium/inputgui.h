@@ -18,7 +18,7 @@ namespace Ossium
         class InputGUI;
 
         /// GUI elements that can be clicked on can implement this interface
-        class InteractableGUI : public GraphicComponent
+        class InteractableGUI : public BaseGraphicComponent
         {
         public:
             friend class InputGUI;
@@ -64,7 +64,7 @@ namespace Ossium
         };
 
         /// Handles inputs for all attached or registered UI elements, such as buttons and sliders.
-        class InputGUI : public Component, public InputContext
+        class InputGUI : public BaseComponent, public InputContext
         {
         public:
             DECLARE_COMPONENT(InputGUI);

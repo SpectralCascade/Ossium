@@ -8,9 +8,4 @@ namespace Ossium
         registryByType = new unordered_map<string, Resource*>[typesys::TypeRegistry<Resource>::GetTotalTypes()];
     }
 
-    bool Resource::Init(string args)
-    {
-        return true;
-    }
-
 }

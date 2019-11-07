@@ -23,24 +23,21 @@ namespace Ossium
     private:                                                                                                            \
         static Resource* ResourceFactory(void* target_controller);                                                      \
     public:                                                                                                             \
-        static Ossium::typesys::TypeFactory<Resource, ResourceType> __resource_factory_
+        static Ossium::typesys::TypeFactory<Resource, ResourceType> __resource_factory
 
     #define REGISTER_RESOURCE(TYPE)                                                                                     \
     Resource* TYPE::ResourceFactory(void* target_controller)                                                            \
     {                                                                                                                   \
         return ((ResourceController*)target_controller)->Load<TYPE>("");                                                \
     }                                                                                                                   \
-    Ossium::typesys::TypeFactory<Resource, ResourceType> TYPE::__resource_factory_(SID( #TYPE )::str, ResourceFactory);
+    Ossium::typesys::TypeFactory<Resource, ResourceType> TYPE::__resource_factory(SID( #TYPE )::str, ResourceFactory);
 
     /// All resource classes e.g. images, audio clips etc. should inherit from this base class
     class Resource
     {
     public:
         Resource() = default;
-        virtual ~Resource() = 0;
-
-        virtual bool Load(string filePath) = 0;
-        virtual bool Init(string args = "");
+        virtual ~Resource() = default;
 
     protected:
         ResourceController* controller;
@@ -54,12 +51,12 @@ namespace Ossium
         ResourceController();
 
         /// Attempts to load a resource
-        template<class T>
-        T* Load(string guid_path)
+        template<typename T, typename ...Args>
+        T* Load(string guid_path, Args&&... args)
         {
             bool success = true;
             T* resource = new T();
-            if (!resource->Load(guid_path))
+            if (!resource->Load(guid_path, forward<Args>(args)...))
             {
                 success = false;
             }
@@ -77,14 +74,14 @@ namespace Ossium
             return resource;
         };
 
-        /// Post-load initialisation method for resources.
-        template<class T>
-        bool Init(string guid_path)
+        /// Attempts to initialise a resource post load.
+        template<typename T, typename ...Args>
+        bool Init(string guid_path, Args&&... args)
         {
             T* resource = Find<T>(guid_path);
             if (resource != nullptr)
             {
-                if (resource->Init())
+                if (resource->Init(forward<Args>(args)...))
                 {
                     return true;
                 }
@@ -94,7 +91,7 @@ namespace Ossium
                 SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
             }
             return false;
-        };
+        }
 
         /// Destroys a resource and removes it from the registry
         template<class T>
@@ -162,7 +159,7 @@ namespace Ossium
         template<class T>
         unordered_map<string, Resource*>& registry()
         {
-            return *registryByType[T::__resource_factory::GetType()];
+            return registryByType[T::__resource_factory.GetType()];
         }
 
         /// Lookup registry array, ordered by type id; key = guid_path, value = pointer to resource

@@ -34,9 +34,11 @@ namespace Ossium
         class Texture;
 
         /// This class wraps an SDL_Texture resource
-        class Image
+        class Image : public Resource
         {
         public:
+            DECLARE_RESOURCE(Image);
+
             Image() = default;
             Image(const Image& source);
             ~Image();
@@ -169,11 +171,11 @@ namespace Ossium
         };
 
         /// This class is used for rendering an image
-        class Texture : public GraphicComponent, public MetaRect
+        class Texture : public BaseGraphicComponent, public MetaRect
         {
         public:
             DECLARE_COMPONENT(Texture);
-            CONSTRUCT_SCHEMA(GraphicComponent, MetaRect);
+            CONSTRUCT_SCHEMA(BaseGraphicComponent, MetaRect);
 
             virtual ~Texture(){};
 

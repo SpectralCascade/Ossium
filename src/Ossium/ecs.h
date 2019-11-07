@@ -38,19 +38,19 @@ namespace Ossium
     private:                                                                            \
         static StrID __component_type;                                                  \
                                                                                         \
-        static Component* ComponentFactory(void* target_entity);                        \
+        static BaseComponent* ComponentFactory(void* target_entity);                        \
                                                                                         \
     public:                                                                             \
         Uint32 GetType()                                                                \
         {                                                                               \
             return __ecs_factory_.GetType();                                            \
         }                                                                               \
-        static Ossium::typesys::TypeFactory<Component, ComponentType> __ecs_factory_
+        static Ossium::typesys::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE)                                                                    \
-    Component* TYPE::ComponentFactory(void* target_entity)                                              \
+    BaseComponent* TYPE::ComponentFactory(void* target_entity)                                              \
     {                                                                                                   \
         return ((Entity*)target_entity)->AddComponent<TYPE>();                                          \
     }                                                                                                   \
@@ -58,7 +58,7 @@ namespace Ossium
     {                                                                                                   \
         entity->MapReference(identdata, member);                                                        \
     }                                                                                                   \
-    Ossium::typesys::TypeFactory<Component, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
+    Ossium::typesys::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
     StrID TYPE::__component_type = SID(#TYPE)::str;                                                     \
                                                                                                         \
     TYPE* TYPE::Clone()                                                                                 \
@@ -79,7 +79,7 @@ namespace Ossium
 
     /// Forward declarations for the controller class
     class Entity;
-    class Component;
+    class BaseComponent;
 
     /// Controls all entities and components at runtime
     class EntityComponentSystem
@@ -125,7 +125,7 @@ namespace Ossium
         /// Vector of pointers to ALL component instances, inside an array ordered by component type.
         /// This is maintained because it's more efficient when updating or rendering lots of components
         /// of a specific type each frame
-        vector<Component*>* components;
+        vector<BaseComponent*>* components;
 
         /// All entities currently pending destruction. These will be destroyed at the end of the frame.
         /// They cannot be removed once added until they are destroyed.
@@ -162,7 +162,7 @@ namespace Ossium
             }
             else
             {
-                vector<Component*> component_vector;
+                vector<BaseComponent*> component_vector;
                 component_vector.push_back(component);
                 components.insert({GetComponentType<T>(), component_vector});
             }
@@ -178,7 +178,7 @@ namespace Ossium
             auto itr = components.find(GetComponentType<T>());
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
-                vector<Component*>& ecs_components = controller->components[GetComponentType<T>()];
+                vector<BaseComponent*>& ecs_components = controller->components[GetComponentType<T>()];
                 /// First, remove the component pointer from the EntityComponentSystem
                 for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
                 {
@@ -233,7 +233,7 @@ namespace Ossium
 
         /// Returns a reference to the Component* array of a specified type.
         /// Faster than the GetComponents() template but doesn't do any type conversion.
-        vector<Component*>& GetComponents(ComponentType compType);
+        vector<BaseComponent*>& GetComponents(ComponentType compType);
 
         template <class T>
         bool HasComponent()
@@ -316,7 +316,7 @@ namespace Ossium
         Entity& operator=(const Entity& source) = delete;
 
         /// Hashtable of components attached to this entity by type
-        unordered_map<ComponentType, vector<Component*>> components;
+        unordered_map<ComponentType, vector<BaseComponent*>> components;
 
         /// Pointer to the system this entity exists in
         EntityComponentSystem* controller;
@@ -338,7 +338,7 @@ namespace Ossium
 
     /// Base class for all components
     /// WARNING: INHERITANCE ORDER MUST NOT BE CHANGED as it affects the STRUCTURAL LAYOUT which schemas are dependant upon.
-    class Component : public SchemaReferable, public ComponentSchema
+    class BaseComponent : public SchemaReferable, public ComponentSchema
     {
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, ComponentSchema);
@@ -375,23 +375,23 @@ namespace Ossium
         /// A cloning method is required for polymorphic copies, e.g. when copying an entity
         /// we need to perform a deep copy of different component types in a vector<Component*>.
         /// This is implemented automagically by the REGISTER_COMPONENT(TYPE) macro.
-        virtual Component* Clone() = 0;
+        virtual BaseComponent* Clone() = 0;
 
-        virtual ~Component();
+        virtual ~BaseComponent();
 
         /// Only friend class Entity can instantiate components
-        Component();
+        BaseComponent();
 
         /// Copying of components by the base copy constructor isn't allowed, use Clone() instead
-        Component(const Component& copySource);
-        Component& operator=(const Component& copySource) = delete;
+        BaseComponent(const BaseComponent& copySource);
+        BaseComponent& operator=(const BaseComponent& copySource) = delete;
 
     };
 
     template <class T, class dummy = void>
     struct is_component
     {
-        typedef Component type;
+        typedef BaseComponent type;
 
         constexpr bool operator()()
         {
@@ -401,7 +401,7 @@ namespace Ossium
     };
 
     template <class T>
-    struct is_component<T, typename enable_if<is_base_of<Component, T>::value, void>::type>
+    struct is_component<T, typename enable_if<is_base_of<BaseComponent, T>::value, void>::type>
     {
         typedef T type;
 
@@ -453,11 +453,11 @@ namespace Ossium
         void TYPE::Update(){}                                           \
         void TYPE::OnInitGraphics(Renderer* renderer, int layer)        \
         {                                                               \
-            GraphicComponent::OnInitGraphics(renderer, layer);          \
+            BaseGraphicComponent::OnInitGraphics(renderer, layer);          \
         }                                                               \
         void TYPE::OnRemoveGraphics()                                   \
         {                                                               \
-            GraphicComponent::OnRemoveGraphics();                       \
+            BaseGraphicComponent::OnRemoveGraphics();                       \
         }
 
     inline namespace Graphics
@@ -465,7 +465,7 @@ namespace Ossium
 
         /// A type of Component automatically registers and unregisters itself from a renderer instance upon creation.
         /// Also holds on to a reference to the renderer in use.
-        class GraphicComponent : public Graphic, public Component
+        class BaseGraphicComponent : public Graphic, public BaseComponent
         {
         public:
             /// Attempts to set the rendering layer of this graphic component. Note that you probably shouldn't call this
@@ -476,7 +476,7 @@ namespace Ossium
             int GetRenderLayer();
 
         protected:
-            DECLARE_ABSTRACT_COMPONENT(GraphicComponent);
+            DECLARE_ABSTRACT_COMPONENT(BaseGraphicComponent);
 
             virtual void Render(Renderer& renderer) = 0;
 

@@ -16,12 +16,12 @@ namespace Ossium
 
     string GetComponentName(Uint32 id)
     {
-        return typesys::TypeFactory<Component, ComponentType>::GetName(id);
+        return typesys::TypeFactory<BaseComponent, ComponentType>::GetName(id);
     }
 
     ComponentType GetComponentType(string name)
     {
-        return typesys::TypeFactory<Component, ComponentType>::GetId(name);
+        return typesys::TypeFactory<BaseComponent, ComponentType>::GetId(name);
     }
 
     Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
@@ -48,10 +48,10 @@ namespace Ossium
         entityCopy->self->name = self->name + " (copy)";
         for (auto i = components.begin(); i != components.end(); i++)
         {
-            vector<Component*> copiedComponents;
+            vector<BaseComponent*> copiedComponents;
             for (auto itr = i->second.begin(); itr != i->second.end(); itr++)
             {
-                Component* copyComponent = (*itr)->Clone();
+                BaseComponent* copyComponent = (*itr)->Clone();
                 copyComponent->entity = entityCopy;
                 copyComponent->OnClone();
                 copyComponent->OnInitGraphics(nullptr);
@@ -71,7 +71,7 @@ namespace Ossium
             {
                 if (itr->second[i] != nullptr)
                 {
-                    vector<Component*>& ecs_components = controller->components[itr->second[i]->GetType()];
+                    vector<BaseComponent*>& ecs_components = controller->components[itr->second[i]->GetType()];
                     for (auto j = ecs_components.begin(); j != ecs_components.end(); j++)
                     {
                         if (*j == itr->second[i])
@@ -95,7 +95,7 @@ namespace Ossium
         controller->entities.erase(self->id);
     }
 
-    vector<Component*>& Entity::GetComponents(ComponentType compType)
+    vector<BaseComponent*>& Entity::GetComponents(ComponentType compType)
     {
         return components[compType];
     }
@@ -186,21 +186,21 @@ namespace Ossium
                 /// TODO: map compType to the type id specified in a lookup table within the JSON data
                 /// to ensure component type ids are correct between versions/devices (due to static instantiation order uncertainty).
                 compType = GetComponentType(component.first);
-                if (!typesys::TypeRegistry<Component>::IsValidType(compType))
+                if (!typesys::TypeRegistry<BaseComponent>::IsValidType(compType))
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] due to invalid type!", component.first.c_str(), compType);
                     continue;
                 }
                 //SDL_Log("Creating component of type \"%s\" [%d]", component.first.c_str(), compType);
                 vector<JString> componentData = component.second.ToArray();
-                vector<Component*>& compsOfType = components[compType];
+                vector<BaseComponent*>& compsOfType = components[compType];
                 unsigned int totalComponents = compsOfType.empty() ? 0 : compsOfType.size();
                 for (unsigned int i = 0, counti = componentData.empty() ? 0 : componentData.size(); i < counti; i++)
                 {
-                    Component* comp = nullptr;
+                    BaseComponent* comp = nullptr;
                     if (i >= totalComponents)
                     {
-                        comp = typesys::TypeFactory<Component, ComponentType>::Create(compType, (void*)this);
+                        comp = typesys::TypeFactory<BaseComponent, ComponentType>::Create(compType, (void*)this);
                         if (comp == nullptr)
                         {
                             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] to entity during Entity::FromString()!", component.first.c_str(), compType);
@@ -255,54 +255,54 @@ namespace Ossium
     /// Component
     ///
 
-    Component::~Component()
+    BaseComponent::~BaseComponent()
     {
     }
 
-    void Component::OnCreate()
+    void BaseComponent::OnCreate()
     {
     }
 
-    void Component::OnDestroy()
+    void BaseComponent::OnDestroy()
     {
     }
 
-    void Component::OnInitGraphics(Renderer* renderer, int layer)
+    void BaseComponent::OnInitGraphics(Renderer* renderer, int layer)
     {
     }
 
-    void Component::OnRemoveGraphics()
+    void BaseComponent::OnRemoveGraphics()
     {
     }
 
-    void Component::OnClone()
+    void BaseComponent::OnClone()
     {
     }
 
-    void Component::Update()
+    void BaseComponent::Update()
     {
     }
 
-    Component::Component()
+    BaseComponent::BaseComponent()
     {
     }
 
-    Component::Component(const Component& copySource)
+    BaseComponent::BaseComponent(const BaseComponent& copySource)
     {
         /// Don't copy anything - we only care about child class values
         /// The entity reference should be constant once created
     }
 
-    Entity* Component::GetEntity()
+    Entity* BaseComponent::GetEntity()
     {
         return entity;
     }
 
-    string Component::GetReferenceID()
+    string BaseComponent::GetReferenceID()
     {
         ComponentType compType = GetType();
         Entity* parentEntity = GetEntity();
-        vector<Component*>& entComps = parentEntity->GetComponents(compType);
+        vector<BaseComponent*>& entComps = parentEntity->GetComponents(compType);
         for (unsigned int i = 0, counti = entComps.empty() ? 0 : entComps.size(); i < counti; i++)
         {
             if (entComps[i] == this)
@@ -315,13 +315,13 @@ namespace Ossium
     }
 
     ///
-    /// GraphicComponent
+    /// BaseGraphicComponent
     ///
 
     inline namespace Graphics
     {
 
-        void GraphicComponent::SetRenderLayer(int layer)
+        void BaseGraphicComponent::SetRenderLayer(int layer)
         {
             if (rendererInstance != nullptr)
             {
@@ -330,36 +330,36 @@ namespace Ossium
             }
         }
 
-        int GraphicComponent::GetRenderLayer()
+        int BaseGraphicComponent::GetRenderLayer()
         {
             return renderLayer;
         }
 
-        GraphicComponent::GraphicComponent()
+        BaseGraphicComponent::BaseGraphicComponent()
         {
         }
 
-        GraphicComponent::~GraphicComponent()
+        BaseGraphicComponent::~BaseGraphicComponent()
         {
         }
 
-        void GraphicComponent::OnCreate()
+        void BaseGraphicComponent::OnCreate()
         {
         }
 
-        void GraphicComponent::OnDestroy()
+        void BaseGraphicComponent::OnDestroy()
         {
         }
 
-        void GraphicComponent::OnClone()
+        void BaseGraphicComponent::OnClone()
         {
         }
 
-        void GraphicComponent::Update()
+        void BaseGraphicComponent::Update()
         {
         }
 
-        void GraphicComponent::OnInitGraphics(Renderer* renderer, int layer)
+        void BaseGraphicComponent::OnInitGraphics(Renderer* renderer, int layer)
         {
             renderLayer = layer >= 0 ? layer : renderLayer;
             rendererInstance = renderer != nullptr ? renderer : rendererInstance;
@@ -369,7 +369,7 @@ namespace Ossium
             }
         }
 
-        void GraphicComponent::OnRemoveGraphics()
+        void BaseGraphicComponent::OnRemoveGraphics()
         {
             if (rendererInstance != nullptr)
             {
@@ -385,7 +385,7 @@ namespace Ossium
 
     EntityComponentSystem::EntityComponentSystem()
     {
-        components = new vector<Component*>[typesys::TypeRegistry<Component>::GetTotalTypes()];
+        components = new vector<BaseComponent*>[typesys::TypeRegistry<BaseComponent>::GetTotalTypes()];
     }
 
     void EntityComponentSystem::UpdateComponents()
@@ -462,7 +462,7 @@ namespace Ossium
         }
         /// Now we can safely remove all nodes from the tree and remove all components
         entityTree.clear();
-        for (unsigned int i = 0, counti = typesys::TypeRegistry<Component>::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             /// No need to delete components as they are deleted when their parent entity is destroyed
             components[i].clear();
@@ -575,9 +575,9 @@ namespace Ossium
                     {
                         string comp_type = splitLeft(splitRight(itr.first, ':', "error"), ':', "error");
                         ComponentType compTypeId = GetComponentType(comp_type);
-                        if (typesys::TypeRegistry<Component>::IsValidType(compTypeId))
+                        if (typesys::TypeRegistry<BaseComponent>::IsValidType(compTypeId))
                         {
-                            vector<Component*>& comps = entityItr->second->data->components[compTypeId];
+                            vector<BaseComponent*>& comps = entityItr->second->data->components[compTypeId];
                             string compid = splitRight(splitRight(itr.first, ':', "error"), ':', "error");
                             if (IsInt(compid) && !comps.empty())
                             {
@@ -632,7 +632,7 @@ namespace Ossium
 
     EntityComponentSystem::~EntityComponentSystem()
     {
-        for (Uint32 i = 0, counti = typesys::TypeRegistry<Component>::GetTotalTypes(); i < counti; i++)
+        for (Uint32 i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             components[i].clear();
         }

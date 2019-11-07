@@ -1,16 +1,14 @@
 #ifndef ENGINESYSTEM_H
 #define ENGINESYSTEM_H
 
-#include "ecs.h"
-#include "resourcecontroller.h"
 #include "input.h"
-#include "renderer.h"
 #include "delta.h"
+#include "component.h"
 
 namespace Ossium
 {
 
-    class EngineSystem
+    class EngineSystem : public GlobalServices
     {
     public:
         friend class EntityComponentSystem;

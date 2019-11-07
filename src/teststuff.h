@@ -4,6 +4,7 @@
 #include "Ossium/sprite.h"
 #include "Ossium/keyboard.h"
 #include "Ossium/delta.h"
+#include "Ossium/component.h"
 
 using namespace std;
 using namespace Ossium;

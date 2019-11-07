@@ -19,6 +19,8 @@ namespace Ossium
         /// IMAGE ///
         ///       ///
 
+        REGISTER_RESOURCE(Image);
+
         /// No values or references are copied by default. You have to call Clone() to make a deep copy.
         Image::Image(const Image& source)
         {

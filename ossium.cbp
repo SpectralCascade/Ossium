@@ -99,6 +99,8 @@
 		<Unit filename="src/Ossium/circularbuffer.h" />
 		<Unit filename="src/Ossium/colors.cpp" />
 		<Unit filename="src/Ossium/colors.h" />
+		<Unit filename="src/Ossium/component.cpp" />
+		<Unit filename="src/Ossium/component.h" />
 		<Unit filename="src/Ossium/config.h" />
 		<Unit filename="src/Ossium/coremaths.cpp" />
 		<Unit filename="src/Ossium/coremaths.h" />
