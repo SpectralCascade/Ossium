@@ -6,7 +6,7 @@
 #include <SDL_ttf.h>
 
 #include "coremaths.h"
-#include "ecs.h"
+#include "component.h"
 #include "colors.h"
 #include "metarect.h"
 #include "font.h"
@@ -170,17 +170,42 @@ namespace Ossium
 
         };
 
+        struct TextureSchema : public MetaRect
+        {
+        public:
+            DECLARE_SCHEMA(TextureSchema, Schema<MetaRectSchema>);
+
+            /// Path to the image file this texture should display
+            M(string, imgPath);
+
+            /// The area of the source image that should be rendered
+            M(SDL_Rect, clip) = {0, 0, 0, 0};
+
+            /// Should this texture be flipped vertically, horizontally, or not at all?
+            M(SDL_RendererFlip, flip) = SDL_FLIP_NONE;
+
+            /// Colour and alpha modulation values. These are applied whenever the Render() method is called
+            M(SDL_Color, modulation) = {0xFF, 0xFF, 0xFF, 0xFF};
+
+            /// The blending mode for this texture. Applied whenever the Render() method is called
+            M(SDL_BlendMode, blending) = SDL_BLENDMODE_BLEND;
+
+        };
+
         /// This class is used for rendering an image
-        class Texture : public BaseGraphicComponent, public MetaRect
+        class Texture : public GraphicComponent, public TextureSchema
         {
         public:
             DECLARE_COMPONENT(Texture);
-            CONSTRUCT_SCHEMA(BaseGraphicComponent, MetaRect);
+            CONSTRUCT_SCHEMA(BaseGraphicComponent, TextureSchema);
 
             virtual ~Texture(){};
 
             /// Updates any derived instance if necessary.
             void Update();
+
+            /// Once loaded, find the source image.
+            void OnLoaded();
 
             /// Sets the alpha blending mode
             void SetBlendMode(SDL_BlendMode blend, bool immediate = false);
@@ -233,18 +258,6 @@ namespace Ossium
         protected:
             /// The source image that this texture renders a copy of
             Image* source = nullptr;
-
-            /// The area of the source image that should be rendered
-            SDL_Rect clip = {0, 0, 0, 0};
-
-            /// Should this texture be flipped vertically, horizontally, or not at all?
-            SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-            /// Colour and alpha modulation values. These are applied whenever the Render() method is called
-            SDL_Color modulation = {0xFF, 0xFF, 0xFF, 0xFF};
-
-            /// The blending mode for this texture. Applied whenever the Render() method is called
-            SDL_BlendMode blending = SDL_BLENDMODE_BLEND;
 
         };
 

@@ -207,6 +207,8 @@ int main(int argc, char* argv[])
 
         EngineSystem engine(&mainRenderer, "");
 
+        engine.LoadScene("assets/test_scene.json");
+
         while (engine.Update())
         {
             /// Do nothing

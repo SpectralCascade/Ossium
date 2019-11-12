@@ -6,13 +6,13 @@ namespace Ossium
 
     EngineSystem::EngineSystem(Renderer* graphicsRenderer, JSON& configData)
     {
-        renderer = graphicsRenderer;
+        MainRenderer = graphicsRenderer != nullptr ? graphicsRenderer : MainRenderer;
         Init(configData);
     }
 
     EngineSystem::EngineSystem(Renderer* graphicsRenderer, string configFilePath)
     {
-        renderer = graphicsRenderer;
+        MainRenderer = graphicsRenderer != nullptr ? graphicsRenderer : MainRenderer;
         if (!configFilePath.empty())
         {
             Init(configFilePath);
@@ -44,7 +44,7 @@ namespace Ossium
         /// Input handling phase
         while (SDL_PollEvent(&currentEvent) != 0)
         {
-            renderer->GetWindow()->HandleEvents(currentEvent);
+            MainRenderer->GetWindow()->HandleEvents(currentEvent);
             if (currentEvent.type == SDL_QUIT
                 #ifdef DEBUG
                 || (currentEvent.type == SDL_KEYUP && currentEvent.key.keysym.sym == SDLK_ESCAPE)
@@ -60,7 +60,7 @@ namespace Ossium
         ecs.UpdateComponents();
 
         /// Render everything
-        renderer->RenderPresent();
+        MainRenderer->RenderPresent();
 
         /// Destroy entities and components that are pending destruction
         /// now we've finished rendering.
@@ -69,6 +69,18 @@ namespace Ossium
         delta.Update();
 
         return !quit;
+    }
+
+    bool EngineSystem::LoadScene(string path)
+    {
+        JSON raw;
+        if (raw.Import(path))
+        {
+            string data = raw.ToString();
+            ecs.FromString(data);
+            return true;
+        }
+        return false;
     }
 
 }

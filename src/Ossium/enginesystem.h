@@ -26,17 +26,14 @@ namespace Ossium
         /// Returns false when the game should stop, otherwise returns true.
         bool Update();
 
+        /// Loads a game scene into the entity component system.
+        bool LoadScene(string path);
+
     private:
         NOCOPY(EngineSystem);
 
         /// The core entity-component system.
         EntityComponentSystem ecs;
-
-        /// The graphics renderer.
-        Renderer* renderer = nullptr;
-
-        /// All resources by file path.
-        ResourceController resources;
 
         /// The main input controller.
         InputController input;

@@ -13,6 +13,7 @@ namespace Ossium
     {
     protected:
         static ResourceController Resources;
+        static Renderer* MainRenderer;
 
     };
 

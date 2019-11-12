@@ -267,6 +267,10 @@ namespace Ossium
     {
     }
 
+    void BaseComponent::OnLoaded()
+    {
+    }
+
     void BaseComponent::OnInitGraphics(Renderer* renderer, int layer)
     {
     }
@@ -616,6 +620,14 @@ namespace Ossium
             }
         }
         serialised_pointers.clear();
+
+        for (unsigned int i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
+        {
+            for (auto component : components[i])
+            {
+                component->OnLoaded();
+            }
+        }
 
         DEBUG_ASSERT(entities.size() == serialised.size(), "Input entities != created entities!");
     }

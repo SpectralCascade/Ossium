@@ -56,7 +56,7 @@ namespace Ossium
 
         };
 
-        class DebugDraw : public BaseGraphicComponent
+        class DebugDraw : public GraphicComponent
         {
         public:
             DECLARE_COMPONENT(DebugDraw);

@@ -55,7 +55,11 @@ namespace Ossium
         T* Load(string guid_path, Args&&... args)
         {
             bool success = true;
-            T* resource = new T();
+            T* resource = Find<T>(guid_path);
+            if (resource == nullptr)
+            {
+                resource = new T();
+            }
             if (!resource->Load(guid_path, forward<Args>(args)...))
             {
                 success = false;
@@ -76,21 +80,60 @@ namespace Ossium
 
         /// Attempts to initialise a resource post load.
         template<typename T, typename ...Args>
-        bool Init(string guid_path, Args&&... args)
+        T* Init(string guid_path, Args&&... args)
         {
             T* resource = Find<T>(guid_path);
             if (resource != nullptr)
             {
-                if (resource->Init(forward<Args>(args)...))
+                resource->Init(forward<Args>(args)...);
+            }
+            else
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
+            }
+            return resource;
+        }
+
+        /// Attempts to load and initialise a resource.
+        template<typename T, typename ...Args>
+        T* LoadAndInit(string guid_path, Args&&... args)
+        {
+            T* resource = Find<T>(guid_path);
+            if (resource == nullptr)
+            {
+                resource = new T();
+            }
+            if (resource != nullptr)
+            {
+                if (resource->LoadAndInit(guid_path, forward<Args>(args)...))
                 {
-                    return true;
+                    /// Add to registry if it isn't already added.
+                    registry<T>()[guid_path] = resource;
+                }
+                else
+                {
+                    delete resource;
+                    resource = nullptr;
+                    SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to load resource '%s'.", guid_path.c_str());
                 }
             }
             else
             {
                 SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
             }
-            return false;
+            return resource;
+        }
+
+        /// Returns a resource, or attempts to load and initialise a resource if it does not exist.
+        template<typename T, typename ...Args>
+        T* Get(string guid_path, Args&&... args)
+        {
+            T* resource = Find<T>(guid_path);
+            if (resource == nullptr)
+            {
+                resource = LoadAndInit<T>(guid_path, forward<Args>(args)...);
+            }
+            return resource;
         }
 
         /// Destroys a resource and removes it from the registry

@@ -50,9 +50,9 @@ namespace Ossium
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
     #define REGISTER_COMPONENT(TYPE)                                                                    \
-    BaseComponent* TYPE::ComponentFactory(void* target_entity)                                              \
+    BaseComponent* TYPE::ComponentFactory(void* target_entity)                                          \
     {                                                                                                   \
-        return ((Entity*)target_entity)->AddComponent<TYPE>();                                          \
+        return ((Entity*)target_entity)->AddComponent<TYPE>(GlobalServices::MainRenderer);              \
     }                                                                                                   \
     void TYPE::MapReference(string identdata, void** member)                                            \
     {                                                                                                   \
@@ -354,9 +354,12 @@ namespace Ossium
         string GetReferenceID();
 
     protected:
-        /// These replace the constructor and destructor
+        /// These replace the constructor and destructor.
         virtual void OnCreate();
         virtual void OnDestroy();
+
+        /// Called once the entire related Entity Component System has been serialised.
+        virtual void OnLoaded();
 
         /// This follows up the OnCreate() call, allowing a component to initialise and register graphics with the provided renderer.
         virtual void OnInitGraphics(Renderer* renderer, int layer = -1);

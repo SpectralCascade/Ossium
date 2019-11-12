@@ -5,7 +5,7 @@
 #include "keyboard.h"
 #include "mouse.h"
 #include "stringintern.h"
-#include "ecs.h"
+#include "component.h"
 #include "callback.h"
 
 namespace Ossium
@@ -18,7 +18,7 @@ namespace Ossium
         class InputGUI;
 
         /// GUI elements that can be clicked on can implement this interface
-        class InteractableGUI : public BaseGraphicComponent
+        class InteractableGUI : public GraphicComponent
         {
         public:
             friend class InputGUI;

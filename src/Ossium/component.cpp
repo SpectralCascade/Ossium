@@ -7,4 +7,8 @@ namespace Ossium
 
     REGISTER_ABSTRACT_GRAPHIC_COMPONENT(GraphicComponent);
 
+    ResourceController GlobalServices::Resources;
+
+    Renderer* GlobalServices::MainRenderer = nullptr;
+
 }

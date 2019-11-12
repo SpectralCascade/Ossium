@@ -371,6 +371,16 @@ namespace Ossium
         {
         }
 
+        void Texture::OnLoaded()
+        {
+            if (source != nullptr && source->Initialised() && imgPath == source->GetPathName())
+            {
+                return;
+            }
+            /// Don't configure dimensions, they should be specified by the schema data.
+            SetSource(Resources.Get<Image>(imgPath, *rendererInstance), false);
+        }
+
         ///
         /// Setters
         ///
