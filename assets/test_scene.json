@@ -2,6 +2,10 @@
     "0" : {
             "Components" : {
                 "Texture" : [{
+                    "modulation" : "(255, 255, 255, 255)",
+                    "blending" : 1,
+                    "flip" : 0,
+                    "clip" : "(0, 0, 0, 0)",
                     "width" : 400,
                     "position" : "(150, 150)",
                     "height" : 200,

@@ -277,127 +277,7 @@ namespace Ossium
 
             DETECT_METHOD_P(FromString, string);
 
-            DETECT_METHOD(c_str);
-
         }
-
-        ///
-        /// FromString() functions
-        ///
-
-        void FromString(...);
-
-        template<typename T>
-        typename enable_if<has_FromString<T>::value, void>::type
-        FromString(T& obj, string data)
-        {
-            obj.FromString(data);
-        }
-
-        template<typename T>
-        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && !has_c_str<T>::value, void>::type
-        FromString(T& obj, string data)
-        {
-            stringstream str;
-            str.str("");
-            str.str(data);
-            if (!(str >> obj))
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to object data.", data.c_str());
-            }
-        }
-
-        /// Overload for string types (insertion operator breaks up strings by spaces)
-        template<typename T>
-        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && has_c_str<T>::value, void>::type
-        FromString(T& obj, string data)
-        {
-            /// Must be a string if it implements c_str(), right...? Not very foolproof. Actually, most of the SFINAE code is not foolproof. Suggestions for improving are welcome.
-            obj = data;
-        }
-
-        /// Converts string version of an iterable object into said object,
-        /// except for types implementing the c_str() method (i.e. strings).
-        template<typename T>
-        typename enable_if<!has_FromString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && is_range_erasable<T>::value && !has_c_str<T>::value, void>::type
-        FromString(T& obj, string data)
-        {
-            unsigned int index = 0;
-            JString jdata = JString(data);
-            for (auto itr = obj.begin(); itr != obj.end(); itr++)
-            {
-                string strValue = "";
-                JString element = jdata.ToElement(index);
-                if (element == "\\!EB!\\" && ++itr != obj.end())
-                {
-                    obj.erase(--itr, obj.end());
-                    break;
-                }
-                FromString(*itr, element);
-                index++;
-            }
-        }
-
-        ///
-        /// ToString() functions
-        ///
-
-        template<typename T>
-        typename enable_if<has_ToString<T>::value, string>::type
-        ToString(T&& obj)
-        {
-            return forward<T>(obj).ToString();
-        }
-
-        template<typename T>
-        typename enable_if<!has_ToString<T>::value && is_insertable<T>::value, string>::type
-        ToString(T& obj)
-        {
-            stringstream str;
-            str.str("");
-            if (!(str << obj))
-            {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string to data.");
-            }
-            return str.str();
-        }
-
-        /// Converts data of objects implementing simple iterators into a string format array (such as vector<int>),
-        /// except for types implementing the c_str() method (i.e. strings).
-        template<typename T>
-        typename enable_if<!has_ToString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && !has_c_str<T>::value, string>::type
-        ToString(T& data, typename T::iterator* start = nullptr)
-        {
-            stringstream dataStream;
-            dataStream.str("");
-            if (start == nullptr || !(*start >= data.begin() && *start < data.end()))
-            {
-                for (auto i = data.begin(); i != data.end();)
-                {
-                    dataStream << (*i);
-                    if (++i != data.end())
-                    {
-                        dataStream << ", ";
-                    }
-                }
-            }
-            else
-            {
-                for (auto i = *start; i != data.end();)
-                {
-                    dataStream << *i;
-                    if (++i != data.end())
-                    {
-                        dataStream << ", ";
-                    }
-                }
-            }
-            string converted = string("[") + dataStream.str() + string("]");
-            return converted;
-        }
-
-        /// Sinkhole for types that ToString() is not implemented for.
-        string ToString(...);
 
         /// Removes white space or some other specified character from both ends of a string
         string strip(string data, char optionalChar = ' ');
@@ -443,6 +323,187 @@ namespace Ossium
             }
             return nullptr;
         }
+
+        ///
+        /// FromString() functions
+        ///
+
+        void FromString(...);
+
+        template<typename T>
+        typename enable_if<has_FromString<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            obj.FromString(data);
+        }
+
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && !is_base_of<string, T>::value && !is_enum<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            stringstream str;
+            str.str("");
+            str.str(data);
+            if (!(str >> obj))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to object data.", data.c_str());
+            }
+        }
+
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && !is_base_of<string, T>::value && is_enum<T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            FromString((int&)obj, data);
+        }
+
+        /// Overload for string types (insertion operator breaks up strings by spaces).
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_insertable<T>::value && is_base_of<string, T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            obj = data;
+        }
+
+        /// Converts string version of an iterable object into said object (except for strings).
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && is_range_erasable<T>::value && !is_base_of<string, T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            unsigned int index = 0;
+            JString jdata = JString(data);
+            for (auto itr = obj.begin(); itr != obj.end(); itr++)
+            {
+                string strValue = "";
+                JString element = jdata.ToElement(index);
+                if (element == "\\!EB!\\" && ++itr != obj.end())
+                {
+                    obj.erase(--itr, obj.end());
+                    break;
+                }
+                FromString(*itr, element);
+                index++;
+            }
+        }
+
+        /// Get SDL_Color from string.
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_same<SDL_Color, T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            string value = "";
+            size_t index = 0;
+            for (auto c : data)
+            {
+                if (isdigit(c))
+                {
+                    value += c;
+                }
+                else if (c == ',')
+                {
+                    *((Uint8*)(((size_t)&obj) + index)) = (Uint8)ToInt(value);
+                    ++index;
+                    value = "";
+                }
+            }
+        }
+
+        /// Get SDL_Rect from string.
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_same<SDL_Rect, T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            string value = "";
+            size_t index = 0;
+            for (auto c : data)
+            {
+                if (isdigit(c) || c == '-')
+                {
+                    value += c;
+                }
+                else if (c == ',')
+                {
+                    *((Sint32*)(((size_t)&obj) + index)) = (Sint32)ToInt(value);
+                    ++index;
+                    value = "";
+                }
+            }
+        }
+
+        ///
+        /// ToString() functions
+        ///
+
+        template<typename T>
+        typename enable_if<has_ToString<T>::value, string>::type
+        ToString(T&& obj)
+        {
+            return forward<T>(obj).ToString();
+        }
+
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && is_insertable<T>::value, string>::type
+        ToString(T& obj)
+        {
+            stringstream str;
+            str.str("");
+            if (!(str << obj))
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string to data.");
+            }
+            return str.str();
+        }
+
+        /// Converts data of objects implementing simple iterators into a string format array (such as vector<int>),
+        /// except for types implementing the c_str() method (i.e. strings).
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && !is_base_of<string, T>::value, string>::type
+        ToString(T& data, typename T::iterator* start = nullptr)
+        {
+            stringstream dataStream;
+            dataStream.str("");
+            if (start == nullptr || !(*start >= data.begin() && *start < data.end()))
+            {
+                for (auto i = data.begin(); i != data.end();)
+                {
+                    dataStream << (*i);
+                    if (++i != data.end())
+                    {
+                        dataStream << ", ";
+                    }
+                }
+            }
+            else
+            {
+                for (auto i = *start; i != data.end();)
+                {
+                    dataStream << *i;
+                    if (++i != data.end())
+                    {
+                        dataStream << ", ";
+                    }
+                }
+            }
+            string converted = string("[") + dataStream.str() + string("]");
+            return converted;
+        }
+
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && is_same<SDL_Color, T>::value, string>::type
+        ToString(T& obj)
+        {
+            return "(" + ToString((int)obj.r) + ", " + ToString((int)obj.g) + ", " + ToString((int)obj.b) + ", " + ToString((int)obj.a) + ")";
+        }
+
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && is_same<SDL_Rect, T>::value, string>::type
+        ToString(T& obj)
+        {
+            return "(" + ToString((int)obj.x) + ", " + ToString((int)obj.y) + ", " + ToString((int)obj.w) + ", " + ToString((int)obj.h) + ")";
+        }
+
+        /// Sinkhole for types that ToString() is not implemented for.
+        string ToString(...);
 
     }
 
