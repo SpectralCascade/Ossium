@@ -16,9 +16,8 @@
                 "AudioSource" : [{
                     "samplePath" : "assets/test_audio.wav",
                     "looping" : 1,
-                    "playedVolume" : 1.0,
-                    "spatialAttenuation" : 0,
-                    "volume" : 1.0,
+                    "spatialAttenuation" : 50,
+                    "volume" : 0.3,
                     "panningAngle" : 0,
                     "targetVolume" : 0.1
                 }]

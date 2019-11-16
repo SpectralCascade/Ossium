@@ -14,7 +14,7 @@ namespace Ossium
     {
         if (looping && !samplePath.empty())
         {
-            Play(Resources->Get<AudioClip>(samplePath), playedVolume, -1);
+            Play(Resources->Get<AudioClip>(samplePath), volume, -1);
         }
         else
         {
@@ -27,7 +27,6 @@ namespace Ossium
         /// Store state
         looping = repeats < 0;
         samplePath = looping ? sample->GetPath() : "";
-        playedVolume = vol;
 
         /// Now set positioning and play the sample
         SetAudioPosition();

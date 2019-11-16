@@ -10,10 +10,10 @@ namespace Ossium
     inline namespace Audio
     {
 
-        struct AudioSourceSchema : public Schema<AudioSourceSchema, 3>
+        struct AudioSourceSchema : public Schema<AudioSourceSchema, 2>
         {
         public:
-            DECLARE_BASE_SCHEMA(AudioSourceSchema, 3);
+            DECLARE_BASE_SCHEMA(AudioSourceSchema, 2);
 
         protected:
             /// Path to the currently playing audio sample.
@@ -21,9 +21,6 @@ namespace Ossium
 
             /// Is the source looping forever?
             M(bool, looping) = false;
-
-            /// The volume the audio sample was played at.
-            M(float, playedVolume) = 1.0f;
 
         };
 
