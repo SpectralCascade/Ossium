@@ -16,26 +16,25 @@
                 "AudioSource" : [{
                     "samplePath" : "assets/test_audio.wav",
                     "looping" : 1,
-                    "spatialAttenuation" : 50,
-                    "volume" : 0.3,
+                    "spatialAttenuation" : 0,
+                    "volume" : 1.0,
                     "panningAngle" : 0,
-                    "targetVolume" : 0.1
+                    "targetVolume" : 1.0
                 }]
             },
-            "Name" : "Entity",
+            "Name" : "Ambient thingy",
             "Parent" : -1
-        }
+        },
     "1" : {
             "Components" : {
                 "AudioListener" : [{
                     "cutoff" : 1280.0
                 }],
                 "Transform2" : [{
-                    "position" : "(400, 400)",
-                    "rotation" : 0
+                    "trans" : "((400, 400), 0)"
                 }]
             },
-            "Name" : "Entity",
+            "Name" : "Player",
             "Parent" : -1
         }
 }

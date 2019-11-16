@@ -226,8 +226,9 @@ namespace Ossium
 
     void Transform::FromString(string& data)
     {
-        Utilities::FromString(position(), Utilities::splitRight(Utilities::splitLeft(data, ',', ""), '('));
-        Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(data, ',', ""), ')'));
+        Utilities::FromString(position(), Utilities::splitRight(Utilities::splitLeft(data, ')', ""), '('));
+        Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(Utilities::splitRight(data, ',', ""), ',', ""), ')'));
+        SDL_Log("Loaded transform at position (%f, %f) with %f degrees rotation.", position().x, position().y, rotation().GetDegrees());
     }
 
     string Transform::ToString()

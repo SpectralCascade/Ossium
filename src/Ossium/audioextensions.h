@@ -71,10 +71,10 @@ namespace Ossium
         class AudioListener : public Component, public AudioListenerSchema
         {
         public:
-            friend class AudioSource;
-
             DECLARE_COMPONENT(AudioListener);
             CONSTRUCT_SCHEMA(Component, AudioListenerSchema);
+
+            friend class AudioSource;
 
             /// Sets the static mainListener instance to this instance if not already set.
             /// Logs a warning if the main listener is already set.

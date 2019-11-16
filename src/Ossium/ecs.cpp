@@ -329,7 +329,7 @@ namespace Ossium
 
     void EntityComponentSystem::UpdateComponents()
     {
-        for (unsigned int i = 0, counti = typesys::TypeRegistry<ComponentType>::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             for (auto j = components[i].begin(); j != components[i].end(); j++)
             {
