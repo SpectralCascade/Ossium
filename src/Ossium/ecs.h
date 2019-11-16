@@ -171,6 +171,18 @@ namespace Ossium
             return component;
         }
 
+        /// Adds a component if it hasn't been added already.
+        template<class T>
+        T* AddComponentOnce(Renderer* renderer = nullptr, int layer = -1)
+        {
+            T* component = GetComponent<T>();
+            if (component == nullptr)
+            {
+                component = AddComponent<T>(renderer, layer);
+            }
+            return component;
+        }
+
         /// Destroys and removes first found instance of a component attached to this entity
         template<class T>
         void RemoveComponent()
@@ -443,56 +455,6 @@ namespace Ossium
         void TYPE::Update(){}                                           \
         void TYPE::OnInitGraphics(Renderer* renderer, int layer){}      \
         void TYPE::OnRemoveGraphics(){}
-
-    #define DECLARE_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                    \
-        DECLARE_ABSTRACT_COMPONENT(TYPE)
-
-    #define REGISTER_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                   \
-        TYPE::TYPE() {}                                                 \
-        TYPE::~TYPE() {}                                                \
-        void TYPE::OnCreate() {}                                        \
-        void TYPE::OnDestroy() {}                                       \
-        void TYPE::OnClone() {}                                         \
-        void TYPE::Update(){}                                           \
-        void TYPE::OnInitGraphics(Renderer* renderer, int layer)        \
-        {                                                               \
-            BaseGraphicComponent::OnInitGraphics(renderer, layer);          \
-        }                                                               \
-        void TYPE::OnRemoveGraphics()                                   \
-        {                                                               \
-            BaseGraphicComponent::OnRemoveGraphics();                       \
-        }
-
-    inline namespace Graphics
-    {
-
-        /// A type of Component automatically registers and unregisters itself from a renderer instance upon creation.
-        /// Also holds on to a reference to the renderer in use.
-        class BaseGraphicComponent : public Graphic, public BaseComponent
-        {
-        public:
-            /// Attempts to set the rendering layer of this graphic component. Note that you probably shouldn't call this
-            /// too frequently as it attempts a removal from one set and insertion into another set within the renderer.
-            void SetRenderLayer(int layer);
-
-            /// Returns the layer this component is being rendered on.
-            int GetRenderLayer();
-
-        protected:
-            DECLARE_ABSTRACT_COMPONENT(BaseGraphicComponent);
-
-            virtual void Render(Renderer& renderer) = 0;
-
-            /// Pointer to the renderer instance this graphic component is registered to.
-            Renderer* rendererInstance = nullptr;
-
-        private:
-            /// The rendering layer this graphic component should use.
-            int renderLayer = 0;
-
-        };
-
-    }
 
 }
 

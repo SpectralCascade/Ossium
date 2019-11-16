@@ -252,7 +252,7 @@ namespace Ossium
     }
 
     ///
-    /// Component
+    /// BaseComponent
     ///
 
     BaseComponent::~BaseComponent()
@@ -316,71 +316,6 @@ namespace Ossium
             }
         }
         return string("null");
-    }
-
-    ///
-    /// BaseGraphicComponent
-    ///
-
-    inline namespace Graphics
-    {
-
-        void BaseGraphicComponent::SetRenderLayer(int layer)
-        {
-            if (rendererInstance != nullptr)
-            {
-                rendererInstance->Unregister(this, renderLayer);
-                renderLayer = rendererInstance->Register(this, layer);
-            }
-        }
-
-        int BaseGraphicComponent::GetRenderLayer()
-        {
-            return renderLayer;
-        }
-
-        BaseGraphicComponent::BaseGraphicComponent()
-        {
-        }
-
-        BaseGraphicComponent::~BaseGraphicComponent()
-        {
-        }
-
-        void BaseGraphicComponent::OnCreate()
-        {
-        }
-
-        void BaseGraphicComponent::OnDestroy()
-        {
-        }
-
-        void BaseGraphicComponent::OnClone()
-        {
-        }
-
-        void BaseGraphicComponent::Update()
-        {
-        }
-
-        void BaseGraphicComponent::OnInitGraphics(Renderer* renderer, int layer)
-        {
-            renderLayer = layer >= 0 ? layer : renderLayer;
-            rendererInstance = renderer != nullptr ? renderer : rendererInstance;
-            if (rendererInstance != nullptr)
-            {
-                renderLayer = rendererInstance->Register(this, renderLayer);
-            }
-        }
-
-        void BaseGraphicComponent::OnRemoveGraphics()
-        {
-            if (rendererInstance != nullptr)
-            {
-                rendererInstance->Unregister(this, renderLayer);
-            }
-        }
-
     }
 
     ///

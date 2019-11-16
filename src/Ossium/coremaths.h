@@ -100,6 +100,11 @@ namespace Ossium
         /// Sets the angle in radians.
         void SetRadians(float radians);
 
+        /// Convert rotation from a given string
+        void FromString(string& data);
+        /// Convert rotation to a string
+        string ToString();
+
     protected:
         using b2Rot::Set;
         using b2Rot::GetAngle;
@@ -155,6 +160,11 @@ namespace Ossium
         inline Point& position() { return EVIL_CAST(p, Point); };
         /// Ditto for the Rotation casting code.
         inline Rotation& rotation() { return EVIL_CAST(q, Rotation); };
+
+        /// Convert from string
+        void FromString(string& data);
+        /// Convert to string
+        string ToString();
 
     protected:
         using b2Transform::p;

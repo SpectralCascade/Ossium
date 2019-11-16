@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
         ///
 
         AudioClip sound;
-        AudioSource source;
+        AudioPlayer source;
         AudioBus sfx;
 
         SoundStream.Link(&master);

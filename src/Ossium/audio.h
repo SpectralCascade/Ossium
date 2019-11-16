@@ -9,6 +9,8 @@
 
 #include "basics.h"
 #include "delta.h"
+#include "resourcecontroller.h"
+#include "schemamodel.h"
 
 using namespace std;
 
@@ -18,11 +20,30 @@ namespace Ossium
     inline namespace Audio
     {
 
-        /// Mix-in class for doing stuff with volume and stereo panning. Requires Derived to implement OnVolumeChanged()
-        template<class Derived>
-        class AudioChannel
+        struct AudioChannelSchema : public Schema<AudioChannelSchema, 3>
         {
         public:
+            DECLARE_BASE_SCHEMA(AudioChannelSchema, 3);
+
+        protected:
+            /// Normalised linear volume level
+            M(float, volume);
+
+            /// The angle at which the audio is panned. 0 = centre, 90 = right, 180 = behind, 270 = left
+            M(Sint16, panningAngle);
+
+            /// The current target volume level
+            M(float, targetVolume);
+
+        };
+
+        /// Mix-in class for doing stuff with volume and stereo panning. Requires Derived to implement OnVolumeChanged()
+        template<class Derived>
+        class AudioChannel : public AudioChannelSchema
+        {
+        public:
+            CONSTRUCT_SCHEMA(SchemaRoot, AudioChannelSchema);
+
             /// Initialise values
             AudioChannel()
             {
@@ -118,21 +139,11 @@ namespace Ossium
                 return static_cast<Derived*>(this);
             }
 
-        private:
-            /// Normalised linear volume level
-            float volume;
-
-            /// The angle at which the audio is panned. 0 = centre, 90 = right, 180 = behind, 270 = left
-            Sint16 panningAngle;
-
-            /// The current target volume level
-            float targetVolume;
-
         };
 
 
         /// Forward declaration
-        class AudioSource;
+        class AudioPlayer;
 
         namespace Internals
         {
@@ -155,7 +166,7 @@ namespace Ossium
                 void Clear();
 
                 /// Returns the first available channel and prevents it being reserved again. Returns -1 if it fails to find a free channel or the callback argument is null
-                int ReserveChannel(AudioSource* src);
+                int ReserveChannel(AudioPlayer* src);
                 /// Frees the specified channel; pass in a value < 0 to free all channels. Does not halt the freed channel(s), use HaltChannel() for that
                 void FreeChannel(int id);
 
@@ -164,7 +175,7 @@ namespace Ossium
 
             private:
                 /// All reserved channels have a callback object which is called when the channel finishes playback; if unreserved, callback is null
-                vector<AudioSource*> channels;
+                vector<AudioPlayer*> channels;
 
                 /// Total channels allocated
                 int numChannels = 0;
@@ -179,16 +190,39 @@ namespace Ossium
 
         }
 
-        /// This represents an audio bus like those you'd get on a mixing desk, with multiple inputs and a single output
-        class AudioBus : public AudioChannel<AudioBus>
+        struct AudioBusSchema : public Schema<AudioBusSchema, 4>
         {
         public:
+            DECLARE_BASE_SCHEMA(AudioBusSchema, 4);
+
+        protected:
+            /// Whether or not volume and panning set by this bus should be ignored
+            M(bool, bypass);
+
+            /// Whether or not this bus is muted
+            M(bool, muted);
+
+            /// Name of this audio bus
+            M(string, name);
+
+            /// Name of the linked audio bus
+            M(string, linkedName);
+
+        };
+
+        /// This represents an audio bus like those you'd get on a mixing desk, with multiple inputs and a single output
+        class AudioBus : public AudioChannel<AudioBus>, public AudioBusSchema
+        {
+        public:
+            CONSTRUCT_SCHEMA(AudioChannel<AudioBus>, AudioBusSchema);
+
             friend class AudioChannel<AudioBus>;
-            friend class AudioSource;
+            friend class AudioPlayer;
             friend class Internals::AudioStream;
 
             /// Initialise stuff
             AudioBus();
+            virtual ~AudioBus() = default;
 
             /// Sets the name of this audio channel
             void SetName(string setName);
@@ -204,6 +238,9 @@ namespace Ossium
 
             /// Returns the audio bus this signal is linked to, or null if not linked
             AudioBus* GetLinkedBus();
+
+            /// Returns the name of the linked audio bus, or an empty string if not linked.
+            string GetLinkedBusName();
 
             /// Convenience method for checking if this audio signal is linked to an audio bus or not
             bool IsLinked();
@@ -231,42 +268,40 @@ namespace Ossium
             /// When the volume changes, iterate over all the input signals and call their OnVolumeChanged() methods
             void OnVolumeChanged();
 
-            /// Whether or not volume and panning set by this bus should be ignored
-            bool bypass;
-
-            /// Whether or not this bus is muted
-            bool muted;
-
             /// The next bus in the signal chain that this bus is linked to; if null, this bus is the end of a signal chain
             AudioBus* linkedBus;
 
             /// The set of input buses coming into this audio bus
             set<AudioBus*> input_buses;
             /// The set of input signals coming into this bus
-            set<AudioSource*> input_signals;
+            set<AudioPlayer*> input_signals;
 
             /// The audio stream coming into this bus; usually null unless the AudioStream has been linked
             Internals::AudioStream* input_stream;
 
-            /// Name of this audio bus
-            string name;
-
         };
 
         /// Wrapper class for Mix_Chunk, representing an audio sample resource
-        class AudioClip
+        class AudioClip : public Resource
         {
         public:
+            DECLARE_RESOURCE(AudioClip);
+
             AudioClip();
             ~AudioClip();
 
             void Free();
 
-            bool Load(string guid_path, int* loadArgs = nullptr);
+            bool Load(string guid_path);
             bool Init();
+
+            bool LoadAndInit(string guid_path);
 
             /// Returns the audio chunk
             Mix_Chunk* GetChunk();
+
+            /// Returns the file path to the original audio sample
+            string GetPath();
 
         private:
             NOCOPY(AudioClip);
@@ -274,19 +309,35 @@ namespace Ossium
             /// The actual audio file in memory
             Mix_Chunk* audioChunk;
 
+            /// File path to the sample
+            string path;
+
         };
 
-        /// Represents a generic audio source
-        /// Not an audio bus by itself as it has no inputs, but it is a type of audio signal
-        /// which may be fed into audio buses
-        class AudioSource : public AudioChannel<AudioSource>
+        /// Stores data required for some basic effects.
+        struct AudioPlayerSchema : public Schema<AudioPlayerSchema, 1>
         {
         public:
+            DECLARE_BASE_SCHEMA(AudioPlayerSchema, 1);
+
+        protected:
+            /// How much the volume should be attenuated with Mix_SetPosition().
+            M(Uint8, spatialAttenuation) = 0;
+
+        };
+
+        /// Not an audio bus by itself as it has no inputs, but it is a type of audio signal
+        /// which may be fed into audio buses
+        class AudioPlayer : public AudioChannel<AudioPlayer>, public AudioPlayerSchema
+        {
+        public:
+            CONSTRUCT_SCHEMA(AudioChannel<AudioPlayer>, AudioPlayerSchema);
+
             friend class AudioBus;
             friend class Internals::ChannelController;
 
-            AudioSource();
-            virtual ~AudioSource();
+            AudioPlayer() = default;
+            virtual ~AudioPlayer();
 
             /// Links this source to an audio output bus
             void Link(AudioBus* bus);
@@ -310,6 +361,9 @@ namespace Ossium
             /// Resumes playing the audio source if anything is currently paused
             void Resume();
 
+            /// Stops playing, if anything is playing.
+            void Stop();
+
             /// Whether or not this audio source is currently playing anything
             bool IsPlaying();
 
@@ -328,15 +382,15 @@ namespace Ossium
         protected:
             void OnPlayFinished();
 
-            /// Whether or not this audio source is paused
-            bool paused;
+            /// The linked audio output bus; if not linked, this is set to nullptr.
+            AudioBus* linkedBus = nullptr;
 
-            /// The linked audio output bus; if not linked, this is set to null
-            AudioBus* linkedBus;
+            /// Whether or not the audio source is currently paused
+            bool paused = false;
 
         private:
             /// The SDL_Mixer channel currently reserved for this audio source. If < 0, the audio source is not playing anything
-            int channel_id;
+            int channel_id = -1;
 
             /// The total number of available channels
             static int total_channels;
@@ -355,11 +409,11 @@ namespace Ossium
             /// Wrapper class for Mix_Music, which streams a single audio clip from disk rather than loading the whole clip into memory
             /// There can only be a single audio stream as there can only be one Mix_Music instance
             /// Audio played via AudioStream can potentially be higher quality than AudioClip, hence it's probably best used for music and the like
-            /// Inherits from AudioBus so that it may be used in the mixer, rather than AudioSource which is designed to work with SDL_Mixer channels
+            /// Inherits from AudioBus so that it may be used in the mixer, rather than AudioPlayer which is designed to work with SDL_Mixer channels
             class AudioStream : public AudioChannel<AudioStream>, public Singleton<AudioStream>
             {
             public:
-                AudioStream();
+                AudioStream() = default;
                 virtual ~AudioStream();
 
                 /// Resets started and paused to false
@@ -418,35 +472,49 @@ namespace Ossium
 
             private:
                 /// The Mix_Music instance
-                Mix_Music* stream;
+                Mix_Music* stream = NULL;
 
                 /// The audio bus this stream is linked to, if at all
-                AudioBus* linkedBus;
+                AudioBus* linkedBus = nullptr;
 
                 /// The file path is cached
                 string cachedPath;
 
                 /// Whether the audio stream is started or not
-                bool started;
+                bool started = false;
 
                 /// Whether the audio stream is paused or not
-                bool paused;
+                bool paused = false;
 
             };
 
         }
 
-        /// Used to control volume levels and other effects on all audio channels, including the single AudioStream instance
-        /// for which there is a dedicated static channel. This is the core of the audio system.
-        /*class AudioMixer
+        /// Audio mixer that controls a collection of audio buses. Also provides basic audio playback capability.
+        class AudioMixer
         {
         public:
-            AudioMixer();
-            ~AudioMixer();
+            /// Add and remove audio buses
+            AudioBus* InsertBus(string name);
+            void RemoveBus(string name);
+
+            /// Returns the audio bus by name, if it exists. Otherwise returns nullptr.
+            AudioBus* FindBus(string name);
+
+            /// Converts audio bus links into a stringified list of data for serialisation.
+            string ToString();
+
+            /// Sets up specified audio buses.
+            void FromString(string& data);
 
         private:
+            /// All audio buses.
+            unordered_map<string, AudioBus*> buses;
 
-        };*/
+            /// The main audio stream, used for music and long audio files that are more efficient to stream.
+            Audio::Internals::AudioStream stream;
+
+        };
 
     }
 

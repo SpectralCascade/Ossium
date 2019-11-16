@@ -273,6 +273,16 @@ namespace Ossium
                 const static bool value = sizeof(CheckInsertionOp(s >> t)) == sizeof(DoesHave);
             };
 
+            template<typename T, typename U = void>
+            struct is_key_value_map : public false_type
+            {
+            };
+
+            template<typename T>
+            struct is_key_value_map<T, void_t<typename T::key_type, typename T::mapped_type, decltype(std::declval<T&>()[std::declval<const typename T::key_type&>()])>> : public true_type
+            {
+            };
+
             DETECT_METHOD(ToString);
 
             DETECT_METHOD_P(FromString, string);
@@ -386,6 +396,31 @@ namespace Ossium
             }
         }
 
+        /// Converts string version of a map into an actual map.
+        template<typename T>
+        typename enable_if<!has_FromString<T>::value && is_key_value_map<T>::value && is_range_erasable<T>::value && !is_base_of<string, T>::value, void>::type
+        FromString(T& obj, string data)
+        {
+            JSON jdata = JSON();
+            if (jdata.Parse(data))
+            {
+                for (auto itr = jdata.begin(); itr != jdata.end(); itr++)
+                {
+                    /// Extract the key-value pair data
+                    typename T::key_type key;
+                    typename T::mapped_type value;
+                    FromString(key, itr->first);
+                    FromString(value, itr->second);
+                    /// Now insert into the map
+                    obj[key] = value;
+                }
+            }
+            else
+            {
+                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to parse data as JSON map!");
+            }
+        }
+
         /// Get SDL_Color from string.
         template<typename T>
         typename enable_if<!has_FromString<T>::value && is_same<SDL_Color, T>::value, void>::type
@@ -455,7 +490,7 @@ namespace Ossium
         }
 
         /// Converts data of objects implementing simple iterators into a string format array (such as vector<int>),
-        /// except for types implementing the c_str() method (i.e. strings).
+        /// except for strings
         template<typename T>
         typename enable_if<!has_ToString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && !is_base_of<string, T>::value, string>::type
         ToString(T& data, typename T::iterator* start = nullptr)
@@ -486,6 +521,20 @@ namespace Ossium
             }
             string converted = string("[") + dataStream.str() + string("]");
             return converted;
+        }
+
+        /// Converts a map into a JSON string.
+        template<typename T>
+        typename enable_if<!has_ToString<T>::value && is_key_value_map<T>::value && !is_base_of<string, T>::value, string>::type
+        ToString(T& data)
+        {
+            JSON jdata = JSON();
+            for (auto itr : data)
+            {
+                /// Convert data to strings
+                jdata[ToString(itr.first)] = (JString)ToString(itr.second);
+            }
+            return jdata.ToString();
         }
 
         template<typename T>
@@ -525,7 +574,7 @@ namespace Ossium
         /// The only instance of the derived class
         static Derived singleInstance;
 
-        Singleton(){};
+        Singleton() = default;
 
     private:
         NOCOPY(Singleton);

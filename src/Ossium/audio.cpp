@@ -12,6 +12,8 @@ namespace Ossium
         /// AudioClip
         ///
 
+        REGISTER_RESOURCE(AudioClip);
+
         AudioClip::AudioClip()
         {
             audioChunk = NULL;
@@ -24,6 +26,7 @@ namespace Ossium
 
         void AudioClip::Free()
         {
+            path = "";
             if (audioChunk != NULL)
             {
                 Mix_FreeChunk(audioChunk);
@@ -31,7 +34,7 @@ namespace Ossium
             }
         }
 
-        bool AudioClip::Load(string guid_path, int* loadArgs)
+        bool AudioClip::Load(string guid_path)
         {
             Free();
             audioChunk = Mix_LoadWAV(guid_path.c_str());
@@ -40,6 +43,7 @@ namespace Ossium
                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load audio clip '%s'! Mix_Error: %s", guid_path.c_str(), Mix_GetError());
                 return false;
             }
+            path = guid_path;
             return true;
         }
 
@@ -48,9 +52,19 @@ namespace Ossium
             return audioChunk != NULL;
         }
 
+        bool AudioClip::LoadAndInit(string guid_path)
+        {
+            return Load(guid_path) && Init();
+        }
+
         Mix_Chunk* AudioClip::GetChunk()
         {
             return audioChunk;
+        }
+
+        string AudioClip::GetPath()
+        {
+            return path;
         }
 
         ///
@@ -101,7 +115,7 @@ namespace Ossium
                 Mix_ChannelFinished(*OnAnyChannelFinished);
             }
 
-            int ChannelController::ReserveChannel(AudioSource* callback)
+            int ChannelController::ReserveChannel(AudioPlayer* callback)
             {
                 if (callback != nullptr)
                 {
@@ -179,6 +193,7 @@ namespace Ossium
             Unlink();
             bus->input_buses.insert(this);
             linkedBus = bus;
+            linkedName = linkedBus->GetName();
         }
 
         void AudioBus::Unlink()
@@ -187,12 +202,18 @@ namespace Ossium
             {
                 linkedBus->input_buses.erase(this);
                 linkedBus = nullptr;
+                linkedName = "";
             }
         }
 
         AudioBus* AudioBus::GetLinkedBus()
         {
             return linkedBus;
+        }
+
+        string AudioBus::GetLinkedBusName()
+        {
+            return linkedBus != nullptr ? linkedBus->GetName() : "";
         }
 
         bool AudioBus::IsLinked()
@@ -288,20 +309,14 @@ namespace Ossium
         }
 
         ///
-        /// AudioSource
+        /// AudioPlayer
         ///
 
-        int AudioSource::total_channels = 0;
+        int AudioPlayer::total_channels = 0;
 
-        Internals::ChannelController& AudioSource::_channelController = Internals::ChannelController::_Instance();
+        Internals::ChannelController& AudioPlayer::_channelController = Internals::ChannelController::_Instance();
 
-        AudioSource::AudioSource()
-        {
-            linkedBus = nullptr;
-            channel_id = -1;
-        }
-
-        AudioSource::~AudioSource()
+        AudioPlayer::~AudioPlayer()
         {
             if (channel_id >= 0)
             {
@@ -314,14 +329,14 @@ namespace Ossium
             }
         }
 
-        void AudioSource::Link(AudioBus* bus)
+        void AudioPlayer::Link(AudioBus* bus)
         {
             Unlink();
             bus->input_signals.insert(this);
             linkedBus = bus;
         }
 
-        void AudioSource::Unlink()
+        void AudioPlayer::Unlink()
         {
             if (linkedBus != nullptr)
             {
@@ -330,7 +345,7 @@ namespace Ossium
             }
         }
 
-        void AudioSource::Play(AudioClip* sample, Sint16 panning, float vol, int repeats)
+        void AudioPlayer::Play(AudioClip* sample, Sint16 panning, float vol, int repeats)
         {
             if (channel_id >= 0)
             {
@@ -354,17 +369,17 @@ namespace Ossium
             paused = false;
         }
 
-        void AudioSource::Play(AudioClip* sample, float vol, int repeats)
+        void AudioPlayer::Play(AudioClip* sample, float vol, int repeats)
         {
             Play(sample, GetPanning(), vol, repeats);
         }
 
-        bool AudioSource::IsPlaying()
+        bool AudioPlayer::IsPlaying()
         {
             return channel_id >= 0;
         }
 
-        void AudioSource::Pause()
+        void AudioPlayer::Pause()
         {
             if (IsPlaying())
             {
@@ -373,7 +388,7 @@ namespace Ossium
             }
         }
 
-        void AudioSource::Resume()
+        void AudioPlayer::Resume()
         {
             if (IsPaused() && IsPlaying())
             {
@@ -382,17 +397,26 @@ namespace Ossium
             }
         }
 
-        bool AudioSource::IsPaused()
+        void AudioPlayer::Stop()
+        {
+            if (IsPlaying())
+            {
+                Mix_HaltChannel(channel_id);
+            }
+            paused = false;
+        }
+
+        bool AudioPlayer::IsPaused()
         {
             return paused;
         }
 
-        bool AudioSource::IsLinked()
+        bool AudioPlayer::IsLinked()
         {
             return linkedBus != nullptr;
         }
 
-        float AudioSource::GetFinalVolume()
+        float AudioPlayer::GetFinalVolume()
         {
             if (IsLinked())
             {
@@ -401,7 +425,7 @@ namespace Ossium
             return this->GetVolume();
         }
 
-        Sint16 AudioSource::GetFinalPanning()
+        Sint16 AudioPlayer::GetFinalPanning()
         {
             if (IsLinked())
             {
@@ -410,19 +434,19 @@ namespace Ossium
             return this->GetPanning();
         }
 
-        void AudioSource::OnVolumeChanged()
+        void AudioPlayer::OnVolumeChanged()
         {
             if (channel_id >= 0)
             {
                 /// This is okay because it's not set as an SDL_Mixer callback
                 Mix_Volume(channel_id, (int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
-                Mix_SetPosition(channel_id, wrap(0, GetFinalPanning(), 0, 360), 0);
+                Mix_SetPosition(channel_id, wrap(0, GetFinalPanning(), 0, 360), spatialAttenuation);
             }
         }
 
-        void AudioSource::OnPlayFinished()
+        void AudioPlayer::OnPlayFinished()
         {
-            /// AudioSource is responsible for freeing the channel as it reserved it in the first place
+            /// AudioPlayer is responsible for freeing the channel as it reserved it in the first place
             _channelController.FreeChannel(channel_id);
             /// Unregister panning effect
             Mix_SetPosition(channel_id, 0, 0);
@@ -441,13 +465,6 @@ namespace Ossium
             void MusicFinished()
             {
                 SoundStream.Init();
-            }
-
-            AudioStream::AudioStream()
-            {
-                stream = NULL;
-                paused = false;
-                started = false;
             }
 
             AudioStream::~AudioStream()
@@ -609,11 +626,113 @@ namespace Ossium
 
         }
 
+        ///
+        /// AudioMixer
+        ///
+
+        AudioBus* AudioMixer::InsertBus(string name)
+        {
+            auto found = buses.find(name);
+            AudioBus* bus = nullptr;
+            if (found == buses.end())
+            {
+                bus = new AudioBus();
+                buses[name] = bus;
+            }
+            else
+            {
+                bus = found->second;
+            }
+            return bus;
+        }
+
+        void AudioMixer::RemoveBus(string name)
+        {
+            auto found = buses.find(name);
+            if (found != buses.end())
+            {
+                delete found->second;
+                found->second = nullptr;
+                buses.erase(found);
+            }
+        }
+
+        AudioBus* AudioMixer::FindBus(string name)
+        {
+            auto found = buses.find(name);
+            if (found != buses.end())
+            {
+                return found->second;
+            }
+            return nullptr;
+        }
+
+        string AudioMixer::ToString()
+        {
+            JSON mixer;
+            JSON busMap;
+            for (auto itr : buses)
+            {
+                busMap[itr.first] = itr.second->GetLinkedBusName();
+            }
+            mixer["Buses"] = busMap.ToString();
+            //mixer["Stream"] = stream.ToString();
+            return mixer.ToString();
+        }
+
+        void AudioMixer::FromString(string& data)
+        {
+            JSON mixer;
+            if (mixer.Parse(data))
+            {
+                string raw = mixer.ToString();
+                JSON busMap;
+                if (busMap.Parse(raw))
+                {
+                    map<AudioBus*, string> linkMap;
+                    for (auto itr : busMap)
+                    {
+                        AudioBus* toLink = FindBus(itr.first);
+                        if (toLink == nullptr)
+                        {
+                            /// Create the bus if it doesn't already exist.
+                            toLink = InsertBus(itr.first);
+                        }
+                        if (!itr.second.empty())
+                        {
+                            /// Register the name of the intended bus to be linked to.
+                            linkMap[toLink] = itr.second;
+                        }
+                    }
+                    /// Link up all the buses.
+                    for (auto itr : linkMap)
+                    {
+                        AudioBus* found = FindBus(itr.second);
+                        if (found != nullptr)
+                        {
+                            itr.first->Link(found);
+                        }
+                    }
+                }
+                else
+                {
+                    /// unexpected parse failure
+                    /// TODO: log warning
+                }
+            }
+            else
+            {
+                /// unexpected parse failure
+                /// TODO: log warning
+            }
+        }
+
     }
 
     inline namespace Global
     {
 
+        /// TODO: get rid of this global stuff! Move access to AudioMixer.
         Audio::Internals::AudioStream& SoundStream = Audio::Internals::AudioStream::_Instance();
 
     }

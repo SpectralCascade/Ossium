@@ -197,7 +197,7 @@ namespace Ossium
         {
         public:
             DECLARE_COMPONENT(Texture);
-            CONSTRUCT_SCHEMA(BaseGraphicComponent, TextureSchema);
+            CONSTRUCT_SCHEMA(GraphicComponent, TextureSchema);
 
             virtual ~Texture(){};
 

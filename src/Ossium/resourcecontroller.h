@@ -7,6 +7,7 @@
 
 #include "basics.h"
 #include "renderer.h"
+#include "stringintern.h"
 
 using namespace std;
 
@@ -154,12 +155,13 @@ namespace Ossium
         template<class T>
         T* Find(string guid_path)
         {
-            if (registry<T>().find(guid_path) == registry<T>().end())
+            auto found = registry<T>().find(guid_path);
+            if (found == registry<T>().end())
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to retrieve resource with GUID '%s'!", guid_path.c_str());
+                //SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to retrieve resource with GUID '%s'!", guid_path.c_str());
                 return nullptr;
             }
-            return reinterpret_cast<T*>(registry<T>()[guid_path]);
+            return reinterpret_cast<T*>(found->second);
         };
 
         /// Destroys all resources of all types

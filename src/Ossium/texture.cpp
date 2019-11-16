@@ -378,7 +378,7 @@ namespace Ossium
                 return;
             }
             /// Don't configure dimensions, they should be specified by the schema data.
-            SetSource(Resources.Get<Image>(imgPath, *rendererInstance), false);
+            SetSource(Resources->Get<Image>(imgPath, *rendererInstance), false);
         }
 
         ///

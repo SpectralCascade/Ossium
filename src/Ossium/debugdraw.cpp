@@ -72,7 +72,7 @@ namespace Ossium
 
         void DebugDraw::OnInitGraphics(Renderer* renderer, int layer)
         {
-            BaseGraphicComponent::OnInitGraphics(renderer, layer);
+            GraphicComponent::OnInitGraphics(renderer, layer);
             physics = new DebugDrawBox2D(renderer);
         }
 

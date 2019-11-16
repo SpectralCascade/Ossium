@@ -154,6 +154,18 @@ namespace Ossium
         Set(angle);
     }
 
+    void Rotation::FromString(string& data)
+    {
+        float degs;
+        Utilities::FromString(degs, data);
+        SetDegrees(degs);
+    }
+
+    string Rotation::ToString()
+    {
+        return Utilities::ToString(GetDegrees());
+    }
+
     ///
     /// Point
     ///
@@ -206,6 +218,21 @@ namespace Ossium
     bool Point::Intersects(Rect rect)
     {
         return x >= rect.x && x <= rect.xmax() && y >= rect.y && y <= rect.ymax();
+    }
+
+    ///
+    /// Transform
+    ///
+
+    void Transform::FromString(string& data)
+    {
+        Utilities::FromString(position(), Utilities::splitRight(Utilities::splitLeft(data, ',', ""), '('));
+        Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(data, ',', ""), ')'));
+    }
+
+    string Transform::ToString()
+    {
+        return "(" + Utilities::ToString(position()) + ", " + Utilities::ToString(rotation()) + ")";
     }
 
     ///
