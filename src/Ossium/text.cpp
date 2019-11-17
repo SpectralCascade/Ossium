@@ -31,7 +31,7 @@ namespace Ossium
             fontToUse = font;
             if (fontToUse == nullptr)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Cannot render text with NULL font resource!");
+                Logger::EngineLog().Error("Cannot render text with NULL font resource!");
                 return false;
             }
         }

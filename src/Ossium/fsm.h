@@ -122,7 +122,7 @@ namespace Ossium
                     return;
                 }
             }
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find state '%s' in StateMachine.", name.c_str());
+            Logger::EngineLog().Warning("Could not find state '{0}' in StateMachine.", name);
         }
 
         /// Adds a state to the state machine; typically,

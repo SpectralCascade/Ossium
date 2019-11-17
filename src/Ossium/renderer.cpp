@@ -28,7 +28,7 @@ namespace Ossium
             renderer = SDL_CreateRenderer(window->GetWindow(), driver, flags);
             if (renderer == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[Renderer] Could not create renderer! SDL_Error: %s", SDL_GetError());
+                Logger::EngineLog().Error("[Renderer] Could not create renderer! SDL_Error: {0}", SDL_GetError());
                 int n_drivers = SDL_GetNumRenderDrivers();
                 SDL_RendererInfo driver_data;
                 string drivers_available;
@@ -37,12 +37,12 @@ namespace Ossium
                     SDL_GetRenderDriverInfo(i, &driver_data);
                     drivers_available = drivers_available + driver_data.name + ", ";
                 }
-                SDL_Log("Available render drivers are: %s", drivers_available.c_str());
-                SDL_Log("Falling back to software renderer by default.");
+                Logger::EngineLog().Info("Available render drivers are: {0}", drivers_available);
+                Logger::EngineLog().Info("Falling back to software renderer by default.");
                 renderer = SDL_CreateRenderer(window->GetWindow(), driver, SDL_RENDERER_SOFTWARE);
                 if (renderer == NULL)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[Renderer] Fallback software renderer could not be created! SDL_Error: %s", SDL_GetError());
+                    Logger::EngineLog().Error("[Renderer] Fallback software renderer could not be created! SDL_Error: {0}", SDL_GetError());
                 }
             }
             if (renderer != NULL)
@@ -101,7 +101,7 @@ namespace Ossium
             layer = clamp(layer, 0, numLayersActive);
             if (layer != intendedLayer)
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "[Renderer] Registered graphic on layer [%d] because the intended layer [%d] is out of bounds (max layer is [%d]).", layer, intendedLayer, numLayersActive - 1);
+                Logger::EngineLog().Warning("[Renderer] Registered graphic on layer [{0}] because the intended layer [{1}] is out of bounds (max layer is [{2}]).", layer, intendedLayer, numLayersActive - 1);
             }
             registeredGraphics[layer].insert(graphic);
             return layer;
@@ -111,7 +111,7 @@ namespace Ossium
         {
             if (!(layer >= 0 && layer < numLayersActive))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "[Renderer] Failed to unregister a graphic because the intended layer [%d] is out of bounds (max layer is %d).", layer, numLayersActive - 1);
+                Logger::EngineLog().Error("[Renderer] Failed to unregister a graphic because the intended layer [{0}] is out of bounds (max layer is {1}).", layer, numLayersActive - 1);
                 return;
             }
             registeredGraphics[layer].erase(graphic);
@@ -143,7 +143,7 @@ namespace Ossium
             layer = clamp(layer, 0, numLayersActive);
             if (layer != intendedLayer)
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "[Renderer] Enqueued graphic on layer [%d] because the intended layer [%d] is out of bounds (max layer is [%d]).", layer, intendedLayer, numLayersActive - 1);
+                Logger::EngineLog().Warning("[Renderer] Enqueued graphic on layer [{0}] because the intended layer [{1}] is out of bounds (max layer is [{2}]).", layer, intendedLayer, numLayersActive - 1);
             }
             queuedGraphics[layer].push(graphic);
             return layer;

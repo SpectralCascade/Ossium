@@ -4,6 +4,8 @@
 #include <map>
 #include <functional>
 
+#include "logging.h"
+
 using namespace std;
 
 namespace Ossium
@@ -38,7 +40,7 @@ namespace Ossium
             auto itr = callees.empty() ? callees.end() : callees.find(handle);
             if (itr == callees.end())
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to unregister callback! Provided handle = [%d]", handle);
+                Logger::EngineLog().Warning("Failed to unregister callback! Provided handle = [{0}]", handle);
                 return;
             }
             callees.erase(itr);

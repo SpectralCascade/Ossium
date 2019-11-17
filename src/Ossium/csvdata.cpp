@@ -5,6 +5,7 @@
 
 #include "basics.h"
 #include "csvdata.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -86,10 +87,10 @@ namespace Ossium
         }
         if (data.empty() || data[0].empty())
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to import CSV '%s' but no data was loaded.", path.c_str());
+            Logger::EngineLog().Warning("Attempted to import CSV '{0}' but no data was loaded.", path);
             return false;
         }
-        SDL_Log("Imported CSV '%s' with %d rows and %d columns.", path.c_str(), (int)data.size(), numColumns);
+        Logger::EngineLog().Info("Imported CSV '{0}' with {1} rows and {2} columns.", path, (int)data.size(), numColumns);
         return true;
     }
 
@@ -126,7 +127,7 @@ namespace Ossium
         {
             return data[row][column];
         }
-        SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not get cell data from CSV, cell [row: %d, column: %d] is out of range!", row, column);
+        Logger::EngineLog().Warning("Could not get cell data from CSV, cell [row: {0}, column: {1}] is out of range!", row, column);
         return "";
     }
 
@@ -136,7 +137,7 @@ namespace Ossium
         {
             return data[index];
         }
-        SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not get row from CSV, row index [%d] is out of range!", index);
+        Logger::EngineLog().Warning("Could not get row from CSV, row index [{0}] is out of range!", index);
         vector<string> none;
         return none;
     }
@@ -154,7 +155,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not get column from CSV, column index [%d] is out of range!", index);
+            Logger::EngineLog().Warning("Could not get column from CSV, column index [{0}] is out of range!", index);
         }
         return column;
     }

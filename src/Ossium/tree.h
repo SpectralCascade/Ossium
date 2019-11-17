@@ -7,6 +7,7 @@
 #include <SDL.h>
 
 #include "basics.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -118,7 +119,7 @@ namespace Ossium
             /// Never remove the root node
             if (node == nullptr)
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Attempted to remove node that is already null.");
+                Logger::EngineLog().Warning("(!) Attempted to remove node that is already null.");
                 return false;
             }
             vector<Node<T>*> all = getAllBelow(node);
@@ -162,7 +163,7 @@ namespace Ossium
                 }
             }
             /// If we reach this point, there's a problem! Will not delete the node because e.g. the node is in another tree
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "(!) Could not locate node[%d] in tree for removal.", node->id);
+            Logger::EngineLog().Warning("(!) Could not locate node[{0}] in tree for removal.", node->id);
             return false;
         }
 
@@ -262,7 +263,7 @@ namespace Ossium
             vector<Node<T>*> all;
             if (source == nullptr)
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Attempted to retrieve all below a null node.");
+                Logger::EngineLog().Warning("(!) Attempted to retrieve all below a null node.");
                 return all;
             }
             if (includeSource)

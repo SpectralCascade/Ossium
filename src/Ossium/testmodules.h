@@ -59,7 +59,7 @@ namespace Ossium
 
         /// Use this macro to run a unit test
         #define TEST_RUN(MODULE)                                                                                            \
-                SDL_Log("\n\nRunning unit test '" #MODULE "':");                                                            \
+                Logger::EngineLog().Info("\n\nRunning unit test '" #MODULE "':");                                                            \
                 MODULE MODULE##_test_obj;                                                                                   \
                 try                                                                                                         \
                 {                                                                                                           \
@@ -67,7 +67,7 @@ namespace Ossium
                 }                                                                                                           \
                 catch (exception& e)                                                                                        \
                 {                                                                                                           \
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "\n!!!\nException occurred during test module %s:\n\n%s\n\n!!!",   \
+                    Logger::EngineLog().Error("\n!!!\nException occurred during test module {0}:\n\n{1}\n\n!!!",            \
                                  #MODULE, e.what());                                                                        \
                     MODULE##_test_obj.passed_test = false;                                                                  \
                 }                                                                                                           \
@@ -75,7 +75,7 @@ namespace Ossium
                 {                                                                                                           \
                     UnitTest::total_passed_test_modules--;                                                                  \
                 }                                                                                                           \
-                SDL_Log("Test module '" #MODULE "' %s!\n\n", MODULE##_test_obj.passed_test ? "PASSED" : "FAILED")
+                Logger::EngineLog().Info("Test module '" #MODULE "' {0}!\n\n", MODULE##_test_obj.passed_test ? "PASSED" : "FAILED")
 
         /// Use this macro to assert a test condition in a class inheriting from UnitTest
         /// where TEST_CONDITION is the boolean test condition.
@@ -90,15 +90,15 @@ namespace Ossium
                 {                                                                                               \
                     total_passed_test_asserts++;                                                                \
                 }                                                                                               \
-                SDL_Log("[%s] Test condition '" #TEST_CONDITION "'.", assert_result ? "PASSED" : "!FAILED!" );
+                Logger::EngineLog().Info("[{0}] Test condition '" #TEST_CONDITION "'.", assert_result ? "PASSED" : "!FAILED!" );
 
         /// When you have finished running all unit tests, use this evaluation macro to log the final results,
         /// pause program execution if any tests failed, and reset the overall unit test results
         #define TEST_EVALUATE()                                                                                         \
                 [] {                                                                                                    \
-                    SDL_Log("Test evaluation results: %d of %d modules passed tests successfully.",                     \
+                    Logger::EngineLog().Info("Test evaluation results: {0} of {1} modules passed tests successfully.",  \
                             UnitTest::total_passed_test_modules, UnitTest::total_test_modules);                         \
-                    SDL_Log("%d of %d test assertions passed successfully.", UnitTest::total_passed_test_asserts,       \
+                    Logger::EngineLog().Info("{0} of {1} test assertions passed successfully.", UnitTest::total_passed_test_asserts,       \
                             UnitTest::total_test_asserts);                                                              \
                     UnitTest::total_passed_test_modules = 0;                                                            \
                     UnitTest::total_test_modules = 0;                                                                   \
@@ -112,7 +112,7 @@ namespace Ossium
         public:
             void RunTest()
             {
-                SDL_Log("wrap() tests.");
+                Logger::EngineLog().Info("wrap() tests.");
 
                 TEST_ASSERT(wrap(2, 1, 0, 4) == 3);
                 TEST_ASSERT(wrap(2, 2, 0, 4) == 4);
@@ -130,13 +130,13 @@ namespace Ossium
                 TEST_ASSERT(wrap(2, -6, -3, 3) == 3);
                 TEST_ASSERT(wrap(2, -15, -3, 3) == 1);
 
-                SDL_Log("int clamp() tests.");
+                Logger::EngineLog().Info("int clamp() tests.");
 
                 TEST_ASSERT(clamp(3, 0, 10) == 3);
                 TEST_ASSERT(clamp(-1, 0, 10) == 0);
                 TEST_ASSERT(clamp(11, 0, 10) == 10);
 
-                SDL_Log("String functions.");
+                Logger::EngineLog().Info("String functions.");
 
                 TEST_ASSERT(strip(" testing ") == "testing");
                 TEST_ASSERT(strip(" t        ") == "t");
@@ -147,7 +147,7 @@ namespace Ossium
                 TEST_ASSERT(splitLeft("1111:2", ':') == "1111");
                 TEST_ASSERT(splitLeft("-3:55", ':') == "-3");
 
-                SDL_Log("Type conversion tests.");
+                Logger::EngineLog().Info("Type conversion tests.");
 
                 TEST_ASSERT(IsInt("1234"));
                 TEST_ASSERT(IsFloat("142.04"));
@@ -256,7 +256,7 @@ namespace Ossium
                 {
                     if (event.Contains("Health"))
                     {
-                        SDL_Log("State change event! Health is set to %d", *(event.Get<int>("Health")));
+                        Logger::EngineLog().Info("State change event! Health is set to {0}", *(event.Get<int>("Health")));
                         AddState<FSM_TestState>("meh");
                         SwitchState("meh");
                     }
@@ -266,10 +266,10 @@ namespace Ossium
                     if (event.Contains("Name"))
                     {
                         string f = *(event.Get<string>("Name"));
-                        SDL_Log("Hello from event '%s'!", f.c_str());
+                        Logger::EngineLog().Info("Hello from event '{0}'!", f);
                     }
                 }
-                SDL_Log("HANDLED EVENT in category '%s'.", event.GetCategory().c_str());
+                Logger::EngineLog().Info("HANDLED EVENT in category '{0}'.", event.GetCategory());
             }
         };
 
@@ -282,17 +282,17 @@ namespace Ossium
 
             void EnterState()
             {
-                SDL_Log("EnterState() called on state '%s'.", name.c_str());
+                Logger::EngineLog().Info("EnterState() called on state '{0}'.", name);
             }
 
             void ExecuteState()
             {
-                SDL_Log("ExecuteState() called on state '%s'.", name.c_str());
+                Logger::EngineLog().Info("ExecuteState() called on state '{0}'.", name);
             }
 
             void ExitState()
             {
-                SDL_Log("ExitState() called on state '%s'.", name.c_str());
+                Logger::EngineLog().Info("ExitState() called on state '{0}'.", name);
             }
 
         };
@@ -413,7 +413,7 @@ namespace Ossium
                 Clock c;
                 c.SetWrap(400);
                 c.Update(0.049f);
-                SDL_Log("%d", (int)c.GetTime());
+                Logger::EngineLog().Info("{0}", c.GetTime());
                 TEST_ASSERT(c.GetTime() == 49);
                 c.Update(0.346f);
                 TEST_ASSERT(c.GetTime() == 395);
@@ -492,21 +492,21 @@ namespace Ossium
 
             void SomeOtherMethod()
             {
-                SDL_Log("Iterating over %d fresh derived members:", GetMemberCount());
+                Logger::EngineLog().Info("Iterating over {0} fresh derived members:", GetMemberCount());
                 for (unsigned int i = 0; i < GetMemberCount(); i++)
                 {
-                    SDL_Log("Found member '%s' of type '%s'", GetMemberName(i), GetMemberType(i));
+                    Logger::EngineLog().Info("Found member '{0}' of type '{1}'", GetMemberName(i), GetMemberType(i));
                     if (GetMemberType(i) == SID("float")::str)
                     {
-                        cout << "Member value is: " << *((float*)GetMember(i)) << endl;
+                        Logger::EngineLog().Info("Member value is: {0}", *((float*)GetMember(i)));
                     }
                     else if (GetMemberType(i) == SID("int")::str)
                     {
-                        cout << "Member value is: " << *((int*)GetMember(i)) << endl;
+                        Logger::EngineLog().Info("Member value is: {0}", *((int*)GetMember(i)));
                     }
                     else if (GetMemberType(i) == SID("string")::str)
                     {
-                        cout << "Member value is: " << *((string*)GetMember(i)) << endl;
+                        Logger::EngineLog().Info("Member value is: {0}" + *((string*)GetMember(i)));
                     }
                 }
             }

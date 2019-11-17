@@ -18,7 +18,7 @@ namespace Ossium
 
         void DebugGraphic::Draw(Renderer& renderer)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Draw(Renderer& renderer) not implemented for debug graphic!");
+            Logger::EngineLog().Error("Draw(Renderer& renderer) not implemented for debug graphic!");
         }
 
         void DebugGraphic::SetColor(SDL_Color color)
@@ -115,7 +115,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_Log("Could not find any graphics with tag %s!", tag.c_str());
+                    Logger::EngineLog().Warning("Could not find any graphics with tag {0}!", tag);
                 }
             }
         }

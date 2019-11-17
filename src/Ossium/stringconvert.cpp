@@ -1,4 +1,5 @@
 #include "stringconvert.h"
+#include "logging.h"
 
 namespace Ossium
 {
@@ -8,13 +9,22 @@ namespace Ossium
 
         string ToString(...)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "ToString reached the variadic function!");
+            Logger::EngineLog().Warning("ToString reached the variadic function!");
             return "(ToString() not implemented for type)";
         }
 
         void FromString(...)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "FromString reached the variadic function!");
+            Logger::EngineLog().Warning("FromString reached the variadic function!");
+        }
+
+        void ToStrings(vector<string>& converted)
+        {
+        }
+
+        vector<string> ToStrings()
+        {
+            return vector<string>();
         }
 
     }

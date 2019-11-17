@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
             int testResult = 0;
             if (!TEST_EVALUATE())
             {
-                SDL_Log("Ono... a test failed :(");
+                Logger::EngineLog().Info("Ono... a test failed :(");
                 testResult = -3;
             }
             return testResult;
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
         Config settings;
         if (!settings.Load("ossium.cfg"))
         {
-            SDL_Log("Creating new configuration file...");
+            Logger::EngineLog().Info("Creating new configuration file...");
             settings.Save("ossium.cfg");
         }
 
@@ -326,7 +326,7 @@ int main(int argc, char* argv[])
         sfx.SetVolume(0);
         if (!sound.Load("assets/test_audio.wav"))
         {
-            SDL_Log("Error loading sound! Mix_Error: %s", Mix_GetError());
+            Logger::EngineLog().Error("Error loading sound! Mix_Error: {0}", Mix_GetError());
         }
         else
         {
@@ -399,9 +399,9 @@ int main(int argc, char* argv[])
 
             world.Step(Global::delta.Time(), velocityIterations, positionIterations);
 
-            //SDL_Log("dtime is %f before update", Global::delta.Time());
+            //Logger::EngineLog().Info("dtime is {0} before update", Global::delta.Time());
             entitySystem.UpdateComponents();
-            //SDL_Log("dtime is %f after update", global::delta.Time());
+            //Logger::EngineLog().Info("dtime is {0} after update", global::delta.Time());
             /// TODO: for some reason this bit crashes the engine after a brief time. Something to do with the animator.
             //spriteAnim.Init(mainRenderer, SDL_GetWindowPixelFormat(mainWindow.GetWindow()), true);
 

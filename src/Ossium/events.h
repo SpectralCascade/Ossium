@@ -45,7 +45,7 @@ namespace Ossium
             }
             catch (bad_variant_access&)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Bad variant access in event! Key used was \"%s\".", key.c_str());
+                Logger::EngineLog().Error("Bad variant access in event! Key used was \"{0}\".", key);
             }
             return nullptr;
         }

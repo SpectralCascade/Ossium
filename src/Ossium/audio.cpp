@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -40,7 +41,7 @@ namespace Ossium
             audioChunk = Mix_LoadWAV(guid_path.c_str());
             if (audioChunk == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load audio clip '%s'! Mix_Error: %s", guid_path.c_str(), Mix_GetError());
+                Logger::EngineLog().Error("Failed to load audio clip '{0}'! Mix_Error: {1}", guid_path, Mix_GetError());
                 return false;
             }
             path = guid_path;
@@ -142,7 +143,7 @@ namespace Ossium
                 }
                 else if (id >= numChannels)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "ChannelController: Channel id is out of range.");
+                    Logger::EngineLog().Error("ChannelController: Channel id is out of range.");
                     return;
                 }
                 else
@@ -717,13 +718,13 @@ namespace Ossium
                 else
                 {
                     /// unexpected parse failure
-                    /// TODO: log warning
+                    Logger::EngineLog().Warning("Failed to parse audio mixer bus data!");
                 }
             }
             else
             {
                 /// unexpected parse failure
-                /// TODO: log warning
+                Logger::EngineLog().Warning("Failed to parse audio mixer data!");
             }
         }
 

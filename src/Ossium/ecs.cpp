@@ -173,7 +173,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity name!");
+            Logger::EngineLog().Error("Failed to get entity name!");
         }
 
         entity_itr = data.find("Components");
@@ -189,10 +189,10 @@ namespace Ossium
                 compType = GetComponentType(component.first);
                 if (!TypeSystem::TypeRegistry<BaseComponent>::IsValidType(compType))
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] due to invalid type!", component.first.c_str(), compType);
+                    Logger::EngineLog().Error("Failed to add component of type \"{0}\" [{1}] due to invalid type!", component.first, compType);
                     continue;
                 }
-                //SDL_Log("Creating component of type \"%s\" [%d]", component.first.c_str(), compType);
+                //Logger::EngineLog().Info("Creating component of type \"{0}\" [{1}]", component.first, compType);
                 vector<JString> componentData = component.second.ToArray();
                 vector<BaseComponent*>& compsOfType = components[compType];
                 unsigned int totalComponents = compsOfType.empty() ? 0 : compsOfType.size();
@@ -204,12 +204,12 @@ namespace Ossium
                         comp = TypeSystem::TypeFactory<BaseComponent, ComponentType>::Create(compType, (void*)this);
                         if (comp == nullptr)
                         {
-                            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] to entity during Entity::FromString()!", component.first.c_str(), compType);
+                            Logger::EngineLog().Error("Failed to add component of type \"{0}\" [{1}] to entity during Entity::FromString()!", component.first, compType);
                             continue;
                         }
                         else
                         {
-                            //SDL_Log("Created component of type \"%s\" [%d].", GetComponentName(comp->GetType()).c_str(), comp->GetType());
+                            //Logger::EngineLog().Info("Created component of type \"{0}\" [{1}].", GetComponentName(comp->GetType()), comp->GetType());
                             totalComponents++;
                         }
                     }
@@ -224,7 +224,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Invalid JSON string input during entity FromString() call!");
+            Logger::EngineLog().Error("Invalid JSON string input during entity FromString() call!");
         }
     }
 
@@ -369,12 +369,12 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but it is not managed by this entity component system instance!");
+                Logger::EngineLog().Warning("Attempted to destroy entity but it is not managed by this entity component system instance!");
             }
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to destroy entity but it was already destroyed.");
+            Logger::EngineLog().Warning("Attempted to destroy entity but it was already destroyed.");
         }
     }
 
@@ -439,7 +439,7 @@ namespace Ossium
         {
             if (!IsInt(itr.first))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load entity due to invalid ID '%s'!", itr.first.c_str());
+                Logger::EngineLog().Error("Failed to load entity due to invalid ID '{0}'!", itr.first);
                 continue;
             }
             int id = ToInt(itr.first);
@@ -470,7 +470,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to get entity parent!");
+                Logger::EngineLog().Warning("Failed to get entity parent!");
             }
         }
         /// Now setup the entity hierarchy
@@ -483,7 +483,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Entity with id '%d' does not exist in this ECS!", itr.second);
+                Logger::EngineLog().Warning("Entity with id '{0}' does not exist in this ECS!", itr.second);
             }
         }
         /// Finally, hook up the serialised pointers
@@ -501,7 +501,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find entity with id '%s'.", itr.first.c_str());
+                    Logger::EngineLog().Warning("Could not find entity with id '{0}'.", itr.first);
                 }
             }
             else
@@ -531,27 +531,27 @@ namespace Ossium
                                 }
                                 else
                                 {
-                                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component '%s'.", itr.first.c_str());
+                                    Logger::EngineLog().Warning("Could not find component '{0}'.", itr.first);
                                 }
                             }
                             else
                             {
-                                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component of type \"%s\" [%d] with index '%s'.", comp_type.c_str(), compTypeId, compid.c_str());
+                                Logger::EngineLog().Warning("Could not find component of type \"{0}\" [{1}] with index '{2}'.", comp_type, compTypeId, compid);
                             }
                         }
                         else
                         {
-                            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find component due to invalid type '%s'.", comp_type.c_str());
+                            Logger::EngineLog().Warning("Could not find component due to invalid type '{0}'.", comp_type);
                         }
                     }
                     else
                     {
-                        SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find entity using component id '%s'.", itr.first.c_str());
+                        Logger::EngineLog().Warning("Could not find entity using component id '{0}'.", itr.first);
                     }
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to extract entity id from key '%s'.", itr.first.c_str());
+                    Logger::EngineLog().Warning("Failed to extract entity id from key '{0}'.", itr.first);
                 }
             }
         }

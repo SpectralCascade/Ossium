@@ -19,7 +19,7 @@ namespace Ossium
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
         if (window == NULL)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Window creation failed! SDL_Error: %s", SDL_GetError());
+            Logger::EngineLog().Error("Window creation failed! SDL_Error: {0}", SDL_GetError());
             throw;
         }
 
@@ -34,7 +34,7 @@ namespace Ossium
         int index = SDL_GetWindowDisplayIndex(window);
         if (index < 0 || SDL_GetDisplayBounds(index, &display_bounds) != 0)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to get primary display bounds! Defaulting to initial window size. SDL_Error: %s", SDL_GetError());
+            Logger::EngineLog().Error("Failed to get primary display bounds! Defaulting to initial window size. SDL_Error: {0}", SDL_GetError());
             display_width = width;
             display_height = height;
         }

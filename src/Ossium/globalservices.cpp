@@ -12,6 +12,6 @@ namespace Ossium
 
     Renderer* GlobalServices::MainRenderer = nullptr;
 
-    AudioMixer GlobalServices::Mixer;
+    Logger GlobalServices::Log;
 
 }

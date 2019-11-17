@@ -2,6 +2,7 @@
 #include <SDL_ttf.h>
 
 #include "font.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -81,7 +82,7 @@ namespace Ossium
                 tempFont = TTF_OpenFont(guid_path.c_str(), pointSizes[i]);
                 if (tempFont == NULL)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to open font '%s' with point size '%d'! TTF_Error: %s", guid_path.c_str(), pointSizes[i], TTF_GetError());
+                    Logger::EngineLog().Error("Failed to open font '{0}' with point size '{1}'! TTF_Error: {2}", guid_path, pointSizes[i], TTF_GetError());
                     continue;
                 }
                 if (font == NULL)
@@ -94,7 +95,7 @@ namespace Ossium
         }
         if (font == NULL)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to open font '%s'! TTF_Error: %s", guid_path.c_str(), TTF_GetError());
+            Logger::EngineLog().Error("Failed to open font '{0}'! TTF_Error: {1}", guid_path, TTF_GetError());
         }
         return font != NULL;
     }
@@ -120,7 +121,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Could not find font with point size '%d'. Defaulting to current selected font.", pointSize);
+                Logger::EngineLog().Warning("Could not find font with point size '{0}'. Defaulting to current selected font.", pointSize);
             }
         }
         return font;

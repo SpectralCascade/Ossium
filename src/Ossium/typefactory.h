@@ -3,6 +3,8 @@
 
 #include <functional>
 
+#include "logging.h"
+
 using namespace std;
 
 namespace Ossium
@@ -83,7 +85,7 @@ namespace Ossium
         public:
             TypeFactory(const char* name, FactoryFunc factory)
             {
-                //SDL_Log("Type factory instantiated for type \"%s\" [%d].", name, TypeRegistry<CoreType>::typeIdent);
+                //Logger::EngineLog().Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
                 type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
                 type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;
@@ -97,7 +99,7 @@ namespace Ossium
                 {
                     return itr->second(args);
                 }
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to create target [type id '%d'] with TypeFactory instance!", typeId);
+                Logger::EngineLog().Error("Failed to create target [type id '{0}'] with TypeFactory instance!", typeId);
                 return nullptr;
             }
 
@@ -108,7 +110,7 @@ namespace Ossium
                 {
                     return Create(itr->second, args);
                 }
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to create target type '%s' with TypeFactory instance!", targetType.c_str());
+                Logger::EngineLog().Error("Failed to create target type '{0}' with TypeFactory instance!", targetType);
                 return nullptr;
             }
 

@@ -30,7 +30,7 @@ void StickFighter::OnCreate()
         return ActionOutcome::ClaimContext;
     });
     keyboard->BindAction("squish", SDLK_LCTRL);
-    SDL_Log("Created a stickfighter instance.");
+    Log.Info("Created a stickfighter instance.");
 }
 
 void StickFighter::OnInitGraphics(Renderer* renderer, int layer)
@@ -53,7 +53,7 @@ void StickFighter::OnDestroy()
 {
     delete context;
     context = nullptr;
-    SDL_Log("Destroying a stickfighter instance now.");
+    Log.Info("Destroying a stickfighter instance now.");
 }
 
 void StickFighter::Update()

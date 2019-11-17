@@ -142,7 +142,7 @@ namespace Ossium
                 {
                     return &((*itr).second);
                 }
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find binding value for state '%s'.", name.c_str());
+                Logger::EngineLog().Warning("Could not find binding value for state '{0}'.", name);
                 return nullptr;
             }
 
@@ -205,7 +205,7 @@ namespace Ossium
                 auto itr = _action_bindings.find(action);
                 if (itr == _action_bindings.end())
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Input handler attempted to bind action '%s' but this action has not been added to the handler!", action.c_str());
+                    Logger::EngineLog().Warning("Input handler attempted to bind action '{0}' but this action has not been added to the handler!", action);
                 }
                 else
                 {
@@ -231,7 +231,7 @@ namespace Ossium
                 {
                     return &((*itr).second);
                 }
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find binding value for action '%s'.", action.c_str());
+                Logger::EngineLog().Warning("Could not find binding value for action '{0}'.", action);
                 return nullptr;
             }
 
@@ -265,7 +265,7 @@ namespace Ossium
                     ActionOutcome outcome = (*i)(data);
                     if (outcome != ActionOutcome::Ignore)
                     {
-                        //SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
+                        //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
                         return outcome;
                     }
                 }
@@ -276,7 +276,7 @@ namespace Ossium
                     ActionOutcome outcome = (*actionItr).second(data);
                     if (outcome != ActionOutcome::Ignore)
                     {
-                        //SDL_Log("ActionOutcome returned outcome %s.", GetActionOutcomeName(outcome).c_str());
+                        //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
                         return outcome;
                     }
                 }
@@ -330,7 +330,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to add an input handler to a context, but the context already has an input handler of type [%d].", GetInputHandlerType<T>());
+                    Logger::EngineLog().Warning("Attempted to add an input handler to a context, but the context already has an input handler of type [{0}].", GetInputHandlerType<T>());
                 }
                 return GetHandler<T>();
             }
@@ -342,7 +342,7 @@ namespace Ossium
                 auto itr = inputs.find(GetInputHandlerType<T>());
                 if (itr == inputs.end())
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get input handler of type [%d] from a context, but it has not been added to the context!", GetInputHandlerType<T>());
+                    Logger::EngineLog().Warning("Attempted to get input handler of type [{0}] from a context, but it has not been added to the context!", GetInputHandlerType<T>());
                     return nullptr;
                 }
                 return reinterpret_cast<T*>((*itr).second);

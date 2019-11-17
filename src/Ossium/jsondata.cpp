@@ -3,6 +3,7 @@
 
 #include "jsondata.h"
 #include "basics.h"
+#include "logging.h"
 
 namespace Ossium
 {
@@ -109,7 +110,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to convert JString value into array, but the value is not an array!");
+            Logger::EngineLog().Warning("Attempted to convert JString value into array, but the value is not an array!");
         }
         return dataArray;
     }
@@ -176,7 +177,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to get element from JSON array, but this JString instance is not an array!");
+            Logger::EngineLog().Warning("Attempted to get element from JSON array, but this JString instance is not an array!");
         }
         /// Exceeded bounds special value
         return JString("\\!EB!\\");
@@ -205,7 +206,7 @@ namespace Ossium
         string toParse = Utilities::FileToString(file);
         if (toParse.empty())
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load JSON file '%s'!", path.c_str());
+            Logger::EngineLog().Warning("Failed to load JSON file '{0}'!", path);
             return false;
         }
         file.close();
@@ -213,7 +214,7 @@ namespace Ossium
         {
             return false;
         }
-        SDL_Log("Imported JSON '%s' successfully.", path.c_str());
+        Logger::EngineLog().Info("Imported JSON '{0}' successfully.", path);
         return true;
     }
 
@@ -424,7 +425,7 @@ namespace Ossium
         }
         if (open || !isJson)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to parse JSON correctly due to bad formatting.");
+            Logger::EngineLog().Warning("Failed to parse JSON correctly due to bad formatting.");
             return false;
         }
         return true;

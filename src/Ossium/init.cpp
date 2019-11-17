@@ -18,7 +18,7 @@ namespace Ossium
     int InitialiseOssium()
     {
         string numCPUs = "";
-        SDL_Log("%s | %d core CPU | %d MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
+        Logger::EngineLog().Info("{0} | {1} core CPU | {2} MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
 
         /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
         #ifdef DEBUG
@@ -28,7 +28,7 @@ namespace Ossium
         int error = 0;
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL error during initialisation: %s", SDL_GetError());
+            Logger::EngineLog().Error("SDL error during initialisation: {0}", SDL_GetError());
             error = INIT_ERROR_SDL;
         }
         else
@@ -36,14 +36,14 @@ namespace Ossium
             int imgFlags = IMG_INIT_PNG;
             if (!(IMG_Init(imgFlags) & imgFlags))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Image error during initialisation: %s", IMG_GetError());
+                Logger::EngineLog().Error("SDL_Image error during initialisation: {0}", IMG_GetError());
                 error = INIT_ERROR_IMG;
             }
             else
             {
                 if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Mixer error during initialisation: %s", Mix_GetError());
+                    Logger::EngineLog().Error("SDL_Mixer error during initialisation: {0}", Mix_GetError());
                     error = INIT_ERROR_MIXER;
                 }
                 else
@@ -59,7 +59,7 @@ namespace Ossium
                     }
                     else
                     {
-                        SDL_Log("Initialised OSSIUM ENGINE successfully!");
+                        Logger::EngineLog().Info("Initialised OSSIUM ENGINE successfully!");
                     }
                     #endif // _SDL_TTF_H
                 }

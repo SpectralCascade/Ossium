@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 #include "basics.h"
+#include "logging.h"
 
 namespace Ossium
 {
@@ -17,7 +18,7 @@ namespace Ossium
         {
             if (length <= 1)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "CircularBuffer cannot be initialised with a length of 1 or less!");
+                Logger::EngineLog().Error("CircularBuffer cannot be initialised with a length of 1 or less!");
                 #ifdef DEBUG
                 /// Chucked in the SDL assert as it's useful to have in debug builds
                 SDL_assert(length > 1);
@@ -114,7 +115,7 @@ namespace Ossium
             /// We don't want to wrap around if there are no items left in the buffer
             if (count <= 0)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Cannot pop_back from an empty circular buffer!");
+                Logger::EngineLog().Error("Cannot pop_back from an empty circular buffer!");
                 /// Return whatever junk value remains rather than throw an exception
                 return buffer[back];
             }
@@ -133,7 +134,7 @@ namespace Ossium
             /// We don't want to wrap around if there are no items left in the buffer
             if (count <= 0)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Cannot pop_front from an empty circular buffer!");
+                Logger::EngineLog().Error("Cannot pop_front from an empty circular buffer!");
                 /// Return whatever junk value rather than throw an exception
                 return buffer[front];
             }
@@ -157,7 +158,7 @@ namespace Ossium
                 back = wrap(front, index, 0, max_size - 1);
                 return true;
             }
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "CircularBuffer drop_back index out of range, cannot drop back.");
+            Logger::EngineLog().Warning("CircularBuffer drop_back index out of range, cannot drop back.");
             return false;
         }
 
@@ -205,7 +206,7 @@ namespace Ossium
             #endif // DEBUG
             if (count == 0 || front + index > count)
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Attempted to access undefined data. Returning back as default.");
+                Logger::EngineLog().Warning("Attempted to access undefined data. Returning back as default.");
                 return buffer[back];
             }
             return buffer[front + wrap(front, index, 0, max_size)];

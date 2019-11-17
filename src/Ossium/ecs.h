@@ -208,7 +208,7 @@ namespace Ossium
                 itr->second[0] = nullptr;
                 itr->second.erase(itr->second.begin());
             }
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "(!) Could not find any component of type[%d] attached to entity[%d] with name '%s'.", GetComponentType<T>(), self->id, self->name.c_str());
+            Logger::EngineLog().Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, self->name);
         }
 
         /// Returns a pointer the first found instance of a component attached

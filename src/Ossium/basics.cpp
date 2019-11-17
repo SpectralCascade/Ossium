@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "basics.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -229,7 +230,7 @@ namespace Ossium
             int value = 0;
             if (!(str >> value))
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to integer!", data.c_str());
+                Logger::EngineLog().Warning("Failed to convert string '{0}' to integer!", data);
             }
             return value;
         }
@@ -242,7 +243,7 @@ namespace Ossium
             float value = 0;
             if (!(str >> value))
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to float!", data.c_str());
+                Logger::EngineLog().Warning("Failed to convert string '{0}' to float!", data);
             }
             return value;
         }

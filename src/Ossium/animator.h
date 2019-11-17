@@ -129,7 +129,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to set default animation keyframe to first keyframe as no keyframes exist yet!");
+                    Logger::EngineLog().Warning("Failed to set default animation keyframe to first keyframe as no keyframes exist yet!");
                 }
             }
 

@@ -22,7 +22,7 @@ namespace Ossium
             {
                 if (csv.data[0].empty() || csv.data[0].size() < 4)
                 {
-                    SDL_Log("Error getting animation data from sprite animation file '%s'.", path.c_str());
+                    Logger::EngineLog().Info("Error getting animation data from sprite animation file '{0}'.", path);
                     return false;
                 }
                 name = splitRight(csv.GetCell(0, 0), '=');
@@ -32,7 +32,7 @@ namespace Ossium
                 tween = splitRight(csv.GetCell(0, 4), '=') == "true" ? true : false;
                 if (spriteSheetPath == "" || spriteSheetPath == "UNKNOWN")
                 {
-                    SDL_Log("Error getting sprite sheet path from sprite animation file '%s'.", path.c_str());
+                    Logger::EngineLog().Warning("Failed to get sprite sheet path from sprite animation file '{0}'.", path);
                     return false;
                 }
                 if (tween)

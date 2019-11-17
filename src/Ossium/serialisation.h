@@ -7,6 +7,7 @@
 
 #include "coremaths.h"
 #include "helpermacros.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -57,7 +58,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Attempted to read from NULL file source! %d sectors open.",
+                Logger::EngineLog().Warning("Attempted to read from NULL file source! {0} sectors open.",
                             openSectors.empty() ? 0 : (int)openSectors.size());
             }
         }
@@ -72,7 +73,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Attempted to write to NULL file source! %d sectors open.",
+                Logger::EngineLog().Warning("Attempted to write to NULL file source! {0} sectors open.",
                             openSectors.empty() ? 0 : (int)openSectors.size());
             }
         }

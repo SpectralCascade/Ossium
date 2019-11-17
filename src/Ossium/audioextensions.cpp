@@ -67,9 +67,9 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO,
-                        "There is more than one audio listener instance active, main listener already set! Main listener entity name is: %s, id is: %d",
-                        mainListener->entity->GetName().c_str(),
+            Logger::EngineLog().Warning(
+                        "There is more than one audio listener instance active, main listener already set! Main listener entity name is: {0}, id is: {1}",
+                        mainListener->entity->GetName(),
                         mainListener->entity->GetID()
             );
         }

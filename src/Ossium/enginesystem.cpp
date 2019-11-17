@@ -30,7 +30,7 @@ namespace Ossium
         JSON data;
         if (!data.Import(configFilePath))
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load EngineSystem initialisation file '%s'!", configFilePath.c_str());
+            Logger::EngineLog().Warning("Failed to load EngineSystem initialisation file '{0}'!", configFilePath);
             return;
         }
         /// Initialise as normal

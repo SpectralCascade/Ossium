@@ -75,7 +75,7 @@ namespace Ossium
             {
                 delete resource;
                 resource = nullptr;
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to load resource '%s'.", guid_path.c_str());
+                Logger::EngineLog().Warning("Failed to load resource '{0}.", guid_path);
             }
             return resource;
         };
@@ -91,7 +91,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
+                Logger::EngineLog().Warning("Cannot find resource '{0}' for post-load initialisation!", guid_path);
             }
             return resource;
         }
@@ -116,12 +116,12 @@ namespace Ossium
                 {
                     delete resource;
                     resource = nullptr;
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to load resource '%s'.", guid_path.c_str());
+                    Logger::EngineLog().Warning("Failed to load resource '{0}'.", guid_path);
                 }
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Cannot find resource '%s' for post-load initialisation!", guid_path.c_str());
+                Logger::EngineLog().Warning("Cannot find resource '{0}' for post-load initialisation!", guid_path);
             }
             return resource;
         }
@@ -159,7 +159,7 @@ namespace Ossium
             auto found = registry<T>().find(guid_path);
             if (found == registry<T>().end())
             {
-                //SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Failed to retrieve resource with GUID '%s'!", guid_path.c_str());
+                //Logger::EngineLog().Warning("Failed to retrieve resource with GUID '{0}'!", guid_path);
                 return nullptr;
             }
             return reinterpret_cast<T*>(found->second);

@@ -84,7 +84,7 @@ namespace Ossium
                 file.close();
                 return true;
             }
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to load schema from file '%s'!", filePath.c_str());
+            Logger::EngineLog().Warning("Failed to load schema from file '{0}'!", filePath);
             return false;
         }
 
@@ -116,7 +116,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Could not get member '%s' at index [%d] during serialisation!", key.c_str(), i);
+                    Logger::EngineLog().Error("Could not get member '{0}' at index [{1}] during serialisation!", key, i);
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace Ossium
                     bool success = member_from_string[i](GetMember(i), member_types[i], itr->second);
                     if (!success)
                     {
-                        SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to serialise member '%s' of type '%s'.", member_names[i], member_types[i]);
+                        Logger::EngineLog().Warning("Failed to serialise member '{0}' of type '{1}'.", member_names[i], member_types[i]);
                     }
                 }
                 else
@@ -154,7 +154,7 @@ namespace Ossium
 
         virtual void MapReference(string identdata, void** member)
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Reference mapping not implemented for a type deriving from schema type \"%s\"", schema_name);
+            Logger::EngineLog().Warning("Reference mapping not implemented for a type deriving from schema type \"{0}\"", schema_name);
         }
 
     private:
@@ -366,7 +366,7 @@ namespace Ossium
                 }                                                                                                                               \
                 else                                                                                                                            \
                 {                                                                                                                               \
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Type \"%s\" is not SchemaReferable.", strtype);                                       \
+                    Logger::EngineLog().Warning("Type \"{0}\" is not SchemaReferable.", strtype);                                               \
                 }                                                                                                                               \
             }                                                                                                                                   \
             (*((void**)member)) = nullptr;                                                                                                      \
@@ -391,7 +391,7 @@ namespace Ossium
             {                                                                                               \
                 return (*((SchemaReferable**)member))->GetReferenceID();                                    \
             }                                                                                               \
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Invalid schema member reference type \"%s\".", strtype);  \
+            Logger::EngineLog().Warning("Invalid schema member reference type \"{0}\".", strtype);  \
             return Utilities::ToString(*(( TYPE *)member));                                                 \
         }                                                                                                   \
         return string("null");                                                                              \

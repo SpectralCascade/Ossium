@@ -26,7 +26,7 @@ namespace Ossium
         {
             if ((*i).empty() || (*i).size() < 2)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to parse event key-value field.");
+                Logger::EngineLog().Error("Failed to parse event key-value field.");
                 continue;
             }
             if ((*i)[0][0] == '%')
@@ -92,7 +92,7 @@ namespace Ossium
             }
             catch (bad_variant_access&)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Bad variant access in event! Key used was \"%s\".", key.c_str());
+                Logger::EngineLog().Error("Bad variant access in event! Key used was \"{0}\".", key);
             }
         }
         return "null";
@@ -176,7 +176,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to serialise event from a JSON string.");
+            Logger::EngineLog().Warning("Failed to serialise event from a JSON string.");
         }
     }
 

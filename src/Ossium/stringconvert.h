@@ -12,6 +12,7 @@ namespace Ossium
 
     inline namespace Utilities
     {
+
         ///
         /// FromString() functions
         ///
@@ -34,7 +35,7 @@ namespace Ossium
             str.str(data);
             if (!(str >> obj))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string '%s' to object data.", data.c_str());
+                SDL_Log("Failed to convert string '%s' to object data.", data.c_str());
             }
         }
 
@@ -95,7 +96,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Failed to parse data as JSON map!");
+                SDL_Log("Failed to parse data as JSON map!");
             }
         }
 
@@ -162,7 +163,7 @@ namespace Ossium
             str.str("");
             if (!(str << obj))
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Failed to convert string to data.");
+                SDL_Log("Failed to convert string to data.");
             }
             return str.str();
         }
@@ -231,6 +232,104 @@ namespace Ossium
 
         /// Sinkhole for types that ToString() is not implemented for.
         string ToString(...);
+
+        ///
+        /// String formatting function, similar to C# String.Format()
+        /// e.g. string name = "Tim";
+        /// Format("My first name is {0} and it is {1} characters long!", name, name.length());
+        /// would return the string "My first name is Tim and it is 3 characters long!"
+        ///
+
+        /// Recursive base case, no arguments
+        void ToStrings(vector<string>& converted);
+
+        /// Base case, no arguments
+        vector<string> ToStrings();
+
+        /// Recursively extracts arguments and appends them to the back of the provided vector
+        template<typename T, typename ...Args>
+        void ToStrings(vector<string>& converted, T&& value, Args&& ...args)
+        {
+            converted.push_back(ToString(value));
+            ToStrings(converted, forward<Args>(args)...);
+        }
+
+        /// Converts all the provided arguments to strings
+        template<typename T, typename ...Args>
+        vector<string> ToStrings(T&& value, Args&& ...args)
+        {
+            vector<string> converted;
+            converted.push_back(ToString(value));
+            ToStrings(converted, forward<Args>(args)...);
+            return converted;
+        }
+
+        /// Format a string with a list of arguments of various types
+        template<typename ...Args>
+        string Format(string text, Args&&... args)
+        {
+            /// Convert arguments to strings
+            vector<string> arguments = ToStrings(forward<Args>(args)...);
+
+            if (arguments.empty())
+            {
+                /// Early out if no arguments
+                return text;
+            }
+
+            char previous = '\0';
+            bool formatting = false;
+            string formatted = "";
+            string parsing = "";
+            for (auto ch : text)
+            {
+                if (!formatting)
+                {
+                    if (ch == '{' && previous != '\\')
+                    {
+                        formatting = true;
+                    }
+                    else
+                    {
+                        formatted += ch;
+                    }
+                }
+                else
+                {
+                    if (ch == '}')
+                    {
+                        /// Get the argument index
+                        if (IsInt(parsing))
+                        {
+                            int index = -1;
+                            FromString(index, parsing);
+                            if (index < 0 || (unsigned int)index >= arguments.size())
+                            {
+                                /// TODO: Log "invalid format argument index".
+                            }
+                            else
+                            {
+                                /// Append the argument
+                                formatted += arguments[(unsigned int)index];
+                            }
+                        }
+                        else
+                        {
+                            /// TODO: Log "invalid formatting argument".
+                        }
+                        formatting = false;
+                        parsing = "";
+                    }
+                    else
+                    {
+                        parsing += ch;
+                    }
+                }
+                previous = ch;
+            }
+
+            return formatted;
+        }
 
     }
 

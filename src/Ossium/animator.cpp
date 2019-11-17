@@ -289,7 +289,7 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Unable to add more tweening functions to animator timeline. Number of functions exceeds the 255 function limit!");
+                    Logger::EngineLog().Warning("Unable to add more tweening functions to animator timeline. Number of functions exceeds the 255 function limit!");
                     return (Uint8)(index - 1);
                 }
             }

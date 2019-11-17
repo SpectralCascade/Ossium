@@ -67,13 +67,13 @@ namespace Ossium
             tempSurface = IMG_Load(guid_path.c_str());
             if (tempSurface == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! IMG_Error: %s", guid_path.c_str(), IMG_GetError());
+                Logger::EngineLog().Error("Could not load image '{0}'! IMG_Error: {1}", guid_path, IMG_GetError());
             }
             #else
             tempSurface = SDL_LoadBMP(guid_path.c_str());
             if (tempSurface == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not load image '%s'! SDL_Error: %s", guid_path.c_str(), SDL_GetError());
+                Logger::EngineLog().Error("Could not load image '{0}'! SDL_Error: {1}", guid_path, SDL_GetError());
             }
             #endif // SDL_IMAGE_H_
             else
@@ -92,7 +92,7 @@ namespace Ossium
             TTF_Font* actualFont = font.GetFont(pointSize);
             if (actualFont == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create text. Failure obtaining the font!");
+                Logger::EngineLog().Error("Failed to create text. Failure obtaining the font!");
                 return false;
             }
             Free();
@@ -136,12 +136,12 @@ namespace Ossium
                     tempSurface = NULL;
                     if (outlineTexture == NULL)
                     {
-                        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
+                        Logger::EngineLog().Error("Failed to create texture from surface! SDL_Error: {0}", SDL_GetError());
                     }
                 }
                 else
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from text! TTF_Error: %s", TTF_GetError());
+                    Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
                 }
             }
             /// Now do the actual text texture
@@ -182,7 +182,7 @@ namespace Ossium
                 tempSurface = NULL;
                 if (texture == NULL)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from surface! SDL_Error: %s", SDL_GetError());
+                    Logger::EngineLog().Error("Failed to create texture from surface! SDL_Error: {0}", SDL_GetError());
                 }
                 else
                 {
@@ -191,7 +191,7 @@ namespace Ossium
             }
             else
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create texture from text! TTF_Error: %s", TTF_GetError());
+                Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
             }
 
             return texture != NULL;
@@ -203,7 +203,7 @@ namespace Ossium
             format = pixelFormatting;
             if (tempSurface == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "NULL surface, cannot initialise Image!");
+                Logger::EngineLog().Error("NULL surface, cannot initialise Image!");
             }
             else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN)
             {
@@ -211,14 +211,14 @@ namespace Ossium
                 formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
                 if (formattedSurface == NULL)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to format surface! SDL_Error: %s", SDL_GetError());
+                    Logger::EngineLog().Error("Failed to format surface! SDL_Error: {0}", SDL_GetError());
                 }
                 else
                 {
                     texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormatting, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
                     if (texture == NULL)
                     {
-                        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Image from surface! SDL_Error: %s", SDL_GetError());
+                        Logger::EngineLog().Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
                     }
                     else
                     {
@@ -240,7 +240,7 @@ namespace Ossium
                 texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
                 if (texture == NULL)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Image from surface! SDL_Error: %s", SDL_GetError());
+                    Logger::EngineLog().Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
                 }
                 else
                 {
@@ -293,7 +293,7 @@ namespace Ossium
             {
                 if (SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
                 {
-                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Image texture lock failure! %s", SDL_GetError());
+                    Logger::EngineLog().Error("Image texture lock failure! {0}", SDL_GetError());
                     return false;
                 }
             }

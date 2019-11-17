@@ -102,7 +102,7 @@ namespace Ossium
         Image* importedTexture = new Image();
         if (!importedTexture->LoadAndInit(path, renderer, pixelFormatting))
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to import texture into texture pack with path '%s'", path.c_str());
+            Logger::EngineLog().Error("Failed to import texture into texture pack with path '{0}'", path);
             return false;
         }
         bool mipmapped = false;
@@ -256,13 +256,13 @@ namespace Ossium
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
             if (renderSurface == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create surface during TexturePack save process!");
+                Logger::EngineLog().Error("Failed to create surface during TexturePack save process!");
                 return false;
             }
             SDL_Texture* renderTarget = SDL_CreateTexture(render, pixelFormatting, SDL_TEXTUREACCESS_TARGET, targetRect.w, targetRect.h);
             if (renderTarget == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create render target texture during TexturePack save process!");
+                Logger::EngineLog().Error("Failed to create render target texture during TexturePack save process!");
                 return false;
             }
             SDL_SetRenderTarget(render, renderTarget);
@@ -302,12 +302,12 @@ namespace Ossium
             metaStream.Close(WRITE);
             packSize = 0;
 
-            SDL_Log("Saved TexturePack at '%s'.", path.c_str());
+            Logger::EngineLog().Info("Saved TexturePack at '{0}'.", path);
             return true;
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Could not save TexturePack, source texture is NULL.");
+            Logger::EngineLog().Warning("Could not save TexturePack, source texture is NULL.");
         }
         return false;
     }
@@ -326,7 +326,7 @@ namespace Ossium
                 return packData[i].pureClip;
             }
         }
-        SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Could not locate texture '%s' in texture pack!", textureId.c_str());
+        Logger::EngineLog().Warning("Could not locate texture '{0}' in texture pack!", textureId);
         return {0, 0, 1, 1};
     }
 

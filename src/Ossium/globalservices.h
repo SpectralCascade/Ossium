@@ -1,7 +1,9 @@
 #ifndef GLOBALSERVICES_H
 #define GLOBALSERVICES_H
 
-#include "audio.h"
+#include "resourcecontroller.h"
+#include "renderer.h"
+#include "logging.h"
 
 namespace Ossium
 {
@@ -17,7 +19,7 @@ namespace Ossium
     protected:
         static ResourceController* Resources;
         static Renderer* MainRenderer;
-        static AudioMixer Mixer;
+        static Logger Log;
 
     };
 

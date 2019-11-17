@@ -30,7 +30,7 @@ namespace Ossium
     {
         if (!openSectors.empty())
         {
-            SDL_Log("Not all sectors were closed before closing the file. Closing %d sectors now.", (int)openSectors.size());
+            Logger::EngineLog().Info("Not all sectors were closed before closing the file. Closing {0} sectors now.", openSectors.size());
             for (int i = 0, counti = openSectors.size(); i < counti; i++)
             {
                 CloseSector(mode);
@@ -42,11 +42,11 @@ namespace Ossium
             file = NULL;
             if (mode == WRITE)
             {
-                SDL_Log("Closed file with final output size of %d bytes and %d sector(s). Wrote %d bytes of data.", fileSize, totalSectors, totalDataBytes);
+                Logger::EngineLog().Info("Closed file with final output size of {0} bytes and {1} sector(s). Wrote {2} bytes of data.", fileSize, totalSectors, totalDataBytes);
             }
             else
             {
-                SDL_Log("Closed file '%s'.", path.c_str());
+                Logger::EngineLog().Info("Closed file '{0}'.", path);
             }
         }
         totalSectors = 0;
@@ -57,15 +57,15 @@ namespace Ossium
 
     void BinarySerialiser::OpenSector(string name, string filePath, bool mode)
     {
-        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Opening new sector '%s' in file '%s' with mode '%s'.", name.c_str(), filePath.c_str(), mode == WRITE ? "binary write" : "binary read");
+        Logger::EngineLog().Verbose("Opening new sector '{0}' in file '{1}' with mode '{2}'.", name, filePath, mode == WRITE ? "binary write" : "binary read");
         if (file == NULL)
         {
-            SDL_Log("Opening file '%s' for %s.", filePath.c_str(), mode == WRITE ? "writing" : "reading");
+            Logger::EngineLog().Info("Opening file '{0}' for {1}.", filePath, mode == WRITE ? "writing" : "reading");
             file = SDL_RWFromFile(filePath.c_str(), mode == WRITE ? "w+b" : "r+b");
             path = filePath;
             if (file == NULL)
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to open file '%s' for serialisation! SDL_Error: %s", filePath.c_str(), SDL_GetError());
+                Logger::EngineLog().Error("Failed to open file '{0}' for serialisation! SDL_Error: {1}", filePath, SDL_GetError());
                 return;
             }
         }
@@ -76,7 +76,7 @@ namespace Ossium
             sectorComparison[name.length()] = '\0';
             if (*(const char*)sectorComparison != *name.c_str())
             {
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Mismatched sector name! Attempted to read sector '%s' but read '%s'.", name.c_str(), (const char*)sectorComparison);
+                Logger::EngineLog().Error("Mismatched sector name! Attempted to read sector '{0}' but read '{1}'.", name, (const char*)sectorComparison);
             }
             delete[] sectorComparison;
             sectorComparison = NULL;
@@ -99,7 +99,7 @@ namespace Ossium
     {
         if (!openSectors.empty())
         {
-            SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Finished %s a sector, %s %d bytes of data.", mode == READ ? "reading" : "writing", mode == READ ? "read" : "wrote", index);
+            Logger::EngineLog().Verbose("Finished {0} a sector, {1} {2} bytes of data.", mode == READ ? "reading" : "writing", mode == READ ? "read" : "wrote", index);
             totalDataBytes += index;
             fileSize += index;
             openSectors.pop();
@@ -110,7 +110,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Attempted to close a sector but no sectors are open.");
+            Logger::EngineLog().Warning("Attempted to close a sector but no sectors are open.");
         }
     }
 
@@ -132,7 +132,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Attempted to read from NULL file source! %d sectors open.",
+            Logger::EngineLog().Warning("Attempted to read from NULL file source! {0} sectors open.",
                         openSectors.empty() ? 0 : (int)openSectors.size());
         }
     }
@@ -149,7 +149,7 @@ namespace Ossium
         }
         else
         {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ERROR, "Attempted to write to NULL file source! %d sectors open.",
+            Logger::EngineLog().Warning("Attempted to write to NULL file source! {0} sectors open.",
                         openSectors.empty() ? 0 : (int)openSectors.size());
         }
     }
