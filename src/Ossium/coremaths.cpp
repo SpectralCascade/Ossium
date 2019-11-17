@@ -229,7 +229,6 @@ namespace Ossium
         Utilities::FromString(position().x, Utilities::splitLeft(data, ',').substr(1));
         Utilities::FromString(position().y, Utilities::splitLeft(Utilities::splitRight(data, ',', ""), ','));
         Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(Utilities::splitRight(data, ','), ','), ')'));
-        SDL_Log("Position: %f, %f, rotation: %f", position().x, position().y, rotation().GetDegrees());
     }
 
     string Transform::ToString()
