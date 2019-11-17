@@ -89,3 +89,12 @@ void StickFighter::Update()
         stickman->PlayAnimation(timeline, &idleAnim);
     }
 }
+
+REGISTER_COMPONENT(MouseFollower);
+
+void MouseFollower::Update()
+{
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    WorldPosition() = Point(x, y);
+}

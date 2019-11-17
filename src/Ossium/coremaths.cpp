@@ -154,7 +154,7 @@ namespace Ossium
         Set(angle);
     }
 
-    void Rotation::FromString(string& data)
+    void Rotation::FromString(string data)
     {
         float degs;
         Utilities::FromString(degs, data);
@@ -224,16 +224,17 @@ namespace Ossium
     /// Transform
     ///
 
-    void Transform::FromString(string& data)
+    void Transform::FromString(string data)
     {
-        Utilities::FromString(position(), Utilities::splitRight(Utilities::splitLeft(data, ')', ""), '('));
-        Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(Utilities::splitRight(data, ',', ""), ',', ""), ')'));
-        SDL_Log("Loaded transform at position (%f, %f) with %f degrees rotation.", position().x, position().y, rotation().GetDegrees());
+        Utilities::FromString(position().x, Utilities::splitLeft(data, ',').substr(1));
+        Utilities::FromString(position().y, Utilities::splitLeft(Utilities::splitRight(data, ',', ""), ','));
+        Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(Utilities::splitRight(data, ','), ','), ')'));
+        SDL_Log("Position: %f, %f, rotation: %f", position().x, position().y, rotation().GetDegrees());
     }
 
     string Transform::ToString()
     {
-        return "(" + Utilities::ToString(position()) + ", " + Utilities::ToString(rotation()) + ")";
+        return "(" + Utilities::ToString(position().x) + ", " + Utilities::ToString(position().x) + ", " + Utilities::ToString(rotation()) + ")";
     }
 
     ///

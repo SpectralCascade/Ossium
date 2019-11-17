@@ -13,6 +13,9 @@
                     "origin" : "(0.5, 0.5)",
                     "imgPath" : "assets/pack_texture.png"
                 }],
+                "Transform2" : [{
+                    "trans" : "(512, 400, 0)"
+                }],
                 "AudioSource" : [{
                     "samplePath" : "assets/test_audio.wav",
                     "looping" : 1,
@@ -28,10 +31,12 @@
     "1" : {
             "Components" : {
                 "AudioListener" : [{
-                    "cutoff" : 1280.0
+                    "cutoff" : 400.0
                 }],
                 "Transform2" : [{
-                    "trans" : "((400, 400), 0)"
+                    "trans" : "(0, 0, 0)"
+                }],
+                "MouseFollower" : [{
                 }]
             },
             "Name" : "Player",

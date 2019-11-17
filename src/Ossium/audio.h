@@ -505,7 +505,7 @@ namespace Ossium
             string ToString();
 
             /// Sets up specified audio buses.
-            void FromString(string& data);
+            void FromString(string data);
 
         private:
             /// All audio buses.

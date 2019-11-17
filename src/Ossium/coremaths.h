@@ -101,7 +101,7 @@ namespace Ossium
         void SetRadians(float radians);
 
         /// Convert rotation from a given string
-        void FromString(string& data);
+        void FromString(string data);
         /// Convert rotation to a string
         string ToString();
 
@@ -162,7 +162,7 @@ namespace Ossium
         inline Rotation& rotation() { return EVIL_CAST(q, Rotation); };
 
         /// Convert from string
-        void FromString(string& data);
+        void FromString(string data);
         /// Convert to string
         string ToString();
 

@@ -39,4 +39,13 @@ private:
 
 };
 
+class MouseFollower : public Component
+{
+public:
+    DECLARE_COMPONENT(MouseFollower);
+
+    void Update();
+
+};
+
 #endif // TESTSTUFF_H

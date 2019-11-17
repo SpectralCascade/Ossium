@@ -126,6 +126,7 @@ namespace Ossium
 
         void FromString(...)
         {
+            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "FromString reached the variadic function!");
         }
 
         string strip(string data, char optionalChar)
