@@ -112,7 +112,7 @@ namespace Ossium
 
     void Entity::SetName(string name)
     {
-        self->name == name;
+        self->name = name;
     }
 
     string Entity::GetName()
@@ -129,7 +129,7 @@ namespace Ossium
     {
         /// Check if this is the root entity, or the parent is the root entity
         /// We can assume self is never null as self is set when the entity is added to the entity tree
-        if (self->name == "" || self->parent->name == "")
+        if (self->parent == nullptr || self->name == "" || self->parent->name == "")
         {
             return nullptr;
         }
