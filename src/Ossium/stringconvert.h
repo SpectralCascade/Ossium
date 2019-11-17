@@ -14,6 +14,17 @@ namespace Ossium
     {
 
         ///
+        /// Internal logging functions, such that the main logging system can be used.
+        ///
+
+        namespace Internal
+        {
+
+            void __InternalLogWarn(string text);
+
+        }
+
+        ///
         /// FromString() functions
         ///
 
@@ -35,7 +46,7 @@ namespace Ossium
             str.str(data);
             if (!(str >> obj))
             {
-                SDL_Log("Failed to convert string '%s' to object data.", data.c_str());
+                Internal::__InternalLogWarn("Failed to convert string '" + data + "' to object data.");
             }
         }
 
@@ -96,7 +107,7 @@ namespace Ossium
             }
             else
             {
-                SDL_Log("Failed to parse data as JSON map!");
+                Internal::__InternalLogWarn("Failed to parse data as JSON map!");
             }
         }
 
@@ -163,7 +174,7 @@ namespace Ossium
             str.str("");
             if (!(str << obj))
             {
-                SDL_Log("Failed to convert string to data.");
+                Internal::__InternalLogWarn("Failed to convert string to data.");
             }
             return str.str();
         }

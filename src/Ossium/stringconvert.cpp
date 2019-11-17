@@ -27,6 +27,16 @@ namespace Ossium
             return vector<string>();
         }
 
+        namespace Internal
+        {
+
+            void __InternalLogWarn(string text)
+            {
+                Logger::EngineLog().Warning(text);
+            }
+
+        }
+
     }
 
 }
