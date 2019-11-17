@@ -6,6 +6,7 @@
 #include <SDL.h>
 
 #include "basics.h"
+#include "stringconvert.h"
 #include "ecs.h"
 #include "delta.h"
 
@@ -16,12 +17,12 @@ namespace Ossium
 
     string GetComponentName(Uint32 id)
     {
-        return typesys::TypeFactory<BaseComponent, ComponentType>::GetName(id);
+        return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetName(id);
     }
 
     ComponentType GetComponentType(string name)
     {
-        return typesys::TypeFactory<BaseComponent, ComponentType>::GetId(name);
+        return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetId(name);
     }
 
     Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
@@ -186,7 +187,7 @@ namespace Ossium
                 /// TODO: map compType to the type id specified in a lookup table within the JSON data
                 /// to ensure component type ids are correct between versions/devices (due to static instantiation order uncertainty).
                 compType = GetComponentType(component.first);
-                if (!typesys::TypeRegistry<BaseComponent>::IsValidType(compType))
+                if (!TypeSystem::TypeRegistry<BaseComponent>::IsValidType(compType))
                 {
                     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] due to invalid type!", component.first.c_str(), compType);
                     continue;
@@ -200,7 +201,7 @@ namespace Ossium
                     BaseComponent* comp = nullptr;
                     if (i >= totalComponents)
                     {
-                        comp = typesys::TypeFactory<BaseComponent, ComponentType>::Create(compType, (void*)this);
+                        comp = TypeSystem::TypeFactory<BaseComponent, ComponentType>::Create(compType, (void*)this);
                         if (comp == nullptr)
                         {
                             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to add component of type \"%s\" [%d] to entity during Entity::FromString()!", component.first.c_str(), compType);
@@ -324,12 +325,12 @@ namespace Ossium
 
     EntityComponentSystem::EntityComponentSystem()
     {
-        components = new vector<BaseComponent*>[typesys::TypeRegistry<BaseComponent>::GetTotalTypes()];
+        components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
     }
 
     void EntityComponentSystem::UpdateComponents()
     {
-        for (unsigned int i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             for (auto j = components[i].begin(); j != components[i].end(); j++)
             {
@@ -401,7 +402,7 @@ namespace Ossium
         }
         /// Now we can safely remove all nodes from the tree and remove all components
         entityTree.clear();
-        for (unsigned int i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             /// No need to delete components as they are deleted when their parent entity is destroyed
             components[i].clear();
@@ -514,7 +515,7 @@ namespace Ossium
                     {
                         string comp_type = splitLeft(splitRight(itr.first, ':', "error"), ':', "error");
                         ComponentType compTypeId = GetComponentType(comp_type);
-                        if (typesys::TypeRegistry<BaseComponent>::IsValidType(compTypeId))
+                        if (TypeSystem::TypeRegistry<BaseComponent>::IsValidType(compTypeId))
                         {
                             vector<BaseComponent*>& comps = entityItr->second->data->components[compTypeId];
                             string compid = splitRight(splitRight(itr.first, ':', "error"), ':', "error");
@@ -556,7 +557,7 @@ namespace Ossium
         }
         serialised_pointers.clear();
 
-        for (unsigned int i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
+        for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             for (auto component : components[i])
             {
@@ -579,7 +580,7 @@ namespace Ossium
 
     EntityComponentSystem::~EntityComponentSystem()
     {
-        for (Uint32 i = 0, counti = typesys::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
+        for (Uint32 i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             components[i].clear();
         }

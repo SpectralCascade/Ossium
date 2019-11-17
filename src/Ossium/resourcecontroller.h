@@ -5,7 +5,8 @@
 #include <unordered_map>
 #include <SDL.h>
 
-#include "basics.h"
+#include "typefactory.h"
+#include "stringconvert.h"
 #include "renderer.h"
 #include "stringintern.h"
 
@@ -24,14 +25,14 @@ namespace Ossium
     private:                                                                                                            \
         static Resource* ResourceFactory(void* target_controller);                                                      \
     public:                                                                                                             \
-        static Ossium::typesys::TypeFactory<Resource, ResourceType> __resource_factory
+        static Ossium::TypeSystem::TypeFactory<Resource, ResourceType> __resource_factory
 
     #define REGISTER_RESOURCE(TYPE)                                                                                     \
     Resource* TYPE::ResourceFactory(void* target_controller)                                                            \
     {                                                                                                                   \
         return ((ResourceController*)target_controller)->Load<TYPE>("");                                                \
     }                                                                                                                   \
-    Ossium::typesys::TypeFactory<Resource, ResourceType> TYPE::__resource_factory(SID( #TYPE )::str, ResourceFactory);
+    Ossium::TypeSystem::TypeFactory<Resource, ResourceType> TYPE::__resource_factory(SID( #TYPE )::str, ResourceFactory);
 
     /// All resource classes e.g. images, audio clips etc. should inherit from this base class
     class Resource
@@ -168,7 +169,7 @@ namespace Ossium
         void FreeAll()
         {
             /// Iterate through registries of all types and delete everything
-            for (ResourceType rtype = 0; rtype < typesys::TypeRegistry<Resource>::GetTotalTypes(); rtype++)
+            for (ResourceType rtype = 0; rtype < TypeSystem::TypeRegistry<Resource>::GetTotalTypes(); rtype++)
             {
                 auto& reg = registryByType[rtype];
                 for (auto i = reg.begin(); i != reg.end(); i++)

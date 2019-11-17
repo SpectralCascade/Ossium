@@ -5,7 +5,7 @@ namespace Ossium
 
     ResourceController::ResourceController()
     {
-        registryByType = new unordered_map<string, Resource*>[typesys::TypeRegistry<Resource>::GetTotalTypes()];
+        registryByType = new unordered_map<string, Resource*>[TypeSystem::TypeRegistry<Resource>::GetTotalTypes()];
     }
 
 }

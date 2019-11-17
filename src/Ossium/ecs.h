@@ -14,6 +14,7 @@
 #include "tree.h"
 #include "stringintern.h"
 #include "schemamodel.h"
+#include "typefactory.h"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ namespace Ossium
         {                                                                               \
             return __ecs_factory_.GetType();                                            \
         }                                                                               \
-        static Ossium::typesys::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
+        static Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
     /// Add this to the class definition of a component that uses DECLARE_COMPONENT
@@ -58,7 +59,7 @@ namespace Ossium
     {                                                                                                   \
         entity->MapReference(identdata, member);                                                        \
     }                                                                                                   \
-    Ossium::typesys::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
     StrID TYPE::__component_type = SID(#TYPE)::str;                                                     \
                                                                                                         \
     TYPE* TYPE::Clone()                                                                                 \

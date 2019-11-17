@@ -7,6 +7,7 @@
 #include <SDL.h>
 
 #include "basics.h"
+#include "typefactory.h"
 #include "helpermacros.h"
 
 using namespace std;
@@ -44,11 +45,11 @@ namespace Ossium
 
         /// Declares an input handler type
         /// Add this to the end of any class you wish to register as a component
-        #define DECLARE_INPUT_HANDLER(TYPE) public: static Ossium::typesys::TypeRegistry<InputHandlerType> __input_type_entry_
+        #define DECLARE_INPUT_HANDLER(TYPE) public: static Ossium::TypeSystem::TypeRegistry<InputHandlerType> __input_type_entry_
 
         /// Adds the input handler type to the registry by static instantiation
         /// Add this to the class definition of an input handler that uses DECLARE_INPUT_HANDLER
-        #define REGISTER_INPUT_HANDLER(TYPE) Ossium::typesys::TypeRegistry<InputHandlerType> TYPE::__input_type_entry_
+        #define REGISTER_INPUT_HANDLER(TYPE) Ossium::TypeSystem::TypeRegistry<InputHandlerType> TYPE::__input_type_entry_
 
         /// Constant return type id for a specified input handler type
         template<class T>

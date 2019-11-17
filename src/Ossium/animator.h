@@ -22,8 +22,8 @@ namespace Ossium
         typedef Uint32 AnimationType;
 
         /// Helper macros for declaring and defining types for specific animation types, such as skeletal animation or sprite animation.
-        #define DECLARE_ANIMATION(TYPE) public: static Ossium::typesys::TypeRegistry<AnimationType> __anim_type_entry_
-        #define REGISTER_ANIMATION(TYPE) Ossium::typesys::TypeRegistry<AnimationType> TYPE::__anim_type_entry_
+        #define DECLARE_ANIMATION(TYPE) public: static Ossium::TypeSystem::TypeRegistry<AnimationType> __anim_type_entry_
+        #define REGISTER_ANIMATION(TYPE) Ossium::TypeSystem::TypeRegistry<AnimationType> TYPE::__anim_type_entry_
 
         /// Constant return type id for a specified animation method.
         template<class T>

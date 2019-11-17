@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include "schemamodel.h"
+#include "stringconvert.h"
 
 namespace Ossium
 {

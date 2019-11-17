@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "basics.h"
+#include "stringconvert.h"
 #include "coremaths.h"
 
 using namespace std;

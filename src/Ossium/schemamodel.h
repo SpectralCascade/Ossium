@@ -2,12 +2,12 @@
 #define SCHEMAMODEL_H
 
 #include <SDL.h>
-#include <functional>
+#include <fstream>
 
 #include "stringintern.h"
 #include "basics.h"
+#include "typefactory.h"
 #include "jsondata.h"
-#include <fstream>
 
 using namespace std;
 
@@ -296,7 +296,7 @@ namespace Ossium
         Uint32 GetReferableType();
 
     private:
-        static typesys::TypeRegistry<SchemaReferable> ref_type_registry;
+        static TypeSystem::TypeRegistry<SchemaReferable> ref_type_registry;
 
     };
 

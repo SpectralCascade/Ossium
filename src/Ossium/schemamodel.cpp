@@ -3,7 +3,7 @@
 namespace Ossium
 {
 
-    typesys::TypeRegistry<SchemaReferable> SchemaReferable::ref_type_registry;
+    TypeSystem::TypeRegistry<SchemaReferable> SchemaReferable::ref_type_registry;
 
     Uint32 SchemaReferable::GetReferableType()
     {

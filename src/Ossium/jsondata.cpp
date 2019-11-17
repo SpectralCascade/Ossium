@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 
 #include "jsondata.h"
 #include "basics.h"

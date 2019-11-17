@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "basics.h"
 
@@ -77,21 +78,6 @@ namespace Ossium
             return value;
         }
 
-        inline namespace memberdetection
-        {
-
-            DoesNotHave operator>>(const ostream&, const any&)
-            {
-                return DoesNotHave();
-            }
-
-            DoesNotHave operator<<(const ostream&, const any&)
-            {
-                return DoesNotHave();
-            }
-
-        }
-
         string ToString(float n)
         {
             stringstream strStream;
@@ -117,16 +103,6 @@ namespace Ossium
             stringstream conversionStream;
             conversionStream << fileStream.rdbuf();
             return conversionStream.str();
-        }
-
-        string ToString(...)
-        {
-            return "(ToString() not implemented for type)";
-        }
-
-        void FromString(...)
-        {
-            SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "FromString reached the variadic function!");
         }
 
         string strip(string data, char optionalChar)

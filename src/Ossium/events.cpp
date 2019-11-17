@@ -1,5 +1,6 @@
 #include <unordered_map>
 #include <string>
+#include <sstream>
 #include <SDL.h>
 
 #include "events.h"
