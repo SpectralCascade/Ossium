@@ -43,9 +43,13 @@ namespace Ossium
             Uint32 index = T::__services_entry.GetType();
             if (index < TypeSystem::TypeRegistry<Internal::ServiceBase>::GetTotalTypes())
             {
+                if (services[index] == nullptr)
+                {
+                    Logger::EngineLog().Warning("Service of type [{0}] has not been set up!", index);
+                }
                 return reinterpret_cast<T*>(services[index]);
             }
-            Logger::EngineLog().Warning("Failed to get service, service type has not been registered.");
+            Logger::EngineLog().Warning("Failed to get service, invalid service type requested.");
             return nullptr;
         }
 

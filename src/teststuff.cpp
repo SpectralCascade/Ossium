@@ -31,6 +31,7 @@ void StickFighter::OnCreate()
     });
     keyboard->BindAction("squish", SDLK_LCTRL);
     Log.Info("Created a stickfighter instance.");
+    OnInit(GetService<Renderer>(), -1);
 }
 
 void StickFighter::OnInit(Renderer* renderer, int layer)
