@@ -52,13 +52,15 @@ namespace Ossium
 
     void GraphicComponent::OnCreate()
     {
+        OnInit(GlobalServices::MainRenderer, -1);
     }
 
     void GraphicComponent::OnDestroy()
     {
+        OnRemoveGraphics();
     }
 
-    void GraphicComponent::OnClone()
+    void GraphicComponent::OnClone(BaseComponent* src)
     {
     }
 
@@ -66,7 +68,7 @@ namespace Ossium
     {
     }
 
-    void GraphicComponent::OnInitGraphics(Renderer* renderer, int layer)
+    void GraphicComponent::OnInit(Renderer* renderer, int layer)
     {
         renderLayer = layer >= 0 ? layer : renderLayer;
         rendererInstance = renderer != nullptr ? renderer : rendererInstance;

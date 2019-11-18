@@ -54,8 +54,7 @@ namespace Ossium
             {
                 BaseComponent* copyComponent = (*itr)->Clone();
                 copyComponent->entity = entityCopy;
-                copyComponent->OnClone();
-                copyComponent->OnInitGraphics(nullptr);
+                copyComponent->OnClone(*itr);
                 copiedComponents.push_back(copyComponent);
             }
             entityCopy->components.insert({i->first, copiedComponents});
@@ -272,7 +271,7 @@ namespace Ossium
     {
     }
 
-    void BaseComponent::OnInitGraphics(Renderer* renderer, int layer)
+    void BaseComponent::OnInit()
     {
     }
 
@@ -280,7 +279,7 @@ namespace Ossium
     {
     }
 
-    void BaseComponent::OnClone()
+    void BaseComponent::OnClone(BaseComponent* src)
     {
     }
 

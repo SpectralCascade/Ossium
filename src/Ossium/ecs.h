@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <SDL.h>
 
-#include "renderer.h"
 #include "tree.h"
 #include "stringintern.h"
 #include "schemamodel.h"
@@ -53,7 +52,7 @@ namespace Ossium
     #define REGISTER_COMPONENT(TYPE)                                                                    \
     BaseComponent* TYPE::ComponentFactory(void* target_entity)                                          \
     {                                                                                                   \
-        return ((Entity*)target_entity)->AddComponent<TYPE>(GlobalServices::MainRenderer);              \
+        return ((Entity*)target_entity)->AddComponent<TYPE>();              \
     }                                                                                                   \
     void TYPE::MapReference(string identdata, void** member)                                            \
     {                                                                                                   \
@@ -148,14 +147,13 @@ namespace Ossium
     public:
         friend class EntityComponentSystem;
 
-        /// Instantiates and attaches a component to this entity
+        /// Instantiates and attaches a component to this entity.
         template<class T>
-        T* AddComponent(Renderer* renderer = nullptr, int layer = -1)
+        T* AddComponent()
         {
             T* component = new T();
             component->entity = this;
             component->OnCreate();
-            component->OnInitGraphics(renderer, layer);
             auto itr = components.find(GetComponentType<T>());
             if (itr != components.end())
             {
@@ -174,12 +172,12 @@ namespace Ossium
 
         /// Adds a component if it hasn't been added already.
         template<class T>
-        T* AddComponentOnce(Renderer* renderer = nullptr, int layer = -1)
+        T* AddComponentOnce()
         {
             T* component = GetComponent<T>();
             if (component == nullptr)
             {
-                component = AddComponent<T>(renderer, layer);
+                component = AddComponent<T>();
             }
             return component;
         }
@@ -202,7 +200,6 @@ namespace Ossium
                     }
                 }
                 /// Now remove the component pointer from this entity's components hash and delete it
-                itr->second[0]->OnRemoveGraphics();
                 itr->second[0]->OnDestroy();
                 delete itr->second[0];
                 itr->second[0] = nullptr;
@@ -374,13 +371,13 @@ namespace Ossium
         /// Called once the entire related Entity Component System has been serialised.
         virtual void OnLoaded();
 
-        /// This follows up the OnCreate() call, allowing a component to initialise and register graphics with the provided renderer.
-        virtual void OnInitGraphics(Renderer* renderer, int layer = -1);
+        /// This follows up the OnCreate() call and can be overloaded with any parameters you would like.
+        void OnInit();
         /// This is called just before the OnDestroy() method is called. Use this to unregister graphics from the renderer if necessary.
         virtual void OnRemoveGraphics();
 
         /// Called when this component is copied; replaces the copy constructor
-        virtual void OnClone();
+        virtual void OnClone(BaseComponent* src);
 
         /// Each frame this method is called
         virtual void Update();
@@ -435,11 +432,9 @@ namespace Ossium
             virtual void OnCreate();                                            \
             virtual void OnDestroy();                                           \
                                                                                 \
-            virtual void OnInitGraphics(Renderer* renderer, int layer = -1);    \
-                                                                                \
             virtual void OnRemoveGraphics();                                    \
                                                                                 \
-            virtual void OnClone();                                             \
+            virtual void OnClone(BaseComponent* src);                           \
                                                                                 \
             virtual void Update();                                              \
                                                                                 \
@@ -452,9 +447,8 @@ namespace Ossium
         TYPE::~TYPE() {}                                                \
         void TYPE::OnCreate() {}                                        \
         void TYPE::OnDestroy() {}                                       \
-        void TYPE::OnClone() {}                                         \
+        void TYPE::OnClone(BaseComponent* src) {}                       \
         void TYPE::Update(){}                                           \
-        void TYPE::OnInitGraphics(Renderer* renderer, int layer){}      \
         void TYPE::OnRemoveGraphics(){}
 
 }

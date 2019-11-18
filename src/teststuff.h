@@ -17,7 +17,7 @@ public:
 
     void OnCreate();
 
-    void OnInitGraphics(Renderer* renderer, int layer);
+    void OnInit(Renderer* renderer, int layer);
 
     void OnDestroy();
 

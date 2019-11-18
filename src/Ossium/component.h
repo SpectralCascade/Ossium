@@ -7,18 +7,19 @@ namespace Ossium
 {
 
     #define DECLARE_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                    \
-        DECLARE_ABSTRACT_COMPONENT(TYPE)
+        DECLARE_ABSTRACT_COMPONENT(TYPE)                                \
+        void OnInit(Renderer* renderer = nullptr, int layer = -1)
 
     #define REGISTER_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                   \
         TYPE::TYPE() {}                                                 \
         TYPE::~TYPE() {}                                                \
         void TYPE::OnCreate() {}                                        \
         void TYPE::OnDestroy() {}                                       \
-        void TYPE::OnClone() {}                                         \
+        void TYPE::OnClone(BaseComponent* src) {}                       \
         void TYPE::Update(){}                                           \
-        void TYPE::OnInitGraphics(Renderer* renderer, int layer)        \
+        void TYPE::OnInit(Renderer* renderer, int layer)                \
         {                                                               \
-            GraphicComponent::OnInitGraphics(renderer, layer);          \
+            GraphicComponent::OnInit(renderer, layer);                  \
         }                                                               \
         void TYPE::OnRemoveGraphics()                                   \
         {                                                               \
@@ -50,6 +51,8 @@ namespace Ossium
 
     protected:
         DECLARE_ABSTRACT_COMPONENT(GraphicComponent);
+
+        void OnInit(Renderer* renderer, int layer);
 
         virtual void Render(Renderer& renderer) = 0;
 

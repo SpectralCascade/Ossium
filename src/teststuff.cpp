@@ -33,10 +33,10 @@ void StickFighter::OnCreate()
     Log.Info("Created a stickfighter instance.");
 }
 
-void StickFighter::OnInitGraphics(Renderer* renderer, int layer)
+void StickFighter::OnInit(Renderer* renderer, int layer)
 {
     /// We add the sprite component here so it automagically gets registered with the renderer.
-    stickman = entity->AddComponent<Sprite>(renderer);
+    stickman = entity->AddComponent<Sprite>();
     stickman->position = Point(renderer->GetWindow()->GetWidth() / 3, renderer->GetWindow()->GetHeight() / 2);
     /// We can also load and initialise the animations here.
     idleAnim.LoadAndInit("assets/stick_idle.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);

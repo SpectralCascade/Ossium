@@ -70,9 +70,9 @@ namespace Ossium
         /// DebugDraw
         REGISTER_COMPONENT(DebugDraw);
 
-        void DebugDraw::OnInitGraphics(Renderer* renderer, int layer)
+        void DebugDraw::OnInit(Renderer* renderer, int layer)
         {
-            GraphicComponent::OnInitGraphics(renderer, layer);
+            GraphicComponent::OnInit(renderer, layer);
             physics = new DebugDrawBox2D(renderer);
         }
 
