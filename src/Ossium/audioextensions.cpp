@@ -14,7 +14,7 @@ namespace Ossium
     {
         if (looping && !samplePath.empty())
         {
-            Play(Resources->Get<AudioClip>(samplePath), volume, -1);
+            Play(GetService<ResourceController>()->Get<AudioClip>(samplePath), volume, -1);
         }
         else
         {

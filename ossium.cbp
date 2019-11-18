@@ -157,6 +157,8 @@
 		<Unit filename="src/Ossium/schemamodel.h" />
 		<Unit filename="src/Ossium/serialisation.cpp" />
 		<Unit filename="src/Ossium/serialisation.h" />
+		<Unit filename="src/Ossium/services.cpp" />
+		<Unit filename="src/Ossium/services.h" />
 		<Unit filename="src/Ossium/sprite.cpp" />
 		<Unit filename="src/Ossium/sprite.h" />
 		<Unit filename="src/Ossium/statesprite.cpp" />

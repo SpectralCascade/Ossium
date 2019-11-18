@@ -205,7 +205,9 @@ int main(int argc, char* argv[])
         Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
         //mainRenderer.SetAspectRatio(16, 9);
 
-        EngineSystem engine(&mainRenderer, "");
+        ResourceController resources;
+
+        EngineSystem engine("", &mainRenderer, &resources);
 
         engine.LoadScene("assets/test_scene.json");
 

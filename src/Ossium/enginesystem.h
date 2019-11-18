@@ -13,9 +13,24 @@ namespace Ossium
     public:
         friend class EntityComponentSystem;
 
-        EngineSystem(Renderer* graphicsRenderer, JSON& configData);
-        EngineSystem(Renderer* graphicsRenderer, string configFilePath = "");
-        ~EngineSystem() = default;
+        template<typename ...Args>
+        EngineSystem(JSON& configData, Args&& ...services)
+        {
+            ecs = new EntityComponentSystem(forward<Args>(services)...);
+            Init(configData);
+        }
+
+        template<typename ...Args>
+        EngineSystem(string configFilePath = "", Args&& ...services)
+        {
+            ecs = new EntityComponentSystem(forward<Args>(services)...);
+            if (!configFilePath.empty())
+            {
+                Init(configFilePath);
+            }
+        }
+
+        ~EngineSystem();
 
         /// Configures the engine with a JSON file.
         void Init(string configFilePath);
@@ -33,7 +48,7 @@ namespace Ossium
         NOCOPY(EngineSystem);
 
         /// The core entity-component system.
-        EntityComponentSystem ecs;
+        EntityComponentSystem* ecs = nullptr;
 
         /// The main input controller.
         InputController input;

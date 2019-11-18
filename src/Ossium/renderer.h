@@ -9,6 +9,7 @@
 
 #include "colors.h"
 #include "helpermacros.h"
+#include "services.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ namespace Ossium
         };
 
         // Wrapper class for SDL_Renderer - also supports layering
-        class Renderer
+        class Renderer : public Service<Renderer>
         {
         public:
             Renderer(Window* window, int numLayers = 1, Uint32 flags = SDL_RENDERER_ACCELERATED, int driver = -1);

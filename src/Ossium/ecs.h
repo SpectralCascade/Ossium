@@ -13,7 +13,7 @@
 #include "tree.h"
 #include "stringintern.h"
 #include "schemamodel.h"
-#include "typefactory.h"
+#include "services.h"
 
 using namespace std;
 
@@ -87,7 +87,13 @@ namespace Ossium
     public:
         friend class Ossium::Entity;
 
-        EntityComponentSystem();
+        template<typename ...Args>
+        EntityComponentSystem(Args&& ...services)
+        {
+            servicesProvider = new ServicesProvider(forward<Args>(services)...);
+            components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
+        }
+
         ~EntityComponentSystem();
 
         /// Iterates through all components that implement the Update() method and calls it for each one
@@ -117,6 +123,13 @@ namespace Ossium
         /// Returns an array of all entities in the root of the hierarchy.
         vector<Entity*> GetRootEntities();
 
+        /// Attempt to get an instance of a specific service type.
+        template<typename T>
+        T* GetService()
+        {
+            return servicesProvider->GetService<T>();
+        }
+
         /// Serialise everything
         string ToString();
         void FromString(string& str);
@@ -139,6 +152,9 @@ namespace Ossium
 
         /// Direct map of ids to reference type members that point to entities or components
         unordered_map<string, set<void**>> serialised_pointers;
+
+        /// Provider for non-static engine services such as a ResourceController instance.
+        ServicesProvider* servicesProvider = nullptr;
 
     };
 
@@ -282,6 +298,13 @@ namespace Ossium
             return output;
         }
 
+        /// Attempt to get an instance of a specific service type.
+        template<typename T>
+        T* GetService()
+        {
+            return controller->GetService<T>();
+        }
+
         string GetName();
         void SetName(string name);
 
@@ -381,6 +404,13 @@ namespace Ossium
 
         /// Each frame this method is called
         virtual void Update();
+
+        /// Attempt to get an instance of a specific service type.
+        template<typename T>
+        T* GetService()
+        {
+            return entity->GetService<T>();
+        }
 
         /// Pointer to the entity that this component is attached to
         Entity* entity = nullptr;

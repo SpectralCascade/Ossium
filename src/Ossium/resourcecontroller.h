@@ -5,10 +5,9 @@
 #include <unordered_map>
 #include <SDL.h>
 
-#include "typefactory.h"
 #include "stringconvert.h"
-#include "renderer.h"
 #include "stringintern.h"
+#include "services.h"
 
 using namespace std;
 
@@ -47,7 +46,7 @@ namespace Ossium
     };
 
     /// Resource controller that deals with resources of various types e.g. images, audio clips.
-    class ResourceController
+    class ResourceController : public Service<ResourceController>
     {
     public:
         ResourceController();

@@ -322,11 +322,6 @@ namespace Ossium
     /// EntityComponentSystem
     ///
 
-    EntityComponentSystem::EntityComponentSystem()
-    {
-        components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
-    }
-
     void EntityComponentSystem::UpdateComponents()
     {
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
@@ -584,6 +579,10 @@ namespace Ossium
             components[i].clear();
         }
         delete[] components;
+        components = nullptr;
+
+        delete servicesProvider;
+        servicesProvider = nullptr;
     }
 
 }

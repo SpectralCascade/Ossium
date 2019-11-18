@@ -52,7 +52,7 @@ namespace Ossium
 
     void GraphicComponent::OnCreate()
     {
-        OnInit(GlobalServices::MainRenderer, -1);
+        OnInit(GetService<Renderer>(), -1);
     }
 
     void GraphicComponent::OnDestroy()
