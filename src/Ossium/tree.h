@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <SDL.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "logging.h"
 
 using namespace std;

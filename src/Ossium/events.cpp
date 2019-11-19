@@ -4,7 +4,7 @@
 #include <SDL.h>
 
 #include "events.h"
-#include "basics.h"
+#include "funcutils.h"
 
 using namespace std;
 

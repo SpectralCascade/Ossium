@@ -6,7 +6,7 @@
 #include <functional>
 #include <SDL.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "typefactory.h"
 #include "helpermacros.h"
 

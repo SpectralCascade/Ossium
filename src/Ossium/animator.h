@@ -7,7 +7,7 @@
 #include "fsm.h"
 #include "time.h"
 #include "renderer.h"
-#include "basics.h"
+#include "funcutils.h"
 #include "curves.h"
 
 using namespace std;

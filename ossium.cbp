@@ -95,8 +95,6 @@
 		<Unit filename="src/Ossium/audio.h" />
 		<Unit filename="src/Ossium/audioextensions.cpp" />
 		<Unit filename="src/Ossium/audioextensions.h" />
-		<Unit filename="src/Ossium/basics.cpp" />
-		<Unit filename="src/Ossium/basics.h" />
 		<Unit filename="src/Ossium/callback.h" />
 		<Unit filename="src/Ossium/circularbuffer.h" />
 		<Unit filename="src/Ossium/colors.cpp" />
@@ -123,6 +121,8 @@
 		<Unit filename="src/Ossium/font.cpp" />
 		<Unit filename="src/Ossium/font.h" />
 		<Unit filename="src/Ossium/fsm.h" />
+		<Unit filename="src/Ossium/funcutils.cpp" />
+		<Unit filename="src/Ossium/funcutils.h" />
 		<Unit filename="src/Ossium/globalservices.cpp" />
 		<Unit filename="src/Ossium/globalservices.h" />
 		<Unit filename="src/Ossium/helpermacros.h" />

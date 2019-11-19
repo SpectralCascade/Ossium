@@ -1,5 +1,5 @@
-#ifndef BASICS_H
-#define BASICS_H
+#ifndef FUNCUTILS_H
+#define FUNCUTILS_H
 
 #include <string>
 #include <functional>
@@ -106,4 +106,4 @@ namespace Ossium
 
 }
 
-#endif // BASICS_H
+#endif // FUNCUTILS_H

@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "stringintern.h"
-#include "basics.h"
+#include "funcutils.h"
 #include "typefactory.h"
 #include "jsondata.h"
 

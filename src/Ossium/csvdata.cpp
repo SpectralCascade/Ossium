@@ -3,7 +3,7 @@
 #include <vector>
 #include <SDL.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "csvdata.h"
 #include "logging.h"
 

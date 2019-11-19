@@ -5,7 +5,7 @@
 
 #include "typeinference.h"
 #include "jsondata.h"
-#include "basics.h"
+#include "funcutils.h"
 
 namespace Ossium
 {

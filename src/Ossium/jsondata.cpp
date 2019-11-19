@@ -2,7 +2,7 @@
 #include <sstream>
 
 #include "jsondata.h"
-#include "basics.h"
+#include "funcutils.h"
 #include "logging.h"
 
 namespace Ossium

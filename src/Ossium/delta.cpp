@@ -1,7 +1,7 @@
 #include <SDL.h>
 
 #include "delta.h"
-#include "basics.h"
+#include "funcutils.h"
 
 namespace Ossium
 {

@@ -7,7 +7,7 @@
 #include <set>
 #include <vector>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "delta.h"
 #include "resourcecontroller.h"
 #include "schemamodel.h"

@@ -5,7 +5,7 @@
 #include <vector>
 #include <SDL.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "stringconvert.h"
 #include "ecs.h"
 #include "delta.h"

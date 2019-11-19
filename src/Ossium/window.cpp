@@ -1,6 +1,6 @@
 #include <SDL.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "window.h"
 
 namespace Ossium

@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "renderer.h"
 #include "texture.h"
 #include "texturepack.h"

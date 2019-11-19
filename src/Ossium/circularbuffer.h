@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <SDL.h>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "logging.h"
 
 namespace Ossium

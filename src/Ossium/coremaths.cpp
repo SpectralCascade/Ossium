@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "basics.h"
+#include "funcutils.h"
 #include "stringconvert.h"
 #include "coremaths.h"
 
