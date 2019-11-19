@@ -327,7 +327,7 @@ namespace Ossium
         void Texture::Render(Renderer& renderer)
         {
 
-            SDL_Rect dest = GetSDL();
+            SDL_Rect dest = GetSDL(WorldPosition());
             if (source == nullptr || source->texture == NULL)
             {
                 SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
@@ -353,17 +353,17 @@ namespace Ossium
             {
                 if (source->outlineTexture != NULL)
                 {
-                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, angle, &trueOrigin, flip);
+                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
                 }
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, angle, &trueOrigin, flip);
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
             }
             else
             {
                 if (source->outlineTexture != NULL)
                 {
-                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, angle, &trueOrigin, flip);
+                    SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
                 }
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, angle, &trueOrigin, flip);
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
             }
         }
 
@@ -513,8 +513,8 @@ namespace Ossium
 
         Point Texture::ScreenToLocalPoint(Point source)
         {
-            source.x = (source.x - position.x + (width * 0.5f)) / (width / (float)(clip.w == 0 ? 0 : clip.w));
-            source.y = (source.y - position.y + (height * 0.5f)) / (height / (float)(clip.h == 0 ? 0 : clip.h));
+            source.x = (source.x - WorldPosition().x + (width * 0.5f)) / (width / (float)(clip.w == 0 ? 0 : clip.w));
+            source.y = (source.y - WorldPosition().y + (height * 0.5f)) / (height / (float)(clip.h == 0 ? 0 : clip.h));
             return source;
         }
 

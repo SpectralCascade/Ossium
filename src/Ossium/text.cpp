@@ -63,7 +63,7 @@ namespace Ossium
         }
         if (box)
         {
-            SDL_Rect boxDest = GetSDL();
+            SDL_Rect boxDest = GetSDL(WorldPosition());
             boxDest.x -= boxPadWidth;
             boxDest.y -= boxPadHeight;
             boxDest.w = GetWidth();

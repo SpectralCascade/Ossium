@@ -38,7 +38,7 @@ void StickFighter::OnInit(Renderer* renderer, int layer)
 {
     /// We add the sprite component here so it automagically gets registered with the renderer.
     stickman = entity->AddComponent<Sprite>();
-    stickman->position = Point(renderer->GetWindow()->GetWidth() / 3, renderer->GetWindow()->GetHeight() / 2);
+    stickman->WorldPosition() = Point(renderer->GetWindow()->GetWidth() / 3, renderer->GetWindow()->GetHeight() / 2);
     /// We can also load and initialise the animations here.
     idleAnim.LoadAndInit("assets/stick_idle.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
     walkAnim.LoadAndInit("assets/stick_walk.osa", *renderer, SDL_PIXELFORMAT_ARGB8888);
@@ -63,22 +63,22 @@ void StickFighter::Update()
     bool moving = false;
     if (keyboard->GetState("up"))
     {
-        stickman->position.y -= 5;
+        stickman->WorldPosition().y -= 5;
         moving = true;
     }
     if (keyboard->GetState("down"))
     {
-        stickman->position.y += 5;
+        stickman->WorldPosition().y += 5;
         moving = true;
     }
     if (keyboard->GetState("left"))
     {
-        stickman->position.x -= 5;
+        stickman->WorldPosition().x -= 5;
         moving = true;
     }
     if (keyboard->GetState("right"))
     {
-        stickman->position.x += 5;
+        stickman->WorldPosition().x += 5;
         moving = true;
     }
     if (moving && stickman->anim.GetSourceName() == "idle")

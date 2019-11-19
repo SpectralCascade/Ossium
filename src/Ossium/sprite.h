@@ -19,6 +19,10 @@ namespace Ossium
             /// Array of keyframe transition data. Defaults to no interpolation.
             Uint8 transitions[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+            Point position = {0, 0};
+
+            float angle = 0;
+
         };
 
         class SpriteAnimation : public Animation<SpriteKeyframe>, public Image

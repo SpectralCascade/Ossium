@@ -239,8 +239,8 @@ namespace Ossium
         SetSource(static_cast<Image*>(animation), !initialised);
         SpriteKeyframe kf = anim.Sample<SpriteKeyframe>();
         SetClip(0, 0, kf.clipArea.w, kf.clipArea.h, !initialised);
-        angle -= angleOffset;
-        position -= positionOffset;
+        WorldRotation().SetDegrees(WorldRotation().GetDegrees() - angleOffset);
+        WorldPosition() -= positionOffset;
         width = initialised ? (percentWidth == 0 ? (0) : (width / percentWidth)) : width * percentWidth;
         height = initialised ? (percentHeight == 0 ? (0) : (height / percentHeight)) : height * percentHeight;
         positionOffset = Point(0, 0);
@@ -264,9 +264,9 @@ namespace Ossium
             clip.w = kf.clipArea.w;
             clip.h = kf.clipArea.h;
             /// Offset position
-            position -= positionOffset;
+            WorldPosition() -= positionOffset;
             positionOffset = kf.position;
-            position += positionOffset;
+            WorldPosition() += positionOffset;
             /// Offset origin
             origin -= originOffset;
             originOffset = kf.origin;
@@ -279,9 +279,9 @@ namespace Ossium
             percentHeight = kf.height;
             height = height * percentHeight;
             /// Offset angle
-            angle -= angleOffset;
+            WorldRotation().SetDegrees(WorldRotation().GetDegrees() - angleOffset);
             angleOffset = kf.angle;
-            angle += angleOffset;
+            WorldRotation().SetDegrees(WorldRotation().GetDegrees() + angleOffset);
         }
     }
 

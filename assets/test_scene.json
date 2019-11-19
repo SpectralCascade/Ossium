@@ -14,6 +14,31 @@
                     "imgPath" : "assets/pack_texture.png"
                 }],
                 "Transform2" : [{
+                    "trans" : "(0, 0, 0)"
+                }],
+                "MouseFollower" : [{
+                }]
+            },
+            "Name" : "picture",
+            "Parent" : -1
+        },
+    "1" : {
+            "Components" : {
+                "AudioListener" : [{
+                    "cutoff" : 600.0
+                }],
+                "Transform2" : [{
+                    "trans" : "(0, 0, 0)"
+                }],
+                "MouseFollower" : [{
+                }]
+            },
+            "Name" : "Player",
+            "Parent" : -1
+        },
+    "2" : {
+            "Components" : {
+                "Transform2" : [{
                     "trans" : "(512, 400, 0)"
                 }],
                 "AudioSource" : [{
@@ -25,21 +50,7 @@
                     "targetVolume" : 1.0
                 }]
             },
-            "Name" : "Ambient thingy",
-            "Parent" : -1
-        },
-    "1" : {
-            "Components" : {
-                "AudioListener" : [{
-                    "cutoff" : 400.0
-                }],
-                "Transform2" : [{
-                    "trans" : "(0, 0, 0)"
-                }],
-                "MouseFollower" : [{
-                }]
-            },
-            "Name" : "Player",
+            "Name" : "audio test",
             "Parent" : -1
         }
 }

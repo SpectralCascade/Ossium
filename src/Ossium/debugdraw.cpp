@@ -47,7 +47,7 @@ namespace Ossium
         {
             /// No need to register the text with the renderer, as the DebugDraw class gives us a renderer to use
             text = entity->AddComponent<Text>();
-            text->position = position;
+            text->WorldPosition() = position;
             text->SetColor(color);
             if (backgroundColor.a != 0)
             {
