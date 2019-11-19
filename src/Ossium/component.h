@@ -25,7 +25,7 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(GraphicComponentSchema, 1);
 
     protected:
-        M(int, renderLayer) = 0;
+        M(int, renderLayer) = -1;
 
     };
 

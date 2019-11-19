@@ -73,6 +73,10 @@ namespace Ossium
         Component::OnLoadFinish();
         if (GetService<Renderer>() != nullptr)
         {
+            if (renderLayer < 0)
+            {
+                renderLayer = 0;
+            }
             renderLayer = GetService<Renderer>()->Register(this, renderLayer);
         }
     }

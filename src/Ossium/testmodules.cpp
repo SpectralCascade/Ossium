@@ -2,7 +2,7 @@
 
 namespace Ossium
 {
-#ifdef UNIT_TESTS
+#ifdef DEBUG
     namespace Test
     {
 
