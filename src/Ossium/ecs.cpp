@@ -81,7 +81,6 @@ namespace Ossium
                         }
                     }
                     /// Now remove the component pointer from this entity's components hash and delete it
-                    itr->second[i]->OnRemoveGraphics();
                     itr->second[i]->OnDestroy();
                     delete itr->second[i];
                     itr->second[i] = nullptr;
@@ -216,6 +215,7 @@ namespace Ossium
                     {
                         comp = compsOfType[i];
                     }
+                    comp->OnLoadStart();
                     comp->FromString(componentData[i]);
                 }
             }
@@ -267,15 +267,11 @@ namespace Ossium
     {
     }
 
-    void BaseComponent::OnLoaded()
+    void BaseComponent::OnLoadStart()
     {
     }
 
-    void BaseComponent::OnInit()
-    {
-    }
-
-    void BaseComponent::OnRemoveGraphics()
+    void BaseComponent::OnLoadFinish()
     {
     }
 
@@ -555,7 +551,7 @@ namespace Ossium
         {
             for (auto component : components[i])
             {
-                component->OnLoaded();
+                component->OnLoadFinish();
             }
         }
 

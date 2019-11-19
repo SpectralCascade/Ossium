@@ -49,7 +49,7 @@ namespace Ossium
             void Update();
 
             /// If a sample is specified, play it.
-            void OnLoaded();
+            void OnLoadFinish();
 
         private:
             /// Sets the spatial audio attenuation and panning of this source.

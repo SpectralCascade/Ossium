@@ -11,7 +11,8 @@
                     "height" : 200,
                     "angle" : 0,
                     "origin" : "(0.5, 0.5)",
-                    "imgPath" : "assets/pack_texture.png"
+                    "imgPath" : "assets/pack_texture.png",
+                    "renderLayer" : 0
                 }],
                 "Transform2" : [{
                     "trans" : "(0, 0, 0)"

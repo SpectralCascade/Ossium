@@ -61,7 +61,7 @@ namespace Ossium
         public:
             DECLARE_COMPONENT(DebugDraw);
 
-            void OnInit(Renderer* renderer, int layer = -1);
+            void OnCreate();
 
             void Render(Renderer& renderer);
 

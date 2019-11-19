@@ -371,14 +371,15 @@ namespace Ossium
         {
         }
 
-        void Texture::OnLoaded()
+        void Texture::OnLoadFinish()
         {
+            GraphicComponent::OnLoadFinish();
             if (source != nullptr && source->Initialised() && imgPath == source->GetPathName())
             {
                 return;
             }
             /// Don't configure dimensions, they should be specified by the schema data.
-            SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *rendererInstance), false);
+            SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()), false);
         }
 
         ///
@@ -407,6 +408,11 @@ namespace Ossium
                     clip.w = 0;
                     clip.h = 0;
                 }
+            }
+            if (GetRenderLayer() < 0)
+            {
+                /// Now we have an image loaded, register the texture instance so it can be rendered.
+                GraphicComponent::OnLoadFinish();
             }
         }
         void Texture::SetBlendMode(SDL_BlendMode blend, bool immediate)

@@ -10,7 +10,7 @@ namespace Ossium
 
     REGISTER_COMPONENT(AudioSource);
 
-    void AudioSource::OnLoaded()
+    void AudioSource::OnLoadFinish()
     {
         if (looping && !samplePath.empty())
         {

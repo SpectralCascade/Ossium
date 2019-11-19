@@ -205,7 +205,7 @@ namespace Ossium
             void Update();
 
             /// Once loaded, find the source image.
-            void OnLoaded();
+            void OnLoadFinish();
 
             /// Sets the alpha blending mode
             void SetBlendMode(SDL_BlendMode blend, bool immediate = false);

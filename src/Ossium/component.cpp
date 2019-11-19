@@ -3,7 +3,7 @@
 namespace Ossium
 {
 
-    REGISTER_ABSTRACT_COMPONENT(Component);
+    REGISTER_ABSTRACT_COMPONENT(Component, BaseComponent);
 
     ///
     /// Component
@@ -30,10 +30,13 @@ namespace Ossium
 
     void GraphicComponent::SetRenderLayer(int layer)
     {
-        if (rendererInstance != nullptr)
+        if (GetService<Renderer>() != nullptr)
         {
-            rendererInstance->Unregister(this, renderLayer);
-            renderLayer = rendererInstance->Register(this, layer);
+            if (renderLayer >= 0)
+            {
+                GetService<Renderer>()->Unregister(this, renderLayer);
+            }
+            renderLayer = GetService<Renderer>()->Register(this, layer);
         }
     }
 
@@ -52,12 +55,36 @@ namespace Ossium
 
     void GraphicComponent::OnCreate()
     {
-        OnInit(GetService<Renderer>(), -1);
+        Component::OnCreate();
+    }
+
+    void GraphicComponent::OnLoadStart()
+    {
+        Component::OnLoadStart();
+        if (GetService<Renderer>() != nullptr && renderLayer >= 0)
+        {
+            GetService<Renderer>()->Unregister(this, renderLayer);
+            renderLayer = -1;
+        }
+    }
+
+    void GraphicComponent::OnLoadFinish()
+    {
+        Component::OnLoadFinish();
+        if (GetService<Renderer>() != nullptr)
+        {
+            renderLayer = GetService<Renderer>()->Register(this, renderLayer);
+        }
     }
 
     void GraphicComponent::OnDestroy()
     {
-        OnRemoveGraphics();
+        Component::OnDestroy();
+        if (GetService<Renderer>() != nullptr && renderLayer >= 0)
+        {
+            GetService<Renderer>()->Unregister(this, renderLayer);
+            renderLayer = -1;
+        }
     }
 
     void GraphicComponent::OnClone(BaseComponent* src)
@@ -66,24 +93,6 @@ namespace Ossium
 
     void GraphicComponent::Update()
     {
-    }
-
-    void GraphicComponent::OnInit(Renderer* renderer, int layer)
-    {
-        renderLayer = layer >= 0 ? layer : renderLayer;
-        rendererInstance = renderer != nullptr ? renderer : rendererInstance;
-        if (rendererInstance != nullptr)
-        {
-            renderLayer = rendererInstance->Register(this, renderLayer);
-        }
-    }
-
-    void GraphicComponent::OnRemoveGraphics()
-    {
-        if (rendererInstance != nullptr)
-        {
-            rendererInstance->Unregister(this, renderLayer);
-        }
     }
 
 }

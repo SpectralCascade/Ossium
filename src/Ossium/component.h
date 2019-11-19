@@ -6,26 +6,6 @@
 namespace Ossium
 {
 
-    #define DECLARE_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                    \
-        DECLARE_ABSTRACT_COMPONENT(TYPE)                                \
-        void OnInit(Renderer* renderer = nullptr, int layer = -1)
-
-    #define REGISTER_ABSTRACT_GRAPHIC_COMPONENT(TYPE)                   \
-        TYPE::TYPE() {}                                                 \
-        TYPE::~TYPE() {}                                                \
-        void TYPE::OnCreate() {}                                        \
-        void TYPE::OnDestroy() {}                                       \
-        void TYPE::OnClone(BaseComponent* src) {}                       \
-        void TYPE::Update(){}                                           \
-        void TYPE::OnInit(Renderer* renderer, int layer)                \
-        {                                                               \
-            GraphicComponent::OnInit(renderer, layer);                  \
-        }                                                               \
-        void TYPE::OnRemoveGraphics()                                   \
-        {                                                               \
-            GraphicComponent::OnRemoveGraphics();                       \
-        }
-
     class Component : public BaseComponent, public GlobalServices
     {
     public:
@@ -39,9 +19,21 @@ namespace Ossium
 
     };
 
-    class GraphicComponent : public Graphic, public Component
+    struct GraphicComponentSchema : public Schema<GraphicComponentSchema, 1>
     {
     public:
+        DECLARE_BASE_SCHEMA(GraphicComponentSchema, 1);
+
+    protected:
+        M(int, renderLayer) = 0;
+
+    };
+
+    class GraphicComponent : public Graphic, public Component, public GraphicComponentSchema
+    {
+    public:
+        CONSTRUCT_SCHEMA(Component, GraphicComponentSchema);
+
         /// Attempts to set the rendering layer of this graphic component. Note that you probably shouldn't call this
         /// too frequently as it attempts a removal from one set and insertion into another set within the renderer.
         void SetRenderLayer(int layer);
@@ -52,16 +44,10 @@ namespace Ossium
     protected:
         DECLARE_ABSTRACT_COMPONENT(GraphicComponent);
 
-        void OnInit(Renderer* renderer, int layer);
-
         virtual void Render(Renderer& renderer) = 0;
 
-        /// Pointer to the renderer instance this graphic component is registered to.
-        Renderer* rendererInstance = nullptr;
-
     private:
-        /// The rendering layer this graphic component should use.
-        int renderLayer = 0;
+        using GraphicComponentSchema::renderLayer;
 
     };
 

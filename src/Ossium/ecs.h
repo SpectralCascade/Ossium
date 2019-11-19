@@ -391,13 +391,10 @@ namespace Ossium
         virtual void OnCreate();
         virtual void OnDestroy();
 
+        /// Called just before the component is serialised.
+        virtual void OnLoadStart();
         /// Called once the entire related Entity Component System has been serialised.
-        virtual void OnLoaded();
-
-        /// This follows up the OnCreate() call and can be overloaded with any parameters you would like.
-        void OnInit();
-        /// This is called just before the OnDestroy() method is called. Use this to unregister graphics from the renderer if necessary.
-        virtual void OnRemoveGraphics();
+        virtual void OnLoadFinish();
 
         /// Called when this component is copied; replaces the copy constructor
         virtual void OnClone(BaseComponent* src);
@@ -462,7 +459,8 @@ namespace Ossium
             virtual void OnCreate();                                            \
             virtual void OnDestroy();                                           \
                                                                                 \
-            virtual void OnRemoveGraphics();                                    \
+            virtual void OnLoadStart();                                         \
+            virtual void OnLoadFinish();                                        \
                                                                                 \
             virtual void OnClone(BaseComponent* src);                           \
                                                                                 \
@@ -472,14 +470,15 @@ namespace Ossium
                                                                                 \
             virtual Uint32 GetType() = 0;
 
-    #define REGISTER_ABSTRACT_COMPONENT(TYPE)                           \
+    #define REGISTER_ABSTRACT_COMPONENT(TYPE, BASETYPE)                 \
         TYPE::TYPE() {}                                                 \
         TYPE::~TYPE() {}                                                \
-        void TYPE::OnCreate() {}                                        \
-        void TYPE::OnDestroy() {}                                       \
+        void TYPE::OnCreate() { BASETYPE::OnCreate(); }                 \
+        void TYPE::OnDestroy() { BASETYPE::OnDestroy(); }               \
+        void TYPE::OnLoadStart() { BASETYPE::OnLoadStart(); }           \
+        void TYPE::OnLoadFinish() { BASETYPE::OnLoadFinish(); }         \
         void TYPE::OnClone(BaseComponent* src) {}                       \
-        void TYPE::Update(){}                                           \
-        void TYPE::OnRemoveGraphics(){}
+        void TYPE::Update(){}
 
 }
 

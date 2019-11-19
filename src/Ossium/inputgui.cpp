@@ -8,7 +8,7 @@ namespace Ossium
     inline namespace UI
     {
 
-        REGISTER_ABSTRACT_GRAPHIC_COMPONENT(InteractableGUI);
+        REGISTER_ABSTRACT_COMPONENT(InteractableGUI, GraphicComponent);
 
         void InteractableGUI::OnHoverBegin()
         {
@@ -47,10 +47,10 @@ namespace Ossium
         void InteractableGUI::OnPointerEvent(const MouseInput& data)
         {
             Point mpos;
-            if (rendererInstance != nullptr)
+            if (GetService<Renderer>() != nullptr)
             {
                 /// Offsets to account for the aspect ratio / viewport of the window
-                SDL_Rect vrect = rendererInstance->GetViewportRect();
+                SDL_Rect vrect = GetService<Renderer>()->GetViewportRect();
                 mpos = Point((float)(data.x - vrect.x), (float)(data.y - vrect.y));
             }
             else
