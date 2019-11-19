@@ -126,6 +126,8 @@
 		<Unit filename="src/Ossium/globalservices.cpp" />
 		<Unit filename="src/Ossium/globalservices.h" />
 		<Unit filename="src/Ossium/helpermacros.h" />
+		<Unit filename="src/Ossium/image.cpp" />
+		<Unit filename="src/Ossium/image.h" />
 		<Unit filename="src/Ossium/init.cpp" />
 		<Unit filename="src/Ossium/init.h" />
 		<Unit filename="src/Ossium/input.cpp" />

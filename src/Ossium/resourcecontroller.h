@@ -3,7 +3,6 @@
 
 #include <string.h>
 #include <unordered_map>
-#include <SDL.h>
 
 #include "stringconvert.h"
 #include "stringintern.h"
