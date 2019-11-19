@@ -28,7 +28,7 @@ namespace Ossium
                 Uint32 changeInTime = (Uint32)round(((-scale) * deltaTimeSeconds) * 1000.0f);
                 if (wrapValue != 0)
                 {
-                    time = (Uint32)wrap(time, -(int)changeInTime, 0, wrapValue);
+                    time = (Uint32)Wrap(time, -(int)changeInTime, 0, wrapValue);
                     if (time > previousTime)
                     {
                         overflow = (int)previousTime + (int)wrapValue;
@@ -52,7 +52,7 @@ namespace Ossium
             {
                 if (wrapValue != 0)
                 {
-                    time = (Uint32)wrap(time, (int)round((scale * deltaTimeSeconds) * 1000.0f), 0, wrapValue);
+                    time = (Uint32)Wrap(time, (int)round((scale * deltaTimeSeconds) * 1000.0f), 0, wrapValue);
                     if (time < previousTime)
                     {
                         overflow = (int)wrapValue - (int)previousTime;
@@ -96,7 +96,7 @@ namespace Ossium
         {
             if (wrapValue != 0)
             {
-                time = (Uint32)wrap(time, (int)round(deltaTime), 0, wrapValue);
+                time = (Uint32)Wrap(time, (int)round(deltaTime), 0, wrapValue);
                 if (time > previousTime)
                 {
                     overflow = (int)previousTime + (int)wrapValue;
@@ -118,7 +118,7 @@ namespace Ossium
         {
             if (wrapValue != 0)
             {
-                time = wrap(time, (int)round(deltaTime), 0, wrapValue);
+                time = Wrap(time, (int)round(deltaTime), 0, wrapValue);
                 if (time < previousTime)
                 {
                     overflow = (int)wrapValue - (int)previousTime;

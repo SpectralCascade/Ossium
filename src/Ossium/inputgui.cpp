@@ -273,7 +273,7 @@ namespace Ossium
                         if (itr->second.first[itr->second.second]->IsHovered())
                         {
                             itr->second.first[itr->second.second]->OnHoverEnd();
-                            itr->second.second = clamp(itr->second.second + 1, 0, itr->second.first.size() - 1);
+                            itr->second.second = Clamp(itr->second.second + 1, 0, itr->second.first.size() - 1);
                         }
                         itr->second.first[itr->second.second]->OnHoverBegin();
                         itr->second.first[itr->second.second]->hovered = true;
@@ -296,7 +296,7 @@ namespace Ossium
                         if (itr->second.first[itr->second.second]->IsHovered())
                         {
                             itr->second.first[itr->second.second]->OnHoverEnd();
-                            itr->second.second = clamp(itr->second.second - 1, 0, itr->second.first.size() - 1);
+                            itr->second.second = Clamp(itr->second.second - 1, 0, itr->second.first.size() - 1);
                         }
                         itr->second.first[itr->second.second]->OnHoverBegin();
                         itr->second.first[itr->second.second]->hovered = true;
@@ -323,7 +323,7 @@ namespace Ossium
             {
                 if (contextOrder.empty())
                 {
-                    currentContextIndex = wrap(currentContextIndex, 1, 0, contextOrder.size() - 1);
+                    currentContextIndex = Wrap(currentContextIndex, 1, 0, contextOrder.size() - 1);
                     currentContext = contextOrder[currentContextIndex];
                     return ClaimContext;
                 }
@@ -337,7 +337,7 @@ namespace Ossium
             {
                 if (!contextOrder.empty())
                 {
-                    currentContextIndex = wrap(currentContextIndex, -1, 0, !contextOrder.size() - 1);
+                    currentContextIndex = Wrap(currentContextIndex, -1, 0, !contextOrder.size() - 1);
                     currentContext = contextOrder[currentContextIndex];
                     return ClaimContext;
                 }

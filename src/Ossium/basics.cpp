@@ -16,7 +16,7 @@ namespace Ossium
     inline namespace Utilities
     {
 
-        float clamp(float n, float min, float max)
+        float Clamp(float n, float min, float max)
         {
             if (n < min)
             {
@@ -29,7 +29,7 @@ namespace Ossium
             return n;
         }
 
-        int clamp(int n, int min, int max)
+        int Clamp(int n, int min, int max)
         {
             if (n < min)
             {
@@ -42,7 +42,7 @@ namespace Ossium
             return n;
         }
 
-        int wrap(int n, int change, int min, int max)
+        int Wrap(int n, int change, int min, int max)
         {
             int wrapped = n + change;
             if (change > max - min)
@@ -64,19 +64,10 @@ namespace Ossium
             return wrapped;
         }
 
-        float mapRange(float value, float min, float max, float min_new, float max_new)
+        float MapRange(float value, float min, float max, float min_new, float max_new)
         {
-            float fraction = clamp(value, min, max) / (max - min);
+            float fraction = Clamp(value, min, max) / (max - min);
             return min_new + (fraction * (max_new - min_new));
-        }
-
-        float zeroToOne(float value)
-        {
-            if (value == 0)
-            {
-                return 1;
-            }
-            return value;
         }
 
         string ToString(float n)
@@ -106,7 +97,7 @@ namespace Ossium
             return conversionStream.str();
         }
 
-        string strip(string data, char optionalChar)
+        string Strip(string data, char optionalChar)
         {
             for (int i = 0, counti = data.length(); i < counti; i++)
             {
@@ -127,7 +118,7 @@ namespace Ossium
             return data;
         }
 
-        string splitRight(string data, char delimiter, string outputOnError)
+        string SplitRight(string data, char delimiter, string outputOnError)
         {
             int index = data.find(delimiter);
             if (data[index] != delimiter)
@@ -141,7 +132,7 @@ namespace Ossium
             return data.substr(index + 1);
         }
 
-        string splitLeft(string data, char delimiter, string outputOnError)
+        string SplitLeft(string data, char delimiter, string outputOnError)
         {
             int index = data.find(delimiter);
             if (data[index] != delimiter)

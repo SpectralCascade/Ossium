@@ -25,11 +25,11 @@ namespace Ossium
                     Logger::EngineLog().Info("Error getting animation data from sprite animation file '{0}'.", path);
                     return false;
                 }
-                name = splitRight(csv.GetCell(0, 0), '=');
-                spriteSheetPath = splitRight(csv.GetCell(0, 1), '=');
-                loop = splitRight(csv.GetCell(0, 2), '=') == "true" ? true : false;
-                duration = (Uint32)ToInt(splitRight(csv.GetCell(0, 3), '='));
-                tween = splitRight(csv.GetCell(0, 4), '=') == "true" ? true : false;
+                name = SplitRight(csv.GetCell(0, 0), '=');
+                spriteSheetPath = SplitRight(csv.GetCell(0, 1), '=');
+                loop = SplitRight(csv.GetCell(0, 2), '=') == "true" ? true : false;
+                duration = (Uint32)ToInt(SplitRight(csv.GetCell(0, 3), '='));
+                tween = SplitRight(csv.GetCell(0, 4), '=') == "true" ? true : false;
                 if (spriteSheetPath == "" || spriteSheetPath == "UNKNOWN")
                 {
                     Logger::EngineLog().Warning("Failed to get sprite sheet path from sprite animation file '{0}'.", path);
@@ -40,30 +40,30 @@ namespace Ossium
                     for (unsigned int i = 2, counti = csv.data.empty() ? 0 : csv.data.size(); i < counti; i++)
                     {
                         SpriteKeyframe keyframe;
-                        keyframe.timePosition = (Uint32)ToInt(splitLeft(csv.GetCell(i, 0), ':'));
-                        keyframe.clipArea.x = (Uint32)ToInt(splitLeft(csv.GetCell(i, 1), ':'));
-                        keyframe.clipArea.y = (Uint32)ToInt(splitLeft(csv.GetCell(i, 2), ':'));
-                        keyframe.clipArea.w = (Uint32)ToInt(splitLeft(csv.GetCell(i, 3), ':'));
-                        keyframe.clipArea.h = (Uint32)ToInt(splitLeft(csv.GetCell(i, 4), ':'));
-                        keyframe.position.x = ToFloat(splitLeft(csv.GetCell(i, 5), ':'));
-                        keyframe.position.y = ToFloat(splitLeft(csv.GetCell(i, 6), ':'));
-                        keyframe.width = ToFloat(splitLeft(csv.GetCell(i, 7), ':'));
-                        keyframe.height = ToFloat(splitLeft(csv.GetCell(i, 8), ':'));
-                        keyframe.origin.x = ToFloat(splitLeft(csv.GetCell(i, 9), ':'));
-                        keyframe.origin.y = ToFloat(splitLeft(csv.GetCell(i, 10), ':'));
-                        keyframe.angle = ToFloat(splitLeft(csv.GetCell(i, 11), ':'));
+                        keyframe.timePosition = (Uint32)ToInt(SplitLeft(csv.GetCell(i, 0), ':'));
+                        keyframe.clipArea.x = (Uint32)ToInt(SplitLeft(csv.GetCell(i, 1), ':'));
+                        keyframe.clipArea.y = (Uint32)ToInt(SplitLeft(csv.GetCell(i, 2), ':'));
+                        keyframe.clipArea.w = (Uint32)ToInt(SplitLeft(csv.GetCell(i, 3), ':'));
+                        keyframe.clipArea.h = (Uint32)ToInt(SplitLeft(csv.GetCell(i, 4), ':'));
+                        keyframe.position.x = ToFloat(SplitLeft(csv.GetCell(i, 5), ':'));
+                        keyframe.position.y = ToFloat(SplitLeft(csv.GetCell(i, 6), ':'));
+                        keyframe.width = ToFloat(SplitLeft(csv.GetCell(i, 7), ':'));
+                        keyframe.height = ToFloat(SplitLeft(csv.GetCell(i, 8), ':'));
+                        keyframe.origin.x = ToFloat(SplitLeft(csv.GetCell(i, 9), ':'));
+                        keyframe.origin.y = ToFloat(SplitLeft(csv.GetCell(i, 10), ':'));
+                        keyframe.angle = ToFloat(SplitLeft(csv.GetCell(i, 11), ':'));
                         /// Now the Tweening transitions
-                        keyframe.transitions[0] = (Uint8)ToInt(splitRight(csv.GetCell(i, 1), ':', "0"));
-                        keyframe.transitions[1] = (Uint8)ToInt(splitRight(csv.GetCell(i, 2), ':', "0"));
-                        keyframe.transitions[2] = (Uint8)ToInt(splitRight(csv.GetCell(i, 3), ':', "0"));
-                        keyframe.transitions[3] = (Uint8)ToInt(splitRight(csv.GetCell(i, 4), ':', "0"));
-                        keyframe.transitions[4] = (Uint8)ToInt(splitRight(csv.GetCell(i, 5), ':', "0"));
-                        keyframe.transitions[5] = (Uint8)ToInt(splitRight(csv.GetCell(i, 6), ':', "0"));
-                        keyframe.transitions[6] = (Uint8)ToInt(splitRight(csv.GetCell(i, 7), ':', "0"));
-                        keyframe.transitions[7] = (Uint8)ToInt(splitRight(csv.GetCell(i, 8), ':', "0"));
-                        keyframe.transitions[8] = (Uint8)ToInt(splitRight(csv.GetCell(i, 9), ':', "0"));
-                        keyframe.transitions[9] = (Uint8)ToInt(splitRight(csv.GetCell(i, 10), ':', "0"));
-                        keyframe.transitions[10] = (Uint8)ToInt(splitRight(csv.GetCell(i, 11), ':', "0"));
+                        keyframe.transitions[0] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 1), ':', "0"));
+                        keyframe.transitions[1] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 2), ':', "0"));
+                        keyframe.transitions[2] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 3), ':', "0"));
+                        keyframe.transitions[3] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 4), ':', "0"));
+                        keyframe.transitions[4] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 5), ':', "0"));
+                        keyframe.transitions[5] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 6), ':', "0"));
+                        keyframe.transitions[6] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 7), ':', "0"));
+                        keyframe.transitions[7] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 8), ':', "0"));
+                        keyframe.transitions[8] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 9), ':', "0"));
+                        keyframe.transitions[9] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 10), ':', "0"));
+                        keyframe.transitions[10] = (Uint8)ToInt(SplitRight(csv.GetCell(i, 11), ':', "0"));
                         /// Insert the loaded keyframe
                         keyframes.insert(keyframe);
                     }

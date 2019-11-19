@@ -496,19 +496,19 @@ namespace Ossium
             }
             else
             {
-                string ent_id = splitLeft(itr.first, ':', "error");
+                string ent_id = SplitLeft(itr.first, ':', "error");
                 if (IsInt(ent_id))
                 {
                     /// Must be a component pointer
                     auto entityItr = entities.find(ToInt(ent_id));
                     if (entityItr != entities.end())
                     {
-                        string comp_type = splitLeft(splitRight(itr.first, ':', "error"), ':', "error");
+                        string comp_type = SplitLeft(SplitRight(itr.first, ':', "error"), ':', "error");
                         ComponentType compTypeId = GetComponentType(comp_type);
                         if (TypeSystem::TypeRegistry<BaseComponent>::IsValidType(compTypeId))
                         {
                             vector<BaseComponent*>& comps = entityItr->second->data->components[compTypeId];
-                            string compid = splitRight(splitRight(itr.first, ':', "error"), ':', "error");
+                            string compid = SplitRight(SplitRight(itr.first, ':', "error"), ':', "error");
                             if (IsInt(compid) && !comps.empty())
                             {
                                 unsigned int id = ToInt(compid);

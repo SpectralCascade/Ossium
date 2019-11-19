@@ -47,7 +47,7 @@ namespace Ossium
         /// Set attenuation based on distance
         /// Use maximum attenuation if distance > cutoff, else calculate based on cutoff.
         float squareDistance = difference.LengthSquared();
-        spatialAttenuation = squareDistance > cutoffSquared ? 255 : (Uint8)Utilities::mapRange(squareDistance, 0, cutoffSquared, 0, 255);
+        spatialAttenuation = squareDistance > cutoffSquared ? 255 : (Uint8)Utilities::MapRange(squareDistance, 0, cutoffSquared, 0, 255);
 
         /// Note: calling this method automatically applies spatial attenuation as it calls OnVolumeChanged().
         SetPanning(difference.Rotation());

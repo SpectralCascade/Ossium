@@ -70,10 +70,10 @@ namespace Ossium
         {
             if (count != 0)
             {
-                back = wrap(back, 1, 0, max_size - 1);
+                back = Wrap(back, 1, 0, max_size - 1);
                 if (back == front)
                 {
-                    front = wrap(front, 1, 0, max_size - 1);
+                    front = Wrap(front, 1, 0, max_size - 1);
                 }
                 else
                 {
@@ -92,10 +92,10 @@ namespace Ossium
         {
             if (count != 0)
             {
-                front = wrap(front, -1, 0, max_size - 1);
+                front = Wrap(front, -1, 0, max_size - 1);
                 if (back == front)
                 {
-                    back = wrap(back, -1, 0, max_size - 1);
+                    back = Wrap(back, -1, 0, max_size - 1);
                 }
                 else
                 {
@@ -121,10 +121,10 @@ namespace Ossium
             }
             count--;
             int origin_back = back;
-            back = wrap(back, -1, 0, max_size - 1);
+            back = Wrap(back, -1, 0, max_size - 1);
             if (front == back)
             {
-                front = wrap(front, -1, 0, max_size - 1);
+                front = Wrap(front, -1, 0, max_size - 1);
             }
             return buffer[origin_back];
         }
@@ -140,10 +140,10 @@ namespace Ossium
             }
             count--;
             int origin_front = front;
-            front = wrap(front, 1, 0, max_size - 1);
+            front = Wrap(front, 1, 0, max_size - 1);
             if (back == front)
             {
-                back = wrap(back, 1, 0, max_size - 1);
+                back = Wrap(back, 1, 0, max_size - 1);
             }
             return buffer[origin_front];
         }
@@ -155,7 +155,7 @@ namespace Ossium
             if (index < count && index >= 0)
             {
                 count = index + 1;
-                back = wrap(front, index, 0, max_size - 1);
+                back = Wrap(front, index, 0, max_size - 1);
                 return true;
             }
             Logger::EngineLog().Warning("CircularBuffer drop_back index out of range, cannot drop back.");
@@ -209,7 +209,7 @@ namespace Ossium
                 Logger::EngineLog().Warning("Attempted to access undefined data. Returning back as default.");
                 return buffer[back];
             }
-            return buffer[front + wrap(front, index, 0, max_size)];
+            return buffer[front + Wrap(front, index, 0, max_size)];
         }
 
     private:

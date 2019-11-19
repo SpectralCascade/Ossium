@@ -71,8 +71,8 @@ namespace Ossium
                 {
                     if ((*this)[i] == ',' && arrayCount == 1 && objCount == 0)
                     {
-                        value = strip(value, '\n');
-                        value = strip(value);
+                        value = Strip(value, '\n');
+                        value = Strip(value);
                         dataArray.push_back(value);
                         value = (string)"";
                         continue;
@@ -90,8 +90,8 @@ namespace Ossium
                         arrayCount--;
                         if (arrayCount < 1)
                         {
-                            value = strip(value, '\n');
-                            value = strip(value);
+                            value = Strip(value, '\n');
+                            value = Strip(value);
                             dataArray.push_back(value);
                             break;
                         }
@@ -133,9 +133,9 @@ namespace Ossium
                 {
                     if ((*this)[i] == ',' && arrayCount == 1 && objCount == 0)
                     {
-                        value = strip(value, '\n');
-                        value = strip(value);
-                        value = strip(value, '"');
+                        value = Strip(value, '\n');
+                        value = Strip(value);
+                        value = Strip(value, '"');
                         if (element_index == arrayIndex)
                         {
                             return value;
@@ -153,9 +153,9 @@ namespace Ossium
                         arrayCount--;
                         if (arrayCount < 1)
                         {
-                            value = strip(value, '\n');
-                            value = strip(value);
-                            value = strip(value, '"');
+                            value = Strip(value, '\n');
+                            value = Strip(value);
+                            value = Strip(value, '"');
                             if (element_index == arrayIndex)
                             {
                                 return value;
@@ -401,9 +401,9 @@ namespace Ossium
                 {
                     if (json[i] == ',' || json[i] == '}')
                     {
-                        value = strip(value, '\n');
-                        value = strip(value);
-                        value = strip(value, '"');
+                        value = Strip(value, '\n');
+                        value = Strip(value);
+                        value = Strip(value, '"');
                         /// Add to data lookup
                         (*this)[key] = value;
                         /// Reset temporary values

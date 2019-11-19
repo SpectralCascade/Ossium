@@ -123,7 +123,7 @@ namespace Ossium
                     int originalIndex = counter;
                     do
                     {
-                        counter = wrap(counter, 1, 0, numChannels - 1);
+                        counter = Wrap(counter, 1, 0, numChannels - 1);
                         if (channels[counter] == nullptr)
                         {
                             channels[counter] = callback;
@@ -440,8 +440,8 @@ namespace Ossium
             if (channel_id >= 0)
             {
                 /// This is okay because it's not set as an SDL_Mixer callback
-                Mix_Volume(channel_id, (int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
-                Mix_SetPosition(channel_id, wrap(0, GetFinalPanning(), 0, 360), spatialAttenuation);
+                Mix_Volume(channel_id, (int)MapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                Mix_SetPosition(channel_id, Wrap(0, GetFinalPanning(), 0, 360), spatialAttenuation);
             }
         }
 
@@ -511,7 +511,7 @@ namespace Ossium
                 if (stream != NULL)
                 {
                     SetVolume(vol);
-                    Mix_VolumeMusic(mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                    Mix_VolumeMusic(MapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
                     Mix_PlayMusic(stream, loops);
                     started = true;
                 }
@@ -521,7 +521,7 @@ namespace Ossium
                     if (Load(cachedPath))
                     {
                         SetVolume(vol);
-                        Mix_VolumeMusic(mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                        Mix_VolumeMusic(MapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
                         Mix_PlayMusic(stream, loops);
                         started = true;
                     }
@@ -622,7 +622,7 @@ namespace Ossium
 
             void AudioStream::OnVolumeChanged()
             {
-                Mix_VolumeMusic((int)mapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
+                Mix_VolumeMusic((int)MapRange(GetFinalVolume(), 0.0f, 1.0f, 0.0f, 128.0f));
             }
 
         }

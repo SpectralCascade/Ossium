@@ -84,7 +84,7 @@ namespace Ossium
 
     Vector2 Vector2::Lerp(Vector2 vec, float w)
     {
-        w = clamp(w, 0.0f, 1.0f);
+        w = Clamp(w, 0.0f, 1.0f);
         return ((*this) * (1.0f - w)) + (vec * w);
     }
 
@@ -127,8 +127,8 @@ namespace Ossium
             /// Remove brackets
             str = str.substr(1, len - 2);
             /// Split and get the individual values
-            string xhalf = splitLeft(str, ',');
-            string yhalf = splitRight(str, ',');
+            string xhalf = SplitLeft(str, ',');
+            string yhalf = SplitRight(str, ',');
             x = ToFloat(xhalf);
             y = ToFloat(yhalf);
         }
@@ -227,9 +227,9 @@ namespace Ossium
 
     void Transform::FromString(string data)
     {
-        Utilities::FromString(position().x, Utilities::splitLeft(data, ',').substr(1));
-        Utilities::FromString(position().y, Utilities::splitLeft(Utilities::splitRight(data, ',', ""), ','));
-        Utilities::FromString(rotation(), Utilities::splitLeft(Utilities::splitRight(Utilities::splitRight(data, ','), ','), ')'));
+        Utilities::FromString(position().x, Utilities::SplitLeft(data, ',').substr(1));
+        Utilities::FromString(position().y, Utilities::SplitLeft(Utilities::SplitRight(data, ',', ""), ','));
+        Utilities::FromString(rotation(), Utilities::SplitLeft(Utilities::SplitRight(Utilities::SplitRight(data, ','), ','), ')'));
     }
 
     string Transform::ToString()
@@ -264,7 +264,7 @@ namespace Ossium
     /// TODO: use a more efficient drawing algorithm
     void Circle::Draw(Renderer& renderer, float smoothness)
     {
-        int segments = r * r * Utilities::clamp(smoothness);
+        int segments = r * r * Utilities::Clamp(smoothness);
         for (int i = 0; i < segments; i++)
         {
             SDL_RenderDrawLine(renderer.GetRendererSDL(),

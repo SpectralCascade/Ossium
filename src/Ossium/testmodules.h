@@ -112,40 +112,40 @@ namespace Ossium
         public:
             void RunTest()
             {
-                Logger::EngineLog().Info("wrap() tests.");
+                Logger::EngineLog().Info("Wrap() tests.");
 
-                TEST_ASSERT(wrap(2, 1, 0, 4) == 3);
-                TEST_ASSERT(wrap(2, 2, 0, 4) == 4);
-                TEST_ASSERT(wrap(2, 3, 0, 4) == 0);
-                TEST_ASSERT(wrap(2, -2, 0, 4) == 0);
-                TEST_ASSERT(wrap(2, -3, 0, 4) == 4);
-                TEST_ASSERT(wrap(2, 7, 0, 4) == 4);
-                TEST_ASSERT(wrap(2, 8, 0, 4) == 0);
-                TEST_ASSERT(wrap(2, 9, 0, 4) == 1);
-                TEST_ASSERT(wrap(2, 14, 0, 4) == 1);
-                TEST_ASSERT(wrap(2, 16, 0, 4) == 3);
-                TEST_ASSERT(wrap(2, -5, 0, 4) == 2);
-                TEST_ASSERT(wrap(2, -8, 0, 4) == 4);
-                TEST_ASSERT(wrap(2, -3, -3, 3) == -1);
-                TEST_ASSERT(wrap(2, -6, -3, 3) == 3);
-                TEST_ASSERT(wrap(2, -15, -3, 3) == 1);
+                TEST_ASSERT(Wrap(2, 1, 0, 4) == 3);
+                TEST_ASSERT(Wrap(2, 2, 0, 4) == 4);
+                TEST_ASSERT(Wrap(2, 3, 0, 4) == 0);
+                TEST_ASSERT(Wrap(2, -2, 0, 4) == 0);
+                TEST_ASSERT(Wrap(2, -3, 0, 4) == 4);
+                TEST_ASSERT(Wrap(2, 7, 0, 4) == 4);
+                TEST_ASSERT(Wrap(2, 8, 0, 4) == 0);
+                TEST_ASSERT(Wrap(2, 9, 0, 4) == 1);
+                TEST_ASSERT(Wrap(2, 14, 0, 4) == 1);
+                TEST_ASSERT(Wrap(2, 16, 0, 4) == 3);
+                TEST_ASSERT(Wrap(2, -5, 0, 4) == 2);
+                TEST_ASSERT(Wrap(2, -8, 0, 4) == 4);
+                TEST_ASSERT(Wrap(2, -3, -3, 3) == -1);
+                TEST_ASSERT(Wrap(2, -6, -3, 3) == 3);
+                TEST_ASSERT(Wrap(2, -15, -3, 3) == 1);
 
-                Logger::EngineLog().Info("int clamp() tests.");
+                Logger::EngineLog().Info("int Clamp() tests.");
 
-                TEST_ASSERT(clamp(3, 0, 10) == 3);
-                TEST_ASSERT(clamp(-1, 0, 10) == 0);
-                TEST_ASSERT(clamp(11, 0, 10) == 10);
+                TEST_ASSERT(Clamp(3, 0, 10) == 3);
+                TEST_ASSERT(Clamp(-1, 0, 10) == 0);
+                TEST_ASSERT(Clamp(11, 0, 10) == 10);
 
                 Logger::EngineLog().Info("String functions.");
 
-                TEST_ASSERT(strip(" testing ") == "testing");
-                TEST_ASSERT(strip(" t        ") == "t");
-                TEST_ASSERT(strip("  test again") == "test again");
-                TEST_ASSERT(strip("test    ") == "test");
-                TEST_ASSERT(splitRight("1:2", ':') == "2");
-                TEST_ASSERT(splitLeft("1:2", ':') == "1");
-                TEST_ASSERT(splitLeft("1111:2", ':') == "1111");
-                TEST_ASSERT(splitLeft("-3:55", ':') == "-3");
+                TEST_ASSERT(Strip(" testing ") == "testing");
+                TEST_ASSERT(Strip(" t        ") == "t");
+                TEST_ASSERT(Strip("  test again") == "test again");
+                TEST_ASSERT(Strip("test    ") == "test");
+                TEST_ASSERT(SplitRight("1:2", ':') == "2");
+                TEST_ASSERT(SplitLeft("1:2", ':') == "1");
+                TEST_ASSERT(SplitLeft("1111:2", ':') == "1111");
+                TEST_ASSERT(SplitLeft("-3:55", ':') == "-3");
 
                 Logger::EngineLog().Info("Type conversion tests.");
 

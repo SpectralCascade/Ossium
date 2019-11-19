@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
             /// Pixel-precise lighting effect that stays constant despite sprite size changes
             //SDL_Rect area = sprite->GetClip();
 //            spriteAnim.ApplyEffect([&lightSpot, &sprite] (SDL_Color c, SDL_Point p) {
-//                float brightness = 1.0f - mapRange(clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
+//                float brightness = 1.0f - MapRange(Clamp(lightSpot.DistanceSquared((Point){(float)p.x, (float)p.y}), 0.0f, (96.0f / sprite->GetRenderWidth()) * (96.0f / sprite->GetRenderWidth())), 0.0f, (100.0f / sprite->GetRenderWidth()) * (100.0f / sprite->GetRenderWidth()), 0.0f, 1.0f);
 //                c = Color((Uint8)(brightness * (float)c.r), (Uint8)(brightness * (float)c.g), (Uint8)(brightness * (float)c.b), c.a);
 //                return c;
 //            });

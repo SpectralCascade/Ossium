@@ -98,7 +98,7 @@ namespace Ossium
         int Renderer::Register(Graphic* graphic, int layer)
         {
             int intendedLayer = layer;
-            layer = clamp(layer, 0, numLayersActive);
+            layer = Clamp(layer, 0, numLayersActive);
             if (layer != intendedLayer)
             {
                 Logger::EngineLog().Warning("[Renderer] Registered graphic on layer [{0}] because the intended layer [{1}] is out of bounds (max layer is [{2}]).", layer, intendedLayer, numLayersActive - 1);
@@ -140,7 +140,7 @@ namespace Ossium
         int Renderer::Enqueue(Graphic* graphic, int layer)
         {
             int intendedLayer = layer;
-            layer = clamp(layer, 0, numLayersActive);
+            layer = Clamp(layer, 0, numLayersActive);
             if (layer != intendedLayer)
             {
                 Logger::EngineLog().Warning("[Renderer] Enqueued graphic on layer [{0}] because the intended layer [{1}] is out of bounds (max layer is [{2}]).", layer, intendedLayer, numLayersActive - 1);
@@ -258,7 +258,7 @@ namespace Ossium
             }
             if (fixed_aspect)
             {
-                smallest_percent = clamp(smallest_percent, 0.0f, 1.0f);
+                smallest_percent = Clamp(smallest_percent, 0.0f, 1.0f);
             }
             viewRect.h = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_height : (float)display_height));
             viewRect.w = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_width : (float)display_width));

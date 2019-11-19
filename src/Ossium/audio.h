@@ -56,7 +56,7 @@ namespace Ossium
             /// Any values outside of the 0 - 1 range are clamped
             void SetVolume(float vol)
             {
-                volume = clamp(vol, 0.0f, 1.0f);
+                volume = Clamp(vol, 0.0f, 1.0f);
                 derived()->OnVolumeChanged();
             }
             /// Returns the volume level of the audio channel as a normalised value between 0 and 1.
@@ -68,7 +68,7 @@ namespace Ossium
             /// Sets stereo panning by direction. Note: this wraps around, so -90 is the same as 270 (left), etc.
             void SetPanning(Sint16 angle)
             {
-                panningAngle = wrap(0, angle, 0, 360);
+                panningAngle = Wrap(0, angle, 0, 360);
                 derived()->OnVolumeChanged();
             }
             /// Returns the panning angle
@@ -79,8 +79,8 @@ namespace Ossium
 
             void SetStereoVolume(float vol, Sint16 angle)
             {
-                volume = clamp(vol, 0.0f, 1.0f);
-                panningAngle = wrap(0, angle, 0, 360);
+                volume = Clamp(vol, 0.0f, 1.0f);
+                panningAngle = Wrap(0, angle, 0, 360);
                 derived()->OnVolumeChanged();
             }
 

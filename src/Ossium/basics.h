@@ -17,23 +17,16 @@ namespace Ossium
     inline namespace Utilities
     {
 
-        ///
-        /// Handy utility functions
-        ///
-
         /// Clamps a number to maxima/minima.
-        float clamp(float n, float min = 0, float max = 1);
-        int clamp(int n, int min, int max);
+        float Clamp(float n, float min = 0, float max = 1);
+        int Clamp(int n, int min, int max);
 
         /// Wraps an integer number within a given range. Both min and max are INCLUSIVE.
-        int wrap(int n, int change, int min, int max);
+        int Wrap(int n, int change, int min, int max);
 
         /// Maps a value and it's range to a different range.
         /// value = value to be mapped, min and max = original range, min_new and max_new = the new range to be mapped to.
-        float mapRange(float value, float min, float max, float min_new, float max_new);
-
-        /// Converts a value to a 1 if it is a 0; useful for avoiding division by zero.
-        float zeroToOne(float value);
+        float MapRange(float value, float min, float max, float min_new, float max_new);
 
         /// Converts numerical values to strings using stringstream.
         string ToString(float n);
@@ -42,13 +35,13 @@ namespace Ossium
         string FileToString(ifstream& fileStream);
 
         /// Removes white space or some other specified character from both ends of a string
-        string strip(string data, char optionalChar = ' ');
+        string Strip(string data, char optionalChar = ' ');
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
         /// If an error occurs, these functions return the string outputOnError, or the data string if using the default value for outputOnError.
-        string splitRight(string data, char delimiter = ' ', string outputOnError = "%s");
+        string SplitRight(string data, char delimiter = ' ', string outputOnError = "%s");
         /// Ditto but returns the first half instead.
-        string splitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
+        string SplitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
 
         ///
         /// Type query functions (for converting strings to specific data types).
@@ -87,10 +80,6 @@ namespace Ossium
         }
 
     }
-
-    ///
-    /// General interfaces and mix-in classes for programming patterns
-    ///
 
     /// Easy to use singleton mix-in; don't use this unless your class could never EVER exist as more than one instance
     template<class Derived>
