@@ -116,6 +116,12 @@ namespace Ossium
             /// Returns the number of layers allocated by the renderer
             int GetNumLayers();
 
+            /// Returns the render buffer colour.
+            SDL_Color GetBackgroundColor();
+
+            /// Sets the render buffer colour.
+            void SetBackgroundColor(SDL_Color color);
+
         private:
             NOCOPY(Renderer);
 
@@ -141,6 +147,9 @@ namespace Ossium
             bool letterbox_bars;
             /// The viewport rect, set when the viewport updates
             SDL_Rect viewportRect;
+
+            /// The render buffer colour. Defaults to black.
+            SDL_Color bufferColour = Colors::BLACK;
 
             /// Cached array of callback ids to unregister this renderer when destroyed.
             int callbackIds[3] = {0, 0, 0};

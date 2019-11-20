@@ -174,10 +174,9 @@ namespace Ossium
             numRenderedPrevious = numRendered;
             numRendered = 0;
             #endif // DEBUG
+            SetDrawColor(bufferColour);
             if (!manualMode)
             {
-                /// Doing this ensures the background is always black
-                SetDrawColor(Colors::BLACK);
                 SDL_RenderPresent(renderer);
             }
         }
@@ -332,6 +331,16 @@ namespace Ossium
         SDL_Renderer* Renderer::GetRendererSDL()
         {
             return renderer;
+        }
+
+        SDL_Color Renderer::GetBackgroundColor()
+        {
+            return bufferColour;
+        }
+
+        void Renderer::SetBackgroundColor(SDL_Color color)
+        {
+            bufferColour = color;
         }
 
     }
