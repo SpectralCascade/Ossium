@@ -17,13 +17,10 @@ namespace Ossium
 {
     int InitialiseOssium()
     {
+        SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+
         string numCPUs = "";
         Logger::EngineLog().Info("{0} | {1} core CPU | {2} MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
-
-        /// Ensure errors are output to console if debug build (use "-D DEBUG" in GCC compile options)
-        #ifdef DEBUG
-        SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
-        #endif // DEBUG
 
         int error = 0;
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
