@@ -7,8 +7,8 @@
 #include <SDL.h>
 
 #include "funcutils.h"
-#include "typefactory.h"
 #include "helpermacros.h"
+#include "services.h"
 
 using namespace std;
 
@@ -43,14 +43,6 @@ namespace Ossium
 
         typedef Uint32 InputHandlerType;
 
-        /// Declares an input handler type
-        /// Add this to the end of any class you wish to register as a component
-        #define DECLARE_INPUT_HANDLER(TYPE) public: static Ossium::TypeSystem::TypeRegistry<InputHandlerType> __input_type_entry_
-
-        /// Adds the input handler type to the registry by static instantiation
-        /// Add this to the class definition of an input handler that uses DECLARE_INPUT_HANDLER
-        #define REGISTER_INPUT_HANDLER(TYPE) Ossium::TypeSystem::TypeRegistry<InputHandlerType> TYPE::__input_type_entry_
-
         /// Constant return type id for a specified input handler type
         template<class T>
         InputHandlerType GetInputHandlerType()
@@ -71,12 +63,14 @@ namespace Ossium
 
         /// An abstract interface for handling a specific type of input; template takes a specialised structure that contains only relevant information
         /// stripped from an SDL_Event, and an ident type used to map an input directly to an action (e.g. SDL_Keycode)
-        template<class InputData, class InputIdent>
+        template<class Derived, class InputData, class InputIdent>
         class InputHandler : public BaseInputHandler
         {
         public:
             /// Function pointer for actions based on this input data
             typedef function<ActionOutcome(const InputData&)> InputAction;
+
+            static TypeSystem::TypeRegistry<Derived> __input_type_entry_;
 
             virtual ~InputHandler()
             {
@@ -307,6 +301,9 @@ namespace Ossium
 
         };
 
+        template<class Derived, class InputData, class InputIdent>
+        TypeSystem::TypeRegistry<Derived> InputHandler<Derived, InputData, InputIdent>::__input_type_entry_;
+
         /// A game might have multiple input contexts; for example, button X closes a dialog box when talking to NPCs,
         /// but the X button opens the player's inventory in normal gameplay.
         class InputContext
@@ -401,7 +398,7 @@ namespace Ossium
 
         };
 
-        class InputController
+        class InputController : public Service<InputController>
         {
         public:
             InputController();
@@ -412,6 +409,23 @@ namespace Ossium
 
             /// Removes a specified input context
             void RemoveContext(string name);
+
+            /// Returns the specified context instance, or nullptr if the context doesn't exist.
+            InputContext* GetContext(string name);
+
+            /// Attempts to retrieve a specified event handler type from the given context.
+            /// Returns nullptr if the context or handler does not exist.
+            template<class HandlerType>
+            HandlerType* Get(string name)
+            {
+                InputContext* context = GetContext(name);
+                if (context != nullptr)
+                {
+                    return context->GetHandler<HandlerType>();
+                }
+                Logger::EngineLog().Warning("Failed to retrieve input handler from context \"{0}\".", name);
+                return nullptr;
+            }
 
             /// This polls all input events and passes them to the currently active input contexts
             void Update();

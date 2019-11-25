@@ -6,8 +6,6 @@ namespace Ossium
     inline namespace Input
     {
 
-        REGISTER_INPUT_HANDLER(MouseHandler);
-
         ActionOutcome MouseHandler::HandleInput(const SDL_Event& raw)
         {
             MouseInput data;

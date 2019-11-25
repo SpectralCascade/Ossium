@@ -89,6 +89,17 @@ namespace Ossium
             }
         }
 
+        InputContext* InputController::GetContext(string name)
+        {
+            auto itr = contexts.find(name);
+            if (itr != contexts.end())
+            {
+                return itr->second;
+            }
+            Logger::EngineLog().Warning("Failed to retrieve context {0} from input controller.", name);
+            return nullptr;
+        }
+
         ActionOutcome InputController::HandleEvent(const SDL_Event& raw)
         {
             for (auto i = contexts.begin(); i != contexts.end(); i++)

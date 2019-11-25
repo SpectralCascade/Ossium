@@ -6,8 +6,6 @@ namespace Ossium
     inline namespace Input
     {
 
-        REGISTER_INPUT_HANDLER(KeyboardHandler);
-
         ActionOutcome KeyboardHandler::HandleInput(const SDL_Event& raw)
         {
             if (raw.type == SDL_KEYUP || raw.type == SDL_KEYDOWN)
