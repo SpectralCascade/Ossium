@@ -97,5 +97,6 @@ void MouseFollower::Update()
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
+    GetService<Renderer>()->WindowToViewportPoint(x, y);
     WorldPosition() = Point(x, y);
 }

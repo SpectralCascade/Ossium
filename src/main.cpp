@@ -206,7 +206,8 @@ int main(int argc, char* argv[])
 
         /// Create renderer
         Renderer mainRenderer(mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
-        //mainRenderer.SetAspectRatio(16, 9);
+        /// Set the main viewport according to a specific aspect ratio
+        mainRenderer.SetAspectRatio(16, 9);
 
         /// Create resource controller
         ResourceController resources;

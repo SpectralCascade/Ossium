@@ -89,6 +89,9 @@ namespace Ossium
             /// Returns the viewport area used for rendering
             SDL_Rect GetViewportRect();
 
+            /// Converts a position relative to the associated window into a position relative to the view port.
+            void WindowToViewportPoint(int& x, int& y);
+
             /// Attempts to set the viewport dimensions to the input target width and height in pixels
             /// If the window is bigger in both width and height than the target dimension arguments, the viewport will remain
             /// at the target dimensions and remaining space in the window will be filled with black bars on all sides.

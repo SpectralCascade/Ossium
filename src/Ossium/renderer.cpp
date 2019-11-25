@@ -226,6 +226,12 @@ namespace Ossium
             return viewportRect;
         }
 
+        void Renderer::WindowToViewportPoint(int& x, int& y)
+        {
+            y -= viewportRect.y;
+            x -= viewportRect.x;
+        }
+
         void Renderer::UpdateViewport(Window& windowCaller)
         {
             SDL_Rect viewRect;
