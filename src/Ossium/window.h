@@ -2,12 +2,17 @@
 #define WINDOW_H
 
 #include <string>
+#include <set>
 #include <SDL.h>
 
+#include "services.h"
 #include "callback.h"
+
+using namespace std;
 
 namespace Ossium
 {
+
     /// Wrapper class for SDL_Window
     class Window
     {
@@ -17,7 +22,7 @@ namespace Ossium
         ~Window();
 
         /// Handles window events
-        void HandleEvents(SDL_Event &event);
+        int HandleEvent(SDL_Event &event);
 
         /// Get/Set specifiers
         SDL_Window* GetWindow();
@@ -69,6 +74,27 @@ namespace Ossium
         bool fullscreen;
         bool focus;
         bool border;
+
+    };
+
+    class WindowManager : public Service<WindowManager>
+    {
+    public:
+        WindowManager() = default;
+        ~WindowManager();
+
+        /// Creates a new window and sets up a destruction callback.
+        Window* CreateWindow(const char* title = nullptr, int w = 640, int h = 480, bool fullscrn = false, Uint32 flags = SDL_WINDOW_SHOWN);
+
+        /// Handles window events. Returns nullptr unless a window receives SDL_WINDOWEVENT_CLOSE, in which case a pointer to that window is returned.
+        Window* HandleEvent(SDL_Event& e);
+
+    private:
+        /// Called when a window is destroyed.
+        void OnWindowDestroyed(Window& window);
+
+        /// Window callback handles.
+        map<Window*, int> windows;
 
     };
 

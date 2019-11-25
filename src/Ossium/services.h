@@ -11,6 +11,22 @@ namespace Ossium
     {
         class ServiceBase
         {
+        public:
+            /// Called before main logic execution.
+            virtual void PreUpdate()
+            {
+            }
+
+            /// Called after main logic execution, but before rendering.
+            virtual void PostUpdate()
+            {
+            }
+
+            /// Called after rendering.
+            virtual void PostRender()
+            {
+            }
+
         };
     }
 
@@ -37,20 +53,53 @@ namespace Ossium
         virtual ~ServicesProvider();
 
         /// Attempts to return a pointer to a service matching the specified type.
+        /// Returns nullptr if a service instance of the specified type does not exist.
         template<typename T>
         T* GetService()
         {
             Uint32 index = T::__services_entry.GetType();
             if (index < TypeSystem::TypeRegistry<Internal::ServiceBase>::GetTotalTypes())
             {
-                if (services[index] == nullptr)
-                {
-                    Logger::EngineLog().Warning("Service of type [{0}] has not been set up!", index);
-                }
                 return reinterpret_cast<T*>(services[index]);
             }
             Logger::EngineLog().Warning("Failed to get service, invalid service type requested.");
             return nullptr;
+        }
+
+        /// Call this just before the main logic update.
+        void PreUpdate()
+        {
+            for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<Internal::ServiceBase>::GetTotalTypes(); i < counti; i++)
+            {
+                if (services[i] != nullptr)
+                {
+                    services[i]->PreUpdate();
+                }
+            }
+        }
+
+        /// Call this just after the main logic update.
+        void PostUpdate()
+        {
+            for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<Internal::ServiceBase>::GetTotalTypes(); i < counti; i++)
+            {
+                if (services[i] != nullptr)
+                {
+                    services[i]->PostUpdate();
+                }
+            }
+        }
+
+        /// Call this at the end of a frame after rendering.
+        void PostRender()
+        {
+            for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<Internal::ServiceBase>::GetTotalTypes(); i < counti; i++)
+            {
+                if (services[i] != nullptr)
+                {
+                    services[i]->PostRender();
+                }
+            }
         }
 
     protected:

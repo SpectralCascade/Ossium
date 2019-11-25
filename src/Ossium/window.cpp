@@ -53,10 +53,19 @@ namespace Ossium
         window = NULL;
     }
 
-    void Window::HandleEvents(SDL_Event &event)
+    int Window::HandleEvent(SDL_Event &event)
     {
+        if (event.type != SDL_WINDOWEVENT || event.window.windowID != SDL_GetWindowID(window))
+        {
+            /// If not a window event or the id doesn't match this window, early out.
+            return 0;
+        }
         switch (event.window.event)
         {
+            case SDL_WINDOWEVENT_CLOSE:
+            {
+                return -1;
+            }
             case SDL_WINDOWEVENT_SIZE_CHANGED:
             {
                 width = event.window.data1;
@@ -89,6 +98,7 @@ namespace Ossium
                 break;
             }
         }
+        return 1;
     }
 
     SDL_Window* Window::GetWindow()
@@ -171,6 +181,50 @@ namespace Ossium
     bool Window::IsFocus()
     {
         return focus;
+    }
+
+    ///
+    /// WindowManager
+    ///
+
+    WindowManager::~WindowManager()
+    {
+        /// Remove all callbacks
+        for (auto i : windows)
+        {
+            /// Prevent invalid callbacks.
+            i.first->OnDestroyed -= i.second;
+        }
+    }
+
+    /// Creates a new window
+    Window* WindowManager::CreateWindow(const char* title, int w, int h, bool fullscrn, Uint32 flags)
+    {
+        Window* window = new Window(title, w, h, fullscrn, flags);
+        windows[window] = window->OnDestroyed += [this] (Window& w) { OnWindowDestroyed(w); };
+        return window;
+    }
+
+    Window* WindowManager::HandleEvent(SDL_Event& event)
+    {
+        for (auto window : windows)
+        {
+            if (window.first->HandleEvent(event) < 0)
+            {
+                return window.first;
+            }
+        }
+        return nullptr;
+    }
+
+    void WindowManager::OnWindowDestroyed(Window& window)
+    {
+        /// Remove the window reference and callback handle.
+        auto itr = windows.find(&window);
+        if (itr != windows.end())
+        {
+            windows.erase(itr);
+        }
     }
 
 }

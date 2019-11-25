@@ -7,6 +7,7 @@ namespace Ossium
     EngineSystem::~EngineSystem()
     {
         delete ecs;
+        delete services;
     }
 
     void EngineSystem::Init(JSON& configData)
@@ -31,10 +32,34 @@ namespace Ossium
     {
         bool quit = false;
 
+        Renderer* renderer = services->GetService<Renderer>();
+
         /// Input handling phase
         while (SDL_PollEvent(&currentEvent) != 0)
         {
-            ecs->GetService<Renderer>()->GetWindow()->HandleEvents(currentEvent);
+            WindowManager* windows = services->GetService<WindowManager>();
+            if (windows != nullptr)
+            {
+                Window* closed = windows->HandleEvent(currentEvent);
+                if (closed != nullptr)
+                {
+                    /// TODO: Check if the window is the main engine window?
+                    quit = true;
+                    break;
+                }
+            }
+            else
+            {
+                /// If no window manager is available, try and acquire the main window via the main renderer service.
+                if (renderer != nullptr)
+                {
+                    if (renderer->GetWindow()->HandleEvent(currentEvent) < 0)
+                    {
+                        quit = true;
+                        break;
+                    }
+                }
+            }
             if (currentEvent.type == SDL_QUIT
                 #ifdef DEBUG
                 || (currentEvent.type == SDL_KEYUP && currentEvent.key.keysym.sym == SDLK_ESCAPE)
@@ -43,19 +68,36 @@ namespace Ossium
                 quit = true;
                 break;
             }
-            input.HandleEvent(currentEvent);
+            InputController* input = services->GetService<InputController>();
+            if (input != nullptr)
+            {
+                input->HandleEvent(currentEvent);
+            }
         }
+
+        /// Update services before main logic update.
+        services->PreUpdate();
 
         /// General game logic update
         ecs->UpdateComponents();
 
-        /// Render everything
-        ecs->GetService<Renderer>()->RenderPresent();
+        /// Update services after the main logic update.
+        services->PostUpdate();
+
+        if (renderer != nullptr)
+        {
+            /// Render everything
+            renderer->RenderPresent();
+        }
 
         /// Destroy entities and components that are pending destruction
         /// now we've finished rendering.
         ecs->DestroyPending();
 
+        /// Update services post-render
+        services->PostRender();
+
+        /// Update the engine time.
         delta.Update();
 
         return !quit;

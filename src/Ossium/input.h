@@ -414,25 +414,25 @@ namespace Ossium
             InputContext* GetContext(string name);
 
             /// Attempts to retrieve a specified event handler type from the given context.
-            /// Returns nullptr if the context or handler does not exist.
+            /// Creates an active context and valid handler if they don't already exist.
             template<class HandlerType>
             HandlerType* Get(string name)
             {
                 InputContext* context = GetContext(name);
-                if (context != nullptr)
+                if (context == nullptr)
                 {
-                    return context->GetHandler<HandlerType>();
+                    context = new InputContext();
                 }
-                Logger::EngineLog().Warning("Failed to retrieve input handler from context \"{0}\".", name);
-                return nullptr;
+                HandlerType* handler = context->GetHandler<HandlerType>();
+                if (handler == nullptr)
+                {
+                    handler = context->AddHandler<HandlerType>();
+                }
+                return handler;
             }
 
-            /// This polls all input events and passes them to the currently active input contexts
-            void Update();
-
-            /// Passes a single event to all contexts. Useful if you don't exclusively use InputHandlers to handle SDL events
-            /// Returns true if the event was handled
-            ActionOutcome HandleEvent(const SDL_Event& raw);
+            /// Passes a single event to all contexts. Returns true upon a ClaimFinal outcome, otherwise returns false when finished.
+            bool HandleEvent(const SDL_Event& raw);
 
             /// Removes all input contexts
             void Clear();

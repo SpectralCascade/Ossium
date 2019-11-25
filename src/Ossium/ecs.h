@@ -87,12 +87,7 @@ namespace Ossium
     public:
         friend class Ossium::Entity;
 
-        template<typename ...Args>
-        EntityComponentSystem(Args&& ...services)
-        {
-            servicesProvider = new ServicesProvider(forward<Args>(services)...);
-            components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
-        }
+        EntityComponentSystem(ServicesProvider* services = nullptr);
 
         ~EntityComponentSystem();
 

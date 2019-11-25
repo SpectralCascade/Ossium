@@ -14,16 +14,18 @@ namespace Ossium
         friend class EntityComponentSystem;
 
         template<typename ...Args>
-        EngineSystem(JSON& configData, Args&& ...services)
+        EngineSystem(JSON& configData, Args&& ...serviceArgs)
         {
-            ecs = new EntityComponentSystem(forward<Args>(services)...);
+            services = new ServicesProvider(forward<Args>(serviceArgs)...);
+            ecs = new EntityComponentSystem(services);
             Init(configData);
         }
 
         template<typename ...Args>
-        EngineSystem(string configFilePath = "", Args&& ...services)
+        EngineSystem(string configFilePath = "", Args&& ...serviceArgs)
         {
-            ecs = new EntityComponentSystem(forward<Args>(services)...);
+            services = new ServicesProvider(forward<Args>(serviceArgs)...);
+            ecs = new EntityComponentSystem(services);
             if (!configFilePath.empty())
             {
                 Init(configFilePath);
@@ -50,8 +52,8 @@ namespace Ossium
         /// The core entity-component system.
         EntityComponentSystem* ecs = nullptr;
 
-        /// The main input controller.
-        InputController input;
+        /// Services available to this engine system instance.
+        ServicesProvider* services = nullptr;
 
         /// SDL_Event for input handling.
         SDL_Event currentEvent;

@@ -198,17 +198,26 @@ int main(int argc, char* argv[])
             settings.Save("ossium.cfg");
         }
 
+        /// Create a window manager service and add a main window.
+        WindowManager windows;
+
         /// Create the window
-        Window mainWindow("Ossium Engine", 1024, 768, settings.fullscreen, SDL_WINDOW_SHOWN);
+        Window* mainWindow = windows.CreateWindow("Ossium Engine", 1024, 768, settings.fullscreen, SDL_WINDOW_SHOWN);
 
         /// Create renderer
-        Renderer mainRenderer(&mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
+        Renderer mainRenderer(mainWindow, 5, settings.vsync ? SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC : SDL_RENDERER_ACCELERATED);
         //mainRenderer.SetAspectRatio(16, 9);
 
+        /// Create resource controller
         ResourceController resources;
 
-        EngineSystem engine("", &mainRenderer, &resources);
+        /// Create input system (one could also set up contexts + handlers here).
+        InputController input;
 
+        /// Create and initialise the main engine instance with services.
+        EngineSystem engine("", &windows, &mainRenderer, &resources, &input);
+
+        /// Load a scene
         engine.LoadScene("assets/test_scene.json");
 
         while (engine.Update())
