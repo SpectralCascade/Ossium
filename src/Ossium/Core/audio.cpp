@@ -465,7 +465,7 @@ namespace Ossium
 
             void MusicFinished()
             {
-                SoundStream.Init();
+                ///SoundStream.Init();
             }
 
             AudioStream::~AudioStream()
@@ -727,14 +727,6 @@ namespace Ossium
                 Logger::EngineLog().Warning("Failed to parse audio mixer data!");
             }
         }
-
-    }
-
-    inline namespace Global
-    {
-
-        /// TODO: get rid of this global stuff! Move access to AudioMixer.
-        Audio::Internals::AudioStream& SoundStream = Audio::Internals::AudioStream::_Instance();
 
     }
 

@@ -113,9 +113,9 @@ namespace Ossium
     };
 
     /// Converts seconds to milliseconds.
-    Uint32 GetMS(float seconds);
+    OSSIUM_EDL Uint32 GetMS(float seconds);
     /// Converts milliseconds to seconds.
-    float GetSeconds(Uint32 ms);
+    OSSIUM_EDL float GetSeconds(Uint32 ms);
 
 }
 

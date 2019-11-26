@@ -10,7 +10,7 @@ namespace Ossium
     inline namespace Audio
     {
 
-        struct AudioSourceSchema : public Schema<AudioSourceSchema, 2>
+        struct OSSIUM_EDL AudioSourceSchema : public Schema<AudioSourceSchema, 2>
         {
         public:
             DECLARE_BASE_SCHEMA(AudioSourceSchema, 2);
@@ -59,7 +59,7 @@ namespace Ossium
 
         };
 
-        struct AudioListenerSchema : public Schema<AudioListenerSchema, 1>
+        struct OSSIUM_EDL AudioListenerSchema : public Schema<AudioListenerSchema, 1>
         {
             DECLARE_BASE_SCHEMA(AudioListenerSchema, 1);
 

@@ -25,7 +25,7 @@ namespace Ossium
         namespace Internal
         {
 
-            void __InternalLogWarn(string text);
+            OSSIUM_EDL void __InternalLogWarn(string text);
 
         }
 
@@ -33,7 +33,7 @@ namespace Ossium
         /// FromString() functions
         ///
 
-        void FromString(...);
+        OSSIUM_EDL void FromString(...);
 
         template<typename T>
         typename enable_if<has_FromString<T>::value, void>::type
@@ -247,7 +247,7 @@ namespace Ossium
         }
 
         /// Sinkhole for types that ToString() is not implemented for.
-        string ToString(...);
+        OSSIUM_EDL string ToString(...);
 
         ///
         /// String formatting function, similar to C# String.Format()
@@ -257,10 +257,10 @@ namespace Ossium
         ///
 
         /// Recursive base case, no arguments
-        void ToStrings(vector<string>& converted);
+        OSSIUM_EDL void ToStrings(vector<string>& converted);
 
         /// Base case, no arguments
-        vector<string> ToStrings();
+        OSSIUM_EDL vector<string> ToStrings();
 
         /// Recursively extracts arguments and appends them to the back of the provided vector
         template<typename T, typename ...Args>

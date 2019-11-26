@@ -22,7 +22,7 @@ namespace Ossium
     ///
 
     template<class BaseType, unsigned int MaximumMembers = 20>
-    struct Schema
+    struct OSSIUM_EDL Schema
     {
         const static unsigned int MaxMembers = MaximumMembers;
 
@@ -245,7 +245,7 @@ namespace Ossium
     ///
 
     template<typename SchemaType, typename Type, typename strType, typename strName>
-    struct MemberInfo
+    struct OSSIUM_EDL MemberInfo
     {
         MemberInfo(unsigned int& m_count, function<bool(void*, const char*, string)> lambdaFromString, function<string(void*, const char*)> lambdaToString, const char* ultimate_name, size_t member_offset)
         {

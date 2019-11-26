@@ -22,7 +22,7 @@ namespace Ossium
         return (Constants::pi / 180.0f) * angle;
     }
 
-    struct Vector2 : public b2Vec2
+    struct OSSIUM_EDL Vector2 : public b2Vec2
     {
         Vector2() = default;
         Vector2(float _x, float _y);
@@ -84,7 +84,7 @@ namespace Ossium
 
     };
 
-    struct Rotation : public b2Rot
+    struct OSSIUM_EDL Rotation : public b2Rot
     {
         Rotation() = default;
         Rotation(float angle) : b2Rot(angle) {};
@@ -120,7 +120,7 @@ namespace Ossium
     struct Rect;
 
     /// Similar to Vector2, but also implements drawing methods.
-    struct Point : public Vector2
+    struct OSSIUM_EDL Point : public Vector2
     {
         Point() = default;
         Point(float _x, float _y);
@@ -142,7 +142,7 @@ namespace Ossium
 
     };
 
-    struct Transform : public b2Transform
+    struct OSSIUM_EDL Transform : public b2Transform
     {
         Transform() = default;
         Transform(const Vector2& position, const Rotation& rotation) : b2Transform((b2Vec2)position, (b2Rot)rotation) {};
@@ -171,7 +171,7 @@ namespace Ossium
 
     };
 
-    struct Circle
+    struct OSSIUM_EDL Circle
     {
         float x;
         float y;
@@ -194,7 +194,7 @@ namespace Ossium
         bool Contains(Point point);
     };
 
-    struct Ray
+    struct OSSIUM_EDL Ray
     {
         Ray() = default;
         Ray(Point origin, Vector2 direction);
@@ -203,13 +203,13 @@ namespace Ossium
         Vector2 u;
     };
 
-    struct InfiniteLine : public Ray
+    struct OSSIUM_EDL InfiniteLine : public Ray
     {
         InfiniteLine() = default;
         InfiniteLine(Point p, Vector2 direction);
     };
 
-    struct Line
+    struct OSSIUM_EDL Line
     {
         Line() = default;
         Line(Point start, Point end);
@@ -223,7 +223,7 @@ namespace Ossium
     };
 
     /// Floating point rectangle; if you want an integer based rectangle, use SDL_Rect instead
-    struct Rect
+    struct OSSIUM_EDL Rect
     {
         Rect();
         Rect(float xpos, float ypos, float width, float height);
@@ -266,7 +266,7 @@ namespace Ossium
 
     };
 
-    struct Triangle
+    struct OSSIUM_EDL Triangle
     {
         Point a;
         Point b;
@@ -281,7 +281,7 @@ namespace Ossium
     };
 
     /// Represents a general shape
-    struct Polygon
+    struct OSSIUM_EDL Polygon
     {
         /// Renders the edges of the polygon
         void Draw(Renderer& renderer);
@@ -302,15 +302,15 @@ namespace Ossium
     ///
 
     /// Basic vector arithmetic
-    Vector2 operator+(const Vector2& vec_a, const Vector2& vec_b);
+    OSSIUM_EDL Vector2 operator+(const Vector2& vec_a, const Vector2& vec_b);
 
-    void operator+=(Vector2 &vec_a, const Vector2& vec_b);
+    OSSIUM_EDL void operator+=(Vector2 &vec_a, const Vector2& vec_b);
 
-    Vector2 operator-(const Vector2& vec_a, const Vector2& vec_b);
+    OSSIUM_EDL Vector2 operator-(const Vector2& vec_a, const Vector2& vec_b);
 
-    void operator-=(Vector2 &vec_a, const Vector2& vec_b);
+    OSSIUM_EDL void operator-=(Vector2 &vec_a, const Vector2& vec_b);
 
-    Vector2 operator*(const Vector2& vec_a, const Vector2& vec_b);
+    OSSIUM_EDL Vector2 operator*(const Vector2& vec_a, const Vector2& vec_b);
 
     /// Scalar multiplication
     inline Vector2 operator*(const Vector2& vec, float scalar)

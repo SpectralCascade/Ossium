@@ -34,7 +34,7 @@ namespace Ossium
             void FromString(string& data);
         };
 
-        struct StateSpriteSchema : public Schema<StateSpriteSchema>
+        struct OSSIUM_EDL StateSpriteSchema : public Schema<StateSpriteSchema>
         {
             DECLARE_SCHEMA(StateSpriteSchema, Schema<StateSpriteSchema>);
 

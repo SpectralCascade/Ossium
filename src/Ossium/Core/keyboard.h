@@ -13,7 +13,7 @@ namespace Ossium
         const bool KEY_UP = false;
 
         /// Stripped down SDL_Event to pure keyboard data for a specific key
-        struct KeyboardInput
+        struct OSSIUM_EDL KeyboardInput
         {
             /// Whether the key is pressed or released
             bool state;

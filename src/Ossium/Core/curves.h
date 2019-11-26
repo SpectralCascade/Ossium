@@ -1,6 +1,8 @@
 #ifndef CURVES_H
 #define CURVES_H
 
+#include "helpermacros.h"
+
 namespace Ossium
 {
 
@@ -12,7 +14,7 @@ namespace Ossium
         typedef float (*CurveFunction)(float start, float end, float percent);
 
         /// Declares a curve/Tweening function with a specified name. Saves some typing and looks neat.
-        #define DECLARE_TWEEN(NAME) float NAME(float start, float end, float percent)
+        #define DECLARE_TWEEN(NAME) OSSIUM_EDL float NAME(float start, float end, float percent)
 
         /// Linear interpolation.
         DECLARE_TWEEN(Lerp);

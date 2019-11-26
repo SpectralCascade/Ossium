@@ -8,7 +8,7 @@ namespace Ossium
 {
 
     /// General configuration information for Ossium
-    struct Config : public Schema<Config, 5>
+    struct OSSIUM_EDL Config : public Schema<Config, 5>
     {
         DECLARE_BASE_SCHEMA(Config, 5);
 

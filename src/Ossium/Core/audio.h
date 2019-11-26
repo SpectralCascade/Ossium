@@ -22,7 +22,7 @@ namespace Ossium
     inline namespace Audio
     {
 
-        struct AudioChannelSchema : public Schema<AudioChannelSchema, 3>
+        struct OSSIUM_EDL AudioChannelSchema : public Schema<AudioChannelSchema, 3>
         {
         public:
             DECLARE_BASE_SCHEMA(AudioChannelSchema, 3);
@@ -41,7 +41,7 @@ namespace Ossium
 
         /// Mix-in class for doing stuff with volume and stereo panning. Requires Derived to implement OnVolumeChanged()
         template<class Derived>
-        class AudioChannel : public AudioChannelSchema
+        class OSSIUM_EDL AudioChannel : public AudioChannelSchema
         {
         public:
             CONSTRUCT_SCHEMA(SchemaRoot, AudioChannelSchema);
@@ -192,7 +192,7 @@ namespace Ossium
 
         }
 
-        struct AudioBusSchema : public Schema<AudioBusSchema, 4>
+        struct OSSIUM_EDL AudioBusSchema : public Schema<AudioBusSchema, 4>
         {
         public:
             DECLARE_BASE_SCHEMA(AudioBusSchema, 4);
@@ -317,7 +317,7 @@ namespace Ossium
         };
 
         /// Stores data required for some basic effects.
-        struct AudioPlayerSchema : public Schema<AudioPlayerSchema, 1>
+        struct OSSIUM_EDL AudioPlayerSchema : public Schema<AudioPlayerSchema, 1>
         {
         public:
             DECLARE_BASE_SCHEMA(AudioPlayerSchema, 1);
@@ -406,7 +406,7 @@ namespace Ossium
         {
 
             /// Callback when the music is finished
-            void MusicFinished();
+            OSSIUM_EDL void MusicFinished();
 
             /// Wrapper class for Mix_Music, which streams a single audio clip from disk rather than loading the whole clip into memory
             /// There can only be a single audio stream as there can only be one Mix_Music instance
@@ -520,14 +520,6 @@ namespace Ossium
 
     }
 
-
-    inline namespace Global
-    {
-
-        /// Convenient global reference for accessing the AudioStream singleton
-        extern Audio::Internals::AudioStream& SoundStream;
-
-    }
 }
 
 #endif // AUDIO_H

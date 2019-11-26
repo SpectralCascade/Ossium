@@ -17,52 +17,52 @@ namespace Ossium
     {
 
         /// Clamps a number to maxima/minima.
-        float Clamp(float n, float min = 0, float max = 1);
-        int Clamp(int n, int min, int max);
+        OSSIUM_EDL float Clamp(float n, float min = 0, float max = 1);
+        OSSIUM_EDL int Clamp(int n, int min, int max);
 
         /// Wraps an integer number within a given range. Both min and max are INCLUSIVE.
-        int Wrap(int n, int change, int min, int max);
+        OSSIUM_EDL int Wrap(int n, int change, int min, int max);
 
         /// Maps a value and it's range to a different range.
         /// value = value to be mapped, min and max = original range, min_new and max_new = the new range to be mapped to.
-        float MapRange(float value, float min, float max, float min_new, float max_new);
+        OSSIUM_EDL float MapRange(float value, float min, float max, float min_new, float max_new);
 
         /// Converts numerical values to strings using stringstream.
-        string ToString(float n);
-        string ToString(int n);
+        OSSIUM_EDL string ToString(float n);
+        OSSIUM_EDL string ToString(int n);
         /// Turns an entire file stream into a string.
-        string FileToString(ifstream& fileStream);
+        OSSIUM_EDL string FileToString(ifstream& fileStream);
 
         /// Removes white space or some other specified character from both ends of a string
-        string Strip(string data, char optionalChar = ' ');
+        OSSIUM_EDL string Strip(string data, char optionalChar = ' ');
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
         /// If an error occurs, these functions return the string outputOnError, or the data string if using the default value for outputOnError.
-        string SplitRight(string data, char delimiter = ' ', string outputOnError = "%s");
+        OSSIUM_EDL string SplitRight(string data, char delimiter = ' ', string outputOnError = "%s");
         /// Ditto but returns the first half instead.
-        string SplitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
+        OSSIUM_EDL string SplitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
 
         ///
         /// Type query functions (for converting strings to specific data types).
         ///
 
         /// Does this string represent a integer value?
-        bool IsInt(const string& data);
+        OSSIUM_EDL bool IsInt(const string& data);
         /// Does this string represent a floating point value?
-        bool IsFloat(const string& data);
+        OSSIUM_EDL bool IsFloat(const string& data);
         /// Does this string represent a numerical value?
-        bool IsNumber(const string& data);
+        OSSIUM_EDL bool IsNumber(const string& data);
         /// Does this string represent a boolean value?
-        bool IsBool(const string& data);
+        OSSIUM_EDL bool IsBool(const string& data);
         /// Does this string represent a string value?
-        bool IsString(const string& data);
+        OSSIUM_EDL bool IsString(const string& data);
 
         /// Convert a string to an int
-        int ToInt(const string& data);
+        OSSIUM_EDL int ToInt(const string& data);
         /// Convert a string to a float
-        float ToFloat(const string& data);
+        OSSIUM_EDL float ToFloat(const string& data);
         /// Convert a string to a bool
-        bool ToBool(const string& data);
+        OSSIUM_EDL bool ToBool(const string& data);
 
         /// Picks an object from a vector if it meets the specified condition function.
         template<class T>

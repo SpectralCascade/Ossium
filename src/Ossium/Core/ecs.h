@@ -70,8 +70,8 @@ namespace Ossium
     }
 
     /// Dynamic type checking
-    ComponentType GetComponentType(string name);
-    string GetComponentName(ComponentType id);
+    OSSIUM_EDL ComponentType GetComponentType(string name);
+    OSSIUM_EDL string GetComponentName(ComponentType id);
 
     /// Forward declarations for the controller class
     class Entity;
@@ -350,7 +350,7 @@ namespace Ossium
 
     };
 
-    struct ComponentSchema : public Schema<ComponentSchema, 0>
+    struct OSSIUM_EDL ComponentSchema : public Schema<ComponentSchema, 0>
     {
         DECLARE_BASE_SCHEMA(ComponentSchema, 0);
 

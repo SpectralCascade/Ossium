@@ -10,7 +10,7 @@
 namespace Ossium
 {
 
-    struct MetaRectSchema : public Schema<MetaRectSchema>
+    struct OSSIUM_EDL MetaRectSchema : public Schema<MetaRectSchema>
     {
         DECLARE_SCHEMA(MetaRectSchema, Schema<MetaRectSchema>);
 

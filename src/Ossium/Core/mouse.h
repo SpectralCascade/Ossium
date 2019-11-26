@@ -25,7 +25,7 @@ namespace Ossium
         const Uint8 MOUSE_RELEASED = SDL_RELEASED;
 
         /// Unlike a keyboard, a mouse has more than one type of input (scroll wheel etc.)
-        struct MouseInput
+        struct OSSIUM_EDL MouseInput
         {
             /// Type of mouse event
             MouseEvent type;

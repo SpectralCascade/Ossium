@@ -1,6 +1,8 @@
 #ifndef COLORS_H
 #define COLORS_H
 
+#include "helpermacros.h"
+
 extern "C"
 {
     #include <SDL.h>
@@ -31,16 +33,16 @@ namespace Ossium
     }
 
     /// Converts raw pixel data into an SDL_Colour. Effectively the opposite of the SDL_MapRGBA() function
-    SDL_Color ConvertToColor(Uint32 pixel, SDL_PixelFormat* pixelFormat);
+    OSSIUM_EDL SDL_Color ConvertToColor(Uint32 pixel, SDL_PixelFormat* pixelFormat);
 
     ///
     /// Convenience functions
     ///
 
     /// Returns an SDL_Color from raw values
-    SDL_Color Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
+    OSSIUM_EDL SDL_Color Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
     /// Returns an SDL_Color from a 24 bit hex code
-    SDL_Color Color(HexCode rgb);
+    OSSIUM_EDL SDL_Color Color(HexCode rgb);
 
 }
 

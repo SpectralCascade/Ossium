@@ -1,6 +1,8 @@
 #ifndef INIT_H
 #define INIT_H
 
+#include "helpermacros.h"
+
 namespace Ossium
 {
     /// Initialisation error types
@@ -13,10 +15,10 @@ namespace Ossium
     };
 
     /// Initialises SDL and other engine subsystems; returns InitError value. No error if >= 0
-    int InitialiseOssium();
+    OSSIUM_EDL int InitialiseOssium();
 
     /// Terminates SDL and other engine subsystems
-    void TerminateOssium();
+    OSSIUM_EDL void TerminateOssium();
 
 }
 

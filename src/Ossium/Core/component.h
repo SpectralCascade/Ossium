@@ -19,7 +19,7 @@ namespace Ossium
 
     };
 
-    struct GraphicComponentSchema : public Schema<GraphicComponentSchema, 1>
+    struct OSSIUM_EDL GraphicComponentSchema : public Schema<GraphicComponentSchema, 1>
     {
     public:
         DECLARE_BASE_SCHEMA(GraphicComponentSchema, 1);

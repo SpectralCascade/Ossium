@@ -16,7 +16,7 @@ using namespace std;
 namespace Ossium
 {
 
-    struct TextureSchema : public MetaRect
+    struct OSSIUM_EDL TextureSchema : public MetaRect
     {
     public:
         DECLARE_SCHEMA(TextureSchema, Schema<MetaRectSchema>);

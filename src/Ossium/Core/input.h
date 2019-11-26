@@ -42,7 +42,7 @@ namespace Ossium
         };
 
         /// Returns the name of an action outcome value
-        string GetActionOutcomeName(ActionOutcome outcome);
+        OSSIUM_EDL string GetActionOutcomeName(ActionOutcome outcome);
 
         typedef Uint32 InputHandlerType;
 

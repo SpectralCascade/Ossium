@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+#include "helpermacros.h"
+
 namespace Ossium
 {
 
@@ -10,7 +12,7 @@ namespace Ossium
     {
 
         /// Macro for short hand declarations
-        #define DECLARE_PIXEL_EFFECT(NAME) SDL_Color NAME(SDL_Color c, SDL_Point p)
+        #define DECLARE_PIXEL_EFFECT(NAME) OSSIUM_EDL SDL_Color NAME(SDL_Color c, SDL_Point p)
 
         /// Grayscale effect
         DECLARE_PIXEL_EFFECT(Grayscale);
