@@ -1,12 +1,12 @@
 #ifndef INPUTGUI_H
 #define INPUTGUI_H
 
-#include "input.h"
-#include "keyboard.h"
-#include "mouse.h"
-#include "stringintern.h"
-#include "component.h"
-#include "callback.h"
+#include "../Core/input.h"
+#include "../Core/keyboard.h"
+#include "../Core/mouse.h"
+#include "../Core/stringintern.h"
+#include "../Core/component.h"
+#include "../Core/callback.h"
 
 namespace Ossium
 {

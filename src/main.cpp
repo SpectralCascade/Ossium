@@ -4,10 +4,9 @@
 #include <Box2D/Box2D.h>
 
 #include "Ossium.h"
-#include "teststuff.h"
 
 #ifdef DEBUG
-#include "Ossium/testmodules.h"
+#include "Ossium/Tests/testmodules.h"
 using namespace Ossium::Test;
 #endif // DEBUG
 
@@ -172,8 +171,8 @@ int main(int argc, char* argv[])
             TEST_RUN(CircularBufferTests);
             TEST_RUN(BasicUtilsTests);
             TEST_RUN(TreeTests);
-            TEST_RUN(FSM_Tests);
-            TEST_RUN(EventSystemTests);
+            //TEST_RUN(FSM_Tests);
+            //TEST_RUN(EventSystemTests);
             //TEST_RUN(CSV_Tests);
             TEST_RUN(JSON_Tests);
             TEST_RUN(ClockTests);

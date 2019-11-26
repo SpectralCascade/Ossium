@@ -5,7 +5,7 @@
 
 #include "texture.h"
 #include "statesprite.h"
-#include "renderer.h"
+#include "../Core/renderer.h"
 
 namespace Ossium
 {

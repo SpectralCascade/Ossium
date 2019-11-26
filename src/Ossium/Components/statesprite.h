@@ -6,10 +6,10 @@
 #include <string>
 #include <SDL.h>
 
-#include "texture.h"
-#include "resourcecontroller.h"
-#include "renderer.h"
-#include "schemamodel.h"
+#include "../Components/texture.h"
+#include "../Core/resourcecontroller.h"
+#include "../Core/renderer.h"
+#include "../Core/schemamodel.h"
 
 using namespace std;
 

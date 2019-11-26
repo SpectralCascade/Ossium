@@ -4,8 +4,8 @@
 #include <SDL_ttf.h>
 
 #include "text.h"
-#include "renderer.h"
-#include "ecs.h"
+#include "../Core/renderer.h"
+#include "../Core/ecs.h"
 
 namespace Ossium
 {

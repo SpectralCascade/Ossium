@@ -26,6 +26,9 @@ namespace Ossium
     #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)
     #endif
 
+    /// For exporting classes and functions to a shared library
+    #define EXPORT_FUNC
+
     /// This macro shouldn't be used by mortal souls. But here it is anyway.
     #define EVIL_CAST(VALUE, TO_TYPE) *(( TO_TYPE *)((void*) & VALUE ))
 

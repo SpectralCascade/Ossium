@@ -7,7 +7,7 @@
 namespace Ossium
 {
 
-    /// This general configuration information for Ossium
+    /// General configuration information for Ossium
     struct Config : public Schema<Config, 5>
     {
         DECLARE_BASE_SCHEMA(Config, 5);

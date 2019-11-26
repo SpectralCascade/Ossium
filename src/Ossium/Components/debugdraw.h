@@ -3,7 +3,7 @@
 
 #include <Box2D/Common/b2Draw.h>
 
-#include "stringintern.h"
+#include "../Core/stringintern.h"
 #include "text.h"
 
 namespace Ossium

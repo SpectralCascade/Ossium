@@ -1,9 +1,10 @@
 #include "teststuff.h"
-#include "Ossium/window.h"
-#include "Ossium/pixeleffects.h"
+#include "Ossium/Core/window.h"
+#include "Ossium/Core/pixeleffects.h"
 
 using namespace Ossium;
 
+/*
 REGISTER_COMPONENT(StickFighter);
 
 void StickFighter::OnCreate()
@@ -90,6 +91,7 @@ void StickFighter::Update()
         stickman->PlayAnimation(timeline, &idleAnim);
     }
 }
+*/
 
 REGISTER_COMPONENT(MouseFollower);
 

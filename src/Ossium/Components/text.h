@@ -5,11 +5,11 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "font.h"
-#include "renderer.h"
-#include "ecs.h"
+#include "../Core/font.h"
+#include "../Core/renderer.h"
+#include "../Core/ecs.h"
 #include "texture.h"
-#include "helpermacros.h"
+#include "../Core/helpermacros.h"
 
 using namespace std;
 

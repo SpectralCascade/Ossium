@@ -1,8 +1,8 @@
 #ifndef AUDIOEXTENSIONS_H
 #define AUDIOEXTENSIONS_H
 
-#include "audio.h"
-#include "component.h"
+#include "../Core/audio.h"
+#include "../Core/component.h"
 
 namespace Ossium
 {

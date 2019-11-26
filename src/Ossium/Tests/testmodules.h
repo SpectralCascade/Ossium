@@ -5,19 +5,17 @@
 #include <unordered_map>
 #include <iostream>
 
-#include "circularbuffer.h"
-#include "tree.h"
-#include "fsm.h"
-#include "events.h"
-#include "csvdata.h"
-#include "jsondata.h"
-#include "funcutils.h"
-#include "time.h"
-#include "delta.h"
-#include "schemamodel.h"
-#include "randutils.h"
-#include "ecs.h"
-#include "text.h"
+#include "../Core/circularbuffer.h"
+#include "../Core/tree.h"
+#include "../Core/csvdata.h"
+#include "../Core/jsondata.h"
+#include "../Core/funcutils.h"
+#include "../Core/time.h"
+#include "../Core/delta.h"
+#include "../Core/schemamodel.h"
+#include "../Core/randutils.h"
+#include "../Core/ecs.h"
+#include "../Components/text.h"
 
 using namespace std;
 
@@ -246,7 +244,7 @@ namespace Ossium
         class FSM_TestMachine;
 
         class FSM_TestState;
-
+/*
         class FSM_TestMachine : public StateMachine<FSM_TestMachine>, public EventHandler
         {
         public:
@@ -384,7 +382,7 @@ namespace Ossium
             }
 
         };
-
+*/
         class JSON_Tests : public UnitTest
         {
         public:
