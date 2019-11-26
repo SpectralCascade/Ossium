@@ -9,7 +9,7 @@ using namespace std;
 namespace Ossium
 {
 
-    class CSV
+    class OSSIUM_EDL CSV
     {
     public:
         /// Import a CSV file; set quoted to false if importing a csv file that doesn't wrap each cell in "" characters

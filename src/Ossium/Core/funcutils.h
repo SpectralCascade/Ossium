@@ -4,7 +4,6 @@
 #include <string>
 #include <functional>
 #include <map>
-#include <SDL.h>
 
 #include "helpermacros.h"
 #include "jsondata.h"
@@ -83,7 +82,7 @@ namespace Ossium
 
     /// Easy to use singleton mix-in; don't use this unless your class could never EVER exist as more than one instance
     template<class Derived>
-    class Singleton
+    class OSSIUM_EDL Singleton
     {
     public:
         static Derived& _Instance()

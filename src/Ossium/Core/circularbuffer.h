@@ -2,7 +2,6 @@
 #define CIRCULARBUFFER_H
 
 #include <algorithm>
-#include <SDL.h>
 
 #include "funcutils.h"
 #include "logging.h"
@@ -11,7 +10,7 @@ namespace Ossium
 {
 
     template<class T>
-    class CircularBuffer
+    class OSSIUM_EDL CircularBuffer
     {
     public:
         CircularBuffer(unsigned int length)

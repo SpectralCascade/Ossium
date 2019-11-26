@@ -6,7 +6,7 @@
 namespace Ossium
 {
 
-    class Component : public BaseComponent, public GlobalServices
+    class OSSIUM_EDL Component : public BaseComponent, public GlobalServices
     {
     public:
         DECLARE_ABSTRACT_COMPONENT(Component);
@@ -29,7 +29,7 @@ namespace Ossium
 
     };
 
-    class GraphicComponent : public Graphic, public Component, public GraphicComponentSchema
+    class OSSIUM_EDL GraphicComponent : public Graphic, public Component, public GraphicComponentSchema
     {
     public:
         CONSTRUCT_SCHEMA(Component, GraphicComponentSchema);

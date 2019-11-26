@@ -1,8 +1,10 @@
 #ifndef AUDIO_H
 #define AUDIO_H
-
-#include <SDL.h>
-#include <SDL_mixer.h>
+extern "C"
+{
+    #include <SDL.h>
+    #include <SDL_mixer.h>
+}
 
 #include <set>
 #include <vector>
@@ -143,7 +145,7 @@ namespace Ossium
 
 
         /// Forward declaration
-        class AudioPlayer;
+        class OSSIUM_EDL AudioPlayer;
 
         namespace Internals
         {
@@ -151,7 +153,7 @@ namespace Ossium
             void OnAnyChannelFinished(int id);
 
             /// Controls the channels allocated by SDL_Mixer
-            class ChannelController : public Singleton<ChannelController>
+            class OSSIUM_EDL ChannelController : public Singleton<ChannelController>
             {
             public:
                 /// Allocates the specified number of audio channels for use with SDL_Mixer
@@ -211,7 +213,7 @@ namespace Ossium
         };
 
         /// This represents an audio bus like those you'd get on a mixing desk, with multiple inputs and a single output
-        class AudioBus : public AudioChannel<AudioBus>, public AudioBusSchema
+        class OSSIUM_EDL AudioBus : public AudioChannel<AudioBus>, public AudioBusSchema
         {
         public:
             CONSTRUCT_SCHEMA(AudioChannel<AudioBus>, AudioBusSchema);
@@ -282,7 +284,7 @@ namespace Ossium
         };
 
         /// Wrapper class for Mix_Chunk, representing an audio sample resource
-        class AudioClip : public Resource
+        class OSSIUM_EDL AudioClip : public Resource
         {
         public:
             DECLARE_RESOURCE(AudioClip);
@@ -328,7 +330,7 @@ namespace Ossium
 
         /// Not an audio bus by itself as it has no inputs, but it is a type of audio signal
         /// which may be fed into audio buses
-        class AudioPlayer : public AudioChannel<AudioPlayer>, public AudioPlayerSchema
+        class OSSIUM_EDL AudioPlayer : public AudioChannel<AudioPlayer>, public AudioPlayerSchema
         {
         public:
             CONSTRUCT_SCHEMA(AudioChannel<AudioPlayer>, AudioPlayerSchema);
@@ -410,7 +412,7 @@ namespace Ossium
             /// There can only be a single audio stream as there can only be one Mix_Music instance
             /// Audio played via AudioStream can potentially be higher quality than AudioClip, hence it's probably best used for music and the like
             /// Inherits from AudioBus so that it may be used in the mixer, rather than AudioPlayer which is designed to work with SDL_Mixer channels
-            class AudioStream : public AudioChannel<AudioStream>, public Singleton<AudioStream>
+            class OSSIUM_EDL AudioStream : public AudioChannel<AudioStream>, public Singleton<AudioStream>
             {
             public:
                 AudioStream() = default;
@@ -491,7 +493,7 @@ namespace Ossium
         }
 
         /// Audio mixer that controls a collection of audio buses. Also provides basic audio playback capability.
-        class AudioMixer
+        class OSSIUM_EDL AudioMixer
         {
         public:
             /// Add and remove audio buses

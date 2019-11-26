@@ -8,7 +8,7 @@
 namespace Ossium
 {
 
-    class Delta
+    class OSSIUM_EDL Delta
     {
     public:
         Delta();
@@ -34,13 +34,6 @@ namespace Ossium
         float fpscap;
 
     };
-
-    inline namespace Global
-    {
-
-        extern Delta delta;
-
-    }
 
 }
 

@@ -1,4 +1,7 @@
-#include <SDL.h>
+extern "C"
+{
+    #include <SDL.h>
+}
 
 #include "delta.h"
 #include "funcutils.h"

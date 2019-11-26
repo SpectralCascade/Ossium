@@ -78,6 +78,17 @@
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
+			<Target title="ossiumdll">
+				<Option output="ossium" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/ossiumdll/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DOSSIUM_EXPORT_DLL" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -172,14 +183,30 @@
 		<Unit filename="src/Ossium/Core/typeinference.h" />
 		<Unit filename="src/Ossium/Core/window.cpp" />
 		<Unit filename="src/Ossium/Core/window.h" />
-		<Unit filename="src/Ossium/Tests/testmodules.cpp" />
-		<Unit filename="src/Ossium/Tests/testmodules.h" />
-		<Unit filename="src/main.cpp">
-			<Option target="Debug" />
+		<Unit filename="src/Ossium/Tests/testmodules.cpp">
 			<Option target="Release" />
+			<Option target="ossium" />
+			<Option target="ossiumdll" />
 		</Unit>
-		<Unit filename="src/teststuff.cpp" />
-		<Unit filename="src/teststuff.h" />
+		<Unit filename="src/Ossium/Tests/testmodules.h">
+			<Option target="Release" />
+			<Option target="ossium" />
+			<Option target="ossiumdll" />
+		</Unit>
+		<Unit filename="src/main.cpp">
+			<Option target="Release" />
+			<Option target="ossiumdll" />
+		</Unit>
+		<Unit filename="src/teststuff.cpp">
+			<Option target="Release" />
+			<Option target="ossium" />
+			<Option target="ossiumdll" />
+		</Unit>
+		<Unit filename="src/teststuff.h">
+			<Option target="Release" />
+			<Option target="ossium" />
+			<Option target="ossiumdll" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

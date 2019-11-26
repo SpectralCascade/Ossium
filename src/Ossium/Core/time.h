@@ -1,14 +1,12 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include <SDL.h>
-
 #include "schemamodel.h"
 
 namespace Ossium
 {
     /// A special clock that measures relative time passed
-    class Clock
+    class OSSIUM_EDL Clock
     {
     public:
         /// Takes the 'absolute' time at which the clock began, in milliseconds.
@@ -76,7 +74,7 @@ namespace Ossium
 
     /// A simple timer, like a stop watch; can only be used for positive timing.
     /// As such, use of this class is limited to timeframes that aren't reversable.
-    class Timer
+    class OSSIUM_EDL Timer
     {
     public:
         /// Takes a clock instance to provide timing ticks - otherwise defaults to absolute time.

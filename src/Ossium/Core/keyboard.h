@@ -22,7 +22,7 @@ namespace Ossium
         };
 
         /// Handles keyboard input events
-        class KeyboardHandler : public InputHandler<KeyboardHandler, KeyboardInput, SDL_Keycode>
+        class OSSIUM_EDL KeyboardHandler : public InputHandler<KeyboardHandler, KeyboardInput, SDL_Keycode>
         {
         public:
             ActionOutcome HandleInput(const SDL_Event& raw);

@@ -6,7 +6,7 @@
 namespace Ossium
 {
 
-    class Logger
+    class OSSIUM_EDL Logger
     {
     public:
         template<typename ...Args>

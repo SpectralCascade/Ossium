@@ -1,5 +1,4 @@
 #include <cstdarg>
-#include <SDL.h>
 #include <cstdio>
 #include <string>
 #include <fstream>

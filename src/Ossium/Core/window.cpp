@@ -1,5 +1,3 @@
-#include <SDL.h>
-
 #include "funcutils.h"
 #include "window.h"
 

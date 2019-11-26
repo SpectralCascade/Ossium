@@ -1,8 +1,5 @@
 #include <memory>
 #include <string>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 
 #include "texture.h"
 #include "../Core/colors.h"

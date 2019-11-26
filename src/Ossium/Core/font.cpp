@@ -1,6 +1,3 @@
-#include <SDL.h>
-#include <SDL_ttf.h>
-
 #include "font.h"
 #include "logging.h"
 

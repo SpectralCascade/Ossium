@@ -9,7 +9,7 @@ namespace Ossium
 
     namespace Internal
     {
-        class ServiceBase
+        class OSSIUM_EDL ServiceBase
         {
         public:
             /// Called before main logic execution.
@@ -31,7 +31,7 @@ namespace Ossium
     }
 
     /// Non-static services locator.
-    class ServicesProvider
+    class OSSIUM_EDL ServicesProvider
     {
     public:
 
@@ -125,7 +125,7 @@ namespace Ossium
 
     /// Common engine services (e.g. Renderer, ResourceController) should inherit from this CRTP mix-in
     template<class Derived>
-    class Service : public Internal::ServiceBase
+    class OSSIUM_EDL Service : public Internal::ServiceBase
     {
     public:
         friend class ServicesProvider;

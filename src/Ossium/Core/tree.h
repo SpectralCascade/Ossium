@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <SDL.h>
 
 #include "funcutils.h"
 #include "logging.h"
@@ -58,7 +57,7 @@ namespace Ossium
 
     /// A simple hierarchical data structure.
     template<class T>
-    class Tree
+    class OSSIUM_EDL Tree
     {
     public:
         friend struct Node<T>;
@@ -202,9 +201,7 @@ namespace Ossium
         {
             for (auto i = roots.begin(); i != roots.end(); i++)
             {
-                #ifdef DEBUG
-                SDL_assert(*i != nullptr);
-                #endif // DEBUG
+                DEBUG_ASSERT(*i != nullptr, "Root node is null!");
                 Node<T>* node = recursiveFind(name, *i);
                 if (node != nullptr)
                 {

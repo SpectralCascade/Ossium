@@ -8,7 +8,7 @@
 namespace Ossium
 {
 
-    class EngineSystem : public GlobalServices
+    class OSSIUM_EDL EngineSystem : public GlobalServices
     {
     public:
         friend class EntityComponentSystem;

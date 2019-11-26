@@ -16,7 +16,7 @@ namespace Ossium
         class DebugDrawBox2D;
 
         /// Abstract class for drawing a graphic
-        class DebugGraphic
+        class OSSIUM_EDL DebugGraphic
         {
         public:
             DebugGraphic(SDL_Color color = Colors::RED);
@@ -31,7 +31,7 @@ namespace Ossium
 
         };
 
-        class DebugLine : public DebugGraphic
+        class OSSIUM_EDL DebugLine : public DebugGraphic
         {
         public:
             DebugLine(Line l, SDL_Color color = Colors::RED);
@@ -44,7 +44,7 @@ namespace Ossium
 
         };
 
-        class DebugText : public DebugGraphic
+        class OSSIUM_EDL DebugText : public DebugGraphic
         {
         public:
             DebugText(string str, Point position, Entity* entity, Font* font, Renderer& renderer, int fontSize = 24, SDL_Color color = Colors::RED, SDL_Color backgroundColor = Colors::TRANSPARENT);
@@ -56,7 +56,7 @@ namespace Ossium
 
         };
 
-        class DebugDraw : public GraphicComponent
+        class OSSIUM_EDL DebugDraw : public GraphicComponent
         {
         public:
             DECLARE_COMPONENT(DebugDraw);
@@ -95,7 +95,7 @@ namespace Ossium
         }
 
         /// Physics rendering class, used by Box2D for debug drawing.
-        class DebugDrawBox2D : public b2Draw
+        class OSSIUM_EDL DebugDrawBox2D : public b2Draw
         {
         public:
             DebugDrawBox2D(Renderer* renderer);

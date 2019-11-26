@@ -1,4 +1,7 @@
-#include <SDL_image.h>
+extern "C"
+{
+    #include <SDL_image.h>
+}
 
 #include "image.h"
 

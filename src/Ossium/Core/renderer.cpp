@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <unordered_set>
 
-#include <SDL.h>
-
 #include "renderer.h"
 #include "window.h"
 

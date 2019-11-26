@@ -3,7 +3,10 @@
 
 #include <string>
 #include <set>
-#include <SDL.h>
+extern "C"
+{
+    #include <SDL.h>
+}
 
 #include "services.h"
 #include "callback.h"
@@ -14,7 +17,7 @@ namespace Ossium
 {
 
     /// Wrapper class for SDL_Window
-    class Window
+    class OSSIUM_EDL Window
     {
     public:
         /// Appropriate constructor and destructor
@@ -77,7 +80,7 @@ namespace Ossium
 
     };
 
-    class WindowManager : public Service<WindowManager>
+    class OSSIUM_EDL WindowManager : public Service<WindowManager>
     {
     public:
         WindowManager() = default;

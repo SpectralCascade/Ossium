@@ -33,7 +33,7 @@ namespace Ossium
     Ossium::TypeSystem::TypeFactory<Resource, ResourceType> TYPE::__resource_factory(SID( #TYPE )::str, ResourceFactory);
 
     /// All resource classes e.g. images, audio clips etc. should inherit from this base class
-    class Resource
+    class OSSIUM_EDL Resource
     {
     public:
         Resource() = default;
@@ -45,7 +45,7 @@ namespace Ossium
     };
 
     /// Resource controller that deals with resources of various types e.g. images, audio clips.
-    class ResourceController : public Service<ResourceController>
+    class OSSIUM_EDL ResourceController : public Service<ResourceController>
     {
     public:
         ResourceController();

@@ -11,7 +11,7 @@ using namespace std;
 namespace Ossium
 {
 
-    class Rand
+    class OSSIUM_EDL Rand
     {
     public:
         Rand();

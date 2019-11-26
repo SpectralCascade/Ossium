@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
-#include <SDL.h>
 
 #include "funcutils.h"
 #include "stringconvert.h"

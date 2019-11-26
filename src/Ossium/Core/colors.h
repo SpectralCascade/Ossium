@@ -1,7 +1,10 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#include <SDL.h>
+extern "C"
+{
+    #include <SDL.h>
+}
 
 namespace Ossium
 {

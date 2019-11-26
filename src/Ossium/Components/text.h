@@ -2,8 +2,6 @@
 #define TEXT_H
 
 #include <string>
-#include <SDL.h>
-#include <SDL_ttf.h>
 
 #include "../Core/font.h"
 #include "../Core/renderer.h"
@@ -16,7 +14,7 @@ using namespace std;
 namespace Ossium
 {
 
-    class Text : public Texture
+    class OSSIUM_EDL Text : public Texture
     {
     public:
         DECLARE_COMPONENT(Text);

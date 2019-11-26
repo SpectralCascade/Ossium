@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <string.h>
-#include <SDL.h>
 #include <Box2D/Box2D.h>
 
 #include "Ossium.h"

@@ -2,8 +2,6 @@
 #define TEXTURE_H
 
 #include <string>
-#include <SDL.h>
-#include <SDL_ttf.h>
 
 #include "../Core/coremaths.h"
 #include "../Core/component.h"
@@ -41,7 +39,7 @@ namespace Ossium
     };
 
     /// This class is used for rendering an image
-    class Texture : public GraphicComponent, public TextureSchema
+    class OSSIUM_EDL Texture : public GraphicComponent, public TextureSchema
     {
     public:
         DECLARE_COMPONENT(Texture);

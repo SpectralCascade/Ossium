@@ -19,7 +19,7 @@ namespace Ossium
 
         /// Used for statically registering types for checking types at runtime.
         template<class BaseType>
-        class TypeRegistry
+        class OSSIUM_EDL TypeRegistry
         {
         protected:
             static Uint32 nextTypeIdent;
@@ -58,7 +58,7 @@ namespace Ossium
 
         /// Similar to the type registry, but also allows instantiation of specific types and registers type names.
         template<class CoreType, class IdType>
-        class TypeFactory : public TypeRegistry<CoreType>
+        class OSSIUM_EDL TypeFactory : public TypeRegistry<CoreType>
         {
         private:
             typedef function<CoreType*(void*)> FactoryFunc;

@@ -1,7 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <SDL.h>
 #include <string>
 #include <Box2D/Common/b2Math.h>
 

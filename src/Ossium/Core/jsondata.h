@@ -5,6 +5,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "helpermacros.h"
+
 using namespace std;
 
 namespace Ossium
@@ -14,7 +16,7 @@ namespace Ossium
     class JSON;
 
     /// String representation of data used in JSON
-    class JString : public string
+    class OSSIUM_EDL JString : public string
     {
     public:
         JString() : string()
@@ -42,7 +44,7 @@ namespace Ossium
 
     };
 
-    class JSON : public unordered_map<string, JString>
+    class OSSIUM_EDL JSON : public unordered_map<string, JString>
     {
     public:
         JSON();

@@ -12,7 +12,7 @@ namespace Ossium
 {
 
     template<typename CallerType>
-    class Callback
+    class OSSIUM_EDL Callback
     {
     public:
         typedef function<void(CallerType&)> RegisteredCallback;

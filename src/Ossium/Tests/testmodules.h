@@ -26,7 +26,7 @@ namespace Ossium
     namespace Test
     {
 
-        class UnitTest
+        class OSSIUM_EDL UnitTest
         {
         public:
             UnitTest();
@@ -105,7 +105,7 @@ namespace Ossium
                     return UnitTest::total_passed_test_modules == UnitTest::total_test_modules;                         \
                 }()
 
-        class BasicUtilsTests : public UnitTest
+        class OSSIUM_EDL BasicUtilsTests : public UnitTest
         {
         public:
             void RunTest()
@@ -165,7 +165,7 @@ namespace Ossium
 
         };
 
-        class CircularBufferTests : public UnitTest
+        class OSSIUM_EDL CircularBufferTests : public UnitTest
         {
         public:
             void RunTest()
@@ -207,7 +207,7 @@ namespace Ossium
 
         };
 
-        class TreeTests : public UnitTest
+        class OSSIUM_EDL TreeTests : public UnitTest
         {
         public:
             void RunTest()
@@ -241,11 +241,11 @@ namespace Ossium
 
         };
 
-        class FSM_TestMachine;
+        class OSSIUM_EDL FSM_TestMachine;
 
         class FSM_TestState;
 /*
-        class FSM_TestMachine : public StateMachine<FSM_TestMachine>, public EventHandler
+        class OSSIUM_EDL FSM_TestMachine : public StateMachine<FSM_TestMachine>, public EventHandler
         {
         public:
             void HandleEvent(Event event)
@@ -271,7 +271,7 @@ namespace Ossium
             }
         };
 
-        class FSM_TestState : public StateInterface<FSM_TestMachine>
+        class OSSIUM_EDL FSM_TestState : public StateInterface<FSM_TestMachine>
         {
         public:
             FSM_TestState(FSM_TestMachine* machine) : StateInterface(machine)
@@ -295,7 +295,7 @@ namespace Ossium
 
         };
 
-        class FSM_Tests : public UnitTest
+        class OSSIUM_EDL FSM_Tests : public UnitTest
         {
         public:
             void RunTest()
@@ -317,7 +317,7 @@ namespace Ossium
 
         };
 
-        class EventSystemTests : public UnitTest
+        class OSSIUM_EDL EventSystemTests : public UnitTest
         {
         public:
             void RunTest()
@@ -351,7 +351,7 @@ namespace Ossium
 
         };
 
-        class CSV_Tests : public UnitTest
+        class OSSIUM_EDL CSV_Tests : public UnitTest
         {
         public:
             void RunTest()
@@ -383,7 +383,7 @@ namespace Ossium
 
         };
 */
-        class JSON_Tests : public UnitTest
+        class OSSIUM_EDL JSON_Tests : public UnitTest
         {
         public:
             void RunTest()
@@ -403,7 +403,7 @@ namespace Ossium
             }
         };
 
-        class ClockTests : public UnitTest
+        class OSSIUM_EDL ClockTests : public UnitTest
         {
         public:
             void RunTest()
@@ -455,7 +455,7 @@ namespace Ossium
             M(float, more) = 555.3f;
         };
 
-        class Example : public SchemaRoot, public SchemaExample
+        class OSSIUM_EDL Example : public SchemaRoot, public SchemaExample
         {
         public:
             CONSTRUCT_SCHEMA(SchemaRoot, SchemaExample);
@@ -483,7 +483,7 @@ namespace Ossium
 
         };
 
-        class InheritanceExample : public Example, public OtherOtherSchema
+        class OSSIUM_EDL InheritanceExample : public Example, public OtherOtherSchema
         {
         public:
             CONSTRUCT_SCHEMA(Example, OtherOtherSchema);
@@ -511,7 +511,7 @@ namespace Ossium
 
         };
 
-        class SchemaTests : public UnitTest, public InheritanceExample
+        class OSSIUM_EDL SchemaTests : public UnitTest, public InheritanceExample
         {
         public:
             void RunTest()
@@ -539,7 +539,7 @@ namespace Ossium
 
         };
 
-        class RandTests : public UnitTest
+        class OSSIUM_EDL RandTests : public UnitTest
         {
         public:
             void RunTest()
@@ -559,7 +559,7 @@ namespace Ossium
             }
         };
 
-        class EntitySerialisationTests : public UnitTest
+        class OSSIUM_EDL EntitySerialisationTests : public UnitTest
         {
         public:
             void RunTest()

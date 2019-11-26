@@ -4,7 +4,6 @@
 #include <map>
 #include <utility>
 #include <string>
-#include <SDL.h>
 
 #include "../Components/texture.h"
 #include "../Core/resourcecontroller.h"
@@ -28,7 +27,7 @@ namespace Ossium
         /// Final bit decides whether clipping along horizontal or vertical
         /// This is in a separate class so it can implement the ToString() and FromString methods,
         /// which are required for schema serialisation because maps and pairs are not supported at the time of writing
-        class StateSpriteTable : public map<string, pair<Image*, Uint16>>
+        class OSSIUM_EDL StateSpriteTable : public map<string, pair<Image*, Uint16>>
         {
         public:
             string ToString();
@@ -57,7 +56,7 @@ namespace Ossium
         };
 
         /// Can be switched between different textures/texture clips
-        class StateSprite : public Texture, protected StateSpriteSchema
+        class OSSIUM_EDL StateSprite : public Texture, protected StateSpriteSchema
         {
         public:
             DECLARE_COMPONENT(StateSprite);

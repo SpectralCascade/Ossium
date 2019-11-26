@@ -4,8 +4,10 @@
 #include <vector>
 #include <queue>
 #include <set>
-
-#include <SDL.h>
+extern "C"
+{
+    #include <SDL.h>
+}
 
 #include "colors.h"
 #include "helpermacros.h"
@@ -25,7 +27,7 @@ namespace Ossium
         class Renderer;
 
         /// Anything that can be rendered should inherit from this interface and implement the Render method
-        class Graphic
+        class OSSIUM_EDL Graphic
         {
         public:
             friend class Renderer;
@@ -36,7 +38,7 @@ namespace Ossium
         };
 
         // Wrapper class for SDL_Renderer - also supports layering
-        class Renderer : public Service<Renderer>
+        class OSSIUM_EDL Renderer : public Service<Renderer>
         {
         public:
             Renderer(Window* window, int numLayers = 1, Uint32 flags = SDL_RENDERER_ACCELERATED, int driver = -1);

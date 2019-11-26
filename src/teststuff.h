@@ -11,7 +11,7 @@ using namespace Ossium;
 
 /*
 /// Note this entire class is just for messing around. Don't follow this as an example for structuring your code!
-class StickFighter : public Component
+class OSSIUM_EDL StickFighter : public Component
 {
 public:
     DECLARE_COMPONENT(StickFighter);
@@ -42,7 +42,7 @@ private:
 
 */
 
-class MouseFollower : public Component
+class OSSIUM_EDL MouseFollower : public Component
 {
 public:
     DECLARE_COMPONENT(MouseFollower);

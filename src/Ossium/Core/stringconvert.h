@@ -3,6 +3,11 @@
 
 #include <utility>
 
+extern "C"
+{
+    #include <SDL.h>
+}
+
 #include "typeinference.h"
 #include "jsondata.h"
 #include "funcutils.h"

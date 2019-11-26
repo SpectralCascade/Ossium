@@ -7,7 +7,7 @@ namespace Ossium
 {
 
     /// Provides access to static services such as the logging system
-    class GlobalServices
+    class OSSIUM_EDL GlobalServices
     {
     protected:
         static Logger Log;

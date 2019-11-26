@@ -18,7 +18,7 @@ namespace Ossium
 
     };
 
-    class Transform2 : public BaseComponent, public GlobalServices, public Transform2Schema
+    class OSSIUM_EDL Transform2 : public BaseComponent, public GlobalServices, public Transform2Schema
     {
     public:
         DECLARE_COMPONENT(Transform2);

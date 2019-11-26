@@ -1,7 +1,10 @@
 #ifndef SCHEMAMODEL_H
 #define SCHEMAMODEL_H
 
-#include <SDL.h>
+extern "C"
+{
+    #include <SDL.h>
+}
 #include <fstream>
 
 #include "stringintern.h"
@@ -194,7 +197,7 @@ namespace Ossium
     /// SchemaRoot
     ///
 
-    class SchemaRoot
+    class OSSIUM_EDL SchemaRoot
     {
     public:
         constexpr static unsigned int GetMemberCount()
@@ -286,7 +289,7 @@ namespace Ossium
     unsigned int MemberInfo<SchemaType, Type, strType, strName>::index = 0;
 
     /// Types that can be referenced via pointers should inherit from this CRTP mix-in class.
-    class SchemaReferable
+    class OSSIUM_EDL SchemaReferable
     {
     public:
         virtual ~SchemaReferable() = default;

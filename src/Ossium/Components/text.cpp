@@ -1,7 +1,5 @@
 #include <string>
 #include <algorithm>
-#include <SDL.h>
-#include <SDL_ttf.h>
 
 #include "text.h"
 #include "../Core/renderer.h"

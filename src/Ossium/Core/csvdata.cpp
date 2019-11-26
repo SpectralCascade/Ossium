@@ -1,7 +1,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <SDL.h>
 
 #include "funcutils.h"
 #include "csvdata.h"

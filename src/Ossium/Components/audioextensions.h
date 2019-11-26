@@ -27,7 +27,7 @@ namespace Ossium
         namespace Internal
         {
 
-            class AudioSourceSchemaCombiner : public AudioPlayer, public AudioSourceSchema
+            class OSSIUM_EDL AudioSourceSchemaCombiner : public AudioPlayer, public AudioSourceSchema
             {
             public:
                 CONSTRUCT_SCHEMA(AudioPlayer, AudioSourceSchema);
@@ -35,7 +35,7 @@ namespace Ossium
 
         }
 
-        class AudioSource : public Component, public Internal::AudioSourceSchemaCombiner
+        class OSSIUM_EDL AudioSource : public Component, public Internal::AudioSourceSchemaCombiner
         {
         public:
             CONSTRUCT_SCHEMA(Component, AudioSourceSchemaCombiner);
@@ -68,7 +68,7 @@ namespace Ossium
 
         };
 
-        class AudioListener : public Component, public AudioListenerSchema
+        class OSSIUM_EDL AudioListener : public Component, public AudioListenerSchema
         {
         public:
             DECLARE_COMPONENT(AudioListener);

@@ -1,5 +1,4 @@
 #include <cmath>
-#include <SDL.h>
 
 #include "mathconsts.h"
 #include "curves.h"

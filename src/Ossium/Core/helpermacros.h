@@ -26,8 +26,12 @@ namespace Ossium
     #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)
     #endif
 
-    /// For exporting classes and functions to a shared library
-    #define EXPORT_FUNC
+    /// Export Dynamic Link macro for creating shared library links.
+    #if defined(OSSIUM_EXPORT_DLL) && defined(_WIN32)
+    #   define OSSIUM_EDL __declspec(dllexport)
+    #else
+    #   define OSSIUM_EDL
+    #endif
 
     /// This macro shouldn't be used by mortal souls. But here it is anyway.
     #define EVIL_CAST(VALUE, TO_TYPE) *(( TO_TYPE *)((void*) & VALUE ))

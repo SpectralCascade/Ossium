@@ -47,7 +47,7 @@ namespace Ossium
             Uint32 direction;
         };
 
-        class MouseHandler : public InputHandler<MouseHandler, MouseInput, MouseEvent>
+        class OSSIUM_EDL MouseHandler : public InputHandler<MouseHandler, MouseInput, MouseEvent>
         {
         public:
             ActionOutcome HandleInput(const SDL_Event& raw);

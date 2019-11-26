@@ -28,7 +28,7 @@ namespace Ossium
     };
 
     /// Some sort of magical rectangle with basic positioning and rotation information...
-    class MetaRect : public MetaRectSchema
+    class OSSIUM_EDL MetaRect : public MetaRectSchema
     {
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, MetaRectSchema);

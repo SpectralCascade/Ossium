@@ -4,7 +4,10 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
-#include <SDL.h>
+extern "C"
+{
+    #include <SDL.h>
+}
 
 #include "funcutils.h"
 #include "helpermacros.h"
@@ -51,7 +54,7 @@ namespace Ossium
         }
 
         /// Interface for accessing InputHandler
-        class BaseInputHandler
+        class OSSIUM_EDL BaseInputHandler
         {
         public:
             virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
@@ -64,7 +67,7 @@ namespace Ossium
         /// An abstract interface for handling a specific type of input; template takes a specialised structure that contains only relevant information
         /// stripped from an SDL_Event, and an ident type used to map an input directly to an action (e.g. SDL_Keycode)
         template<class Derived, class InputData, class InputIdent>
-        class InputHandler : public BaseInputHandler
+        class OSSIUM_EDL InputHandler : public BaseInputHandler
         {
         public:
             /// Function pointer for actions based on this input data
@@ -306,7 +309,7 @@ namespace Ossium
 
         /// A game might have multiple input contexts; for example, button X closes a dialog box when talking to NPCs,
         /// but the X button opens the player's inventory in normal gameplay.
-        class InputContext
+        class OSSIUM_EDL InputContext
         {
         public:
             ~InputContext()
@@ -398,7 +401,7 @@ namespace Ossium
 
         };
 
-        class InputController : public Service<InputController>
+        class OSSIUM_EDL InputController : public Service<InputController>
         {
         public:
             InputController();

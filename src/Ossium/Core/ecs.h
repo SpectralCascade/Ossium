@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <set>
 #include <algorithm>
-#include <SDL.h>
 
 #include "tree.h"
 #include "stringintern.h"
@@ -36,9 +35,7 @@ namespace Ossium
         virtual void MapReference(string identdata, void** member);                     \
                                                                                         \
     private:                                                                            \
-        static StrID __component_type;                                                  \
-                                                                                        \
-        static BaseComponent* ComponentFactory(void* target_entity);                        \
+        static BaseComponent* ComponentFactory(void* target_entity);                    \
                                                                                         \
     public:                                                                             \
         Uint32 GetType()                                                                \
@@ -52,14 +49,13 @@ namespace Ossium
     #define REGISTER_COMPONENT(TYPE)                                                                    \
     BaseComponent* TYPE::ComponentFactory(void* target_entity)                                          \
     {                                                                                                   \
-        return ((Entity*)target_entity)->AddComponent<TYPE>();              \
+        return ((Entity*)target_entity)->AddComponent<TYPE>();                                          \
     }                                                                                                   \
     void TYPE::MapReference(string identdata, void** member)                                            \
     {                                                                                                   \
         entity->MapReference(identdata, member);                                                        \
     }                                                                                                   \
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
-    StrID TYPE::__component_type = SID(#TYPE)::str;                                                     \
                                                                                                         \
     TYPE* TYPE::Clone()                                                                                 \
     {                                                                                                   \
@@ -82,7 +78,7 @@ namespace Ossium
     class BaseComponent;
 
     /// Controls all entities and components at runtime
-    class EntityComponentSystem
+    class OSSIUM_EDL EntityComponentSystem
     {
     public:
         friend class Ossium::Entity;
@@ -153,7 +149,7 @@ namespace Ossium
 
     };
 
-    class Entity : public SchemaReferable
+    class OSSIUM_EDL Entity : public SchemaReferable
     {
     public:
         friend class EntityComponentSystem;
@@ -366,7 +362,7 @@ namespace Ossium
 
     /// Base class for all components
     /// WARNING: INHERITANCE ORDER MUST NOT BE CHANGED as it affects the STRUCTURAL LAYOUT which schemas are dependant upon.
-    class BaseComponent : public SchemaReferable, public ComponentSchema
+    class OSSIUM_EDL BaseComponent : public SchemaReferable, public ComponentSchema
     {
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, ComponentSchema);

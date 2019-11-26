@@ -1,8 +1,6 @@
 #ifndef INIT_H
 #define INIT_H
 
-#include <SDL.h>
-
 namespace Ossium
 {
     /// Initialisation error types

@@ -14,7 +14,7 @@ namespace Ossium
     inline namespace Physics
     {
 
-        class OnRayHit : public b2RayCastCallback
+        class OSSIUM_EDL OnRayHit : public b2RayCastCallback
         {
         public:
             typedef function<float32(b2Fixture*, const Vector2&, const Vector2&, float32)> RayHitCallback;
@@ -29,7 +29,7 @@ namespace Ossium
             RayHitCallback onRayHit;
         };
 
-        class PhysicsWorld : public b2World
+        class OSSIUM_EDL PhysicsWorld : public b2World
         {
         public:
             PhysicsWorld() : b2World({0.0f, -9.81f}) {};
