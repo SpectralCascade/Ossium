@@ -1,0 +1,692 @@
+EXPORTS
+    _ZN13MouseFollower12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @1
+    _ZN13MouseFollower14__ecs_factory_E @2 DATA
+    _ZN13MouseFollower16ComponentFactoryEPv @3
+    _ZN13MouseFollower5CloneEv @4
+    _ZN13MouseFollower6UpdateEv @5
+    _ZN6Ossium10Transform212MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @6
+    _ZN6Ossium10Transform214__ecs_factory_E @7 DATA
+    _ZN6Ossium10Transform216ComponentFactoryEPv @8
+    _ZN6Ossium10Transform25CloneEv @9
+    _ZN6Ossium10Transform28positionEv @10
+    _ZN6Ossium10Transform28rotationEv @11
+    _ZN6Ossium10Transform29transformEv @12
+    _ZN6Ossium10TypeSystem12TypeRegistryINS_13BaseComponentEE13nextTypeIdentE @13 DATA
+    _ZN6Ossium10TypeSystem12TypeRegistryINS_15SchemaReferableEE13nextTypeIdentE @14 DATA
+    _ZN6Ossium10TypeSystem12TypeRegistryINS_5Input12MouseHandlerEE13nextTypeIdentE @15 DATA
+    _ZN6Ossium10TypeSystem12TypeRegistryINS_5Input15KeyboardHandlerEE13nextTypeIdentE @16 DATA
+    _ZN6Ossium10TypeSystem12TypeRegistryINS_8ResourceEE13nextTypeIdentE @17 DATA
+    _ZN6Ossium10TypeSystem12TypeRegistryINS_9Utilities8Internal11ServiceBaseEE13nextTypeIdentE @18 DATA
+    _ZN6Ossium12EngineSystem4InitENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @19
+    _ZN6Ossium12EngineSystem4InitERNS_4JSONE @20
+    _ZN6Ossium12EngineSystem6UpdateEv @21
+    _ZN6Ossium12EngineSystem9LoadSceneENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @22
+    _ZN6Ossium12EngineSystemD1Ev @23
+    _ZN6Ossium12EngineSystemD2Ev @24
+    _ZN6Ossium13BaseComponent11OnLoadStartEv @25
+    _ZN6Ossium13BaseComponent12OnLoadFinishEv @26
+    _ZN6Ossium13BaseComponent14GetReferenceIDB5cxx11Ev @27
+    _ZN6Ossium13BaseComponent6UpdateEv @28
+    _ZN6Ossium13BaseComponent7OnCloneEPS0_ @29
+    _ZN6Ossium13BaseComponent8OnCreateEv @30
+    _ZN6Ossium13BaseComponent9GetEntityEv @31
+    _ZN6Ossium13BaseComponent9OnDestroyEv @32
+    _ZN6Ossium13BaseComponentC1ERKS0_ @33
+    _ZN6Ossium13BaseComponentC1Ev @34
+    _ZN6Ossium13BaseComponentC2ERKS0_ @35
+    _ZN6Ossium13BaseComponentC2Ev @36
+    _ZN6Ossium13BaseComponentD0Ev @37
+    _ZN6Ossium13BaseComponentD1Ev @38
+    _ZN6Ossium13BaseComponentD2Ev @39
+    _ZN6Ossium13WindowManager11HandleEventER9SDL_Event @40
+    _ZN6Ossium13WindowManager12CreateWindowEPKciibj @41
+    _ZN6Ossium13WindowManager17OnWindowDestroyedERNS_6WindowE @42
+    _ZN6Ossium13WindowManagerD1Ev @43
+    _ZN6Ossium13WindowManagerD2Ev @44
+    _ZN6Ossium14GlobalServices3LogE @45 DATA
+    _ZN6Ossium15SchemaReferable16GetReferableTypeEv @46
+    _ZN6Ossium15SchemaReferable17ref_type_registryE @47 DATA
+    _ZN6Ossium16GraphicComponent11OnLoadStartEv @48
+    _ZN6Ossium16GraphicComponent12OnLoadFinishEv @49
+    _ZN6Ossium16GraphicComponent14GetRenderLayerEv @50
+    _ZN6Ossium16GraphicComponent14SetRenderLayerEi @51
+    _ZN6Ossium16GraphicComponent6UpdateEv @52
+    _ZN6Ossium16GraphicComponent7OnCloneEPNS_13BaseComponentE @53
+    _ZN6Ossium16GraphicComponent8OnCreateEv @54
+    _ZN6Ossium16GraphicComponent9OnDestroyEv @55
+    _ZN6Ossium16GraphicComponentC1Ev @56
+    _ZN6Ossium16GraphicComponentC2Ev @57
+    _ZN6Ossium16GraphicComponentD0Ev @58
+    _ZN6Ossium16GraphicComponentD1Ev @59
+    _ZN6Ossium16GraphicComponentD2Ev @60
+    _ZN6Ossium16ServicesProvider10SetServiceEv @61
+    _ZN6Ossium16ServicesProviderD0Ev @62
+    _ZN6Ossium16ServicesProviderD1Ev @63
+    _ZN6Ossium16ServicesProviderD2Ev @64
+    _ZN6Ossium18ResourceControllerC1Ev @65
+    _ZN6Ossium18ResourceControllerC2Ev @66
+    _ZN6Ossium21EntityComponentSystem10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @67
+    _ZN6Ossium21EntityComponentSystem12CreateEntityEPNS_6EntityE @68
+    _ZN6Ossium21EntityComponentSystem12CreateEntityEv @69
+    _ZN6Ossium21EntityComponentSystem13DestroyEntityEPNS_6EntityEb @70
+    _ZN6Ossium21EntityComponentSystem14DestroyPendingEv @71
+    _ZN6Ossium21EntityComponentSystem15GetRootEntitiesEv @72
+    _ZN6Ossium21EntityComponentSystem16GetTotalEntitiesEv @73
+    _ZN6Ossium21EntityComponentSystem16UpdateComponentsEv @74
+    _ZN6Ossium21EntityComponentSystem5ClearEv @75
+    _ZN6Ossium21EntityComponentSystem8ToStringB5cxx11Ev @76
+    _ZN6Ossium21EntityComponentSystemC1EPNS_16ServicesProviderE @77
+    _ZN6Ossium21EntityComponentSystemC2EPNS_16ServicesProviderE @78
+    _ZN6Ossium21EntityComponentSystemD1Ev @79
+    _ZN6Ossium21EntityComponentSystemD2Ev @80
+    _ZN6Ossium2UI15InteractableGUI10OnHoverEndEv @81
+    _ZN6Ossium2UI15InteractableGUI11OnLoadStartEv @82
+    _ZN6Ossium2UI15InteractableGUI11OnPointerUpEv @83
+    _ZN6Ossium2UI15InteractableGUI12OnHoverBeginEv @84
+    _ZN6Ossium2UI15InteractableGUI12OnLoadFinishEv @85
+    _ZN6Ossium2UI15InteractableGUI13OnPointerDownEv @86
+    _ZN6Ossium2UI15InteractableGUI14OnPointerEventERKNS_5Input10MouseInputE @87
+    _ZN6Ossium2UI15InteractableGUI15ContainsPointerENS_5PointE @88
+    _ZN6Ossium2UI15InteractableGUI6OnDragERKNS_5Input10MouseInputE @89
+    _ZN6Ossium2UI15InteractableGUI6UpdateEv @90
+    _ZN6Ossium2UI15InteractableGUI7OnCloneEPNS_13BaseComponentE @91
+    _ZN6Ossium2UI15InteractableGUI8OnCreateEv @92
+    _ZN6Ossium2UI15InteractableGUI8OnScrollERKNS_5Input10MouseInputE @93
+    _ZN6Ossium2UI15InteractableGUI9IsHoveredEv @94
+    _ZN6Ossium2UI15InteractableGUI9IsPressedEv @95
+    _ZN6Ossium2UI15InteractableGUI9OnDestroyEv @96
+    _ZN6Ossium2UI15InteractableGUIC1Ev @97
+    _ZN6Ossium2UI15InteractableGUIC2Ev @98
+    _ZN6Ossium2UI15InteractableGUID0Ev @99
+    _ZN6Ossium2UI15InteractableGUID1Ev @100
+    _ZN6Ossium2UI15InteractableGUID2Ev @101
+    _ZN6Ossium2UI8InputGUI10GetContextEPKc @102
+    _ZN6Ossium2UI8InputGUI10SelectDownERKNS_5Input13KeyboardInputE @103
+    _ZN6Ossium2UI8InputGUI10SelectLeftERKNS_5Input13KeyboardInputE @104
+    _ZN6Ossium2UI8InputGUI11SelectRightERKNS_5Input13KeyboardInputE @105
+    _ZN6Ossium2UI8InputGUI12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @106
+    _ZN6Ossium2UI8InputGUI13HandlePointerERKNS_5Input10MouseInputE @107
+    _ZN6Ossium2UI8InputGUI13RemoveContextEPKc @108
+    _ZN6Ossium2UI8InputGUI14__ecs_factory_E @109 DATA
+    _ZN6Ossium2UI8InputGUI15AddInteractableEPKcRNS0_15InteractableGUIE @110
+    _ZN6Ossium2UI8InputGUI16ComponentFactoryEPv @111
+    _ZN6Ossium2UI8InputGUI16ConfirmSelectionERKNS_5Input13KeyboardInputE @112
+    _ZN6Ossium2UI8InputGUI17GetCurrentContextEv @113
+    _ZN6Ossium2UI8InputGUI17SwitchContextBackERKNS_5Input13KeyboardInputE @114
+    _ZN6Ossium2UI8InputGUI18RemoveInteractableEPKcRNS0_15InteractableGUIE @115
+    _ZN6Ossium2UI8InputGUI20SwitchContextForwardERKNS_5Input13KeyboardInputE @116
+    _ZN6Ossium2UI8InputGUI5CloneEv @117
+    _ZN6Ossium2UI8InputGUI6GoBackERKNS_5Input13KeyboardInputE @118
+    _ZN6Ossium2UI8InputGUI8OnCreateEv @119
+    _ZN6Ossium2UI8InputGUI8SelectUpERKNS_5Input13KeyboardInputE @120
+    _ZN6Ossium2UI8InputGUI9RemoveAllEv @121
+    _ZN6Ossium3CSV6ExportENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEb @122
+    _ZN6Ossium3CSV6GetRowB5cxx11Ej @123
+    _ZN6Ossium3CSV6ImportENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEb @124
+    _ZN6Ossium3CSV7GetCellB5cxx11Ejj @125
+    _ZN6Ossium3CSV9GetColumnB5cxx11Ej @126
+    _ZN6Ossium4Font4FreeEv @127
+    _ZN6Ossium4Font4InitENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @128
+    _ZN6Ossium4Font4LoadENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPi @129
+    _ZN6Ossium4Font7GetFontEi @130
+    _ZN6Ossium4FontC1Ev @131
+    _ZN6Ossium4FontC2Ev @132
+    _ZN6Ossium4FontD1Ev @133
+    _ZN6Ossium4FontD2Ev @134
+    _ZN6Ossium4JSON10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @135
+    _ZN6Ossium4JSON5ParseERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEj @136
+    _ZN6Ossium4JSON6ExportENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @137
+    _ZN6Ossium4JSON6ImportENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @138
+    _ZN6Ossium4JSON8ToStringB5cxx11Ej @139
+    _ZN6Ossium4JSON8ToStringB5cxx11Ev @140
+    _ZN6Ossium4JSONC1ENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEj @141
+    _ZN6Ossium4JSONC1Ev @142
+    _ZN6Ossium4JSONC2ENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEj @143
+    _ZN6Ossium4JSONC2Ev @144
+    _ZN6Ossium4Rand11UnitVector2Ev @145
+    _ZN6Ossium4Rand3IntEii @146
+    _ZN6Ossium4Rand4SeedEi @147
+    _ZN6Ossium4Rand5FloatEff @148
+    _ZN6Ossium4Rand7Vector2ENS_7Vector2ES1_ @149
+    _ZN6Ossium4RandC1Ei @150
+    _ZN6Ossium4RandC1Ev @151
+    _ZN6Ossium4RandC2Ei @152
+    _ZN6Ossium4RandC2Ev @153
+    _ZN6Ossium4RandD1Ev @154
+    _ZN6Ossium4RandD2Ev @155
+    _ZN6Ossium4Text10GetHintingEv @156
+    _ZN6Ossium4Text10GetOutlineEv @157
+    _ZN6Ossium4Text10SetHintingEi @158
+    _ZN6Ossium4Text10SetKerningEb @159
+    _ZN6Ossium4Text10SetOutlineEi @160
+    _ZN6Ossium4Text10SetStylingEiii9SDL_Color @161
+    _ZN6Ossium4Text12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @162
+    _ZN6Ossium4Text13GetRenderModeEv @163
+    _ZN6Ossium4Text13SetRenderModeEi @164
+    _ZN6Ossium4Text13TextToTextureERNS_8Graphics8RendererEPNS_4FontEi @165
+    _ZN6Ossium4Text14__ecs_factory_E @166 DATA
+    _ZN6Ossium4Text16ComponentFactoryEPv @167
+    _ZN6Ossium4Text18GetBackgroundColorEv @168
+    _ZN6Ossium4Text18GetBoxPaddingWidthEv @169
+    _ZN6Ossium4Text18SetBackgroundColorE9SDL_Color @170
+    _ZN6Ossium4Text18SetBoxPaddingWidthEi @171
+    _ZN6Ossium4Text19GetBoxPaddingHeightEv @172
+    _ZN6Ossium4Text19SetBoxPaddingHeightEi @173
+    _ZN6Ossium4Text5CloneEv @174
+    _ZN6Ossium4Text6RenderERNS_8Graphics8RendererE @175
+    _ZN6Ossium4Text6SetBoxEb @176
+    _ZN6Ossium4Text7GetTextB5cxx11Ev @177
+    _ZN6Ossium4Text7IsBoxedEv @178
+    _ZN6Ossium4Text7OnCloneEv @179
+    _ZN6Ossium4Text7SetTextENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @180
+    _ZN6Ossium4Text8GetColorEv @181
+    _ZN6Ossium4Text8GetStyleEv @182
+    _ZN6Ossium4Text8GetWidthEv @183
+    _ZN6Ossium4Text8SetColorE9SDL_Color @184
+    _ZN6Ossium4Text8SetStyleEi @185
+    _ZN6Ossium4Text9GetHeightEv @186
+    _ZN6Ossium4Text9IsKerningEv @187
+    _ZN6Ossium5Audio10AudioMixer10FromStringENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @188
+    _ZN6Ossium5Audio10AudioMixer7FindBusENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @189
+    _ZN6Ossium5Audio10AudioMixer8ToStringB5cxx11Ev @190
+    _ZN6Ossium5Audio10AudioMixer9InsertBusENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @191
+    _ZN6Ossium5Audio10AudioMixer9RemoveBusENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @192
+    _ZN6Ossium5Audio11AudioPlayer14GetFinalVolumeEv @193
+    _ZN6Ossium5Audio11AudioPlayer14OnPlayFinishedEv @194
+    _ZN6Ossium5Audio11AudioPlayer14total_channelsE @195 DATA
+    _ZN6Ossium5Audio11AudioPlayer15GetFinalPanningEv @196
+    _ZN6Ossium5Audio11AudioPlayer15OnVolumeChangedEv @197
+    _ZN6Ossium5Audio11AudioPlayer18_channelControllerE @198 DATA
+    _ZN6Ossium5Audio11AudioPlayer4LinkEPNS0_8AudioBusE @199
+    _ZN6Ossium5Audio11AudioPlayer4PlayEPNS0_9AudioClipEfi @200
+    _ZN6Ossium5Audio11AudioPlayer4PlayEPNS0_9AudioClipEsfi @201
+    _ZN6Ossium5Audio11AudioPlayer4StopEv @202
+    _ZN6Ossium5Audio11AudioPlayer5PauseEv @203
+    _ZN6Ossium5Audio11AudioPlayer6ResumeEv @204
+    _ZN6Ossium5Audio11AudioPlayer6UnlinkEv @205
+    _ZN6Ossium5Audio11AudioPlayer8IsLinkedEv @206
+    _ZN6Ossium5Audio11AudioPlayer8IsPausedEv @207
+    _ZN6Ossium5Audio11AudioPlayer9IsPlayingEv @208
+    _ZN6Ossium5Audio11AudioPlayerD0Ev @209
+    _ZN6Ossium5Audio11AudioPlayerD1Ev @210
+    _ZN6Ossium5Audio11AudioPlayerD2Ev @211
+    _ZN6Ossium5Audio11AudioSource12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @212
+    _ZN6Ossium5Audio11AudioSource12OnLoadFinishEv @213
+    _ZN6Ossium5Audio11AudioSource14__ecs_factory_E @214 DATA
+    _ZN6Ossium5Audio11AudioSource16ComponentFactoryEPv @215
+    _ZN6Ossium5Audio11AudioSource16SetAudioPositionEv @216
+    _ZN6Ossium5Audio11AudioSource4PlayEPNS0_9AudioClipEfi @217
+    _ZN6Ossium5Audio11AudioSource5CloneEv @218
+    _ZN6Ossium5Audio11AudioSource6UpdateEv @219
+    _ZN6Ossium5Audio13AudioListener12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @220
+    _ZN6Ossium5Audio13AudioListener12mainListenerE @221 DATA
+    _ZN6Ossium5Audio13AudioListener14__ecs_factory_E @222 DATA
+    _ZN6Ossium5Audio13AudioListener16ComponentFactoryEPv @223
+    _ZN6Ossium5Audio13AudioListener5CloneEv @224
+    _ZN6Ossium5Audio13AudioListener8OnCreateEv @225
+    _ZN6Ossium5Audio13AudioListener9OnDestroyEv @226
+    _ZN6Ossium5Audio8AudioBus10IsBypassedEv @227
+    _ZN6Ossium5Audio8AudioBus12GetLinkedBusEv @228
+    _ZN6Ossium5Audio8AudioBus13SetBypassModeEb @229
+    _ZN6Ossium5Audio8AudioBus14GetFinalVolumeEv @230
+    _ZN6Ossium5Audio8AudioBus15GetFinalPanningEv @231
+    _ZN6Ossium5Audio8AudioBus15OnVolumeChangedEv @232
+    _ZN6Ossium5Audio8AudioBus16GetLinkedBusNameB5cxx11Ev @233
+    _ZN6Ossium5Audio8AudioBus4LinkEPS1_ @234
+    _ZN6Ossium5Audio8AudioBus4MuteEv @235
+    _ZN6Ossium5Audio8AudioBus6UnlinkEv @236
+    _ZN6Ossium5Audio8AudioBus6UnmuteEv @237
+    _ZN6Ossium5Audio8AudioBus7GetNameB5cxx11Ev @238
+    _ZN6Ossium5Audio8AudioBus7IsMutedEv @239
+    _ZN6Ossium5Audio8AudioBus7SetNameENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @240
+    _ZN6Ossium5Audio8AudioBus8IsLinkedEv @241
+    _ZN6Ossium5Audio8AudioBusC1Ev @242
+    _ZN6Ossium5Audio8AudioBusC2Ev @243
+    _ZN6Ossium5Audio9AudioClip11LoadAndInitENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @244
+    _ZN6Ossium5Audio9AudioClip15ResourceFactoryEPv @245
+    _ZN6Ossium5Audio9AudioClip18__resource_factoryE @246 DATA
+    _ZN6Ossium5Audio9AudioClip4FreeEv @247
+    _ZN6Ossium5Audio9AudioClip4InitEv @248
+    _ZN6Ossium5Audio9AudioClip4LoadENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @249
+    _ZN6Ossium5Audio9AudioClip7GetPathB5cxx11Ev @250
+    _ZN6Ossium5Audio9AudioClip8GetChunkEv @251
+    _ZN6Ossium5Audio9AudioClipC1Ev @252
+    _ZN6Ossium5Audio9AudioClipC2Ev @253
+    _ZN6Ossium5Audio9AudioClipD0Ev @254
+    _ZN6Ossium5Audio9AudioClipD1Ev @255
+    _ZN6Ossium5Audio9AudioClipD2Ev @256
+    _ZN6Ossium5Audio9Internals11AudioStream14GetFinalVolumeEv @257
+    _ZN6Ossium5Audio9Internals11AudioStream15GetFinalPanningEv @258
+    _ZN6Ossium5Audio9Internals11AudioStream15OnVolumeChangedEv @259
+    _ZN6Ossium5Audio9Internals11AudioStream4FreeEv @260
+    _ZN6Ossium5Audio9Internals11AudioStream4InitEv @261
+    _ZN6Ossium5Audio9Internals11AudioStream4LinkEPNS0_8AudioBusE @262
+    _ZN6Ossium5Audio9Internals11AudioStream4LoadENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @263
+    _ZN6Ossium5Audio9Internals11AudioStream4PlayENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEfi @264
+    _ZN6Ossium5Audio9Internals11AudioStream4PlayEfi @265
+    _ZN6Ossium5Audio9Internals11AudioStream4StopEv @266
+    _ZN6Ossium5Audio9Internals11AudioStream5PauseEv @267
+    _ZN6Ossium5Audio9Internals11AudioStream6ResumeEv @268
+    _ZN6Ossium5Audio9Internals11AudioStream6UnlinkEv @269
+    _ZN6Ossium5Audio9Internals11AudioStream7GetPathB5cxx11Ev @270
+    _ZN6Ossium5Audio9Internals11AudioStream8IsLinkedEv @271
+    _ZN6Ossium5Audio9Internals11AudioStream8IsPausedEv @272
+    _ZN6Ossium5Audio9Internals11AudioStream9GetStreamEv @273
+    _ZN6Ossium5Audio9Internals11AudioStream9IsStartedEv @274
+    _ZN6Ossium5Audio9Internals11AudioStreamD0Ev @275
+    _ZN6Ossium5Audio9Internals11AudioStreamD1Ev @276
+    _ZN6Ossium5Audio9Internals11AudioStreamD2Ev @277
+    _ZN6Ossium5Audio9Internals17ChannelController11FreeChannelEi @278
+    _ZN6Ossium5Audio9Internals17ChannelController14ReserveChannelEPNS0_11AudioPlayerE @279
+    _ZN6Ossium5Audio9Internals17ChannelController15ChannelFinishedEi @280
+    _ZN6Ossium5Audio9Internals17ChannelController4InitEi @281
+    _ZN6Ossium5Audio9Internals17ChannelController5ClearEv @282
+    _ZN6Ossium5Audio9Internals17ChannelControllerC1Ev @283
+    _ZN6Ossium5Audio9Internals17ChannelControllerC2Ev @284
+    _ZN6Ossium5Audio9Internals17ChannelControllerD1Ev @285
+    _ZN6Ossium5Audio9Internals17ChannelControllerD2Ev @286
+    _ZN6Ossium5Clock10StepFramesEif @287
+    _ZN6Ossium5Clock12GetDeltaTimeEv @288
+    _ZN6Ossium5Clock14GetInitialTimeEv @289
+    _ZN6Ossium5Clock14GetScaleFactorEv @290
+    _ZN6Ossium5Clock5ScaleEf @291
+    _ZN6Ossium5Clock6UpdateEf @292
+    _ZN6Ossium5Clock7GetTimeEv @293
+    _ZN6Ossium5Clock7GetWrapEv @294
+    _ZN6Ossium5Clock7SetTimeEj @295
+    _ZN6Ossium5Clock7SetWrapEj @296
+    _ZN6Ossium5Clock8IsPausedEv @297
+    _ZN6Ossium5Clock9SetPausedEb @298
+    _ZN6Ossium5ClockC1Ej @299
+    _ZN6Ossium5ClockC2Ej @300
+    _ZN6Ossium5Delta4InitERNS_4JSONE @301
+    _ZN6Ossium5Delta4InitEv @302
+    _ZN6Ossium5Delta4TimeEv @303
+    _ZN6Ossium5Delta5ResetEv @304
+    _ZN6Ossium5Delta6UpdateEv @305
+    _ZN6Ossium5DeltaC1Ev @306
+    _ZN6Ossium5DeltaC2Ev @307
+    _ZN6Ossium5Image10LockPixelsEv @308
+    _ZN6Ossium5Image11GetPathNameB5cxx11Ev @309
+    _ZN6Ossium5Image11InitialisedEv @310
+    _ZN6Ossium5Image11LoadAndInitENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERNS_8Graphics8RendererEjb @311
+    _ZN6Ossium5Image12UnlockPixelsEv @312
+    _ZN6Ossium5Image14CreateFromTextERNS_8Graphics8RendererERNS_4FontENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi9SDL_ColoriiiiiSC_ @313
+    _ZN6Ossium5Image15ResourceFactoryEPv @314
+    _ZN6Ossium5Image18__resource_factoryE @315 DATA
+    _ZN6Ossium5Image4FreeEv @316
+    _ZN6Ossium5Image4InitERNS_8Graphics8RendererEjb @317
+    _ZN6Ossium5Image4LoadENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @318
+    _ZN6Ossium5Image8GetWidthEv @319
+    _ZN6Ossium5Image9GetHeightEv @320
+    _ZN6Ossium5ImageC1ERKS0_ @321
+    _ZN6Ossium5ImageC2ERKS0_ @322
+    _ZN6Ossium5ImageD0Ev @323
+    _ZN6Ossium5ImageD1Ev @324
+    _ZN6Ossium5ImageD2Ev @325
+    _ZN6Ossium5Input12InputHandlerINS0_12MouseHandlerENS0_10MouseInputENS0_10MouseEventEE19__input_type_entry_E @326 DATA
+    _ZN6Ossium5Input12InputHandlerINS0_15KeyboardHandlerENS0_13KeyboardInputEiE19__input_type_entry_E @327 DATA
+    _ZN6Ossium5Input12MouseHandler11HandleInputERK9SDL_Event @328
+    _ZN6Ossium5Input15InputController10AddContextENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNS0_12InputContextE @329
+    _ZN6Ossium5Input15InputController10GetContextENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @330
+    _ZN6Ossium5Input15InputController11HandleEventERK9SDL_Event @331
+    _ZN6Ossium5Input15InputController13RemoveContextENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @332
+    _ZN6Ossium5Input15InputController5ClearEv @333
+    _ZN6Ossium5Input15InputControllerC1Ev @334
+    _ZN6Ossium5Input15InputControllerC2Ev @335
+    _ZN6Ossium5Input15InputControllerD1Ev @336
+    _ZN6Ossium5Input15InputControllerD2Ev @337
+    _ZN6Ossium5Input15KeyboardHandler11HandleInputERK9SDL_Event @338
+    _ZN6Ossium5Timer4StopEv @339
+    _ZN6Ossium5Timer5PauseEv @340
+    _ZN6Ossium5Timer5StartEv @341
+    _ZN6Ossium5Timer6ResumeEv @342
+    _ZN6Ossium5Timer8GetTicksEv @343
+    _ZN6Ossium5Timer8IsPausedEv @344
+    _ZN6Ossium5Timer9IsStartedEv @345
+    _ZN6Ossium5TimerC1EPNS_5ClockE @346
+    _ZN6Ossium5TimerC1ERKS0_ @347
+    _ZN6Ossium5TimerC2EPNS_5ClockE @348
+    _ZN6Ossium5TimerC2ERKS0_ @349
+    _ZN6Ossium5TimeraSERKS0_ @350
+    _ZN6Ossium6Entity10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @351
+    _ZN6Ossium6Entity11CreateChildEv @352
+    _ZN6Ossium6Entity12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @353
+    _ZN6Ossium6Entity13GetComponentsEj @354
+    _ZN6Ossium6Entity14GetReferenceIDB5cxx11Ev @355
+    _ZN6Ossium6Entity4FindENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @356
+    _ZN6Ossium6Entity4FindENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPS0_ @357
+    _ZN6Ossium6Entity5CloneEv @358
+    _ZN6Ossium6Entity5GetIDEv @359
+    _ZN6Ossium6Entity7DestroyEb @360
+    _ZN6Ossium6Entity7GetNameB5cxx11Ev @361
+    _ZN6Ossium6Entity7SetNameENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @362
+    _ZN6Ossium6Entity8ToStringB5cxx11Ev @363
+    _ZN6Ossium6Entity9GetParentEv @364
+    _ZN6Ossium6Entity9SetParentEPS0_ @365
+    _ZN6Ossium6EntityC1EPNS_21EntityComponentSystemEPS0_ @366
+    _ZN6Ossium6EntityC2EPNS_21EntityComponentSystemEPS0_ @367
+    _ZN6Ossium6EntityD0Ev @368
+    _ZN6Ossium6EntityD1Ev @369
+    _ZN6Ossium6EntityD2Ev @370
+    _ZN6Ossium6Logger9EngineLogEv @371
+    _ZN6Ossium6Logger9engineLogE @372 DATA
+    _ZN6Ossium6Window11HandleEventER9SDL_Event @373
+    _ZN6Ossium6Window11IsMinimisedEv @374
+    _ZN6Ossium6Window11SetBorderedEv @375
+    _ZN6Ossium6Window11SetWindowedEv @376
+    _ZN6Ossium6Window12IsFullscreenEv @377
+    _ZN6Ossium6Window13SetBorderlessEv @378
+    _ZN6Ossium6Window13SetFullscreenEv @379
+    _ZN6Ossium6Window15GetDisplayWidthEv @380
+    _ZN6Ossium6Window16GetDisplayHeightEv @381
+    _ZN6Ossium6Window7IsFocusEv @382
+    _ZN6Ossium6Window8GetWidthEv @383
+    _ZN6Ossium6Window8SetWidthEi @384
+    _ZN6Ossium6Window9GetHeightEv @385
+    _ZN6Ossium6Window9GetWindowEv @386
+    _ZN6Ossium6Window9SetHeightEi @387
+    _ZN6Ossium6WindowC1EPKciibj @388
+    _ZN6Ossium6WindowC2EPKciibj @389
+    _ZN6Ossium6WindowD1Ev @390
+    _ZN6Ossium6WindowD2Ev @391
+    _ZN6Ossium7JString5IsIntEv @392
+    _ZN6Ossium7JString5ToIntEv @393
+    _ZN6Ossium7JString6IsBoolEv @394
+    _ZN6Ossium7JString6IsJSONEv @395
+    _ZN6Ossium7JString6ToBoolEv @396
+    _ZN6Ossium7JString6ToJSONEv @397
+    _ZN6Ossium7JString7IsArrayEv @398
+    _ZN6Ossium7JString7IsFloatEv @399
+    _ZN6Ossium7JString7ToArrayEv @400
+    _ZN6Ossium7JString7ToFloatEv @401
+    _ZN6Ossium7JString8IsNumberEv @402
+    _ZN6Ossium7JString8IsStringEv @403
+    _ZN6Ossium7JString9ToElementEj @404
+    _ZN6Ossium7Physics12PhysicsWorld7RayCastERKNS_3RayENS0_8OnRayHitEf @405
+    _ZN6Ossium7Physics12PhysicsWorld7RayCastERKNS_3RayEP17b2RayCastCallbackf @406
+    _ZN6Ossium7Physics12PhysicsWorld7RayCastERKNS_5PointES4_NS0_8OnRayHitE @407
+    _ZN6Ossium7Physics8OnRayHit13ReportFixtureEP9b2FixtureRK6b2Vec2S6_f @408
+    _ZN6Ossium7Physics8OnRayHitC1ESt8functionIFfP9b2FixtureRKNS_7Vector2ES7_fEE @409
+    _ZN6Ossium7Physics8OnRayHitC2ESt8functionIFfP9b2FixtureRKNS_7Vector2ES7_fEE @410
+    _ZN6Ossium7ServiceINS_13WindowManagerEE16__services_entryE @411 DATA
+    _ZN6Ossium7ServiceINS_18ResourceControllerEE16__services_entryE @412 DATA
+    _ZN6Ossium7ServiceINS_5Input15InputControllerEE16__services_entryE @413 DATA
+    _ZN6Ossium7ServiceINS_8Graphics8RendererEE16__services_entryE @414 DATA
+    _ZN6Ossium7Texture11SetAlphaModEhb @415
+    _ZN6Ossium7Texture11SetColorModEhhhb @416
+    _ZN6Ossium7Texture12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @417
+    _ZN6Ossium7Texture12OnLoadFinishEv @418
+    _ZN6Ossium7Texture12SetBlendModeE13SDL_BlendModeb @419
+    _ZN6Ossium7Texture14GetRenderWidthEv @420
+    _ZN6Ossium7Texture14GetSourceWidthEv @421
+    _ZN6Ossium7Texture14SetRenderWidthEf @422
+    _ZN6Ossium7Texture14__ecs_factory_E @423 DATA
+    _ZN6Ossium7Texture15GetRenderHeightEv @424
+    _ZN6Ossium7Texture15GetSourceHeightEv @425
+    _ZN6Ossium7Texture15SetRenderHeightEf @426
+    _ZN6Ossium7Texture16ComponentFactoryEPv @427
+    _ZN6Ossium7Texture18ScreenToLocalPointENS_5PointE @428
+    _ZN6Ossium7Texture5CloneEv @429
+    _ZN6Ossium7Texture6GetModEv @430
+    _ZN6Ossium7Texture6RenderERNS_8Graphics8RendererE @431
+    _ZN6Ossium7Texture6SetModE9SDL_Colorb @432
+    _ZN6Ossium7Texture6UpdateEv @433
+    _ZN6Ossium7Texture7GetClipEv @434
+    _ZN6Ossium7Texture7GetFlipEv @435
+    _ZN6Ossium7Texture7SetClipEiiiib @436
+    _ZN6Ossium7Texture7SetFlipE16SDL_RendererFlip @437
+    _ZN6Ossium7Texture9GetSourceEv @438
+    _ZN6Ossium7Texture9SetSourceEPNS_5ImageEb @439
+    _ZN6Ossium8CallbackINS_6WindowEE10nextHandleE @440 DATA
+    _ZN6Ossium8Graphics11StateSprite11ChangeStateERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @441
+    _ZN6Ossium8Graphics11StateSprite12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @442
+    _ZN6Ossium8Graphics11StateSprite14ChangeSubStateEtb @443
+    _ZN6Ossium8Graphics11StateSprite14GetCurrentClipEv @444
+    _ZN6Ossium8Graphics11StateSprite14__ecs_factory_E @445 DATA
+    _ZN6Ossium8Graphics11StateSprite15GetCurrentStateB5cxx11Ev @446
+    _ZN6Ossium8Graphics11StateSprite16ComponentFactoryEPv @447
+    _ZN6Ossium8Graphics11StateSprite18GetCurrentSubstateEv @448
+    _ZN6Ossium8Graphics11StateSprite5CloneEv @449
+    _ZN6Ossium8Graphics11StateSprite8AddStateENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNS_5ImageEbt @450
+    _ZN6Ossium8Graphics11StateSprite8AddStateENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPNS_5ImageEt @451
+    _ZN6Ossium8Graphics12DebugGraphic4DrawERNS0_8RendererE @452
+    _ZN6Ossium8Graphics12DebugGraphic8SetColorE9SDL_Color @453
+    _ZN6Ossium8Graphics12DebugGraphicC1E9SDL_Color @454
+    _ZN6Ossium8Graphics12DebugGraphicC2E9SDL_Color @455
+    _ZN6Ossium8Graphics12DebugGraphicD0Ev @456
+    _ZN6Ossium8Graphics12DebugGraphicD1Ev @457
+    _ZN6Ossium8Graphics12DebugGraphicD2Ev @458
+    _ZN6Ossium8Graphics14DebugDrawBox2D10DrawCircleERK6b2Vec2fRK7b2Color @459
+    _ZN6Ossium8Graphics14DebugDrawBox2D11DrawPolygonEPK6b2Vec2iRK7b2Color @460
+    _ZN6Ossium8Graphics14DebugDrawBox2D11DrawSegmentERK6b2Vec2S4_RK7b2Color @461
+    _ZN6Ossium8Graphics14DebugDrawBox2D11GetColorSDLERK7b2Color @462
+    _ZN6Ossium8Graphics14DebugDrawBox2D13DrawTransformERK11b2Transform @463
+    _ZN6Ossium8Graphics14DebugDrawBox2D15DrawSolidCircleERK6b2Vec2fS4_RK7b2Color @464
+    _ZN6Ossium8Graphics14DebugDrawBox2D16DrawSolidPolygonEPK6b2Vec2iRK7b2Color @465
+    _ZN6Ossium8Graphics14DebugDrawBox2D9DrawPointERK6b2Vec2fRK7b2Color @466
+    _ZN6Ossium8Graphics14DebugDrawBox2DC1EPNS0_8RendererE @467
+    _ZN6Ossium8Graphics14DebugDrawBox2DC2EPNS0_8RendererE @468
+    _ZN6Ossium8Graphics16StateSpriteTable10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @469
+    _ZN6Ossium8Graphics16StateSpriteTable8ToStringB5cxx11Ev @470
+    _ZN6Ossium8Graphics8Renderer10ClearQueueEv @471
+    _ZN6Ossium8Graphics8Renderer10UnregisterEPNS0_7GraphicEi @472
+    _ZN6Ossium8Graphics8Renderer12GetNumLayersEv @473
+    _ZN6Ossium8Graphics8Renderer12SetBlendmodeE13SDL_BlendMode @474
+    _ZN6Ossium8Graphics8Renderer12SetDrawColorE9SDL_Color @475
+    _ZN6Ossium8Graphics8Renderer12SetDrawColorEhhhh @476
+    _ZN6Ossium8Graphics8Renderer13RenderPresentEb @477
+    _ZN6Ossium8Graphics8Renderer13UnregisterAllEv @478
+    _ZN6Ossium8Graphics8Renderer14GetAspectWidthEv @479
+    _ZN6Ossium8Graphics8Renderer14GetRendererSDLEv @480
+    _ZN6Ossium8Graphics8Renderer14SetAspectRatioEiib @481
+    _ZN6Ossium8Graphics8Renderer14UpdateViewportERNS_6WindowE @482
+    _ZN6Ossium8Graphics8Renderer15GetAspectHeightEv @483
+    _ZN6Ossium8Graphics8Renderer15GetViewportRectEv @484
+    _ZN6Ossium8Graphics8Renderer16ReallocateLayersEi @485
+    _ZN6Ossium8Graphics8Renderer17OnWindowDestroyedERNS_6WindowE @486
+    _ZN6Ossium8Graphics8Renderer18GetBackgroundColorEv @487
+    _ZN6Ossium8Graphics8Renderer18SetBackgroundColorE9SDL_Color @488
+    _ZN6Ossium8Graphics8Renderer21WindowToViewportPointERiS2_ @489
+    _ZN6Ossium8Graphics8Renderer7EnqueueEPNS0_7GraphicEi @490
+    _ZN6Ossium8Graphics8Renderer8GetWidthEv @491
+    _ZN6Ossium8Graphics8Renderer8RegisterEPNS0_7GraphicEi @492
+    _ZN6Ossium8Graphics8Renderer9GetHeightEv @493
+    _ZN6Ossium8Graphics8Renderer9GetWindowEv @494
+    _ZN6Ossium8Graphics8RendererC1EPNS_6WindowEiji @495
+    _ZN6Ossium8Graphics8RendererC2EPNS_6WindowEiji @496
+    _ZN6Ossium8Graphics8RendererD1Ev @497
+    _ZN6Ossium8Graphics8RendererD2Ev @498
+    _ZN6Ossium8Graphics9DebugDraw12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @499
+    _ZN6Ossium8Graphics9DebugDraw14__ecs_factory_E @500 DATA
+    _ZN6Ossium8Graphics9DebugDraw16ComponentFactoryEPv @501
+    _ZN6Ossium8Graphics9DebugDraw5ClearENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @502
+    _ZN6Ossium8Graphics9DebugDraw5CloneEv @503
+    _ZN6Ossium8Graphics9DebugDraw6RenderERNS0_8RendererE @504
+    _ZN6Ossium8Graphics9DebugDraw8OnCreateEv @505
+    _ZN6Ossium8Graphics9DebugLine4DrawERNS0_8RendererE @506
+    _ZN6Ossium8Graphics9DebugLineC1ENS_4LineE9SDL_Color @507
+    _ZN6Ossium8Graphics9DebugLineC1ENS_5PointES2_9SDL_Color @508
+    _ZN6Ossium8Graphics9DebugLineC2ENS_4LineE9SDL_Color @509
+    _ZN6Ossium8Graphics9DebugLineC2ENS_5PointES2_9SDL_Color @510
+    _ZN6Ossium8Graphics9DebugText4DrawERNS0_8RendererE @511
+    _ZN6Ossium8Graphics9DebugTextC1ENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENS_5PointEPNS_6EntityEPNS_4FontERNS0_8RendererEi9SDL_ColorSF_ @512
+    _ZN6Ossium8Graphics9DebugTextC2ENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENS_5PointEPNS_6EntityEPNS_4FontERNS0_8RendererEi9SDL_ColorSF_ @513
+    _ZN6Ossium8Graphics9DebugTextD0Ev @514
+    _ZN6Ossium8Graphics9DebugTextD1Ev @515
+    _ZN6Ossium8Graphics9DebugTextD2Ev @516
+    _ZN6Ossium9Component11OnLoadStartEv @517
+    _ZN6Ossium9Component12OnLoadFinishEv @518
+    _ZN6Ossium9Component13WorldPositionEv @519
+    _ZN6Ossium9Component13WorldRotationEv @520
+    _ZN6Ossium9Component14WorldTransformEv @521
+    _ZN6Ossium9Component6UpdateEv @522
+    _ZN6Ossium9Component7OnCloneEPNS_13BaseComponentE @523
+    _ZN6Ossium9Component8OnCreateEv @524
+    _ZN6Ossium9Component9OnDestroyEv @525
+    _ZN6Ossium9ComponentC1Ev @526
+    _ZN6Ossium9ComponentC2Ev @527
+    _ZN6Ossium9ComponentD0Ev @528
+    _ZN6Ossium9ComponentD1Ev @529
+    _ZN6Ossium9ComponentD2Ev @530
+    _ZN6Ossium9SingletonINS_5Audio9Internals11AudioStreamEE14singleInstanceE @531 DATA
+    _ZN6Ossium9SingletonINS_5Audio9Internals17ChannelControllerEE14singleInstanceE @532 DATA
+    _ZTI13MouseFollower @533 DATA
+    _ZTIN6Ossium10Transform2E @534 DATA
+    _ZTIN6Ossium13BaseComponentE @535 DATA
+    _ZTIN6Ossium13WindowManagerE @536 DATA
+    _ZTIN6Ossium15SchemaReferableE @537 DATA
+    _ZTIN6Ossium16GraphicComponentE @538 DATA
+    _ZTIN6Ossium16ServicesProviderE @539 DATA
+    _ZTIN6Ossium18ResourceControllerE @540 DATA
+    _ZTIN6Ossium2UI15InteractableGUIE @541 DATA
+    _ZTIN6Ossium2UI8InputGUIE @542 DATA
+    _ZTIN6Ossium4TextE @543 DATA
+    _ZTIN6Ossium5Audio11AudioPlayerE @544 DATA
+    _ZTIN6Ossium5Audio11AudioSourceE @545 DATA
+    _ZTIN6Ossium5Audio13AudioListenerE @546 DATA
+    _ZTIN6Ossium5Audio8AudioBusE @547 DATA
+    _ZTIN6Ossium5Audio8Internal25AudioSourceSchemaCombinerE @548 DATA
+    _ZTIN6Ossium5Audio9AudioClipE @549 DATA
+    _ZTIN6Ossium5Audio9Internals11AudioStreamE @550 DATA
+    _ZTIN6Ossium5ImageE @551 DATA
+    _ZTIN6Ossium5Input12InputHandlerINS0_12MouseHandlerENS0_10MouseInputENS0_10MouseEventEEE @552 DATA
+    _ZTIN6Ossium5Input12InputHandlerINS0_15KeyboardHandlerENS0_13KeyboardInputEiEE @553 DATA
+    _ZTIN6Ossium5Input12MouseHandlerE @554 DATA
+    _ZTIN6Ossium5Input15InputControllerE @555 DATA
+    _ZTIN6Ossium5Input15KeyboardHandlerE @556 DATA
+    _ZTIN6Ossium5Input16BaseInputHandlerE @557 DATA
+    _ZTIN6Ossium6EntityE @558 DATA
+    _ZTIN6Ossium7Physics8OnRayHitE @559 DATA
+    _ZTIN6Ossium7ServiceINS_13WindowManagerEEE @560 DATA
+    _ZTIN6Ossium7ServiceINS_18ResourceControllerEEE @561 DATA
+    _ZTIN6Ossium7ServiceINS_5Input15InputControllerEEE @562 DATA
+    _ZTIN6Ossium7ServiceINS_8Graphics8RendererEEE @563 DATA
+    _ZTIN6Ossium7TextureE @564 DATA
+    _ZTIN6Ossium8Graphics11StateSpriteE @565 DATA
+    _ZTIN6Ossium8Graphics12DebugGraphicE @566 DATA
+    _ZTIN6Ossium8Graphics14DebugDrawBox2DE @567 DATA
+    _ZTIN6Ossium8Graphics7GraphicE @568 DATA
+    _ZTIN6Ossium8Graphics8RendererE @569 DATA
+    _ZTIN6Ossium8Graphics9DebugDrawE @570 DATA
+    _ZTIN6Ossium8Graphics9DebugLineE @571 DATA
+    _ZTIN6Ossium8Graphics9DebugTextE @572 DATA
+    _ZTIN6Ossium8MetaRectE @573 DATA
+    _ZTIN6Ossium8ResourceE @574 DATA
+    _ZTIN6Ossium9ComponentE @575 DATA
+    _ZTIN6Ossium9Utilities8Internal11ServiceBaseE @576 DATA
+    _ZTV13MouseFollower @577 DATA
+    _ZTVN6Ossium10Transform2E @578 DATA
+    _ZTVN6Ossium13BaseComponentE @579 DATA
+    _ZTVN6Ossium13WindowManagerE @580 DATA
+    _ZTVN6Ossium15SchemaReferableE @581 DATA
+    _ZTVN6Ossium16GraphicComponentE @582 DATA
+    _ZTVN6Ossium16ServicesProviderE @583 DATA
+    _ZTVN6Ossium18ResourceControllerE @584 DATA
+    _ZTVN6Ossium2UI15InteractableGUIE @585 DATA
+    _ZTVN6Ossium2UI8InputGUIE @586 DATA
+    _ZTVN6Ossium4TextE @587 DATA
+    _ZTVN6Ossium5Audio11AudioPlayerE @588 DATA
+    _ZTVN6Ossium5Audio11AudioSourceE @589 DATA
+    _ZTVN6Ossium5Audio13AudioListenerE @590 DATA
+    _ZTVN6Ossium5Audio8AudioBusE @591 DATA
+    _ZTVN6Ossium5Audio8Internal25AudioSourceSchemaCombinerE @592 DATA
+    _ZTVN6Ossium5Audio9AudioClipE @593 DATA
+    _ZTVN6Ossium5Audio9Internals11AudioStreamE @594 DATA
+    _ZTVN6Ossium5ImageE @595 DATA
+    _ZTVN6Ossium5Input12InputHandlerINS0_12MouseHandlerENS0_10MouseInputENS0_10MouseEventEEE @596 DATA
+    _ZTVN6Ossium5Input12InputHandlerINS0_15KeyboardHandlerENS0_13KeyboardInputEiEE @597 DATA
+    _ZTVN6Ossium5Input12MouseHandlerE @598 DATA
+    _ZTVN6Ossium5Input15InputControllerE @599 DATA
+    _ZTVN6Ossium5Input15KeyboardHandlerE @600 DATA
+    _ZTVN6Ossium5Input16BaseInputHandlerE @601 DATA
+    _ZTVN6Ossium6EntityE @602 DATA
+    _ZTVN6Ossium7Physics8OnRayHitE @603 DATA
+    _ZTVN6Ossium7ServiceINS_13WindowManagerEEE @604 DATA
+    _ZTVN6Ossium7ServiceINS_18ResourceControllerEEE @605 DATA
+    _ZTVN6Ossium7ServiceINS_5Input15InputControllerEEE @606 DATA
+    _ZTVN6Ossium7ServiceINS_8Graphics8RendererEEE @607 DATA
+    _ZTVN6Ossium7TextureE @608 DATA
+    _ZTVN6Ossium8Graphics11StateSpriteE @609 DATA
+    _ZTVN6Ossium8Graphics12DebugGraphicE @610 DATA
+    _ZTVN6Ossium8Graphics14DebugDrawBox2DE @611 DATA
+    _ZTVN6Ossium8Graphics7GraphicE @612 DATA
+    _ZTVN6Ossium8Graphics8RendererE @613 DATA
+    _ZTVN6Ossium8Graphics9DebugDrawE @614 DATA
+    _ZTVN6Ossium8Graphics9DebugLineE @615 DATA
+    _ZTVN6Ossium8Graphics9DebugTextE @616 DATA
+    _ZTVN6Ossium8MetaRectE @617 DATA
+    _ZTVN6Ossium8ResourceE @618 DATA
+    _ZTVN6Ossium9ComponentE @619 DATA
+    _ZTVN6Ossium9Utilities8Internal11ServiceBaseE @620 DATA
+    _ZTch0_h4_N6Ossium4Text5CloneEv @621
+    _ZTch0_h4_N6Ossium7Texture5CloneEv @622
+    _ZTch0_h4_N6Ossium8Graphics11StateSprite5CloneEv @623
+    _ZTch0_h4_N6Ossium8Graphics9DebugDraw5CloneEv @624
+    _ZThn100_N6Ossium8Graphics11StateSprite12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @625
+    _ZThn12_N6Ossium10Transform212MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @626
+    _ZThn12_N6Ossium5Audio11AudioSource10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @627
+    _ZThn12_N6Ossium5Audio11AudioSource12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @628
+    _ZThn12_N6Ossium5Audio11AudioSource8ToStringB5cxx11Ev @629
+    _ZThn12_N6Ossium5Audio11AudioSourceD0Ev @630
+    _ZThn12_N6Ossium5Audio11AudioSourceD1Ev @631
+    _ZThn12_N6Ossium5Audio13AudioListener12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @632
+    _ZThn16_N6Ossium4Text12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @633
+    _ZThn16_N6Ossium7Texture12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @634
+    _ZThn16_N6Ossium8Graphics11StateSprite12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @635
+    _ZThn16_N6Ossium8Graphics9DebugDraw12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @636
+    _ZThn24_N6Ossium4Text12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @637
+    _ZThn24_N6Ossium7Texture10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @638
+    _ZThn24_N6Ossium7Texture12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @639
+    _ZThn24_N6Ossium7Texture8ToStringB5cxx11Ev @640
+    _ZThn24_N6Ossium8Graphics11StateSprite10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @641
+    _ZThn24_N6Ossium8Graphics11StateSprite12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @642
+    _ZThn24_N6Ossium8Graphics11StateSprite8ToStringB5cxx11Ev @643
+    _ZThn28_N6Ossium5Audio11AudioSource12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @644
+    _ZThn48_N6Ossium5Audio11AudioSource12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @645
+    _ZThn4_N13MouseFollower12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @646
+    _ZThn4_N6Ossium10Transform212MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @647
+    _ZThn4_N6Ossium16GraphicComponent10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @648
+    _ZThn4_N6Ossium16GraphicComponent11OnLoadStartEv @649
+    _ZThn4_N6Ossium16GraphicComponent12OnLoadFinishEv @650
+    _ZThn4_N6Ossium16GraphicComponent6UpdateEv @651
+    _ZThn4_N6Ossium16GraphicComponent7OnCloneEPNS_13BaseComponentE @652
+    _ZThn4_N6Ossium16GraphicComponent8OnCreateEv @653
+    _ZThn4_N6Ossium16GraphicComponent8ToStringB5cxx11Ev @654
+    _ZThn4_N6Ossium16GraphicComponent9OnDestroyEv @655
+    _ZThn4_N6Ossium16GraphicComponentD0Ev @656
+    _ZThn4_N6Ossium16GraphicComponentD1Ev @657
+    _ZThn4_N6Ossium2UI15InteractableGUI11OnLoadStartEv @658
+    _ZThn4_N6Ossium2UI15InteractableGUI12OnLoadFinishEv @659
+    _ZThn4_N6Ossium2UI15InteractableGUI6UpdateEv @660
+    _ZThn4_N6Ossium2UI15InteractableGUI7OnCloneEPNS_13BaseComponentE @661
+    _ZThn4_N6Ossium2UI15InteractableGUI8OnCreateEv @662
+    _ZThn4_N6Ossium2UI15InteractableGUI9OnDestroyEv @663
+    _ZThn4_N6Ossium2UI15InteractableGUID0Ev @664
+    _ZThn4_N6Ossium2UI15InteractableGUID1Ev @665
+    _ZThn4_N6Ossium2UI8InputGUI12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @666
+    _ZThn4_N6Ossium4Text7GetTypeEv @667
+    _ZThn4_N6Ossium4TextD0Ev @668
+    _ZThn4_N6Ossium4TextD1Ev @669
+    _ZThn4_N6Ossium5Audio11AudioSource12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @670
+    _ZThn4_N6Ossium5Audio13AudioListener12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @671
+    _ZThn4_N6Ossium7Texture10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @672
+    _ZThn4_N6Ossium7Texture12OnLoadFinishEv @673
+    _ZThn4_N6Ossium7Texture6UpdateEv @674
+    _ZThn4_N6Ossium7Texture7GetTypeEv @675
+    _ZThn4_N6Ossium7Texture8ToStringB5cxx11Ev @676
+    _ZThn4_N6Ossium7TextureD0Ev @677
+    _ZThn4_N6Ossium7TextureD1Ev @678
+    _ZThn4_N6Ossium8Graphics11StateSprite10FromStringERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @679
+    _ZThn4_N6Ossium8Graphics11StateSprite7GetTypeEv @680
+    _ZThn4_N6Ossium8Graphics11StateSprite8ToStringB5cxx11Ev @681
+    _ZThn4_N6Ossium8Graphics11StateSpriteD0Ev @682
+    _ZThn4_N6Ossium8Graphics11StateSpriteD1Ev @683
+    _ZThn4_N6Ossium8Graphics9DebugDraw7GetTypeEv @684
+    _ZThn4_N6Ossium8Graphics9DebugDraw8OnCreateEv @685
+    _ZThn4_N6Ossium8Graphics9DebugDrawD0Ev @686
+    _ZThn4_N6Ossium8Graphics9DebugDrawD1Ev @687
+    _ZThn8_N6Ossium4Text12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @688
+    _ZThn8_N6Ossium7Texture12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @689
+    _ZThn8_N6Ossium8Graphics11StateSprite12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @690
+    _ZThn8_N6Ossium8Graphics9DebugDraw12MapReferenceENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEPPv @691
