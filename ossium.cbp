@@ -180,6 +180,9 @@
 		<Unit filename="src/Ossium/Core/schemamodel.h" />
 		<Unit filename="src/Ossium/Core/services.cpp" />
 		<Unit filename="src/Ossium/Core/services.h" />
+		<Unit filename="src/Ossium/Core/staticmanager.h">
+			<Option target="ossiumdll" />
+		</Unit>
 		<Unit filename="src/Ossium/Core/stringconvert.cpp" />
 		<Unit filename="src/Ossium/Core/stringconvert.h" />
 		<Unit filename="src/Ossium/Core/stringintern.h" />

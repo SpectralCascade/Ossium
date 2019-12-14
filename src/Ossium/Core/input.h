@@ -48,9 +48,9 @@ namespace Ossium
 
         /// Constant return type id for a specified input handler type
         template<class T>
-        InputHandlerType GetInputHandlerType()
+        OSSIUM_EDL InputHandlerType GetInputHandlerType()
         {
-            return T::__input_type_entry_.GetType();
+            return T::__input_type_entry_()->GetType();
         }
 
         /// Interface for accessing InputHandler
@@ -73,7 +73,11 @@ namespace Ossium
             /// Function pointer for actions based on this input data
             typedef function<ActionOutcome(const InputData&)> InputAction;
 
-            static TypeSystem::TypeRegistry<Derived> __input_type_entry_;
+            OSSIUM_EDL static TypeSystem::TypeRegistry<Derived>* __input_type_entry_()
+            {
+                static TypeSystem::TypeRegistry<Derived>* entry = new TypeSystem::TypeRegistry<Derived>();
+                return entry;
+            }
 
             virtual ~InputHandler()
             {
@@ -303,9 +307,6 @@ namespace Ossium
             unordered_map<string, InputAction> _action_bindings;
 
         };
-
-        template<class Derived, class InputData, class InputIdent>
-        TypeSystem::TypeRegistry<Derived> InputHandler<Derived, InputData, InputIdent>::__input_type_entry_;
 
         /// A game might have multiple input contexts; for example, button X closes a dialog box when talking to NPCs,
         /// but the X button opens the player's inventory in normal gameplay.

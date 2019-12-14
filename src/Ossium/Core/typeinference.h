@@ -21,7 +21,7 @@ namespace Ossium
 
         #define DETECT_METHOD(METHOD_NAME)                                                                                                                      \
         template<class T>                                                                                                                                       \
-        struct has_##METHOD_NAME                                                                                                                                \
+        struct OSSIUM_EDL has_##METHOD_NAME                                                                                                                                \
         {                                                                                                                                                       \
             template<typename TypeToCheck>                                                                                                                      \
             /** decltype() returns a bool type if the type to check has the method, otherwise substitution fails and the alternative method is used instead. **/\
@@ -45,7 +45,7 @@ namespace Ossium
 
         #define DETECT_METHOD_P(METHOD_NAME, PARAMTYPE)                                                                                                         \
         template<class T>                                                                                                                                       \
-        struct has_##METHOD_NAME                                                                                                                                \
+        struct OSSIUM_EDL has_##METHOD_NAME                                                                                                                                \
         {                                                                                                                                                       \
             template<typename TypeToCheck>                                                                                                                      \
             static constexpr decltype(declval<TypeToCheck>().METHOD_NAME(declval<PARAMTYPE>()), bool())                                                         \
