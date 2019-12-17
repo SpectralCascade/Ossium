@@ -1,0 +1,6 @@
+{
+    "Key"       : "Value",
+    "Wow"       : "Nice",
+    "Number"    : 15,
+    "Array"     : ["oh", 99, {"fake" : 0, "obj" : false}, ["more", "data"], "today"]
+}

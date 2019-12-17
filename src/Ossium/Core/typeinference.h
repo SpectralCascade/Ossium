@@ -5,6 +5,8 @@
 #include <type_traits>
 #include <any>
 
+#include "helpermacros.h"
+
 using namespace std;
 
 namespace Ossium
@@ -21,10 +23,10 @@ namespace Ossium
 
         #define DETECT_METHOD(METHOD_NAME)                                                                                                                      \
         template<class T>                                                                                                                                       \
-        struct OSSIUM_EDL has_##METHOD_NAME                                                                                                                                \
+        struct OSSIUM_EDL has_##METHOD_NAME                                                                                                                     \
         {                                                                                                                                                       \
-            template<typename TypeToCheck>                                                                                                                      \
             /** decltype() returns a bool type if the type to check has the method, otherwise substitution fails and the alternative method is used instead. **/\
+            template<typename TypeToCheck>                                                                                                                      \
             static constexpr decltype(declval<TypeToCheck>().METHOD_NAME(), bool())                                                                             \
             check(int)                                                                                                                                          \
             {                                                                                                                                                   \

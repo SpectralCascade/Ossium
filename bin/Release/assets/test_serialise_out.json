@@ -1,0 +1,13 @@
+{
+    "testVector2" : [111, 220, 53, -63],
+    "degree" : "English lit.",
+    "wow" : -0.99,
+    "freshFoo" : 77,
+    "foo" : -747,
+    "age" : 25.4,
+    "freshHello" : "SUP :P",
+    "more" : 32.6,
+    "bar" : 12345,
+    "hello" : "g'day mate",
+    "oh" : 9
+}
