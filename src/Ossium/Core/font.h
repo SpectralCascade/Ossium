@@ -5,7 +5,7 @@
 #include <map>
 extern "C"
 {
-    #include <SDL_ttf.h>
+    #include <SDL2/SDL_ttf.h>
 }
 
 #include "../Core/helpermacros.h"

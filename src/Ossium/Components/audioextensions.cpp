@@ -24,13 +24,20 @@ namespace Ossium
 
     void AudioSource::Play(AudioClip* sample, float vol, int repeats)
     {
-        /// Store state
-        looping = repeats < 0;
-        samplePath = looping ? sample->GetPath() : "";
+        if (sample != nullptr)
+        {
+            /// Store state
+            looping = repeats < 0;
+            samplePath = looping ? sample->GetPath() : "";
 
-        /// Now set positioning and play the sample
-        SetAudioPosition();
-        AudioPlayer::Play(sample, vol, repeats);
+            /// Now set positioning and play the sample
+            SetAudioPosition();
+            AudioPlayer::Play(sample, vol, repeats);
+        }
+        else
+        {
+            Logger::EngineLog().Error("Cannot play NULL audio sample!");
+        }
     }
 
     void AudioSource::Update()

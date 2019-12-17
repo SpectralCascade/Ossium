@@ -14,17 +14,17 @@ namespace Ossium
         friend class EntityComponentSystem;
 
         template<typename ...Args>
-        EngineSystem(JSON& configData, Args&& ...serviceArgs)
+        EngineSystem(ServicesProvider* engineServices, JSON& configData)
         {
-            services = new ServicesProvider(forward<Args>(serviceArgs)...);
+            services = engineServices;
             ecs = new EntityComponentSystem(services);
             Init(configData);
         }
 
         template<typename ...Args>
-        EngineSystem(string configFilePath = "", Args&& ...serviceArgs)
+        EngineSystem(ServicesProvider* engineServices, string configFilePath = "")
         {
-            services = new ServicesProvider(forward<Args>(serviceArgs)...);
+            services = engineServices;
             ecs = new EntityComponentSystem(services);
             if (!configFilePath.empty())
             {
@@ -45,6 +45,12 @@ namespace Ossium
 
         /// Loads a game scene into the entity component system.
         bool LoadScene(string path);
+
+        /// Returns the ECS instance.
+        EntityComponentSystem* GetECS();
+
+        /// Returns the services provider.
+        ServicesProvider* GetServices();
 
     private:
         NOCOPY(EngineSystem);

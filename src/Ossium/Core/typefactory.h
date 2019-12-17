@@ -85,7 +85,7 @@ namespace Ossium
         public:
             TypeFactory(const char* name, FactoryFunc factory)
             {
-                //Logger::EngineLog().Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
+                Logger::EngineLog().Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
                 type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
                 type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;

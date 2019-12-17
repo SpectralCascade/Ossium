@@ -7,7 +7,6 @@ namespace Ossium
     EngineSystem::~EngineSystem()
     {
         delete ecs;
-        delete services;
     }
 
     void EngineSystem::Init(JSON& configData)
@@ -113,6 +112,16 @@ namespace Ossium
             return true;
         }
         return false;
+    }
+
+    EntityComponentSystem* EngineSystem::GetECS()
+    {
+        return ecs;
+    }
+
+    ServicesProvider* EngineSystem::GetServices()
+    {
+        return services;
     }
 
 }

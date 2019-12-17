@@ -321,7 +321,9 @@ namespace Ossium
     {
         if (services == nullptr)
         {
-            services = new ServicesProvider();
+            Logger::EngineLog().Error("ServicesProvider argument cannot be NULL when creating an ECS instance!");
+            DEBUG_ASSERT(services != nullptr, "ServicesProvider argument cannot be NULL when creating an ECS instance!");
+            throw;
         }
         servicesProvider = services;
         components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
@@ -585,9 +587,6 @@ namespace Ossium
         }
         delete[] components;
         components = nullptr;
-
-        delete servicesProvider;
-        servicesProvider = nullptr;
     }
 
 }

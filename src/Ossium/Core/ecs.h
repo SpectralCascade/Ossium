@@ -83,7 +83,7 @@ namespace Ossium
     public:
         friend class Ossium::Entity;
 
-        EntityComponentSystem(ServicesProvider* services = nullptr);
+        EntityComponentSystem(ServicesProvider* services);
 
         ~EntityComponentSystem();
 
