@@ -14,7 +14,7 @@ namespace Ossium
     /// Turns a code snippet into a string
     #define STRINGIFY(CODE) "CODE"
 
-    #ifdef DEBUG
+    #ifdef OSSIUM_DEBUG
     #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)                       \
             if (!(CONDITION))                                           \
             {                                                           \
@@ -27,6 +27,7 @@ namespace Ossium
     #endif
 
     /// Export Dynamic Link macro for creating shared library links.
+    /// NOTE: DLL builds are not supported due to issues with static variable linkage.
     #if defined(OSSIUM_EXPORT_DLL) && defined(_WIN32)
     #   define OSSIUM_EDL __declspec(dllexport)
     #else

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 #include "funcutils.h"
 #include "logging.h"
@@ -22,11 +23,9 @@ namespace Ossium
     {
         friend class Tree<T>;
 
-        /// Name given to this node
-        string name;
         /// The actual data stored in the node
         T data;
-        /// Pointer to parent node; null if this is the root node
+        /// Pointer to parent node; null if this is a root node
         Node<T>* parent;
         /// Children nodes; empty if this is a leaf node
         vector<Node<T>*> children;
@@ -62,6 +61,8 @@ namespace Ossium
     public:
         friend struct Node<T>;
 
+        typedef function<bool(Node<T>*)> FindNodePredicate;
+
         Tree()
         {
             total = 0;
@@ -70,31 +71,22 @@ namespace Ossium
 
         ~Tree()
         {
-            clear();
+            Clear();
         }
 
         /// Adds data to the tree. If parent is null, adds to root node children. Returns pointer to the node
-        Node<T>* insert(string name, T data, Node<T>* parent = nullptr)
+        Node<T>* Insert(T data, Node<T>* parent = nullptr)
         {
             Node<T>* node = new Node<T>();
-            node->name = name;
             node->data = data;
             node->parent = parent;
-            insert(node);
+            Insert(node);
             return node;
         }
 
-        void insert(Node<T>* node)
+        void Insert(Node<T>* node)
         {
-            if (node == nullptr)
-            {
-                return;
-            }
             node->id = nextId;
-            if (node->name.length() < 1)
-            {
-                node->name = "Node[" + ToString(node->id) + "]";
-            }
             if (node->parent != nullptr)
             {
                 node->parent->children.push_back(node);
@@ -113,7 +105,7 @@ namespace Ossium
         }
 
         /// Removes a specified data node and all nodes below it
-        bool remove(Node<T>* node)
+        bool Remove(Node<T>* node)
         {
             /// Never remove the root node
             if (node == nullptr)
@@ -121,13 +113,15 @@ namespace Ossium
                 Logger::EngineLog().Warning("(!) Attempted to remove node that is already null.");
                 return false;
             }
-            vector<Node<T>*> all = getAllBelow(node);
+            vector<Node<T>*> all = GetAllBelow(node);
             node->children.clear();
             /// Delete all nodes below the source node
             for (auto i = all.begin(); i != all.end(); i++)
             {
                 delete *i;
                 *i = nullptr;
+                updateFlattened = true;
+                total--;
             }
             if (node->parent != nullptr)
             {
@@ -166,63 +160,57 @@ namespace Ossium
             return false;
         }
 
-        /// Finds and removes first found data node with the specified name
-        bool remove(const string& name)
+        /// Finds and removes first found data node that meets the predicate condition.
+        bool Remove(FindNodePredicate predicate)
         {
-            /// Short circuit out - no removal of the root node!
-            if (name.length() == 0)
-            {
-                return false;
-            }
-            Node<T>* node = find(name);
-            return remove(node);
+            /// Short circuit evalutation
+            Node<T>* node = Find(predicate);
+            return Remove(node);
         }
 
         /// Removes all nodes from the tree, except for the root
-        void clear()
+        void Clear()
         {
             roots.clear();
             flatTree.clear();
         }
 
-        /// Recursive search; returns first matching node as a pointer from the source node downwards.
-        /// If no instance is found, returns null
-        Node<T>* find(const string& name, Node<T>* source)
+        /// Searches for a node that meets the provided predicate condition.
+        Node<T>* Find(FindNodePredicate predicate, Node<T>* source = nullptr)
         {
             if (source == nullptr)
             {
-                return nullptr;
-            }
-            return recursiveFind(name, source);
-        }
-
-        /// Uses roots vector as the default source
-        Node<T>* find(const string& name)
-        {
-            for (auto i = roots.begin(); i != roots.end(); i++)
-            {
-                DEBUG_ASSERT(*i != nullptr, "Root node is null!");
-                Node<T>* node = recursiveFind(name, *i);
-                if (node != nullptr)
+                /// Search from roots
+                for (auto i = roots.begin(); i != roots.end(); i++)
                 {
-                    return node;
+                    DEBUG_ASSERT(*i != nullptr, "Root node is null!");
+                    Node<T>* node = RecursiveFind(predicate, *i);
+                    if (node != nullptr)
+                    {
+                        return node;
+                    }
                 }
+            }
+            else
+            {
+                /// Search from parent
+                return RecursiveFind(predicate, source);
             }
             return nullptr;
         }
 
-        /// Gets pointers to all nodes in the tree (below the source node) which have the specified name; pretty slow!
-        void findAll(const string& name, Node<T>* source, vector<Node<T>*>& output)
+        /// Gets pointers to all nodes in the tree (below the source node) which meet the predicate condition; pretty slow!
+        void FindAll(FindNodePredicate predicate, Node<T>* source, vector<Node<T>*>& output)
         {
             /// While we're iterating over everything we may as well rebuild the flatTree
             flatTree.clear();
             flatTree.reserve(total);
-            recursiveFindAll(name, source, output);
+            RecursiveFindAll(predicate, source, output);
             updateFlattened = false;
         }
 
         /// Defaults to roots as the source
-        vector<Node<T>*> findAll(const string& name)
+        vector<Node<T>*> FindAll(FindNodePredicate predicate)
         {
             vector<Node<T>*> nodes;
             /// While we're iterating over everything we may as well rebuild the flatTree
@@ -231,15 +219,15 @@ namespace Ossium
 
             for (auto i = roots.begin(); i != roots.end(); i++)
             {
-                recursiveFindAll(*i->name, *i, nodes);
+                RecursiveFindAll(predicate, *i, nodes);
             }
             updateFlattened = false;
             return nodes;
         }
 
-        /// A version of findAll() that matches multiple names; more efficient as it only walks the tree once,
-        /// but can match more than a single name
-        vector<Node<T>*> findAll(const vector<string>& names)
+        /// A version of FindAll() that matches multiple predicates; more efficient as it only walks the tree once,
+        /// but can match more than a single predicate at a time.
+        vector<Node<T>*> FindAll(const vector<FindNodePredicate>& predicates)
         {
             vector<Node<T>*> nodes;
             flatTree.clear();
@@ -247,7 +235,7 @@ namespace Ossium
 
             for (auto i = roots.begin(); i != roots.end(); i++)
             {
-                recursiveFindAll(names, *i, nodes);
+                RecursiveFindAll(predicates, *i, nodes);
             }
 
             updateFlattened = false;
@@ -255,7 +243,7 @@ namespace Ossium
         }
 
         /// Returns all nodes in the tree below a source node; includeSource adds the source node to the output vector
-        vector<Node<T>*> getAllBelow(Node<T>* source, bool includeSource = false)
+        vector<Node<T>*> GetAllBelow(Node<T>* source, bool includeSource = false)
         {
             vector<Node<T>*> all;
             if (source == nullptr)
@@ -265,32 +253,33 @@ namespace Ossium
             }
             if (includeSource)
             {
-                recursiveGetAll(source, all);
+                RecursiveGetAll(source, all);
             }
             else
             {
                 for (auto i = source->children.begin(); i != source->children.end(); i++)
                 {
-                    recursiveGetAll(source, all);
+                    RecursiveGetAll(*i, all);
                 }
             }
             return all;
         }
 
-        /// Gets all nodes in the tree except for the root node
-        /// It's preferable to use getFlatTree() instead of this method, as this does not cache
-        vector<Node<T>*> getAll()
+        /// Get every single node in the tree.
+        /// It's preferable to use GetFlatTree() instead of this method, as this recurses through the entire tree
+        /// instead of returning the cached vector array.
+        vector<Node<T>*> GetAll()
         {
             vector<Node<T>*> all;
             for (auto i = roots.begin(); i != roots.end(); i++)
             {
-                recursiveGetAll(*i, all);
+                RecursiveGetAll(*i, all);
             }
             return all;
         }
 
-        /// Returns a reference to the flatTree version of the tree
-        vector<Node<T>*>& getFlatTree()
+        /// Returns a reference to the cached, 'flattened' version of the tree.
+        vector<Node<T>*>& GetFlatTree()
         {
             if (updateFlattened)
             {
@@ -299,19 +288,20 @@ namespace Ossium
                 flatTree.reserve(total);
                 for (auto i = roots.begin(); i != roots.end(); i++)
                 {
-                    recursiveFlatten(*i);
+                    RecursiveFlatten(*i);
                 }
                 updateFlattened = false;
             }
             return flatTree;
         }
 
-        /// Not including root node
-        unsigned int size()
+        /// Returns the total number of nodes in the tree.
+        unsigned int Size()
         {
             return total;
         }
 
+        /// Sets the lazy-generated ID. Useful when ensuring unique ids after serialisation.
         void SetGeneration(int generation)
         {
             nextId = generation;
@@ -322,6 +312,7 @@ namespace Ossium
             return nextId;
         }
 
+        /// Returns a vector array of the root nodes.
         vector<Node<T>*> GetRoots()
         {
             return roots;
@@ -344,25 +335,25 @@ namespace Ossium
         bool updateFlattened;
 
         /// Recursively iterates through the tree and builds the flatTree tree array
-        void recursiveFlatten(Node<T>* parent)
+        void RecursiveFlatten(Node<T>* parent)
         {
             flatTree.push_back(parent);
             for (auto i = parent->children.begin(); i != parent->children.end(); i++)
             {
-                recursiveFlatten(*i);
+                RecursiveFlatten(*i);
             }
         }
 
         /// Recursive search method
-        Node<T>* recursiveFind(const string& name, Node<T>* parent)
+        Node<T>* RecursiveFind(FindNodePredicate& predicate, Node<T>* parent)
         {
-            if (parent->name == name)
+            if (predicate(parent))
             {
                 return parent;
             }
             for (auto i = parent->children.begin(); i != parent->children.end(); i++)
             {
-                Node<T>* found = recursiveFind(name, *i);
+                Node<T>* found = RecursiveFind(predicate, *i);
                 if (found != nullptr)
                 {
                     return found;
@@ -371,32 +362,32 @@ namespace Ossium
             return nullptr;
         }
 
-        void recursiveFindAll(const string& name, Node<T>* parent, vector<Node<T>*>& output)
+        void RecursiveFindAll(FindNodePredicate& predicate, Node<T>* parent, vector<Node<T>*>& output)
         {
             /// We can recalculate the flatTree tree while we're here
             if (updateFlattened)
             {
                 flatTree.push_back(parent);
             }
-            if (parent->name == name)
+            if (predicate(parent))
             {
                 output.push_back(parent);
             }
             for (auto i = parent->children.begin(); i != parent->children.end(); i++)
             {
-                recursiveFindAll(name, *i, output);
+                RecursiveFindAll(predicate, *i, output);
             }
         }
 
-        void recursiveFindAll(const vector<string>& names, Node<T>* parent, vector<Node<T>*>& output)
+        void RecursiveFindAll(const vector<FindNodePredicate>& predicates, Node<T>* parent, vector<Node<T>*>& output)
         {
             if (updateFlattened)
             {
                 flatTree.push_back(parent);
             }
-            for (auto i = names.begin(); i != names.end(); i++)
+            for (auto predicate = predicates.begin(); predicate != predicates.end(); predicate++)
             {
-                if (*i == parent->name)
+                if ((*predicate)(parent))
                 {
                     output.push_back(parent);
                     break;
@@ -404,17 +395,17 @@ namespace Ossium
             }
             for (auto i = parent->children.begin(); i != parent->children.end(); i++)
             {
-                recursiveFindAll(names, *i, output);
+                RecursiveFindAll(predicates, *i, output);
             }
         }
 
         /// Recursively returns pointers to ALL nodes below some source node
-        void recursiveGetAll(Node<T>* source, vector<Node<T>*>& output)
+        void RecursiveGetAll(Node<T>* source, vector<Node<T>*>& output)
         {
             output.push_back(source);
             for (auto i = source->children.begin(); i != source->children.end(); i++)
             {
-                recursiveGetAll(*i, output);
+                RecursiveGetAll(*i, output);
             }
         }
 

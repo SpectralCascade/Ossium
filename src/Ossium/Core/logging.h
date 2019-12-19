@@ -44,6 +44,15 @@ namespace Ossium
             SDL_LogVerbose(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
         }
 
+        template<typename ...Args>
+        void Debug(string message, Args&&... args)
+        {
+            #ifdef OSSIUM_DEBUG
+            message = Format(message, forward<Args>(args)...);
+            SDL_LogDebug(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
+            #endif // DEBUG
+        }
+
         static Logger& EngineLog();
 
     private:

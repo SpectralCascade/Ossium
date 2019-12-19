@@ -271,7 +271,7 @@ namespace Ossium
 
     bool Image::LockPixels()
     {
-        #ifdef DEBUG
+        #ifdef OSSIUM_DEBUG
         SDL_assert(texture != NULL);
         #endif
         if (pixels != NULL)
@@ -291,7 +291,7 @@ namespace Ossium
 
     bool Image::UnlockPixels()
     {
-        #ifdef DEBUG
+        #ifdef OSSIUM_DEBUG
         SDL_assert(texture != NULL);
         #endif
         if (pixels == NULL)

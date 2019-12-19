@@ -21,7 +21,7 @@ using namespace std;
 
 namespace Ossium
 {
-#ifdef DEBUG
+#ifdef OSSIUM_DEBUG
 
     namespace Test
     {

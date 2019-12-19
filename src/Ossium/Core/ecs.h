@@ -135,7 +135,7 @@ namespace Ossium
         /// They cannot be removed once added until they are destroyed.
         vector<Entity*> pendingDestruction;
 
-        /// Entity tree hierarchy
+        /// Entity tree hierarchy (pure scene graph).
         Tree<Entity*> entityTree;
 
         /// Hash table of entity nodes by id
@@ -212,7 +212,7 @@ namespace Ossium
                 itr->second[0] = nullptr;
                 itr->second.erase(itr->second.begin());
             }
-            Logger::EngineLog().Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, self->name);
+            Logger::EngineLog().Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, name);
         }
 
         /// Returns a pointer the first found instance of a component attached
@@ -296,9 +296,6 @@ namespace Ossium
             return controller->GetService<T>();
         }
 
-        string GetName();
-        void SetName(string name);
-
         /// Maps an id to a reference for serialisation.
         void MapReference(string ident, void** ptr);
 
@@ -325,6 +322,9 @@ namespace Ossium
         /// String conversion methods get/set with the JSON representation of all attached components.
         void FromString(string& str);
         string ToString();
+
+        /// The name of this entity.
+        string name;
 
         void Destroy(bool immediate = false);
 

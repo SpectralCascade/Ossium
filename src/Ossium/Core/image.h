@@ -19,7 +19,7 @@ namespace Ossium
     class Texture;
     class TexturePack;
 
-    /// This class wraps an SDL_Texture resource
+    /// This class wraps an SDL_Texture resource (an image usually stored in video memory).
     class OSSIUM_EDL Image : public Resource
     {
     public:

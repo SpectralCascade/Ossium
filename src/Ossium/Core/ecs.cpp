@@ -27,25 +27,23 @@ namespace Ossium
     Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
     {
         controller = entity_system;
-        string name = "Entity";
         if (parent != nullptr)
         {
-            self = controller->entityTree.insert(name, this, parent->self);
+            self = controller->entityTree.Insert(this, parent->self);
         }
         else
         {
-            self = controller->entityTree.insert(name, this);
+            self = controller->entityTree.Insert(this);
         }
         controller->entities[self->id] = self;
         /// Set the name again, using the generated id
         name = "Entity[" + Ossium::ToString(self->id) + "]";
-        SetName(name);
     }
 
     Entity* Entity::Clone()
     {
         Entity* entityCopy = new Entity(controller, self->parent != nullptr ? self->parent->data : nullptr);
-        entityCopy->self->name = self->name + " (copy)";
+        entityCopy->name = name + " (copy)";
         for (auto i = components.begin(); i != components.end(); i++)
         {
             vector<BaseComponent*> copiedComponents;
@@ -89,7 +87,7 @@ namespace Ossium
         }
         components.clear();
         /// Clean up all children
-        controller->entityTree.remove(self);
+        controller->entityTree.Remove(self);
         controller->entities.erase(self->id);
     }
 
@@ -108,16 +106,6 @@ namespace Ossium
         return Utilities::ToString(self->id);
     }
 
-    void Entity::SetName(string name)
-    {
-        self->name = name;
-    }
-
-    string Entity::GetName()
-    {
-        return self->name;
-    }
-
     void Entity::MapReference(string ident, void** ptr)
     {
         controller->serialised_pointers[ident].insert(ptr);
@@ -127,7 +115,7 @@ namespace Ossium
     {
         /// Check if this is the root entity, or the parent is the root entity
         /// We can assume self is never null as self is set when the entity is added to the entity tree
-        if (self->parent == nullptr || self->name == "" || self->parent->name == "")
+        if (self->parent == nullptr || name.empty() || self->parent->data->name.empty())
         {
             return nullptr;
         }
@@ -137,15 +125,12 @@ namespace Ossium
         }
     }
 
-    Entity* Entity::Find(string name)
+    Entity* Entity::Find(string targetName, Entity* parent = nullptr)
     {
-        Node<Entity*>* node = controller->entityTree.find(name);
-        return node != nullptr ? node->data : nullptr;
-    }
-
-    Entity* Entity::Find(string name, Entity* parent)
-    {
-        Node<Entity*>* node = controller->entityTree.find(name, parent->self);
+        Node<Entity*>* node = controller->entityTree.Find(
+            [targetName] (Node<Entity*>* n) { return n->data->name == targetName; },
+            parent != nullptr ? parent->self : nullptr
+        );
         return node != nullptr ? node->data : nullptr;
     }
 
@@ -166,7 +151,7 @@ namespace Ossium
         auto entity_itr = data.find("Name");
         if (entity_itr != data.end())
         {
-            SetName(entity_itr->second);
+            name = entity_itr->second;
         }
         else
         {
@@ -239,7 +224,7 @@ namespace Ossium
             }
             json_components[GetComponentName((ComponentType)itr.first)] = Utilities::ToString(component_array);
         }
-        data["Name"] = GetName();
+        data["Name"] = name;
         data["Parent"] = Utilities::ToString(self->parent != nullptr && self->parent->data != nullptr ? self->parent->id : -1);
         data["Components"] = json_components.ToString();
         return data.ToString();
@@ -391,7 +376,7 @@ namespace Ossium
     void EntityComponentSystem::Clear()
     {
         /// Delete all entities
-        vector<Node<Entity*>*>& entities = entityTree.getFlatTree();
+        vector<Node<Entity*>*>& entities = entityTree.GetFlatTree();
         for (auto i = entities.begin(); i != entities.end(); i++)
         {
             if (*i != nullptr && (*i)->data != nullptr)
@@ -402,7 +387,7 @@ namespace Ossium
             }
         }
         /// Now we can safely remove all nodes from the tree and remove all components
-        entityTree.clear();
+        entityTree.Clear();
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             /// No need to delete components as they are deleted when their parent entity is destroyed
@@ -412,7 +397,7 @@ namespace Ossium
 
     unsigned int EntityComponentSystem::GetTotalEntities()
     {
-        return entityTree.size();
+        return entityTree.Size();
     }
 
     string EntityComponentSystem::ToString()

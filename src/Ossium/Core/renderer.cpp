@@ -15,7 +15,7 @@ namespace Ossium
 
         Renderer::Renderer(Window* window, int numLayers, Uint32 flags, int driver)
         {
-            #ifdef DEBUG
+            #ifdef OSSIUM_DEBUG
             SDL_assert(window != NULL);
             #endif // DEBUG
 
@@ -163,12 +163,12 @@ namespace Ossium
                 {
                     (queuedGraphics[layer].front())->Render(*this);
                     queuedGraphics[layer].pop();
-                    #ifdef DEBUG
+                    #ifdef OSSIUM_DEBUG
                     numRendered++;
                     #endif // DEBUG
                 }
             }
-            #ifdef DEBUG
+            #ifdef OSSIUM_DEBUG
             numRenderedPrevious = numRendered;
             numRendered = 0;
             #endif // DEBUG
@@ -320,7 +320,7 @@ namespace Ossium
 
         // GENERAL
 
-        #ifdef DEBUG
+        #ifdef OSSIUM_DEBUG
         int Renderer::GetNumRendered()
         {
             return numRenderedPrevious;

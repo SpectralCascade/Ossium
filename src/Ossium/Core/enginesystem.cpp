@@ -60,7 +60,7 @@ namespace Ossium
                 }
             }
             if (currentEvent.type == SDL_QUIT
-                #ifdef DEBUG
+                #ifdef OSSIUM_DEBUG
                 || (currentEvent.type == SDL_KEYUP && currentEvent.key.keysym.sym == SDLK_ESCAPE)
                 #endif // DEBUG
             ) {

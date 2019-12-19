@@ -8,12 +8,16 @@
 namespace Ossium
 {
 
-    struct Transform2Schema : public Schema<Transform2Schema, 1>
+    struct Transform2Schema : public Schema<Transform2Schema, 2>
     {
     public:
-        DECLARE_BASE_SCHEMA(Transform2Schema, 1);
+        DECLARE_BASE_SCHEMA(Transform2Schema, 2);
+
+        /// Should this transform be tied to the parent transform?
+        M(bool, tieToParent) = false;
 
     protected:
+        /// Local/relative transform to parent.
         M(Transform, trans);
 
     };
@@ -24,13 +28,13 @@ namespace Ossium
         DECLARE_COMPONENT(Transform2);
         CONSTRUCT_SCHEMA(BaseComponent, Transform2Schema);
 
-        /// Get the transform position
+        /// Ref to the local transform position.
         Point& position();
 
-        /// Get the transform orientation
+        /// Ref to the local transform orientation.
         Rotation& rotation();
 
-        /// Get the actual transform
+        /// Ref to the local transform itself.
         Transform& transform();
 
     };

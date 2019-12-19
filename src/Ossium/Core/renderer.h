@@ -113,7 +113,7 @@ namespace Ossium
             /// (if at all). Note that enqueued and registered graphics are removed and unregistered upon calling this method!
             void ReallocateLayers(int numLayers);
 
-            #ifdef DEBUG
+            #ifdef OSSIUM_DEBUG
             /// Returns the number of rendered graphics in the previous frame
             int GetNumRendered();
             #endif // DEBUG
@@ -162,7 +162,7 @@ namespace Ossium
             /// Number of layers this renderer has
             int numLayersActive;
 
-            #ifdef DEBUG
+            #ifdef OSSIUM_DEBUG
             /// Number of graphics rendered in the current frame
             int numRendered;
             /// Number of graphics rendered in the previous frame

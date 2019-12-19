@@ -4,7 +4,7 @@
 
 #include "Ossium.h"
 
-#ifdef DEBUG
+#ifdef OSSIUM_DEBUG
 #include "Ossium/Tests/testmodules.h"
 using namespace Ossium::Test;
 #endif // DEBUG
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        #ifdef DEBUG
+        #ifdef OSSIUM_DEBUG
         if (argc > 1 && strcmp(argv[1], "--run-tests") == 0)
         {
             TEST_RUN(CircularBufferTests);

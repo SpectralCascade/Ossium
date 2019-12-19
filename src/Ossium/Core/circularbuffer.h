@@ -18,7 +18,7 @@ namespace Ossium
             if (length <= 1)
             {
                 Logger::EngineLog().Error("CircularBuffer cannot be initialised with a length of 1 or less!");
-                #ifdef DEBUG
+                #ifdef OSSIUM_DEBUG
                 /// Chucked in the SDL assert as it's useful to have in debug builds
                 SDL_assert(length > 1);
                 #endif // DEBUG
@@ -199,7 +199,7 @@ namespace Ossium
         /// This is based on relative distance from front to back (i.e. index 0 == front)
         const T& operator[](int index)
         {
-            #ifdef DEBUG
+            #ifdef OSSIUM_DEBUG
             SDL_assert(index < max_size);
             SDL_assert(index >= 0);
             #endif // DEBUG
