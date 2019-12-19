@@ -6,6 +6,7 @@
 #include <vector>
 #include <string.h>
 #include <unordered_map>
+#include <unordered_set>
 #include <set>
 #include <algorithm>
 
@@ -77,7 +78,6 @@ namespace Ossium
     class Entity;
     class BaseComponent;
 
-
     template <class T, class dummy = void>
     struct is_component
     {
@@ -113,6 +113,8 @@ namespace Ossium
         ~EntityComponentSystem();
 
         /// Iterates through all components that implement the Update() method and calls it for each one
+        /// Note: as a minor optimisation, rather than calling this you could inherit from this class
+        /// and replace with an override that only calls Update() on component types that use it.
         void UpdateComponents();
 
         /// SFINAE case, where type T is not a valid component type.
@@ -175,6 +177,18 @@ namespace Ossium
         void FromString(string& str);
 
     private:
+        /// Removes the entity from the inactiveEntities set.
+        void SetActive(Entity* entity);
+
+        /// Inserts the entity into the inactiveEntities set.
+        void SetInactive(Entity* entity);
+
+        /// Returns false if the entity is in the inactiveEntities set.
+        bool IsActive(Entity* entity);
+
+        /// All GLOBALLY inactive entities - includes entities that could be locally active.
+        unordered_set<Entity*> inactiveEntities;
+
         /// Vector of pointers to ALL component instances, inside an array ordered by component type.
         /// This is maintained because it's more efficient when updating or rendering lots of components
         /// of a specific type each frame
@@ -357,6 +371,15 @@ namespace Ossium
         /// Ditto but in string form, required by SchemaReferable derived types.
         string GetReferenceID();
 
+        /// Returns true when this entity is active in the scene (i.e. no parents are inactive
+        /// and not inactive locally).
+        bool IsActive();
+        /// Returns true when this entity is active locally, regardless of whether it is active in the scene or not.
+        bool IsActiveLocally();
+
+        /// Sets the local state of this entity to active or inactive.
+        void SetActive(bool activate);
+
         /// This effectively replaces the copy constructor; entities can only be explicitly copied
         Entity* Clone();
 
@@ -391,6 +414,14 @@ namespace Ossium
         Entity(const Entity& copySource) = delete;
         Entity& operator=(const Entity& source) = delete;
 
+        /// Setup active state etc.
+        void OnSceneLoaded();
+
+        /// Set active in the scene
+        void SetActiveInScene();
+        /// Set inactive in the scene
+        void SetInactiveInScene();
+
         /// Hashtable of components attached to this entity by type
         unordered_map<ComponentType, vector<BaseComponent*>> components;
 
@@ -400,15 +431,19 @@ namespace Ossium
         /// Pointer to the node containing this entity
         Node<Entity*>* self;
 
+        /// Is this entity active (locally) in the scene?
+        bool active = true;
+
     };
 
-    struct OSSIUM_EDL ComponentSchema : public Schema<ComponentSchema, 0>
+    struct OSSIUM_EDL ComponentSchema : public Schema<ComponentSchema, 1>
     {
-        DECLARE_BASE_SCHEMA(ComponentSchema, 0);
+        DECLARE_BASE_SCHEMA(ComponentSchema, 1);
 
         ///
         /// Warning: extend max members before adding new members!
         ///
+        M(bool, enabled) = true;
 
     };
 
@@ -428,6 +463,9 @@ namespace Ossium
         virtual Uint32 GetType() = 0;
 
         string GetReferenceID();
+
+        /// Returns true only when enabled and the associated entity is active.
+        bool IsActiveAndEnabled();
 
     protected:
         /// These replace the constructor and destructor.

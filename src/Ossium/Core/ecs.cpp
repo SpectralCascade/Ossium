@@ -56,6 +56,9 @@ namespace Ossium
             }
             entityCopy->components.insert({i->first, copiedComponents});
         }
+        /// Trigger active state setup=
+        entityCopy->OnSceneLoaded();
+
         return entityCopy;
     }
 
@@ -88,6 +91,12 @@ namespace Ossium
         components.clear();
         /// Clean up all children
         controller->entityTree.Remove(self);
+        /// Remove this instance from inactive set and the entities map
+        auto itr = controller->inactiveEntities.find(this);
+        if (itr != controller->inactiveEntities.end())
+        {
+            controller->inactiveEntities.erase(itr);
+        }
         controller->entities.erase(self->id);
     }
 
@@ -104,6 +113,61 @@ namespace Ossium
     string Entity::GetReferenceID()
     {
         return Utilities::ToString(self->id);
+    }
+
+    bool Entity::IsActive()
+    {
+        return controller->IsActive(this);
+    }
+
+    bool Entity::IsActiveLocally()
+    {
+        return active;
+    }
+
+    void Entity::SetActive(bool activate)
+    {
+        /// Only bother setting stuff if there is an actual change.
+        if (active != activate)
+        {
+            active = activate;
+            if (active)
+            {
+                SetActiveInScene();
+            }
+            else
+            {
+                SetInactiveInScene();
+            }
+        }
+    }
+
+    void Entity::SetActiveInScene()
+    {
+        /// If LOCALLY active... otherwise short circuit out,
+        /// we shouldn't set this or it's children active in the scene.
+        if (active)
+        {
+            controller->SetActive(this);
+            for (auto child : self->children)
+            {
+                child->data->SetActiveInScene();
+            }
+        }
+    }
+
+    void Entity::SetInactiveInScene()
+    {
+        /// If LOCALLY active... otherwise short circuit out,
+        /// we must already be inactive in the scene, so no need to go on.
+        if (active)
+        {
+            controller->SetInactive(this);
+            for (auto child : self->children)
+            {
+                child->data->SetInactiveInScene();
+            }
+        }
     }
 
     void Entity::MapReference(string ident, void** ptr)
@@ -144,6 +208,16 @@ namespace Ossium
         self->SetParent(parent != nullptr ? parent->self : nullptr);
     }
 
+    void Entity::OnSceneLoaded()
+    {
+        if (!active)
+        {
+            /// Bypass changes check
+            active = true;
+            SetActive(false);
+        }
+    }
+
     void Entity::FromString(string& str)
     {
         JSON data(str);
@@ -156,6 +230,16 @@ namespace Ossium
         else
         {
             Logger::EngineLog().Error("Failed to get entity name!");
+        }
+
+        entity_itr = data.find("Active");
+        if (entity_itr != data.end())
+        {
+            Utilities::FromString(active, entity_itr->second);
+        }
+        else
+        {
+            Logger::EngineLog().Warning("Failed to get entity active flag!");
         }
 
         entity_itr = data.find("Components");
@@ -225,6 +309,7 @@ namespace Ossium
             json_components[GetComponentName((ComponentType)itr.first)] = Utilities::ToString(component_array);
         }
         data["Name"] = name;
+        data["Active"] = Utilities::ToString(active);
         data["Parent"] = Utilities::ToString(self->parent != nullptr && self->parent->data != nullptr ? self->parent->id : -1);
         data["Components"] = json_components.ToString();
         return data.ToString();
@@ -303,6 +388,11 @@ namespace Ossium
         return string("null");
     }
 
+    bool BaseComponent::IsActiveAndEnabled()
+    {
+        return enabled && entity->IsActive();
+    }
+
     ///
     /// EntityComponentSystem
     ///
@@ -325,8 +415,10 @@ namespace Ossium
         {
             for (auto j = components[i].begin(); j != components[i].end(); j++)
             {
-                /// We shouldn't need to check if the component is null - if it is we have bigger problems!
-                (*j)->Update();
+                if ((*j)->IsActiveAndEnabled())
+                {
+                    (*j)->Update();
+                }
             }
         }
     }
@@ -403,6 +495,25 @@ namespace Ossium
     unsigned int EntityComponentSystem::GetTotalEntities()
     {
         return entityTree.Size();
+    }
+
+    void EntityComponentSystem::SetActive(Entity* entity)
+    {
+        auto itr = inactiveEntities.find(entity);
+        if (itr != inactiveEntities.end())
+        {
+            inactiveEntities.erase(itr);
+        }
+    }
+
+    void EntityComponentSystem::SetInactive(Entity* entity)
+    {
+        inactiveEntities.insert(entity);
+    }
+
+    bool EntityComponentSystem::IsActive(Entity* entity)
+    {
+        return inactiveEntities.find(entity) == inactiveEntities.end();
     }
 
     string EntityComponentSystem::ToString()
@@ -548,6 +659,12 @@ namespace Ossium
         }
         serialised_pointers.clear();
 
+        /// Notify all entities that the scene has finished loading
+        for (auto entityNode : entityTree.GetFlatTree())
+        {
+            entityNode->data->OnSceneLoaded();
+        }
+        /// Notify all components that the scene has finished loading
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
             for (auto component : components[i])
