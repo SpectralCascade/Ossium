@@ -235,6 +235,11 @@ namespace Ossium
         controller->DestroyEntity(this, immediate);
     }
 
+    EntityComponentSystem* Entity::GetECS()
+    {
+        return controller;
+    }
+
     ///
     /// BaseComponent
     ///

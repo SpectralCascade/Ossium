@@ -7,4 +7,5 @@ ossium.cfg
 ossium.depend
 ossium.layout
 bin/Debug/Orkney Regular.ttf
+bin/ossium/libossium.a
 test_output.csv

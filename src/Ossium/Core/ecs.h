@@ -64,7 +64,7 @@ namespace Ossium
 
     /// Constant return type id for a specified component type
     template<class T>
-    ComponentType GetComponentType()
+    const ComponentType GetComponentType()
     {
         return T::__ecs_factory_.GetType();
     }
@@ -77,7 +77,32 @@ namespace Ossium
     class Entity;
     class BaseComponent;
 
-    /// Controls all entities and components at runtime
+
+    template <class T, class dummy = void>
+    struct is_component
+    {
+        typedef BaseComponent type;
+
+        constexpr bool operator()()
+        {
+            return value;
+        }
+        constexpr static bool value = false;
+    };
+
+    template <class T>
+    struct is_component<T, typename enable_if<is_base_of<BaseComponent, T>::value, void>::type>
+    {
+        typedef T type;
+
+        constexpr bool operator()()
+        {
+            return value;
+        }
+        constexpr static bool value = true;
+    };
+
+    /// Controls all entities and components at runtime and has access to engine services.
     class OSSIUM_EDL EntityComponentSystem
     {
     public:
@@ -89,6 +114,30 @@ namespace Ossium
 
         /// Iterates through all components that implement the Update() method and calls it for each one
         void UpdateComponents();
+
+        /// SFINAE case, where type T is not a valid component type.
+        template<typename T>
+        typename enable_if<!is_component<T>::value, void>::type
+        WalkComponents(function<void(T*)> operation)
+        {
+            Logger::EngineLog().Error("Attempted to walk over non-component type with ECS instance!");
+        }
+
+        /// Walks over all components of type T and operates on them.
+        /// O(n) time complexity, where n == number of instances of component type T controlled by this ECS instance.
+        template<typename T>
+        typename enable_if<is_component<T>::value, void>::type
+        WalkComponents(function<void(T*)> operation)
+        {
+            const ComponentType compType = GetComponentType<T>();
+            for (unsigned int i = 0, counti = components[compType].empty() ? 0 : components[compType].size(); i < counti; i++)
+            {
+                for (auto itr : components[compType])
+                {
+                    operation(*itr);
+                }
+            }
+        }
 
         /// Creates a new entity within this system and returns a reference to it.
         Entity* CreateEntity();
@@ -319,6 +368,9 @@ namespace Ossium
         /// Creates a child entity of this entity
         Entity* CreateChild();
 
+        /// Returns a reference to the ECS instance.
+        EntityComponentSystem* GetECS();
+
         /// String conversion methods get/set with the JSON representation of all attached components.
         void FromString(string& str);
         string ToString();
@@ -417,30 +469,6 @@ namespace Ossium
         BaseComponent(const BaseComponent& copySource);
         BaseComponent& operator=(const BaseComponent& copySource) = delete;
 
-    };
-
-    template <class T, class dummy = void>
-    struct is_component
-    {
-        typedef BaseComponent type;
-
-        constexpr bool operator()()
-        {
-            return value;
-        }
-        constexpr static bool value = false;
-    };
-
-    template <class T>
-    struct is_component<T, typename enable_if<is_base_of<BaseComponent, T>::value, void>::type>
-    {
-        typedef T type;
-
-        constexpr bool operator()()
-        {
-            return value;
-        }
-        constexpr static bool value = true;
     };
 
     #define DECLARE_ABSTRACT_COMPONENT(TYPE)                                    \
