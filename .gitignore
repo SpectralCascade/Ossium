@@ -2,6 +2,7 @@
 *.o
 *.dll
 *.exe
+*.a
 ossium.cfg
 ossium.depend
 ossium.layout
