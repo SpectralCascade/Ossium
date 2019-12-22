@@ -1,3 +1,19 @@
+/** COPYRIGHT NOTICE
+ *  
+ *  Ossium Engine
+ *  Copyright (c) 2018-2019 Tim Lane
+ *  
+ *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+ *  
+ *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ *  
+ *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+ *  
+ *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+ *  
+ *  3. This notice may not be removed or altered from any source distribution.
+ *  
+**/
 #ifndef VECTOR_H
 #define VECTOR_H
 
@@ -110,6 +126,11 @@ namespace Ossium
 
     };
 
+    /*inline Rotation operator*(const Rotation& rota, const Rotation& rotb)
+    {
+        return b2Mul(rota, rotb);
+    }*/
+
     /// Forward declarations
     struct Circle;
     struct Ray;
@@ -139,35 +160,6 @@ namespace Ossium
         bool Intersects(Ray ray);
         /// Whether or not this point is intersecting a rect
         bool Intersects(Rect rect);
-
-    };
-
-    struct OSSIUM_EDL Transform : public b2Transform
-    {
-        Transform() = default;
-        Transform(const Vector2& position, const Rotation& rotation) : b2Transform((b2Vec2)position, (b2Rot)rotation) {};
-
-        /// Typically using EVIL_CAST would NOT be acceptable,
-        /// but for this specific use case I deem it acceptable as the Point class
-        /// not only inherits from Vector2 (which in turn inherits from b2Vec2),
-        /// but Point is the same size as b2Vec2 and ALWAYS WILL BE. Of course,
-        /// the argument against this would be that "What if someone wants to add more
-        /// members to Point or Vector2 (or make one of them virtual)!?". To which I answer:
-        /// the person who does that doesn't understand the purpose of the Point struct
-        /// and shouldn't be touching the code in such a case. If they really want to
-        /// add some members, they should just inherit from Point and do their own thing.
-        inline Point& position() { return EVIL_CAST(p, Point); };
-        /// Ditto for the Rotation casting code.
-        inline Rotation& rotation() { return EVIL_CAST(q, Rotation); };
-
-        /// Convert from string
-        void FromString(string data);
-        /// Convert to string
-        string ToString();
-
-    protected:
-        using b2Transform::p;
-        using b2Transform::q;
 
     };
 

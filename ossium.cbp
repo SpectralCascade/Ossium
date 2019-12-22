@@ -193,6 +193,7 @@
 		<Unit filename="src/Ossium/Core/font.h" />
 		<Unit filename="src/Ossium/Core/funcutils.cpp" />
 		<Unit filename="src/Ossium/Core/funcutils.h" />
+		<Unit filename="src/Ossium/Core/getset.h" />
 		<Unit filename="src/Ossium/Core/globalservices.cpp" />
 		<Unit filename="src/Ossium/Core/globalservices.h" />
 		<Unit filename="src/Ossium/Core/helpermacros.h" />
@@ -226,6 +227,7 @@
 		<Unit filename="src/Ossium/Core/schemamodel.h" />
 		<Unit filename="src/Ossium/Core/services.cpp" />
 		<Unit filename="src/Ossium/Core/services.h" />
+		<Unit filename="src/Ossium/Core/slot_map.hpp" />
 		<Unit filename="src/Ossium/Core/staticmanager.h">
 			<Option target="ossiumdll" />
 		</Unit>
