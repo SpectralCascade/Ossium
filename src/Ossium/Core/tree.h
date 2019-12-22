@@ -1,3 +1,19 @@
+/** COPYRIGHT NOTICE
+ *  
+ *  Ossium Engine
+ *  Copyright (c) 2018-2019 Tim Lane
+ *  
+ *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+ *  
+ *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ *  
+ *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+ *  
+ *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+ *  
+ *  3. This notice may not be removed or altered from any source distribution.
+ *  
+**/
 #ifndef TREE_H
 #define TREE_H
 
@@ -175,6 +191,26 @@ namespace Ossium
             flatTree.clear();
         }
 
+        typedef function<void(Node<T>*)> NodeOp;
+
+        /// Depth-first tree traversal
+        void Walk(NodeOp walkFunc)
+        {
+            for (auto child : roots)
+            {
+                RecursiveWalk(walkFunc, child);
+            }
+        }
+
+        /// Overload takes an additional function that is called when walking back up the tree.
+        void Walk(NodeOp walkDown, NodeOp walkUp)
+        {
+            for (auto child : roots)
+            {
+                RecursiveWalk(walkDown, walkUp, child);
+            }
+        }
+
         /// Searches for a node that meets the provided predicate condition.
         Node<T>* Find(FindNodePredicate predicate, Node<T>* source = nullptr)
         {
@@ -342,6 +378,28 @@ namespace Ossium
             {
                 RecursiveFlatten(*i);
             }
+        }
+
+        /// Walks recursively through the tree and operates on all nodes, depth first.
+        void RecursiveWalk(NodeOp& nodeOp, Node<T>* node)
+        {
+            nodeOp(node);
+            for (auto child : node->children)
+            {
+                RecursiveWalk(nodeOp, child);
+            }
+        }
+
+        /// Walks recursively down and operates on all the nodes, depth first,
+        /// but also operates on all the nodes on the walk back up the tree with the second function.
+        void RecursiveWalk(NodeOp& walkDown, NodeOp& walkUp, Node<T>* node)
+        {
+            walkDown(node);
+            for (auto child : node->children)
+            {
+                RecursiveWalk(walkDown, walkUp, child);
+            }
+            walkUp(node);
         }
 
         /// Recursive search method
