@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2019 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <memory>
 #include <string>
@@ -30,7 +30,7 @@ namespace Ossium
     void Texture::Render(Renderer& renderer)
     {
 
-        SDL_Rect dest = GetSDL(WorldPosition());
+        SDL_Rect dest = GetSDL(GetTransform()->GetWorldPosition());
         if (source == nullptr || source->texture == NULL)
         {
             SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
@@ -56,17 +56,17 @@ namespace Ossium
         {
             if (source->outlineTexture != NULL)
             {
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
             }
-            SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
+            SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
         }
         else
         {
             if (source->outlineTexture != NULL)
             {
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
+                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
             }
-            SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, WorldRotation().GetDegrees(), &trueOrigin, flip);
+            SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
         }
     }
 
@@ -222,8 +222,8 @@ namespace Ossium
 
     Point Texture::ScreenToLocalPoint(Point source)
     {
-        source.x = (source.x - WorldPosition().x + (width * 0.5f)) / (width / (float)(clip.w == 0 ? 0 : clip.w));
-        source.y = (source.y - WorldPosition().y + (height * 0.5f)) / (height / (float)(clip.h == 0 ? 0 : clip.h));
+        source.x = (source.x - GetTransform()->GetWorldPosition().x + (width * 0.5f)) / (width / (float)(clip.w == 0 ? 0 : clip.w));
+        source.y = (source.y - GetTransform()->GetWorldPosition().y + (height * 0.5f)) / (height / (float)(clip.h == 0 ? 0 : clip.h));
         return source;
     }
 

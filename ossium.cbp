@@ -227,7 +227,6 @@
 		<Unit filename="src/Ossium/Core/schemamodel.h" />
 		<Unit filename="src/Ossium/Core/services.cpp" />
 		<Unit filename="src/Ossium/Core/services.h" />
-		<Unit filename="src/Ossium/Core/slot_map.hpp" />
 		<Unit filename="src/Ossium/Core/staticmanager.h">
 			<Option target="ossiumdll" />
 		</Unit>
