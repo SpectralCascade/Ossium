@@ -17,7 +17,6 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "property.h"
 #include "coremaths.h"
 #include "ecs.h"
 #include "globalservices.h"
