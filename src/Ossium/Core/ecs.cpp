@@ -40,7 +40,7 @@ namespace Ossium
         return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetId(name);
     }
 
-    Entity::Entity(EntityComponentSystem* entity_system, Entity* parent)
+    Entity::Entity(Scene* entity_system, Entity* parent)
     {
         controller = entity_system;
         if (parent != nullptr)
@@ -266,8 +266,6 @@ namespace Ossium
             for (auto component : components_data)
             {
                 ComponentType compType = 0;
-                /// TODO: map compType to the type id specified in a lookup table within the JSON data
-                /// to ensure component type ids are correct between versions/devices (due to static instantiation order uncertainty).
                 compType = GetComponentType(component.first);
                 if (!TypeSystem::TypeRegistry<BaseComponent>::IsValidType(compType))
                 {
@@ -336,7 +334,7 @@ namespace Ossium
         controller->DestroyEntity(this, immediate);
     }
 
-    EntityComponentSystem* Entity::GetECS()
+    Scene* Entity::GetScene()
     {
         return controller;
     }
@@ -410,15 +408,10 @@ namespace Ossium
     }
 
     ///
-    /// EntityComponentSystem
+    /// Scene
     ///
 
-    int EntityComponentSystem::Init()
-    {
-        return TypeFactory<BaseComponent, ComponentType>::Init();
-    }
-
-    EntityComponentSystem::EntityComponentSystem(ServicesProvider* services)
+    Scene::Scene(ServicesProvider* services)
     {
         if (services == nullptr)
         {
@@ -430,7 +423,7 @@ namespace Ossium
         components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
     }
 
-    void EntityComponentSystem::UpdateComponents()
+    void Scene::UpdateComponents()
     {
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
@@ -444,19 +437,19 @@ namespace Ossium
         }
     }
 
-    Entity* EntityComponentSystem::CreateEntity()
+    Entity* Scene::CreateEntity()
     {
         Entity* created = new Entity(this);
         return created;
     }
 
-    Entity* EntityComponentSystem::CreateEntity(Entity* parent)
+    Entity* Scene::CreateEntity(Entity* parent)
     {
         Entity* created = new Entity(this, parent);
         return created;
     }
 
-    void EntityComponentSystem::DestroyEntity(Entity* entity, bool immediate)
+    void Scene::DestroyEntity(Entity* entity, bool immediate)
     {
         if (entity != nullptr)
         {
@@ -482,7 +475,7 @@ namespace Ossium
         }
     }
 
-    void EntityComponentSystem::DestroyPending()
+    void Scene::DestroyPending()
     {
         for (auto entity : pendingDestruction)
         {
@@ -491,7 +484,7 @@ namespace Ossium
         pendingDestruction.clear();
     }
 
-    void EntityComponentSystem::Clear()
+    void Scene::Clear()
     {
         /// Delete all entities
         vector<Node<Entity*>*>& entities = entityTree.GetFlatTree();
@@ -513,12 +506,12 @@ namespace Ossium
         }
     }
 
-    unsigned int EntityComponentSystem::GetTotalEntities()
+    unsigned int Scene::GetTotalEntities()
     {
         return entityTree.Size();
     }
 
-    void EntityComponentSystem::SetActive(Entity* entity)
+    void Scene::SetActive(Entity* entity)
     {
         auto itr = inactiveEntities.find(entity);
         if (itr != inactiveEntities.end())
@@ -527,17 +520,17 @@ namespace Ossium
         }
     }
 
-    void EntityComponentSystem::SetInactive(Entity* entity)
+    void Scene::SetInactive(Entity* entity)
     {
         inactiveEntities.insert(entity);
     }
 
-    bool EntityComponentSystem::IsActive(Entity* entity)
+    bool Scene::IsActive(Entity* entity)
     {
         return inactiveEntities.find(entity) == inactiveEntities.end();
     }
 
-    string EntityComponentSystem::ToString()
+    string Scene::ToString()
     {
         JSON serialised;
         for (auto mappedEntity : entities)
@@ -551,7 +544,7 @@ namespace Ossium
         return serialised.ToString();
     }
 
-    void EntityComponentSystem::FromString(string& str)
+    void Scene::FromString(string& str)
     {
         /// TODO: don't clear..?
         Clear();
@@ -697,7 +690,7 @@ namespace Ossium
         DEBUG_ASSERT(entities.size() == serialised.size(), "Input entities != created entities!");
     }
 
-    vector<Entity*> EntityComponentSystem::GetRootEntities()
+    vector<Entity*> Scene::GetRootEntities()
     {
         vector<Entity*> roots;
         for (auto node : entityTree.GetRoots())
@@ -707,7 +700,7 @@ namespace Ossium
         return roots;
     }
 
-    EntityComponentSystem::~EntityComponentSystem()
+    Scene::~Scene()
     {
         for (Uint32 i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {

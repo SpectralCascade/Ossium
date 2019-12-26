@@ -51,11 +51,6 @@ namespace Ossium
                                                                                         \
         virtual void MapReference(string identdata, void** member);                     \
                                                                                         \
-        static const Uint32 GetTypeStatic()                                             \
-        {                                                                               \
-            return __ecs_factory_.GetType();                                            \
-        }                                                                               \
-                                                                                        \
         static const bool is_abstract_component = false;                                \
                                                                                         \
         typedef BASETYPE ParentType;                                                    \
@@ -143,17 +138,14 @@ namespace Ossium
     };
 
     /// Controls all entities and components at runtime and has access to engine services.
-    class OSSIUM_EDL EntityComponentSystem
+    class OSSIUM_EDL Scene
     {
     public:
         friend class Ossium::Entity;
 
-        EntityComponentSystem(ServicesProvider* services);
+        Scene(ServicesProvider* services);
 
-        ~EntityComponentSystem();
-
-        /// Initialises the type system such that component inheritance is supported.
-        static int Init();
+        ~Scene();
 
         /// Iterates through all components that implement the Update() method and calls it for each one
         /// Note: as a minor optimisation, rather than calling this you could inherit from this class
@@ -259,7 +251,7 @@ namespace Ossium
     class OSSIUM_EDL Entity : public SchemaReferable
     {
     public:
-        friend class EntityComponentSystem;
+        friend class Scene;
 
         /// Instantiates and attaches a component to this entity.
         template<class T>
@@ -296,7 +288,7 @@ namespace Ossium
             return component;
         }
 
-        /// Destroys and removes first found instance of a component attached to this entity
+        /// Destroys and removes first found instance of a component attached to this entity.
         template<class T>
         void RemoveComponent()
         {
@@ -304,7 +296,7 @@ namespace Ossium
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
                 vector<BaseComponent*>& ecs_components = controller->components[GetComponentType<T>()];
-                /// First, remove the component pointer from the EntityComponentSystem
+                /// First, remove the component pointer from the Scene
                 for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
                 {
                     if (*i == itr->second[0])
@@ -349,23 +341,25 @@ namespace Ossium
         }
 
         /// Returns a vector of pointers to all component instances of a given type
-        /// attached to this entity
+        /// attached to this entity. Also returns derivative type instances!
         template <class T>
         vector<T*> GetComponents()
         {
-            auto itr = components.find(GetComponentType<T>());
-            if (itr != components.end())
+            vector<T*> retComponents;
+            vector<ComponentType> allTypes = GetDerivedComponentTypes<T>();
+            allTypes.insert(allTypes.begin(), GetComponentType<T>());
+            for (ComponentType type : allTypes)
             {
-                vector<T*> retComponents;
-                for (auto i = itr->second.begin(); i != itr->second.end(); i++)
+                auto itr = components.find(type);
+                if (itr != components.end())
                 {
-                    retComponents.push_back(static_cast<T*>(*i));
+                    for (auto i = itr->second.begin(); i != itr->second.end(); i++)
+                    {
+                        retComponents.push_back(static_cast<T*>(*i));
+                    }
                 }
-                return retComponents;
             }
-            // Return an empty vector
-            vector<T*> none;
-            return none;
+            return retComponents;
         }
 
         /// Returns a reference to the Component* array of a specified type.
@@ -449,7 +443,7 @@ namespace Ossium
         Entity* CreateChild();
 
         /// Returns a reference to the ECS instance.
-        EntityComponentSystem* GetECS();
+        Scene* GetScene();
 
         /// String conversion methods get/set with the JSON representation of all attached components.
         void FromString(string& str);
@@ -462,8 +456,8 @@ namespace Ossium
 
     private:
         /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
-        /// or by calling CreateEntity() on an EntityComponentSystem instance
-        Entity(EntityComponentSystem* entity_system, Entity* parent = nullptr);
+        /// or by calling CreateEntity() on an Scene instance
+        Entity(Scene* entity_system, Entity* parent = nullptr);
         ~Entity();
 
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary
@@ -484,7 +478,7 @@ namespace Ossium
         unordered_map<ComponentType, vector<BaseComponent*>> components;
 
         /// Pointer to the system this entity exists in
-        EntityComponentSystem* controller;
+        Scene* controller;
 
         /// Pointer to the node containing this entity
         Node<Entity*>* self;
@@ -513,7 +507,7 @@ namespace Ossium
         CONSTRUCT_SCHEMA(SchemaRoot, ComponentSchema);
 
         friend class Entity;
-        friend class EntityComponentSystem;
+        friend class Scene;
 
         /// Returns a pointer to the entity this component is attached to.
         Entity* GetEntity();
@@ -567,11 +561,6 @@ namespace Ossium
 
         static const bool is_abstract_component = true;
 
-        static const Uint32 GetTypeStatic()
-        {
-            return 0;
-        }
-
     };
 
     #define DECLARE_ABSTRACT_COMPONENT(TYPE)                                    \
@@ -591,11 +580,6 @@ namespace Ossium
             virtual TYPE* Clone() = 0;                                          \
                                                                                 \
             virtual Uint32 GetType() = 0;                                       \
-                                                                                \
-            static const Uint32 GetTypeStatic()                                 \
-            {                                                                   \
-                return 0;                                                       \
-            }                                                                   \
                                                                                 \
             static const bool is_abstract_component = true
 

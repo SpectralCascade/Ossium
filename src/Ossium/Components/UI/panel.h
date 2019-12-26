@@ -17,11 +17,6 @@ namespace Ossium
         M(Vector2, anchorMin) = Vector2(0.5f, 0.5f);
         M(Vector2, anchorMax) = Vector2(0.5f, 0.5f);
 
-    private:
-        /// This is automatically set at runtime after the scene is loaded.
-        /// If null, the panel uses the renderer viewport as the UI space.
-        M(Panel*, parent) = nullptr;
-
     };
 
     class Panel : public Transform, public PanelSchema

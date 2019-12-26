@@ -194,7 +194,6 @@
 		<Unit filename="src/Ossium/Core/font.h" />
 		<Unit filename="src/Ossium/Core/funcutils.cpp" />
 		<Unit filename="src/Ossium/Core/funcutils.h" />
-		<Unit filename="src/Ossium/Core/getset.h" />
 		<Unit filename="src/Ossium/Core/globalservices.cpp" />
 		<Unit filename="src/Ossium/Core/globalservices.h" />
 		<Unit filename="src/Ossium/Core/helpermacros.h" />

@@ -41,7 +41,7 @@ namespace Ossium
         int error = 0;
 
         /// Initialise ECS subsystem
-        if (EntityComponentSystem::Init() < 0)
+        if (TypeFactory<BaseComponent, ComponentType>::Init() < 0)
         {
             Logger::EngineLog().Warning("Failed to initialise ECS subsystem, component inheritance not supported!");
         }
