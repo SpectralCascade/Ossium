@@ -156,6 +156,7 @@
 			<Add directory="Box2D/bin/Release" />
 		</Linker>
 		<Unit filename="src/Ossium.h" />
+		<Unit filename="src/Ossium/Components/UI/panel.h" />
 		<Unit filename="src/Ossium/Components/audioextensions.cpp" />
 		<Unit filename="src/Ossium/Components/audioextensions.h" />
 		<Unit filename="src/Ossium/Components/debugdraw.cpp" />

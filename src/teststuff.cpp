@@ -116,5 +116,8 @@ void MouseFollower::Update()
     int x, y;
     SDL_GetMouseState(&x, &y);
     GetService<Renderer>()->WindowToViewportPoint(x, y);
-    GetTransform()->SetLocalPosition(Point(x, y));
+    if (entity->GetComponent<Transform>() != nullptr)
+    {
+        GetTransform()->SetLocalPosition(Point(x, y));
+    }
 }

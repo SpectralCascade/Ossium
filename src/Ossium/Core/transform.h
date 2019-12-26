@@ -59,7 +59,7 @@ namespace Ossium
         void SetDirty();
 
     public:
-        DECLARE_COMPONENT(Transform);
+        DECLARE_COMPONENT(BaseComponent, Transform);
         CONSTRUCT_SCHEMA(BaseComponent, TransformSchema);
 
         Point GetLocalPosition();

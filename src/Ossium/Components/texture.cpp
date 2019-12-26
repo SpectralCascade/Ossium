@@ -70,10 +70,6 @@ namespace Ossium
         }
     }
 
-    void Texture::Update()
-    {
-    }
-
     void Texture::OnLoadFinish()
     {
         GraphicComponent::OnLoadFinish();

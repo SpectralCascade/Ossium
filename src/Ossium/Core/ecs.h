@@ -39,7 +39,7 @@ namespace Ossium
 
     /// Declares a component type, declares a virtual copy method and constructor
     /// Add this to the end of any class you wish to register as a component
-    #define DECLARE_COMPONENT(TYPE)                                                     \
+    #define DECLARE_COMPONENT(BASETYPE, TYPE)                                           \
     friend class Ossium::Entity;                                                        \
     protected:                                                                          \
         virtual TYPE* Clone();                                                          \
@@ -51,6 +51,17 @@ namespace Ossium
                                                                                         \
         virtual void MapReference(string identdata, void** member);                     \
                                                                                         \
+        static const Uint32 GetTypeStatic()                                             \
+        {                                                                               \
+            return __ecs_factory_.GetType();                                            \
+        }                                                                               \
+                                                                                        \
+        static const bool is_abstract_component = false;                                \
+                                                                                        \
+        typedef BASETYPE ParentType;                                                    \
+                                                                                        \
+        inline static const char* parentTypeName = SID(#BASETYPE)::str;                 \
+                                                                                        \
     private:                                                                            \
         static BaseComponent* ComponentFactory(void* target_entity);                    \
                                                                                         \
@@ -59,24 +70,31 @@ namespace Ossium
         {                                                                               \
             return __ecs_factory_.GetType();                                            \
         }                                                                               \
-        static Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
+        static Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> __ecs_factory_;
 
     /// Adds the component type to the registry by static instantiation and defines a virtual copy method.
-    /// Add this to the class definition of a component that uses DECLARE_COMPONENT
-    #define REGISTER_COMPONENT(TYPE)                                                                    \
-    BaseComponent* TYPE::ComponentFactory(void* target_entity)                                          \
-    {                                                                                                   \
-        return ((Entity*)target_entity)->AddComponent<TYPE>();                                          \
-    }                                                                                                   \
-    void TYPE::MapReference(string identdata, void** member)                                            \
-    {                                                                                                   \
-        entity->MapReference(identdata, member);                                                        \
-    }                                                                                                   \
-    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_(SID( #TYPE )::str, ComponentFactory);  \
-                                                                                                        \
-    TYPE* TYPE::Clone()                                                                                 \
-    {                                                                                                   \
-        return new TYPE(*this);                                                                         \
+    /// Add this to the class definition (.cpp source file) of a component that uses DECLARE_COMPONENT
+    #define REGISTER_COMPONENT(TYPE)                                                                        \
+    BaseComponent* TYPE::ComponentFactory(void* target_entity)                                              \
+    {                                                                                                       \
+        return ((Entity*)target_entity)->AddComponent<TYPE>();                                              \
+    }                                                                                                       \
+    void TYPE::MapReference(string identdata, void** member)                                                \
+    {                                                                                                       \
+        entity->MapReference(identdata, member);                                                            \
+    }                                                                                                       \
+                                                                                                            \
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                    \
+    ParentType::is_abstract_component ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(      \
+        SID( #TYPE )::str, ComponentFactory                                                                 \
+    ) :                                                                                                     \
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                          \
+        SID( #TYPE )::str, ComponentFactory, string(parentTypeName)                                         \
+    );                                                                                                      \
+                                                                                                            \
+    TYPE* TYPE::Clone()                                                                                     \
+    {                                                                                                       \
+        return new TYPE(*this);                                                                             \
     }
 
     /// Constant return type id for a specified component type
@@ -84,6 +102,12 @@ namespace Ossium
     const ComponentType GetComponentType()
     {
         return T::__ecs_factory_.GetType();
+    }
+
+    template<class T>
+    const vector<ComponentType>& GetDerivedComponentTypes()
+    {
+        return T::__ecs_factory_.GetDerivedTypes();
     }
 
     /// Dynamic type checking
@@ -127,6 +151,9 @@ namespace Ossium
         EntityComponentSystem(ServicesProvider* services);
 
         ~EntityComponentSystem();
+
+        /// Initialises the type system such that component inheritance is supported.
+        static int Init();
 
         /// Iterates through all components that implement the Update() method and calls it for each one
         /// Note: as a minor optimisation, rather than calling this you could inherit from this class
@@ -295,8 +322,9 @@ namespace Ossium
             Logger::EngineLog().Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, name);
         }
 
-        /// Returns a pointer the first found instance of a component attached
-        /// to this entity of type T
+        /// Returns a pointer to the first found instance of a component attached
+        /// to this entity of type T. If one is not found, checks for derived types and
+        /// returns a valid pointer if it can find a derived type instance. Otherwise returns nullptr.
         template <class T>
         T* GetComponent()
         {
@@ -304,6 +332,18 @@ namespace Ossium
             if (itr != components.end() && !itr->second.empty())
             {
                 return static_cast<T*>(itr->second[0]);
+            }
+            else
+            {
+                vector<ComponentType> derivedTypes = GetDerivedComponentTypes<T>();
+                for (ComponentType type : derivedTypes)
+                {
+                    itr = components.find(type);
+                    if (itr != components.end() && !itr->second.empty())
+                    {
+                        return static_cast<T*>(itr->second[0]);
+                    }
+                }
             }
             return nullptr;
         }
@@ -525,6 +565,13 @@ namespace Ossium
         BaseComponent(const BaseComponent& copySource);
         BaseComponent& operator=(const BaseComponent& copySource) = delete;
 
+        static const bool is_abstract_component = true;
+
+        static const Uint32 GetTypeStatic()
+        {
+            return 0;
+        }
+
     };
 
     #define DECLARE_ABSTRACT_COMPONENT(TYPE)                                    \
@@ -543,7 +590,14 @@ namespace Ossium
                                                                                 \
             virtual TYPE* Clone() = 0;                                          \
                                                                                 \
-            virtual Uint32 GetType() = 0;
+            virtual Uint32 GetType() = 0;                                       \
+                                                                                \
+            static const Uint32 GetTypeStatic()                                 \
+            {                                                                   \
+                return 0;                                                       \
+            }                                                                   \
+                                                                                \
+            static const bool is_abstract_component = true
 
     #define REGISTER_ABSTRACT_COMPONENT(TYPE, BASETYPE)                 \
         TYPE::TYPE() {}                                                 \
