@@ -1,0 +1,453 @@
+# depslib dependency file v1.0
+1577487415 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
+	"editorview.h"
+
+1577487282 /home/tim/git/Ossium/Editor/src/Components/editorview.h
+	<Ossium.h>
+	"../Core/neurongui.h"
+
+1577462352 /home/tim/git/Ossium/Engine/src/Ossium.h
+	"Core/config.h"
+	"Core/init.h"
+	"Core/time.h"
+	"Core/font.h"
+	"Components/text.h"
+	"Core/window.h"
+	"Core/renderer.h"
+	"Core/audio.h"
+	"Core/colors.h"
+	"Components/statesprite.h"
+	"Core/pixeleffects.h"
+	"Core/csvdata.h"
+	"Core/circularbuffer.h"
+	"Core/curves.h"
+	"Components/inputgui.h"
+	"Core/randutils.h"
+	"Core/physics.h"
+	"Components/debugdraw.h"
+	"Core/enginesystem.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/config.h
+	"schemamodel.h"
+	"stringconvert.h"
+
+1577211640 /home/tim/git/Ossium/Engine/src/Core/schemamodel.h
+	<SDL2/SDL.h>
+	<fstream>
+	"stringintern.h"
+	"funcutils.h"
+	"typefactory.h"
+	"jsondata.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/stringintern.h
+	<cstdio>
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/funcutils.h
+	<string>
+	<functional>
+	<map>
+	"helpermacros.h"
+	"jsondata.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/helpermacros.h
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/jsondata.h
+	<string>
+	<vector>
+	<unordered_map>
+	"helpermacros.h"
+
+1577360697 /home/tim/git/Ossium/Engine/src/Core/typefactory.h
+	<functional>
+	"logging.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/logging.h
+	"stringconvert.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/stringconvert.h
+	<utility>
+	<SDL2/SDL.h>
+	"typeinference.h"
+	"jsondata.h"
+	"funcutils.h"
+
+1577212869 /home/tim/git/Ossium/Engine/src/Core/typeinference.h
+	<sstream>
+	<type_traits>
+	<any>
+	"helpermacros.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/init.h
+	"helpermacros.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/time.h
+	"schemamodel.h"
+
+1577488484 /home/tim/git/Ossium/Engine/src/Core/font.h
+	<string>
+	<map>
+	<SDL2/SDL_ttf.h>
+	"resourcecontroller.h"
+	"../Core/helpermacros.h"
+
+1577483002 /home/tim/git/Ossium/Engine/src/Components/text.h
+	<string>
+	"../Core/font.h"
+	"../Core/renderer.h"
+	"../Core/ecs.h"
+	"texture.h"
+	"../Core/helpermacros.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/renderer.h
+	<vector>
+	<queue>
+	<set>
+	<SDL2/SDL.h>
+	"colors.h"
+	"helpermacros.h"
+	"services.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/colors.h
+	"helpermacros.h"
+	<SDL2/SDL.h>
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/services.h
+	"logging.h"
+	"typefactory.h"
+
+1577369943 /home/tim/git/Ossium/Engine/src/Core/ecs.h
+	<vector>
+	<string.h>
+	<unordered_map>
+	<unordered_set>
+	<set>
+	<algorithm>
+	"tree.h"
+	"stringintern.h"
+	"schemamodel.h"
+	"services.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/tree.h
+	<string>
+	<vector>
+	<unordered_map>
+	<functional>
+	"funcutils.h"
+	"logging.h"
+
+1577230612 /home/tim/git/Ossium/Engine/src/Components/texture.h
+	<string>
+	"../Core/coremaths.h"
+	"../Core/component.h"
+	"../Core/colors.h"
+	"../Core/metarect.h"
+	"../Core/font.h"
+	"../Core/resourcecontroller.h"
+	"../Core/image.h"
+
+1577138993 /home/tim/git/Ossium/Engine/src/Core/coremaths.h
+	<string>
+	<Box2D/Common/b2Math.h>
+	"mathconsts.h"
+	"renderer.h"
+	"helpermacros.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2Math.h
+	"Box2D/Common/b2Settings.h"
+	<math.h>
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2Settings.h
+	<stddef.h>
+	<assert.h>
+	<float.h>
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/mathconsts.h
+
+1577129369 /home/tim/git/Ossium/Engine/src/Core/component.h
+	"transform.h"
+
+1577230489 /home/tim/git/Ossium/Engine/src/Core/transform.h
+	"coremaths.h"
+	"ecs.h"
+	"globalservices.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/globalservices.h
+	"logging.h"
+
+1577183430 /home/tim/git/Ossium/Engine/src/Core/metarect.h
+	<cmath>
+	"schemamodel.h"
+	"coremaths.h"
+	"ecs.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/resourcecontroller.h
+	<string.h>
+	<unordered_map>
+	"stringconvert.h"
+	"stringintern.h"
+	"services.h"
+
+1577482945 /home/tim/git/Ossium/Engine/src/Core/image.h
+	"resourcecontroller.h"
+	"renderer.h"
+	"font.h"
+	"colors.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/window.h
+	<string>
+	<set>
+	<SDL2/SDL.h>
+	"services.h"
+	"callback.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/callback.h
+	<map>
+	<functional>
+	"logging.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/audio.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_mixer.h>
+	<set>
+	<vector>
+	"funcutils.h"
+	"delta.h"
+	"resourcecontroller.h"
+	"schemamodel.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/delta.h
+	"jsondata.h"
+
+1577230578 /home/tim/git/Ossium/Engine/src/Components/statesprite.h
+	<map>
+	<utility>
+	<string>
+	"../Components/texture.h"
+	"../Core/resourcecontroller.h"
+	"../Core/renderer.h"
+	"../Core/schemamodel.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/pixeleffects.h
+	<SDL2/SDL.h>
+	"helpermacros.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/csvdata.h
+	<string>
+	<vector>
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/circularbuffer.h
+	<algorithm>
+	"funcutils.h"
+	"logging.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/curves.h
+	"helpermacros.h"
+
+1577230553 /home/tim/git/Ossium/Engine/src/Components/inputgui.h
+	"../Core/input.h"
+	"../Core/keyboard.h"
+	"../Core/mouse.h"
+	"../Core/stringintern.h"
+	"../Core/component.h"
+	"../Core/callback.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/input.h
+	<unordered_map>
+	<vector>
+	<functional>
+	<SDL2/SDL.h>
+	"funcutils.h"
+	"helpermacros.h"
+	"services.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/keyboard.h
+	"input.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/mouse.h
+	"input.h"
+	"coremaths.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/randutils.h
+	<functional>
+	<random>
+	"coremaths.h"
+
+1577026973 /home/tim/git/Ossium/Engine/src/Core/physics.h
+	<Box2D/Box2D.h>
+	<functional>
+	"coremaths.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Box2D.h
+	"Box2D/Common/b2Settings.h"
+	"Box2D/Common/b2Draw.h"
+	"Box2D/Common/b2Timer.h"
+	"Box2D/Collision/Shapes/b2CircleShape.h"
+	"Box2D/Collision/Shapes/b2EdgeShape.h"
+	"Box2D/Collision/Shapes/b2ChainShape.h"
+	"Box2D/Collision/Shapes/b2PolygonShape.h"
+	"Box2D/Collision/b2BroadPhase.h"
+	"Box2D/Collision/b2Distance.h"
+	"Box2D/Collision/b2DynamicTree.h"
+	"Box2D/Collision/b2TimeOfImpact.h"
+	"Box2D/Dynamics/b2Body.h"
+	"Box2D/Dynamics/b2Fixture.h"
+	"Box2D/Dynamics/b2WorldCallbacks.h"
+	"Box2D/Dynamics/b2TimeStep.h"
+	"Box2D/Dynamics/b2World.h"
+	"Box2D/Dynamics/Contacts/b2Contact.h"
+	"Box2D/Dynamics/Joints/b2DistanceJoint.h"
+	"Box2D/Dynamics/Joints/b2FrictionJoint.h"
+	"Box2D/Dynamics/Joints/b2GearJoint.h"
+	"Box2D/Dynamics/Joints/b2MotorJoint.h"
+	"Box2D/Dynamics/Joints/b2MouseJoint.h"
+	"Box2D/Dynamics/Joints/b2PrismaticJoint.h"
+	"Box2D/Dynamics/Joints/b2PulleyJoint.h"
+	"Box2D/Dynamics/Joints/b2RevoluteJoint.h"
+	"Box2D/Dynamics/Joints/b2RopeJoint.h"
+	"Box2D/Dynamics/Joints/b2WeldJoint.h"
+	"Box2D/Dynamics/Joints/b2WheelJoint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2Draw.h
+	"Box2D/Common/b2Math.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2Timer.h
+	"Box2D/Common/b2Settings.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/Shapes/b2CircleShape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/Shapes/b2Shape.h
+	"Box2D/Common/b2BlockAllocator.h"
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/b2Collision.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2BlockAllocator.h
+	"Box2D/Common/b2Settings.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/b2Collision.h
+	"Box2D/Common/b2Math.h"
+	<limits.h>
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/Shapes/b2EdgeShape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/Shapes/b2ChainShape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/Shapes/b2PolygonShape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/b2BroadPhase.h
+	"Box2D/Common/b2Settings.h"
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Collision/b2DynamicTree.h"
+	<algorithm>
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/b2DynamicTree.h
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Common/b2GrowableStack.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2GrowableStack.h
+	"Box2D/Common/b2Settings.h"
+	<string.h>
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/b2Distance.h
+	"Box2D/Common/b2Math.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Collision/b2TimeOfImpact.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/b2Distance.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/b2Body.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/Shapes/b2Shape.h"
+	<memory>
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/b2Fixture.h
+	"Box2D/Dynamics/b2Body.h"
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/b2WorldCallbacks.h
+	"Box2D/Common/b2Settings.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/b2TimeStep.h
+	"Box2D/Common/b2Math.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/b2World.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Common/b2BlockAllocator.h"
+	"Box2D/Common/b2StackAllocator.h"
+	"Box2D/Dynamics/b2ContactManager.h"
+	"Box2D/Dynamics/b2WorldCallbacks.h"
+	"Box2D/Dynamics/b2TimeStep.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Common/b2StackAllocator.h
+	"Box2D/Common/b2Settings.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/b2ContactManager.h
+	"Box2D/Collision/b2BroadPhase.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Contacts/b2Contact.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Collision/Shapes/b2Shape.h"
+	"Box2D/Dynamics/b2Fixture.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2DistanceJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2Joint.h
+	"Box2D/Common/b2Math.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2FrictionJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2GearJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2MotorJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2MouseJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2RopeJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2WeldJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2WheelJoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1577230544 /home/tim/git/Ossium/Engine/src/Components/debugdraw.h
+	<Box2D/Common/b2Draw.h>
+	"../Core/stringintern.h"
+	"text.h"
+
+1577369733 /home/tim/git/Ossium/Engine/src/Core/enginesystem.h
+	"input.h"
+	"delta.h"
+	"component.h"
+
+1577489277 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
+	<stack>
+	<Ossium.h>
+
+1577488974 source:/home/tim/git/Ossium/Editor/src/main.cpp
+	<Ossium.h>
+	"Components/editorview.h"
+
+1577487826 source:/home/tim/git/Ossium/Editor/src/Core/neurongui.cpp
+	"neurongui.h"
+

@@ -71,7 +71,6 @@ namespace Ossium
                     /// Initialise the Audio channel subsystem
                     Audio::Internals::ChannelController::_Instance().Init(50);
 
-                    #ifdef _SDL_TTF_H
                     if (TTF_Init() == -1)
                     {
                         SDL_LogError(SDL_LOG_CATEGORY_ERROR, TTF_GetError());
@@ -81,7 +80,6 @@ namespace Ossium
                     {
                         Logger::EngineLog().Info("Initialised OSSIUM ENGINE successfully!");
                     }
-                    #endif // _SDL_TTF_H
                 }
             }
         }

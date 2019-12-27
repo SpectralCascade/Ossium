@@ -107,6 +107,11 @@
 			<Add option="-Wall" />
 			<Add option="-std=c++1z" />
 		</Compiler>
+		<Unit filename="src/Components/editorview.cpp" />
+		<Unit filename="src/Components/editorview.h" />
+		<Unit filename="src/Core/editorlayout.h" />
+		<Unit filename="src/Core/neurongui.cpp" />
+		<Unit filename="src/Core/neurongui.h" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />

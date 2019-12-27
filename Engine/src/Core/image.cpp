@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2019 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 extern "C"
 {
@@ -269,6 +269,53 @@ namespace Ossium
     bool Image::Initialised()
     {
         return texture != NULL;
+    }
+
+    void Image::Render(
+        SDL_Renderer* renderer,
+        SDL_Rect dest,
+        SDL_Rect* clip,
+        SDL_Point* origin,
+        double rotation,
+        SDL_Color modulation,
+        SDL_BlendMode blending,
+        SDL_RendererFlip flip)
+    {
+        if (texture == NULL)
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 100, 255, 255);
+            SDL_RenderFillRect(renderer, &dest);
+            return;
+        }
+
+        if (outlineTexture != NULL)
+        {
+            SDL_SetTextureBlendMode(outlineTexture, blending);
+            SDL_SetTextureColorMod(outlineTexture, modulation.r, modulation.g, modulation.b);
+            SDL_SetTextureAlphaMod(outlineTexture, modulation.a);
+        }
+
+        SDL_SetTextureBlendMode(texture, blending);
+        SDL_SetTextureColorMod(texture, modulation.r, modulation.g, modulation.b);
+        SDL_SetTextureAlphaMod(texture, modulation.a);
+
+        /// Rendering time!
+        if (clip && clip->w > 0 && clip->h > 0)
+        {
+            if (outlineTexture != NULL)
+            {
+                SDL_RenderCopyEx(renderer, outlineTexture, clip, &dest, rotation, origin, flip);
+            }
+            SDL_RenderCopyEx(renderer, texture, clip, &dest, rotation, origin, flip);
+        }
+        else
+        {
+            if (outlineTexture != NULL)
+            {
+                SDL_RenderCopyEx(renderer, outlineTexture, NULL, &dest, rotation, origin, flip);
+            }
+            SDL_RenderCopyEx(renderer, texture, NULL, &dest, rotation, origin, flip);
+        }
     }
 
     int Image::GetWidth()
