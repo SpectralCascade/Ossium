@@ -32,8 +32,6 @@ namespace Ossium::Editor
         /// The native OS window.
         Window* native = nullptr;
 
-
-
         /// Initialises the window.
         //void OnLoadFinish();
 

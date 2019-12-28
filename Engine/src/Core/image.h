@@ -17,6 +17,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include "schemamodel.h"
 #include "resourcecontroller.h"
 #include "renderer.h"
 #include "font.h"
@@ -31,6 +32,33 @@ namespace Ossium
         RENDERTEXT_SHADED,
         RENDERTEXT_BLEND,
         RENDERTEXT_BLEND_WRAPPED
+    };
+
+    struct TextStyle : public Schema<TextStyle, 9>
+    {
+        DECLARE_BASE_SCHEMA(TextStyle, 9);
+
+        TextStyle(
+            string font = "",
+            int fontSize = 12,
+            SDL_Color color = Colors::BLACK,
+            int hint = 0,
+            int kern = 0,
+            int outlineThickness = 0,
+            int styling = 0,
+            int renderingMode = RENDERTEXT_BLEND,
+            SDL_Color backgroundColor = Colors::TRANSPARENT
+        );
+
+        M(string, fontPath);
+        M(int, ptsize) = 12;
+        M(SDL_Color, fg) = Colors::BLACK;
+        M(int, hinting) = 0;
+        M(int, kerning) = 0;
+        M(int, outline) = 0;
+        M(int, style) = 0;
+        M(int, rendermode) = RENDERTEXT_SOLID;
+        M(SDL_Color, bg) = Colors::TRANSPARENT;
     };
 
     /// Forward declarations
@@ -71,6 +99,8 @@ namespace Ossium
             SDL_Color bgColor = Colors::BLACK,
             Uint32 wrapLength = 0
         );
+
+        bool CreateFromText(Renderer& renderer, Font& fontToUse, string text, const TextStyle& style, Uint32 wrapLength);
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
         /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.

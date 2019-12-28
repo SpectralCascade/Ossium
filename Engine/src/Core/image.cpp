@@ -24,6 +24,20 @@ extern "C"
 namespace Ossium
 {
 
+    TextStyle::TextStyle(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
+        int styling, int renderingMode, SDL_Color backgroundColor)
+    {
+        fontPath = font;
+        ptsize = fontSize;
+        fg = color;
+        hinting = hint;
+        kerning = kern;
+        outline = outlineThickness;
+        style = styling;
+        rendermode = renderingMode;
+        bg = backgroundColor;
+    }
+
     REGISTER_RESOURCE(Image);
 
     /// No values or references are copied by default. You have to call Clone() to make a deep copy.
@@ -86,6 +100,11 @@ namespace Ossium
             pathname = guid_path;
         }
         return tempSurface != NULL;
+    }
+
+    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength)
+    {
+        return CreateFromText(renderer, font, text, style.ptsize, style.fg, style.hinting, style.kerning, style.outline, style.style, style.rendermode, style.bg, wrapLength);
     }
 
     bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)

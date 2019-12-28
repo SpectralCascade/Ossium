@@ -24,20 +24,6 @@
 namespace Ossium
 {
 
-    TextFormat::TextFormat(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
-        int styling, int renderingMode, SDL_Color backgroundColor)
-    {
-        fontPath = font;
-        ptsize = fontSize;
-        fg = color;
-        hinting = hint;
-        kerning = kern;
-        outline = outlineThickness;
-        style = styling;
-        rendermode = renderingMode;
-        bg = backgroundColor;
-    }
-
     REGISTER_COMPONENT(Text);
 
     void Text::OnClone()

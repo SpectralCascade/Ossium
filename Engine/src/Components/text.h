@@ -30,33 +30,6 @@ using namespace std;
 namespace Ossium
 {
 
-    struct TextFormat : public Schema<TextFormat, 9>
-    {
-        DECLARE_BASE_SCHEMA(TextFormat, 9);
-
-        TextFormat(
-            string font = "",
-            int fontSize = 12,
-            SDL_Color color = Colors::BLACK,
-            int hint = 0,
-            int kern = 0,
-            int outlineThickness = 0,
-            int styling = 0,
-            int renderingMode = RENDERTEXT_BLEND,
-            SDL_Color backgroundColor = Colors::TRANSPARENT
-        );
-
-        M(string, fontPath);
-        M(int, ptsize) = 12;
-        M(SDL_Color, fg) = Colors::BLACK;
-        M(int, hinting) = 0;
-        M(int, kerning) = 0;
-        M(int, outline) = 0;
-        M(int, style) = 0;
-        M(int, rendermode) = RENDERTEXT_SOLID;
-        M(SDL_Color, bg) = Colors::TRANSPARENT;
-    };
-
     class OSSIUM_EDL Text : public Texture
     {
     public:

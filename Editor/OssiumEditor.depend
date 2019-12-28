@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1577562453 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
+1577574403 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
 	"editorview.h"
 
-1577568387 /home/tim/git/Ossium/Editor/src/Components/editorview.h
+1577570802 /home/tim/git/Ossium/Editor/src/Components/editorview.h
 	<Ossium.h>
 	"../Core/neurongui.h"
 
@@ -90,7 +90,7 @@
 	"resourcecontroller.h"
 	"../Core/helpermacros.h"
 
-1577562251 /home/tim/git/Ossium/Engine/src/Components/text.h
+1577573577 /home/tim/git/Ossium/Engine/src/Components/text.h
 	<string>
 	"../Core/font.h"
 	"../Core/renderer.h"
@@ -187,7 +187,8 @@
 	"stringintern.h"
 	"services.h"
 
-1577560864 /home/tim/git/Ossium/Engine/src/Core/image.h
+1577573682 /home/tim/git/Ossium/Engine/src/Core/image.h
+	"schemamodel.h"
 	"resourcecontroller.h"
 	"renderer.h"
 	"font.h"
@@ -440,14 +441,14 @@
 	"delta.h"
 	"component.h"
 
-1577568487 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
+1577573981 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
 	<stack>
 	<Ossium.h>
 
-1577568925 source:/home/tim/git/Ossium/Editor/src/main.cpp
+1577574249 source:/home/tim/git/Ossium/Editor/src/main.cpp
 	<Ossium.h>
 	"Components/editorview.h"
 
-1577568853 source:/home/tim/git/Ossium/Editor/src/Core/neurongui.cpp
+1577574096 source:/home/tim/git/Ossium/Editor/src/Core/neurongui.cpp
 	"neurongui.h"
 

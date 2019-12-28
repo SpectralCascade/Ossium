@@ -16,8 +16,20 @@ namespace Ossium::Editor
         NEURON_LAYOUT_VERTICAL = 1
     };
 
+    struct NeuronSkinSchema : public Schema<NeuronSkinSchema, 20>
+    {
+        DECLARE_BASE_SCHEMA(NeuronSkinSchema, 20);
+
+        // Default text styles, used when no text style is specified.
+        M(TextStyle, styleLabel);
+        M(TextStyle, styleTextField);
+        M(TextStyle, styleDropdownText);
+        M(TextStyle, styleButtonText);
+    };
+
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
-    class NeuronGUI : public TextFormat
+    // TODO: don't inherit TextFormat!!!!!!!!!!!!!!!!!!!!! instead maybe setup layout options member in personal schema
+    class NeuronGUI : public NeuronSkinSchema
     {
     private:
         /// Used to determine how GUI elements are positioned.
@@ -35,7 +47,7 @@ namespace Ossium::Editor
         ResourceController* resources = nullptr;
 
     public:
-        CONSTRUCT_SCHEMA(SchemaRoot, TextFormat);
+        CONSTRUCT_SCHEMA(SchemaRoot, NeuronSkinSchema);
 
         /// Requires a renderer instance to enqueue graphics, an input context for input and access to resources.
         /// TODO: make an empty default constructor that is safe to use
@@ -73,15 +85,18 @@ namespace Ossium::Editor
 
         /// Displays some text.
         void TextLabel(string text);
+        void TextLabel(string text, const TextStyle& style);
 
         /// Takes text input and displays it. Returns the current string input.
         string TextField(string text);
+        string TextField(string text, const TextStyle& style, SDL_Color bg = Colors::WHITE, SDL_Color outlineColor = Colors::BLACK, SDL_Color cursorColor = Colors::BLACK);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
-        bool Button(string buttonText = "Button");
+        bool Button(string text);
+        bool Button(string text, const TextStyle& style);
 
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
-        bool Toggle(bool toggleValue, string labelText = "");
+        bool Toggle(bool toggleValue);
 
         /// Displays a drop-down list of items when clicked. Returns the selected item.
         /*template<typename T>

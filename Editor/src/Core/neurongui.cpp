@@ -12,9 +12,14 @@ namespace Ossium::Editor
         resources = resourceController;
 
         // Set default font and text formatting
-        fontPath = "../assets/Orkney Regular.ttf";
-        rendermode = RENDERTEXT_BLEND_WRAPPED;
-        ptsize = 14;
+        // TODO: set these inline???
+        styleLabel.fontPath = "../assets/Orkney Regular.ttf";
+        styleLabel.rendermode = RENDERTEXT_BLEND_WRAPPED;
+        styleLabel.ptsize = 14;
+
+        styleTextField = styleLabel;
+        styleDropdownText = styleLabel;
+        styleButtonText = styleLabel;
 
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
@@ -97,12 +102,17 @@ namespace Ossium::Editor
 
     void NeuronGUI::TextLabel(string text)
     {
+        TextLabel(text, styleLabel);
+    }
+
+    void NeuronGUI::TextLabel(string text, const TextStyle& style)
+    {
         if (IsVisible())
         {
             // Create the texture from scratch
             Image texture;
-            int fontSizes[2] = {1, ptsize};
-            texture.CreateFromText(*renderer, *resources->Get<Font>(fontPath, fontSizes), text, ptsize, fg, hinting, kerning, outline, style, rendermode, bg, (Uint32)renderer->GetWidth());
+            int fontSizes[2] = {1, style.ptsize};
+            texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
 
             // Set the destination rect
             SDL_Rect dest;
@@ -121,17 +131,51 @@ namespace Ossium::Editor
 
     string NeuronGUI::TextField(string text)
     {
-        // TODO
+        return TextField(text, styleTextField);
     }
 
-    bool NeuronGUI::Button(string buttonText)
+    string NeuronGUI::TextField(string text, const TextStyle& style, SDL_Color bg, SDL_Color outlineColor, SDL_Color cursorColor)
     {
-        // TODO
+        if (IsVisible())
+        {
+            // TODO: text field input
+            text += "|";
+
+            Image texture;
+            int fontSizes[2] = {1, style.ptsize};
+            texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
+
+            // Set the destination rect
+            SDL_Rect dest;
+            dest.x = GetLayoutPosition().x;
+            dest.y = GetLayoutPosition().y;
+            dest.w = texture.GetWidth();
+            dest.h = texture.GetHeight();
+
+            // Render the texture
+            texture.Render(renderer->GetRendererSDL(), dest);
+
+            // Move along
+            Move(GetLayoutDirection() ? dest.h : dest.w);
+        }
+        return text;
     }
 
-    bool NeuronGUI::Toggle(bool toggleValue, string labelText)
+    bool NeuronGUI::Button(string text)
+    {
+        return Button(text, styleButtonText);
+    }
+
+    bool NeuronGUI::Button(string text, const TextStyle& style)
     {
         // TODO
+        return false;
+    }
+
+    bool NeuronGUI::Toggle(bool toggleValue)
+    {
+        // TODO
+        return false;
     }
 
 }
