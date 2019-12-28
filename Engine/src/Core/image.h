@@ -29,7 +29,8 @@ namespace Ossium
     {
         RENDERTEXT_SOLID = 0,
         RENDERTEXT_SHADED,
-        RENDERTEXT_BLEND
+        RENDERTEXT_BLEND,
+        RENDERTEXT_BLEND_WRAPPED
     };
 
     /// Forward declarations
@@ -56,8 +57,20 @@ namespace Ossium
         bool Load(string guid_path);
 
         /// Creates an image with a text string
-        bool CreateFromText(Renderer& renderer, Font& fontToUse, string text, int pointSize = 12, SDL_Color color = Colors::RED,
-                            int hinting = 0, int kerning = 0, int outline = 0, int style = 0, int renderMode = 0, SDL_Color bgColor = Colors::BLACK);
+        bool CreateFromText(
+            Renderer& renderer,
+            Font& fontToUse,
+            string text,
+            int pointSize = 12,
+            SDL_Color color = Colors::RED,
+            int hinting = 0,
+            int kerning = 0,
+            int outline = 0,
+            int style = 0,
+            int renderMode = 0,
+            SDL_Color bgColor = Colors::BLACK,
+            Uint32 wrapLength = 0
+        );
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
         /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.

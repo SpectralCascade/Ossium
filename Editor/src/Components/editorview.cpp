@@ -9,7 +9,7 @@ namespace Ossium::Editor
 
         TextLabel("Testing...");
         TextLabel("----------");
-        TextLabel("I hope this works...");
+        TextLabel("I hope this works... haha ha hahahah hah ah aa ha ha hah ha h hah ha ha ahha ha hhahahahahaha ah ah ha hahahhaha ahah hahaha haha");
         TextLabel(":D");
     }
 

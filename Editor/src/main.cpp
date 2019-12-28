@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     if (InitialiseOssium() >= 0)
     {
         // Setup main window
-        Window window("Ossium Editor");
+        Window window("Ossium Editor", 640, 480, false, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
 
         // Setup services
         Renderer renderer(&window);

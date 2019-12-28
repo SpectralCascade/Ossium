@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2019 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <queue>
 #include <algorithm>
@@ -255,52 +255,70 @@ namespace Ossium
             int height = windowCaller.GetHeight();
             int display_width = windowCaller.GetDisplayWidth();
             int display_height = windowCaller.GetDisplayHeight();
-            if (windowCaller.IsFullscreen())
+
+            if (aspect_width > 0 && aspect_height > 0)
             {
-                percent_width = (float)display_width / (float)aspect_width;
-                percent_height = (float)display_height / (float)aspect_height;
+                if (windowCaller.IsFullscreen())
+                {
+                    percent_width = (float)display_width / (float)aspect_width;
+                    percent_height = (float)display_height / (float)aspect_height;
+                }
+                else
+                {
+                    percent_width = (float)width / (float)aspect_width;
+                    percent_height = (float)height / (float)aspect_height;
+                }
+                /// Get the smallest percent and use that to scale dimensions
+                float smallest_percent;
+                if (percent_width < percent_height)
+                {
+                    smallest_percent = percent_width;
+                }
+                else
+                {
+                    smallest_percent = percent_height;
+                }
+                if (fixed_aspect)
+                {
+                    smallest_percent = Clamp(smallest_percent, 0.0f, 1.0f);
+                }
+                viewRect.h = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_height : (float)display_height));
+                viewRect.w = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_width : (float)display_width));
+
+                /// Calculate viewport anchor position
+                int deltaw = (width - viewRect.w);
+                int deltah = (height - viewRect.h);
+                if (deltaw > 0)
+                {
+                    viewRect.x = deltaw / 2;
+                }
+                else
+                {
+                    viewRect.x = 0;
+                }
+                if (deltah > 0)
+                {
+                    viewRect.y = deltah / 2;
+                }
+                else
+                {
+                    viewRect.y = 0;
+                }
             }
             else
             {
-                percent_width = (float)width / (float)aspect_width;
-                percent_height = (float)height / (float)aspect_height;
-            }
-            /// Get the smallest percent and use that to scale dimensions
-            float smallest_percent;
-            if (percent_width < percent_height)
-            {
-                smallest_percent = percent_width;
-            }
-            else
-            {
-                smallest_percent = percent_height;
-            }
-            if (fixed_aspect)
-            {
-                smallest_percent = Clamp(smallest_percent, 0.0f, 1.0f);
-            }
-            viewRect.h = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_height : (float)display_height));
-            viewRect.w = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_width : (float)display_width));
-            /// Calculate viewport anchor position
-            int deltaw = (width - viewRect.w);
-            int deltah = (height - viewRect.h);
-            if (deltaw > 0)
-            {
-                viewRect.x = deltaw / 2;
-            }
-            else
-            {
+                /// No aspect ratio is set
                 viewRect.x = 0;
-            }
-            if (deltah > 0)
-            {
-                viewRect.y = deltah / 2;
-            }
-            else
-            {
                 viewRect.y = 0;
+                viewRect.w = windowCaller.GetWidth();
+                viewRect.h = windowCaller.GetHeight();
             }
-            SDL_RenderSetViewport(renderer, &viewRect);
+
+            if (SDL_RenderSetViewport(renderer, &viewRect) < 0)
+            {
+                Logger::EngineLog().Error("Failed to set viewport! SDL_Error: {0}", SDL_GetError());
+            }
+
             viewportRect = viewRect;
         }
 

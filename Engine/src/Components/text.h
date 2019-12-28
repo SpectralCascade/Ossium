@@ -42,7 +42,7 @@ namespace Ossium
             int kern = 0,
             int outlineThickness = 0,
             int styling = 0,
-            int renderingMode = RENDERTEXT_SOLID,
+            int renderingMode = RENDERTEXT_BLEND,
             SDL_Color backgroundColor = Colors::TRANSPARENT
         );
 

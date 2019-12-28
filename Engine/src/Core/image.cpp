@@ -88,7 +88,7 @@ namespace Ossium
         return tempSurface != NULL;
     }
 
-    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor)
+    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
     {
         if (pointSize <= 0)
         {
@@ -122,12 +122,17 @@ namespace Ossium
             {
                 case RENDERTEXT_BLEND:
                 {
-                    tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), bgColor);
+                    tempSurface = TTF_RenderUTF8_Blended(actualFont, text.c_str(), bgColor);
+                    break;
+                }
+                case RENDERTEXT_BLEND_WRAPPED:
+                {
+                    tempSurface = TTF_RenderUTF8_Blended_Wrapped(actualFont, text.c_str(), bgColor, wrapLength);
                     break;
                 }
                 default:
                 {
-                    tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), bgColor);
+                    tempSurface = TTF_RenderUTF8_Solid(actualFont, text.c_str(), bgColor);
                     break;
                 }
             }
@@ -153,24 +158,24 @@ namespace Ossium
         TTF_SetFontOutline(actualFont, 0);
         switch (renderMode)
         {
-            case RENDERTEXT_SOLID:
-            {
-                tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), color);
-                break;
-            }
             case RENDERTEXT_SHADED:
             {
-                tempSurface = TTF_RenderText_Shaded(actualFont, text.c_str(), color, bgColor);
+                tempSurface = TTF_RenderUTF8_Shaded(actualFont, text.c_str(), color, bgColor);
                 break;
             }
             case RENDERTEXT_BLEND:
             {
-                tempSurface = TTF_RenderText_Blended(actualFont, text.c_str(), color);
+                tempSurface = TTF_RenderUTF8_Blended(actualFont, text.c_str(), color);
+                break;
+            }
+            case RENDERTEXT_BLEND_WRAPPED:
+            {
+                tempSurface = TTF_RenderUTF8_Blended_Wrapped(actualFont, text.c_str(), color, wrapLength);
                 break;
             }
             default:
             {
-                tempSurface = TTF_RenderText_Solid(actualFont, text.c_str(), color);
+                tempSurface = TTF_RenderUTF8_Solid(actualFont, text.c_str(), color);
                 break;
             }
         }

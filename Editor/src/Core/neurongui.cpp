@@ -10,9 +10,12 @@ namespace Ossium::Editor
         renderer = render;
         input = inputContext;
         resources = resourceController;
-        // Set default font
-        ptsize = 24;
+
+        // Set default font and text formatting
         fontPath = "../assets/Orkney Regular.ttf";
+        rendermode = RENDERTEXT_BLEND_WRAPPED;
+        ptsize = 14;
+
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
         // The default direction is vertical
@@ -98,7 +101,8 @@ namespace Ossium::Editor
         {
             // Create the texture from scratch
             Image texture;
-            texture.CreateFromText(*renderer, *resources->Get<Font>(fontPath), text, ptsize, fg, hinting, kerning, outline, style, rendermode, bg);
+            int fontSizes[2] = {1, ptsize};
+            texture.CreateFromText(*renderer, *resources->Get<Font>(fontPath, fontSizes), text, ptsize, fg, hinting, kerning, outline, style, rendermode, bg, (Uint32)renderer->GetWidth());
 
             // Set the destination rect
             SDL_Rect dest;
@@ -111,7 +115,7 @@ namespace Ossium::Editor
             texture.Render(renderer->GetRendererSDL(), dest);
 
             // Move along
-            Move(dest.h + 4);
+            Move(GetLayoutDirection() ? dest.h : dest.w);
         }
     }
 
