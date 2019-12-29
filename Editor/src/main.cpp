@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
         //EngineSystem engine(&services);
 
         EditorWindow view(&renderer, &mainContext, &resources);
+        //view.OnGUI();
 
         SDL_Event currentEvent;
 
@@ -52,13 +53,6 @@ int main(int argc, char* argv[])
                 input.HandleEvent(currentEvent);
             }
 
-            SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 255, 255, 255);
-            SDL_RenderClear(renderer.GetRendererSDL());
-
-            view.OnGUI();
-
-            SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 255, 255, 255);
-            SDL_RenderPresent(renderer.GetRendererSDL());
         }
 
     }

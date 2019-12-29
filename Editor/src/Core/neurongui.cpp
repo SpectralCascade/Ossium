@@ -5,6 +5,141 @@ using namespace Ossium;
 namespace Ossium::Editor
 {
 
+    //
+    // NeuronClickableStyle
+    //
+
+    NeuronClickableStyle::NeuronClickableStyle(SDL_Color bodyColor, TextStyle textStyle)
+    {
+        normalColor = bodyColor - 35;
+        hoverColor = bodyColor;
+        clickColor = normalColor - 40;
+        normalTextStyle = textStyle;
+        hoverTextStyle = textStyle;
+        clickTextStyle = textStyle;
+        bottomEdgeColor = Colors::BLACK;
+        rightEdgeColor = Colors::BLACK;
+        topEdgeColor = Colors::WHITE;
+        leftEdgeColor = Colors::WHITE;
+    }
+
+    NeuronClickableStyle::NeuronClickableStyle(SDL_Color bodyColor, TextStyle textStyle, SDL_Color outlineColor)
+    {
+        normalColor = bodyColor - 35;
+        hoverColor = bodyColor;
+        clickColor = normalColor - 40;
+        normalTextStyle = textStyle;
+        hoverTextStyle = textStyle;
+        clickTextStyle = textStyle;
+        bottomEdgeColor = outlineColor;
+        rightEdgeColor = outlineColor;
+        topEdgeColor = outlineColor;
+        leftEdgeColor = outlineColor;
+    }
+
+    NeuronClickableStyle::NeuronClickableStyle(
+        SDL_Color bodyColor, TextStyle textStyle, SDL_Color endEdgeColors, SDL_Color sideEdgeColors)
+    {
+        normalColor = bodyColor - 35;
+        hoverColor = bodyColor;
+        clickColor = normalColor - 40;
+        normalTextStyle = textStyle;
+        hoverTextStyle = textStyle;
+        clickTextStyle = textStyle;
+        bottomEdgeColor = endEdgeColors;
+        rightEdgeColor = sideEdgeColors;
+        topEdgeColor = endEdgeColors;
+        leftEdgeColor = sideEdgeColors;
+    }
+
+    NeuronClickableStyle::NeuronClickableStyle(
+        SDL_Color bodyColor,
+        TextStyle textStyle,
+        SDL_Color topColor,
+        SDL_Color bottomColor,
+        SDL_Color leftColor,
+        SDL_Color rightColor)
+    {
+        normalColor = bodyColor - 35;
+        hoverColor = bodyColor;
+        clickColor = normalColor - 40;
+        normalTextStyle = textStyle;
+        hoverTextStyle = textStyle;
+        clickTextStyle = textStyle;
+        bottomEdgeColor = bottomColor;
+        rightEdgeColor = rightColor;
+        topEdgeColor = topColor;
+        leftEdgeColor = leftColor;
+    }
+
+    NeuronClickableStyle::NeuronClickableStyle(
+        SDL_Color bodyNormal,
+        SDL_Color bodyHover,
+        SDL_Color bodyClick,
+        TextStyle textNormal,
+        TextStyle textHover,
+        TextStyle textClick,
+        SDL_Color topColor,
+        SDL_Color bottomColor,
+        SDL_Color leftColor,
+        SDL_Color rightColor)
+    {
+        normalColor = bodyNormal;
+        hoverColor = bodyHover;
+        clickColor = bodyClick;
+        normalTextStyle = textNormal;
+        hoverTextStyle = textHover;
+        clickTextStyle = textClick;
+        bottomEdgeColor = bottomColor;
+        rightEdgeColor = rightColor;
+        topEdgeColor = topColor;
+        leftEdgeColor = leftColor;
+    }
+
+    namespace NeuronStyles
+    {
+        TextStyle NEURON_TEXT_NORMAL_STYLE = TextStyle(
+            "../assets/Orkney Regular.ttf",
+            14,
+            Colors::BLACK,
+            0,
+            0,
+            0,
+            0,
+            RENDERTEXT_BLEND_WRAPPED
+        );
+        TextStyle NEURON_TEXT_INVERSE_STYLE = TextStyle(
+            "../assets/Orkney Regular.ttf",
+            14,
+            Colors::WHITE,
+            0,
+            0,
+            0,
+            0,
+            RENDERTEXT_BLEND_WRAPPED
+        );
+        NeuronClickableStyle NEURON_BUTTON_STYLE = NeuronClickableStyle(
+            Color(0, 255, 255),
+            NEURON_TEXT_NORMAL_STYLE
+        );
+        NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE = NeuronClickableStyle(
+            Color(0, 220, 220),
+            Color(0, 200, 0),
+            Color(0, 200, 0),
+            NEURON_TEXT_NORMAL_STYLE,
+            NEURON_TEXT_INVERSE_STYLE,
+            NEURON_TEXT_INVERSE_STYLE,
+            Colors::TRANSPARENT,
+            Colors::TRANSPARENT,
+            Colors::TRANSPARENT,
+            Colors::TRANSPARENT
+        );
+    }
+
+    //
+    // NeuronGUI
+    //
+
     NeuronGUI::NeuronGUI(Renderer* render, InputContext* inputContext, ResourceController* resourceController)
     {
         renderer = render;
@@ -34,7 +169,10 @@ namespace Ossium::Editor
 
     void NeuronGUI::Refresh()
     {
+        SDL_RenderClear(renderer->GetRendererSDL());
         OnGUI();
+        renderer->SetDrawColor(Color(200, 200, 200));
+        SDL_RenderPresent(renderer->GetRendererSDL());
     }
 
     void NeuronGUI::Begin()
@@ -124,7 +262,7 @@ namespace Ossium::Editor
         TextLabel(text, styleLabel);
     }
 
-    void NeuronGUI::TextLabel(string text, const TextStyle& style)
+    void NeuronGUI::TextLabel(string text, TextStyle style)
     {
         if (IsVisible())
         {
@@ -153,7 +291,7 @@ namespace Ossium::Editor
         return TextField(text, styleTextField);
     }
 
-    string NeuronGUI::TextField(string text, const TextStyle& style, SDL_Color bg, SDL_Color outlineColor, SDL_Color cursorColor)
+    string NeuronGUI::TextField(string text, TextStyle style, SDL_Color bg, SDL_Color outlineColor, SDL_Color cursorColor)
     {
         if (IsVisible())
         {
@@ -180,54 +318,66 @@ namespace Ossium::Editor
         return text;
     }
 
-    bool NeuronGUI::Button(string text)
+    bool NeuronGUI::Button(string text, int xpadding, int ypadding)
     {
-        return Button(text, styleButtonText);
+        return Button(text, NeuronStyles::NEURON_BUTTON_STYLE, xpadding, ypadding);
     }
 
-    bool NeuronGUI::Button(string text, const TextStyle& style)
+    bool NeuronGUI::Button(string text, NeuronClickableStyle style, int xpadding, int ypadding)
     {
         if (IsVisible())
         {
             MouseHandler* mouse = input->GetHandler<MouseHandler>();
 
+            // TODO: support other text styles for hover and click?
+            TextStyle textStyle = style.normalTextStyle;
+
             // Create the texture from scratch
             Image texture;
-            int fontSizes[2] = {1, style.ptsize};
-            texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
+            int fontSizes[2] = {1, textStyle.ptsize};
+            texture.CreateFromText(*renderer, *resources->Get<Font>(textStyle.fontPath, fontSizes), text, textStyle, (Uint32)renderer->GetWidth());
 
             // Set the destination rect
             SDL_Rect dest;
-            dest.x = GetLayoutPosition().x + 2;
-            dest.y = GetLayoutPosition().y + 2;
+            dest.x = GetLayoutPosition().x + (xpadding / 2);
+            dest.y = GetLayoutPosition().y + (ypadding / 2);
             dest.w = texture.GetWidth();
             dest.h = texture.GetHeight();
 
-            Rect buttonDest = Rect(dest.x - 2, dest.y - 2, dest.w + 4, dest.h + 4);
+            Rect buttonDest = Rect(dest.x - (xpadding / 2), dest.y - (ypadding / 2), dest.w + xpadding, dest.h + ypadding);
 
             Vector2 mpos = mouse->GetMousePosition();
+            bool hovered = buttonDest.Contains(mpos);
+            bool pressed = mouse->LeftPressed();
+
+            SDL_Color buttonColour = hovered ?
+                (pressed ?
+                    style.clickColor : // Pressed colour
+                    style.hoverColor   // Hovered colour
+                ) : style.normalColor; // Not hovered colour
 
             // Render the button
             // TODO: generate nicer buttons and pass styling arguments
-            buttonDest.DrawFilled(
-                *renderer,
-                buttonDest.Contains(mpos) ?
-                    (mouse->LeftPressed() ?
-                        Color(0, 180, 180) : // Pressed colour
-                        Color(0, 255, 255)   // Hovered colour
-                    ) : Color(0, 220, 220)  // Not hovered colour
-            );
-
-            // Button outline
-            buttonDest.Draw(*renderer, Colors::BLACK);
+            buttonDest.DrawFilled(*renderer, buttonColour);
 
             // Render the text
             texture.Render(renderer->GetRendererSDL(), dest);
 
-            // Move along
-            Move(GetLayoutDirection() ? dest.h : dest.w);
+            // Button outline
+            Line line(Vector2(buttonDest.x, buttonDest.y), Vector2(buttonDest.x + buttonDest.w, buttonDest.y));
+            line.Draw(*renderer, pressed && hovered ? style.bottomEdgeColor : style.topEdgeColor);
+            line.b = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
+            line.Draw(*renderer, pressed && hovered ? style.rightEdgeColor : style.leftEdgeColor);
+            line.a.x += buttonDest.w;
+            line.b.x = line.a.x;
+            line.Draw(*renderer, pressed && hovered ? style.leftEdgeColor : style.rightEdgeColor);
+            line.a = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
+            line.Draw(*renderer, pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
 
-            return buttonDest.Contains(mpos) && DidClick(mpos);
+            // Move along
+            Move(GetLayoutDirection() ? buttonDest.h + 1 : buttonDest.w + 1);
+
+            return hovered && DidClick(mpos);
         }
         return false;
     }

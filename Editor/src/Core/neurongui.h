@@ -27,6 +27,72 @@ namespace Ossium::Editor
         M(TextStyle, styleButtonText);
     };
 
+    struct NeuronClickableStyle : public Schema<NeuronClickableStyle, 10>
+    {
+        DECLARE_BASE_SCHEMA(NeuronClickableStyle, 10);
+
+        NeuronClickableStyle(
+            SDL_Color bodyColor,
+            TextStyle textStyle
+        );
+
+        NeuronClickableStyle(
+            SDL_Color bodyColor,
+            TextStyle textStyle,
+            SDL_Color outlineColor
+        );
+
+        NeuronClickableStyle(
+            SDL_Color bodyColor,
+            TextStyle textStyle,
+            SDL_Color endEdgeColors,
+            SDL_Color sideEdgeColors
+        );
+
+        NeuronClickableStyle(
+            SDL_Color bodyColor,
+            TextStyle textStyle,
+            SDL_Color topColor,
+            SDL_Color bottomColor,
+            SDL_Color leftColor,
+            SDL_Color rightColor
+        );
+
+        NeuronClickableStyle(
+            SDL_Color bodyNormal,
+            SDL_Color bodyHover,
+            SDL_Color bodyClick,
+            TextStyle textNormal,
+            TextStyle textHover,
+            TextStyle textClick,
+            SDL_Color topColor,
+            SDL_Color bottomColor,
+            SDL_Color leftColor,
+            SDL_Color rightColor
+        );
+
+        M(SDL_Color, normalColor);
+        M(SDL_Color, hoverColor);
+        M(SDL_Color, clickColor);
+
+        M(TextStyle, normalTextStyle);
+        M(TextStyle, hoverTextStyle);
+        M(TextStyle, clickTextStyle);
+
+        M(SDL_Color, topEdgeColor);
+        M(SDL_Color, bottomEdgeColor);
+        M(SDL_Color, leftEdgeColor);
+        M(SDL_Color, rightEdgeColor);
+    };
+
+    namespace NeuronStyles
+    {
+        extern TextStyle NEURON_TEXT_NORMAL_STYLE;
+        extern TextStyle NEURON_TEXT_INVERSE_STYLE;
+        extern NeuronClickableStyle NEURON_BUTTON_STYLE;
+        extern NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE;
+    }
+
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
     // TODO: don't inherit TextFormat!!!!!!!!!!!!!!!!!!!!! instead maybe setup layout options member in personal schema
     class NeuronGUI : public NeuronSkinSchema
@@ -97,15 +163,15 @@ namespace Ossium::Editor
 
         /// Displays some text.
         void TextLabel(string text);
-        void TextLabel(string text, const TextStyle& style);
+        void TextLabel(string text, TextStyle style);
 
         /// Takes text input and displays it. Returns the current string input.
         string TextField(string text);
-        string TextField(string text, const TextStyle& style, SDL_Color bg = Colors::WHITE, SDL_Color outlineColor = Colors::BLACK, SDL_Color cursorColor = Colors::BLACK);
+        string TextField(string text, TextStyle style, SDL_Color bg = Colors::WHITE, SDL_Color outlineColor = Colors::BLACK, SDL_Color cursorColor = Colors::BLACK);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
-        bool Button(string text);
-        bool Button(string text, const TextStyle& style);
+        bool Button(string text, int xpadding = 4, int ypadding = 4);
+        bool Button(string text, NeuronClickableStyle style, int xpadding = 4, int ypadding = 4);
 
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
         bool Toggle(bool toggleValue);

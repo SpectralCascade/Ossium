@@ -14,9 +14,13 @@ namespace Ossium::Editor
 
         TextField("Testing input...");
 
-        if (Button("cool button"))
+        if (Button("cool button", 40))
         {
             Logger::EngineLog().Info("Neuron button clicked!");
+        }
+        if (Button("wow", 100, 20))
+        {
+            Logger::EngineLog().Info("Wowzas");
         }
 
     }

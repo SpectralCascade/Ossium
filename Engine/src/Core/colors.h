@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2019 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef COLORS_H
 #define COLORS_H
@@ -51,12 +51,25 @@ namespace Ossium
     /// Converts raw pixel data into an SDL_Colour. Effectively the opposite of the SDL_MapRGBA() function
     OSSIUM_EDL SDL_Color ConvertToColor(Uint32 pixel, SDL_PixelFormat* pixelFormat);
 
+    SDL_Color operator-(SDL_Color color, int brightness);
+    SDL_Color operator+(SDL_Color color, int brightness);
+
     ///
     /// Convenience functions
     ///
 
     /// Returns an SDL_Color from raw values
     OSSIUM_EDL SDL_Color Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
+    /// Ditto, but const.
+    OSSIUM_EDL SDL_Color constexpr ColorConst(const Uint8 r, const Uint8 g, const Uint8 b)
+    {
+        return {r, g, b, 0xFF};
+    }
+    /// Ditto, but with custom alpha value.
+    OSSIUM_EDL SDL_Color constexpr ColorConst(const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
+    {
+        return {r, g, b, a};
+    }
     /// Returns an SDL_Color from a 24 bit hex code
     OSSIUM_EDL SDL_Color Color(HexCode rgb);
 
