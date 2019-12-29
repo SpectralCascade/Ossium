@@ -13,6 +13,12 @@ namespace Ossium::Editor
         TextLabel(":D");
 
         TextField("Testing input...");
+
+        if (Button("cool button"))
+        {
+            Logger::EngineLog().Info("Neuron button clicked!");
+        }
+
     }
 
 }

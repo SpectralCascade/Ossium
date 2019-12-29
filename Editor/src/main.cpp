@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
         ResourceController resources;
         InputController input;
         InputContext mainContext;
+        input.AddContext("main", &mainContext);
 
         ServicesProvider services(&renderer, &resources, &input);
 

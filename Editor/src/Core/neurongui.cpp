@@ -21,10 +21,20 @@ namespace Ossium::Editor
         styleDropdownText = styleLabel;
         styleButtonText = styleLabel;
 
+        // Refresh whenever the mouse interacts.
+        input->GetHandler<MouseHandler>()->AddBindlessAction(
+            [&] (const MouseInput& m) { this->Refresh(); return ActionOutcome::Ignore; }
+        );
+
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
         // The default direction is vertical
         layoutDirection.push(NEURON_LAYOUT_VERTICAL);
+    }
+
+    void NeuronGUI::Refresh()
+    {
+        OnGUI();
     }
 
     void NeuronGUI::Begin()
@@ -35,6 +45,15 @@ namespace Ossium::Editor
             layoutDirection.pop();
         }
         layoutStack.top() = Vector2(0, 0);
+    }
+
+    bool NeuronGUI::DidClick(Vector2 pos)
+    {
+        bool didClick = mousePressed;
+        mousePressed = input->GetHandler<MouseHandler>()->LeftPressed();
+        Vector2 oldPos = lastMousePos;
+        lastMousePos = pos;
+        return didClick && !mousePressed && pos == oldPos;
     }
 
     void NeuronGUI::BeginLayout(int direction)
@@ -168,7 +187,48 @@ namespace Ossium::Editor
 
     bool NeuronGUI::Button(string text, const TextStyle& style)
     {
-        // TODO
+        if (IsVisible())
+        {
+            MouseHandler* mouse = input->GetHandler<MouseHandler>();
+
+            // Create the texture from scratch
+            Image texture;
+            int fontSizes[2] = {1, style.ptsize};
+            texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
+
+            // Set the destination rect
+            SDL_Rect dest;
+            dest.x = GetLayoutPosition().x + 2;
+            dest.y = GetLayoutPosition().y + 2;
+            dest.w = texture.GetWidth();
+            dest.h = texture.GetHeight();
+
+            Rect buttonDest = Rect(dest.x - 2, dest.y - 2, dest.w + 4, dest.h + 4);
+
+            Vector2 mpos = mouse->GetMousePosition();
+
+            // Render the button
+            // TODO: generate nicer buttons and pass styling arguments
+            buttonDest.DrawFilled(
+                *renderer,
+                buttonDest.Contains(mpos) ?
+                    (mouse->LeftPressed() ?
+                        Color(0, 180, 180) : // Pressed colour
+                        Color(0, 255, 255)   // Hovered colour
+                    ) : Color(0, 220, 220)  // Not hovered colour
+            );
+
+            // Button outline
+            buttonDest.Draw(*renderer, Colors::BLACK);
+
+            // Render the text
+            texture.Render(renderer->GetRendererSDL(), dest);
+
+            // Move along
+            Move(GetLayoutDirection() ? dest.h : dest.w);
+
+            return buttonDest.Contains(mpos) && DidClick(mpos);
+        }
         return false;
     }
 

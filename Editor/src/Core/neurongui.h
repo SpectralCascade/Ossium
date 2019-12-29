@@ -41,6 +41,9 @@ namespace Ossium::Editor
         /// The current scrolled position of the GUI view.
         Vector2 scrollPos = Vector2(0, 0);
 
+        Vector2 lastMousePos = Vector2(0, 0);
+        bool mousePressed = false;
+
     protected:
         Renderer* renderer = nullptr;
         InputContext* input = nullptr;
@@ -53,13 +56,22 @@ namespace Ossium::Editor
         /// TODO: make an empty default constructor that is safe to use
         NeuronGUI(Renderer* render, InputContext* inputContext, ResourceController* resourceController);
 
+        /// Reloads the GUI.
+        void Refresh();
+
     private:
         void BeginLayout(int direction);
         void EndLayout();
 
     protected:
-        /// Resets layout
+        /// Returns true if the mouse position has not changed between pressing the left button and releasing it.
+        bool DidClick(Vector2 pos);
+
+        /// Resets the layout.
         void Begin();
+
+        /// Abstract method that should contain all GUI logic.
+        virtual void OnGUI() = 0;
 
         /// Returns false if the current UI layout position is off screen.
         bool IsVisible();
