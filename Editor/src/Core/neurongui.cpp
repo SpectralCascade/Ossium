@@ -100,7 +100,7 @@ namespace Ossium::Editor
     {
         TextStyle NEURON_TEXT_NORMAL_STYLE = TextStyle(
             "../assets/Orkney Regular.ttf",
-            14,
+            12,
             Colors::BLACK,
             0,
             0,
@@ -110,7 +110,7 @@ namespace Ossium::Editor
         );
         TextStyle NEURON_TEXT_INVERSE_STYLE = TextStyle(
             "../assets/Orkney Regular.ttf",
-            14,
+            12,
             Colors::WHITE,
             0,
             0,
@@ -121,6 +121,18 @@ namespace Ossium::Editor
         NeuronClickableStyle NEURON_BUTTON_STYLE = NeuronClickableStyle(
             Color(0, 255, 255),
             NEURON_TEXT_NORMAL_STYLE
+        );
+        NeuronClickableStyle NEURON_TEXTFIELD_STYLE = NeuronClickableStyle(
+            Color(205, 205, 205) - 40,
+            Color(205, 205, 205),
+            Color(205, 205, 205),
+            NEURON_TEXT_NORMAL_STYLE,
+            NEURON_TEXT_NORMAL_STYLE,
+            NEURON_TEXT_NORMAL_STYLE,
+            Colors::BLACK,
+            Colors::WHITE,
+            Colors::BLACK,
+            Colors::WHITE
         );
         NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE = NeuronClickableStyle(
             Color(0, 220, 220),
@@ -133,6 +145,14 @@ namespace Ossium::Editor
             Colors::TRANSPARENT,
             Colors::TRANSPARENT,
             Colors::TRANSPARENT
+        );
+        NeuronClickableStyle NEURON_CHECKBOX_STYLE = NeuronClickableStyle(
+            Colors::WHITE,
+            NEURON_TEXT_NORMAL_STYLE,
+            Colors::BLACK,
+            Colors::WHITE,
+            Colors::BLACK,
+            Colors::WHITE
         );
     }
 
@@ -150,7 +170,7 @@ namespace Ossium::Editor
         // TODO: set these inline???
         styleLabel.fontPath = "../assets/Orkney Regular.ttf";
         styleLabel.rendermode = RENDERTEXT_BLEND_WRAPPED;
-        styleLabel.ptsize = 14;
+        styleLabel.ptsize = 12;
 
         styleTextField = styleLabel;
         styleDropdownText = styleLabel;
@@ -165,6 +185,8 @@ namespace Ossium::Editor
         layoutStack.push(Vector2(0, 0));
         // The default direction is vertical
         layoutDirection.push(NEURON_LAYOUT_VERTICAL);
+        // No difference at root as the layout can't be ended manually
+        layoutDifference.push(0);
     }
 
     void NeuronGUI::Refresh()
@@ -182,6 +204,15 @@ namespace Ossium::Editor
             layoutStack.pop();
             layoutDirection.pop();
         }
+        if (layoutDifference.size() > 1)
+        {
+            // TODO: log warning once, the dev has probably forgotten to call EndHorizontal or EndVertical at some point.
+            while (layoutDifference.size() > 1)
+            {
+                layoutDifference.pop();
+            }
+            layoutDifference.top() = 0;
+        }
         layoutStack.top() = Vector2(0, 0);
     }
 
@@ -198,6 +229,7 @@ namespace Ossium::Editor
     {
         layoutStack.push(GetLayoutPosition());
         layoutDirection.push(direction);
+        layoutDifference.push(0);
     }
 
     void NeuronGUI::EndLayout()
@@ -207,6 +239,24 @@ namespace Ossium::Editor
             layoutStack.pop();
             layoutDirection.pop();
         }
+        if (layoutDifference.size() > 1)
+        {
+            Vector2 moveAmount;
+            if (GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL)
+            {
+                moveAmount = Vector2(layoutDifference.top(), 0.0f);
+            }
+            else
+            {
+                moveAmount = Vector2(0.0f, layoutDifference.top());
+            }
+            layoutDifference.pop();
+            Move(moveAmount);
+        }
+        else
+        {
+            // Log warning once, attempted to EndHorizontal or EndVertical to many times
+        }
     }
 
     bool NeuronGUI::IsVisible()
@@ -214,17 +264,23 @@ namespace Ossium::Editor
         return GetLayoutPosition().x < renderer->GetWidth() + scrollPos.x && GetLayoutPosition().y < renderer->GetHeight() + scrollPos.y;
     }
 
-    void NeuronGUI::Move(float amount)
+    void NeuronGUI::Move(Vector2 amount)
     {
-        amount = max(0.0f, amount);
         if (GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL)
         {
-            layoutStack.top().x += amount;
+            layoutStack.top().x += max(0.0f, amount.x);
+            layoutDifference.top() = max(layoutDifference.top(), amount.y);
         }
         else
         {
-            layoutStack.top().y += amount;
+            layoutStack.top().y += max(0.0f, amount.y);
+            layoutDifference.top() = max(layoutDifference.top(), amount.x);
         }
+    }
+
+    void NeuronGUI::Space(float amount)
+    {
+        Move(GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL ? Vector2(amount, 0.0f) : Vector2(0.0f, amount));
     }
 
     Vector2 NeuronGUI::GetLayoutPosition()
@@ -282,48 +338,36 @@ namespace Ossium::Editor
             texture.Render(renderer->GetRendererSDL(), dest);
 
             // Move along
-            Move(GetLayoutDirection() ? dest.h : dest.w);
+            Move(Vector2(dest.w, dest.h));
         }
     }
 
     string NeuronGUI::TextField(string text)
     {
-        return TextField(text, styleTextField);
+        return TextField(text, NeuronStyles::NEURON_TEXTFIELD_STYLE);
     }
 
-    string NeuronGUI::TextField(string text, TextStyle style, SDL_Color bg, SDL_Color outlineColor, SDL_Color cursorColor)
+    string NeuronGUI::TextField(string text, NeuronClickableStyle style, SDL_Color cursorColor)
     {
         if (IsVisible())
         {
-            // TODO: text field input
             text += "|";
 
-            Image texture;
-            int fontSizes[2] = {1, style.ptsize};
-            texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
+            if (Button(text, style, false))
+            {
+                // Start text input
+            }
 
-            // Set the destination rect
-            SDL_Rect dest;
-            dest.x = GetLayoutPosition().x;
-            dest.y = GetLayoutPosition().y;
-            dest.w = texture.GetWidth();
-            dest.h = texture.GetHeight();
-
-            // Render the texture
-            texture.Render(renderer->GetRendererSDL(), dest);
-
-            // Move along
-            Move(GetLayoutDirection() ? dest.h : dest.w);
         }
         return text;
     }
 
-    bool NeuronGUI::Button(string text, int xpadding, int ypadding)
+    bool NeuronGUI::Button(string text, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
     {
-        return Button(text, NeuronStyles::NEURON_BUTTON_STYLE, xpadding, ypadding);
+        return Button(text, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding);
     }
 
-    bool NeuronGUI::Button(string text, NeuronClickableStyle style, int xpadding, int ypadding)
+    bool NeuronGUI::Button(string text, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
     {
         if (IsVisible())
         {
@@ -365,27 +409,47 @@ namespace Ossium::Editor
 
             // Button outline
             Line line(Vector2(buttonDest.x, buttonDest.y), Vector2(buttonDest.x + buttonDest.w, buttonDest.y));
-            line.Draw(*renderer, pressed && hovered ? style.bottomEdgeColor : style.topEdgeColor);
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.bottomEdgeColor : style.topEdgeColor);
             line.b = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
-            line.Draw(*renderer, pressed && hovered ? style.rightEdgeColor : style.leftEdgeColor);
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.rightEdgeColor : style.leftEdgeColor);
             line.a.x += buttonDest.w;
             line.b.x = line.a.x;
-            line.Draw(*renderer, pressed && hovered ? style.leftEdgeColor : style.rightEdgeColor);
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.leftEdgeColor : style.rightEdgeColor);
             line.a = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
-            line.Draw(*renderer, pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
 
             // Move along
-            Move(GetLayoutDirection() ? buttonDest.h + 1 : buttonDest.w + 1);
+            Move(Vector2(buttonDest.w + 1, buttonDest.h + 1));
 
             return hovered && DidClick(mpos);
         }
         return false;
     }
 
-    bool NeuronGUI::Toggle(bool toggleValue)
+    bool NeuronGUI::Toggle(bool toggleValue, SDL_Color checkColor)
     {
-        // TODO
-        return false;
+        return Toggle(toggleValue, NeuronStyles::NEURON_CHECKBOX_STYLE, Vector2(12, 12), checkColor);
+    }
+
+    bool NeuronGUI::Toggle(bool toggleValue, NeuronClickableStyle style, Vector2 boxSize, SDL_Color checkColor)
+    {
+        Vector2 rootPos = GetLayoutPosition();
+        // Checkbox button
+        if (Button("", style, false, (Uint32)boxSize.x, (Uint32)boxSize.y))
+        {
+            toggleValue = !toggleValue;
+        }
+
+        if (toggleValue)
+        {
+            // Do tick
+            Line line(rootPos + Vector2(boxSize.x / 4, boxSize.y / 2), rootPos + Vector2(boxSize.x / 2, (boxSize.y / 6) * 5));
+            line.Draw(*renderer, checkColor);
+            line.a = Vector2(Vector2((boxSize.x / 4) * 3, boxSize.y / 6)) + rootPos;
+            line.Draw(*renderer, checkColor);
+        }
+
+        return toggleValue;
     }
 
 }

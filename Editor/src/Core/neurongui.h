@@ -91,6 +91,8 @@ namespace Ossium::Editor
         extern TextStyle NEURON_TEXT_INVERSE_STYLE;
         extern NeuronClickableStyle NEURON_BUTTON_STYLE;
         extern NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE;
+        extern NeuronClickableStyle NEURON_TEXTFIELD_STYLE;
+        extern NeuronClickableStyle NEURON_CHECKBOX_STYLE;
     }
 
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
@@ -103,6 +105,9 @@ namespace Ossium::Editor
 
         /// Used to determine whether elements should be positioned vertically or horizontally.
         stack<bool> layoutDirection;
+
+        /// Used to determine how much to move after completing a horizontal or vertical layout group.
+        stack<float> layoutDifference;
 
         /// The current scrolled position of the GUI view.
         Vector2 scrollPos = Vector2(0, 0);
@@ -143,7 +148,11 @@ namespace Ossium::Editor
         bool IsVisible();
 
         /// Increases the current position along x (if horizontal) or y (if vertical). Negative values are clamped to 0.
-        void Move(float amount);
+        /// You should provide the full size on both x and y of the layout element you define.
+        void Move(Vector2 amount);
+
+        /// Similar to Move, but just adds space along the current layout direction.
+        void Space(float amount);
 
         /// Returns the current position.
         Vector2 GetLayoutPosition();
@@ -167,14 +176,15 @@ namespace Ossium::Editor
 
         /// Takes text input and displays it. Returns the current string input.
         string TextField(string text);
-        string TextField(string text, TextStyle style, SDL_Color bg = Colors::WHITE, SDL_Color outlineColor = Colors::BLACK, SDL_Color cursorColor = Colors::BLACK);
+        string TextField(string text, NeuronClickableStyle style, SDL_Color cursorColor = Colors::BLACK);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
-        bool Button(string text, int xpadding = 4, int ypadding = 4);
-        bool Button(string text, NeuronClickableStyle style, int xpadding = 4, int ypadding = 4);
+        bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
+        bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
 
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
-        bool Toggle(bool toggleValue);
+        bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
+        bool Toggle(bool toggleValue, NeuronClickableStyle style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
 
         /// Displays a drop-down list of items when clicked. Returns the selected item.
         /*template<typename T>

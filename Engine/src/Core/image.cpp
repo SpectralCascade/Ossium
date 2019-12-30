@@ -165,12 +165,21 @@ namespace Ossium
                 tempSurface = NULL;
                 if (outlineTexture == NULL)
                 {
-                    Logger::EngineLog().Error("Failed to create texture from surface! SDL_Error: {0}", SDL_GetError());
+                    Logger::EngineLog().Error("Failed to create outline texture from surface! SDL_Error: {0}", SDL_GetError());
                 }
             }
             else
             {
-                Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
+                TTF_SizeUTF8(actualFont, text.c_str(), &width, &height);
+                if (width != 0 && height != 0)
+                {
+                    Logger::EngineLog().Error("Failed to create outline texture from text! TTF_Error: {0}", TTF_GetError());
+                }
+                else
+                {
+                    // empty text
+                }
+
             }
         }
         /// Now do the actual text texture
@@ -220,7 +229,40 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
+            TTF_SizeUTF8(actualFont, text.c_str(), &width, &height);
+            if (width != 0 && height != 0)
+            {
+                Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
+            }
+            else
+            {
+                width = 1;
+                height = 1;
+                // Attempted to use invisible characters or empty string, just create a single transparent pixel instead.
+                #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+                tempSurface = SDL_CreateRGBSurface(0, width, height, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+                #else
+                tempSurface = SDL_CreateRGBSurface(0, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+                #endif
+                if (tempSurface == NULL)
+                {
+                    Logger::EngineLog().Error("Failed to create surface from empty text! SDL_Error: {0}", SDL_GetError());
+                }
+                else
+                {
+                    texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
+                    SDL_FreeSurface(tempSurface);
+                    tempSurface = NULL;
+                    if (texture == NULL)
+                    {
+                        Logger::EngineLog().Error("Failed to create texture from surface! SDL_Error: {0}", SDL_GetError());
+                    }
+                    else
+                    {
+                        pathname = "";
+                    }
+                }
+            }
         }
 
         return texture != NULL;
