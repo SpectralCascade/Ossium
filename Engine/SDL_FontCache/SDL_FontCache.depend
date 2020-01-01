@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1577878158 source:/home/tim/git/Ossium/Engine/SDL_FontCache/SDL_FontCache.c
+	"SDL_FontCache.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1577883855 /home/tim/git/Ossium/Engine/SDL_FontCache/SDL_FontCache.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_ttf.h>
+	"SDL_gpu.h"
+	<stdarg.h>
+

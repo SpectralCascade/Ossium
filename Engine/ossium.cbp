@@ -129,21 +129,24 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-g" />
 					<Add option="-std=c++1z" />
+					<Add option="-g" />
 					<Add directory="Box2D/" />
+					<Add directory="SDL_FontCache/" />
 				</Compiler>
 				<Linker>
+					<Add option="-static-libstdc++" />
+					<Add option="-static-libgcc" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
 					<Add option="-lSDL2_image" />
 					<Add option="-lSDL2_mixer" />
 					<Add option="-lSDL2_ttf" />
-					<Add option="-static-libstdc++" />
-					<Add option="-static-libgcc" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
+					<Add library="SDL_FontCache/bin/Release/libSDL_FontCache.a" />
 					<Add directory="Box2D/bin/Release" />
+					<Add directory="SDL_FontCache/bin/Release" />
 				</Linker>
 			</Target>
 		</Build>
@@ -155,7 +158,6 @@
 		<Linker>
 			<Add directory="Box2D/bin/Release" />
 		</Linker>
-		<Unit filename="src/Ossium.h" />
 		<Unit filename="src/Components/UI/panel.h" />
 		<Unit filename="src/Components/audioextensions.cpp" />
 		<Unit filename="src/Components/audioextensions.h" />
@@ -240,6 +242,7 @@
 		<Unit filename="src/Core/typeinference.h" />
 		<Unit filename="src/Core/window.cpp" />
 		<Unit filename="src/Core/window.h" />
+		<Unit filename="src/Ossium.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

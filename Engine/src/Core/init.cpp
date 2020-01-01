@@ -73,7 +73,7 @@ namespace Ossium
 
                     if (TTF_Init() == -1)
                     {
-                        SDL_LogError(SDL_LOG_CATEGORY_ERROR, TTF_GetError());
+                        Logger::EngineLog().Error("SDL_ttf error during initialisation: {0}", TTF_GetError());
                         error = INIT_ERROR_TTF;
                     }
                     else
