@@ -109,11 +109,24 @@ namespace Ossium::Editor
         /// Used to determine how much to move after completing a horizontal or vertical layout group.
         stack<float> layoutDifference;
 
+        /// Used for order-based idents for text fields.
+        Uint32 textFieldCounter = 1;
+
+        /// Corresponds to the text field currently being edited.
+        /// This is reset when the viewport loses focus or the user clicks away.
+        Uint32 activeTextFieldId = 0;
+
+        /// The position of the text cursor in a text field.
+        int textFieldCursorPos = 0;
+
         /// The current scrolled position of the GUI view.
         Vector2 scrollPos = Vector2(0, 0);
 
         Vector2 lastMousePos = Vector2(0, 0);
         bool mousePressed = false;
+
+        /// Handles keyboard inputs such as backspace while a text field is in use.
+        ActionOutcome HandleTextField(const KeyboardInput& key);
 
     protected:
         Renderer* renderer = nullptr;
@@ -131,15 +144,16 @@ namespace Ossium::Editor
         void Refresh();
 
     private:
+        /// Resets the layout. Called automatically by Refresh().
+        void Begin();
+        /// Sets up the layout such that additional GUI elements are aligned in a particular direction.
         void BeginLayout(int direction);
+        /// Pops back to the previous layout.s=
         void EndLayout();
 
     protected:
         /// Returns true if the mouse position has not changed between pressing the left button and releasing it.
         bool DidClick(Vector2 pos);
-
-        /// Resets the layout.
-        void Begin();
 
         /// Abstract method that should contain all GUI logic.
         virtual void OnGUI() = 0;
@@ -153,6 +167,9 @@ namespace Ossium::Editor
 
         /// Similar to Move, but just adds space along the current layout direction.
         void Space(float amount);
+
+        /// Similar to Space, but automatically moves along to the next multiple of the specified tab size.
+        void Tab(int tabSize = 30);
 
         /// Returns the current position.
         Vector2 GetLayoutPosition();

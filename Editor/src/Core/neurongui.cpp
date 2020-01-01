@@ -178,8 +178,26 @@ namespace Ossium::Editor
 
         // Refresh whenever the mouse interacts.
         input->GetHandler<MouseHandler>()->AddBindlessAction(
-            [&] (const MouseInput& m) { this->Refresh(); return ActionOutcome::Ignore; }
+            [&] (const MouseInput& m) {
+                if (activeTextFieldId != 0 && m.type != MOUSE_MOTION && m.type != MOUSE_WHEEL)
+                {
+                    // Stop text field input
+                    activeTextFieldId = 0;
+                    Logger::EngineLog().Info("Unset active text field");
+                    input->GetHandler<KeyboardHandler>()->StopTextInput();
+                }
+                this->Refresh();
+                return ActionOutcome::Ignore;
+            }
         );
+        KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
+        keyboard->AddBindlessAction(
+            [&] (const KeyboardInput& key) {
+                return this->HandleTextField(key);
+            }
+        );
+        // Don't need to store the handle because the callback is destroyed when this is destroyed
+        keyboard->OnTextInput += [&] (KeyboardHandler& k) { textFieldCursorPos++; this->Refresh(); };
 
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
@@ -189,10 +207,62 @@ namespace Ossium::Editor
         layoutDifference.push(0);
     }
 
+    ActionOutcome NeuronGUI::HandleTextField(const KeyboardInput& key)
+    {
+        if (activeTextFieldId != 0)
+        {
+            KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
+            if (key.state)
+            {
+                switch (key.key)
+                {
+                    case SDLK_BACKSPACE:
+                        // CTRL-Backspace clears entire alphanumeric blocks and whitespace blocks but not punctuation.
+                        if (SDL_GetModState())
+                        {
+                            bool stop = false;
+                            while (!stop)
+                            {
+                                string popped = keyboard->PopTextInput();
+                                if ((popped.empty() || !(popped[0] == ' ' && keyboard->GetTextInput().back() == ' ')) &&
+                                    (popped[0] < '0' || (popped[0] > '9' && popped[0] < 'A') ||
+                                    (popped[0] > 'Z' && popped[0] < 'a') || popped[0] > 'z'))
+                                {
+                                    stop = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            keyboard->PopTextInput();
+                        }
+                        Refresh();
+                        break;
+                    case SDLK_LEFT:
+                        textFieldCursorPos = textFieldCursorPos > 0 ? textFieldCursorPos - 1 : 0;
+                        Refresh();
+                        break;
+                    case SDLK_RIGHT:
+                        textFieldCursorPos++;
+                        Refresh();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return ActionOutcome::Ignore;
+    }
+
     void NeuronGUI::Refresh()
     {
+        // Clear the entire viewport
         SDL_RenderClear(renderer->GetRendererSDL());
+        // Reset state
+        Begin();
+        // Immediate-mode GUI i/o
         OnGUI();
+        // Render GUI
         renderer->SetDrawColor(Color(200, 200, 200));
         SDL_RenderPresent(renderer->GetRendererSDL());
     }
@@ -214,6 +284,8 @@ namespace Ossium::Editor
             layoutDifference.top() = 0;
         }
         layoutStack.top() = Vector2(0, 0);
+        // Reset the text field id generator
+        textFieldCounter = 1;
     }
 
     bool NeuronGUI::DidClick(Vector2 pos)
@@ -281,6 +353,20 @@ namespace Ossium::Editor
     void NeuronGUI::Space(float amount)
     {
         Move(GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL ? Vector2(amount, 0.0f) : Vector2(0.0f, amount));
+    }
+
+    void NeuronGUI::Tab(int tabSize)
+    {
+        int amount = tabSize;
+        if (GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL)
+        {
+            amount = tabSize - ((int)GetLayoutPosition().x % tabSize);
+        }
+        else
+        {
+            amount = tabSize - ((int)GetLayoutPosition().y % tabSize);
+        }
+        Space((float)amount);
     }
 
     Vector2 NeuronGUI::GetLayoutPosition()
@@ -351,14 +437,29 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            text += "|";
+            KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
+            //MouseHandler* mouse = input->GetHandler<MouseHandler>();
+            if (activeTextFieldId == textFieldCounter)
+            {
+                // Accept text input
+                text = keyboard->GetTextInput();
+                textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, 0, text.length());
+                text.insert(textFieldCursorPos, "|");
+            }
+
+            //if ( input->GetHandler<MouseHandler>()->GetMousePosition())
+            // TODO: set I-beam mouse cursor when hovering
 
             if (Button(text, style, false))
             {
-                // Start text input
+                activeTextFieldId = textFieldCounter;
+                textFieldCursorPos = text.length() - 1;
+                Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
+                keyboard->StartTextInput();
             }
 
         }
+        textFieldCounter++;
         return text;
     }
 
