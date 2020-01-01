@@ -61,7 +61,7 @@ def main():
         with open(sys.argv[1]) as file:
             for line in file.readlines():
                 copyrightNotice += " *  " + line
-    Walk(walkDir, extensions, InsertCopyright, [startIdent + "\n *  \n" + copyrightNotice + "\n *  \n" + endIdent + "\n"])
+    Walk(walkDir, extensions, InsertCopyright, [startIdent + "\n *  \n" + copyrightNotice + " *  \n" + endIdent + "\n"])
     return 0
 
 if (__name__ == "__main__"):
