@@ -1,17 +1,17 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef STRINGCONVERT_H
 #define STRINGCONVERT_H
@@ -87,7 +87,13 @@ namespace Ossium
 
         /// Converts string version of an iterable object into said object (except for strings).
         template<typename T>
-        typename enable_if<!has_FromString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && is_range_erasable<T>::value && !is_base_of<string, T>::value, void>::type
+        typename enable_if<
+            !has_FromString<T>::value &&
+            !is_insertable<T>::value &&
+            (is_insertable<typename T::value_type>::value || has_FromString<typename T::value_type>::value) &&
+            is_range_erasable<T>::value &&
+            !is_base_of<string, T>::value,
+        void>::type
         FromString(T& obj, string data)
         {
             unsigned int index = 0;
@@ -202,19 +208,23 @@ namespace Ossium
         /// Converts data of objects implementing simple iterators into a string format array (such as vector<int>),
         /// except for strings
         template<typename T>
-        typename enable_if<!has_ToString<T>::value && !is_insertable<T>::value && is_insertable<typename T::value_type>::value && !is_base_of<string, T>::value, string>::type
+        typename enable_if<
+            !has_ToString<T>::value &&
+            !is_insertable<T>::value &&
+            (is_insertable<typename T::value_type>::value || has_ToString<typename T::value_type>::value) &&
+            !is_base_of<string, T>::value,
+        string>::type
         ToString(T& data, typename T::iterator* start = nullptr)
         {
-            stringstream dataStream;
-            dataStream.str("");
+            string dataStream;
             if (start == nullptr || !(*start >= data.begin() && *start < data.end()))
             {
                 for (auto i = data.begin(); i != data.end();)
                 {
-                    dataStream << (*i);
+                    dataStream += ToString(*i);
                     if (++i != data.end())
                     {
-                        dataStream << ", ";
+                        dataStream += string(", ");
                     }
                 }
             }
@@ -222,14 +232,14 @@ namespace Ossium
             {
                 for (auto i = *start; i != data.end();)
                 {
-                    dataStream << *i;
+                    dataStream += ToString(*i);
                     if (++i != data.end())
                     {
-                        dataStream << ", ";
+                        dataStream += string(", ");
                     }
                 }
             }
-            string converted = string("[") + dataStream.str() + string("]");
+            string converted = string("[") + dataStream + string("]");
             return converted;
         }
 

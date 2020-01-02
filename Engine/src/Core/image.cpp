@@ -1,17 +1,17 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 extern "C"
 {
@@ -101,19 +101,9 @@ namespace Ossium
         return tempSurface != NULL;
     }
 
-    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength)
+    bool Image::CreateFromText(Renderer& renderer, TTF_Font* font, string text, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
     {
-        return CreateFromText(renderer, font, text, style.ptsize, style.fg, style.hinting, style.kerning, style.outline, style.style, style.rendermode, style.bg, wrapLength);
-    }
-
-    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
-    {
-        if (pointSize <= 0)
-        {
-            pointSize = 1;
-        }
-        TTF_Font* actualFont = font.GetFont(pointSize);
-        if (actualFont == NULL)
+        if (font == NULL)
         {
             Logger::EngineLog().Error("Failed to create text. Failure obtaining the font!");
             return false;
@@ -125,10 +115,10 @@ namespace Ossium
             tempSurface = NULL;
         }
         /// Configure font
-        TTF_SetFontHinting(actualFont, hinting);
-        TTF_SetFontKerning(actualFont, (int)kerning);
-        TTF_SetFontOutline(actualFont, outline);
-        TTF_SetFontStyle(actualFont, style);
+        TTF_SetFontHinting(font, hinting);
+        TTF_SetFontKerning(font, (int)kerning);
+        TTF_SetFontOutline(font, outline);
+        TTF_SetFontStyle(font, style);
         if (outline > 0 && renderMode != RENDERTEXT_SHADED)
         {
             if (outlineTexture != NULL)
@@ -140,17 +130,17 @@ namespace Ossium
             {
                 case RENDERTEXT_BLEND:
                 {
-                    tempSurface = TTF_RenderUTF8_Blended(actualFont, text.c_str(), bgColor);
+                    tempSurface = TTF_RenderUTF8_Blended(font, text.c_str(), bgColor);
                     break;
                 }
                 case RENDERTEXT_BLEND_WRAPPED:
                 {
-                    tempSurface = TTF_RenderUTF8_Blended_Wrapped(actualFont, text.c_str(), bgColor, wrapLength);
+                    tempSurface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), bgColor, wrapLength);
                     break;
                 }
                 default:
                 {
-                    tempSurface = TTF_RenderUTF8_Solid(actualFont, text.c_str(), bgColor);
+                    tempSurface = TTF_RenderUTF8_Solid(font, text.c_str(), bgColor);
                     break;
                 }
             }
@@ -169,7 +159,7 @@ namespace Ossium
             }
             else
             {
-                TTF_SizeUTF8(actualFont, text.c_str(), &width, &height);
+                TTF_SizeUTF8(font, text.c_str(), &width, &height);
                 if (width != 0 && height != 0)
                 {
                     Logger::EngineLog().Error("Failed to create outline texture from text! TTF_Error: {0}", TTF_GetError());
@@ -182,27 +172,27 @@ namespace Ossium
             }
         }
         /// Now do the actual text texture
-        TTF_SetFontOutline(actualFont, 0);
+        TTF_SetFontOutline(font, 0);
         switch (renderMode)
         {
             case RENDERTEXT_SHADED:
             {
-                tempSurface = TTF_RenderUTF8_Shaded(actualFont, text.c_str(), color, bgColor);
+                tempSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), color, bgColor);
                 break;
             }
             case RENDERTEXT_BLEND:
             {
-                tempSurface = TTF_RenderUTF8_Blended(actualFont, text.c_str(), color);
+                tempSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
                 break;
             }
             case RENDERTEXT_BLEND_WRAPPED:
             {
-                tempSurface = TTF_RenderUTF8_Blended_Wrapped(actualFont, text.c_str(), color, wrapLength);
+                tempSurface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, wrapLength);
                 break;
             }
             default:
             {
-                tempSurface = TTF_RenderUTF8_Solid(actualFont, text.c_str(), color);
+                tempSurface = TTF_RenderUTF8_Solid(font, text.c_str(), color);
                 break;
             }
         }
@@ -228,7 +218,7 @@ namespace Ossium
         }
         else
         {
-            TTF_SizeUTF8(actualFont, text.c_str(), &width, &height);
+            TTF_SizeUTF8(font, text.c_str(), &width, &height);
             if (width != 0 && height != 0)
             {
                 Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
@@ -265,6 +255,16 @@ namespace Ossium
         }
 
         return texture != NULL;
+    }
+
+    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength)
+    {
+        return CreateFromText(renderer, font, text, style.ptsize, style.fg, style.hinting, style.kerning, style.outline, style.style, style.rendermode, style.bg, wrapLength);
+    }
+
+    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
+    {
+        return CreateFromText(renderer, font.GetFont(pointSize), text, color, hinting, kerning, outline, style, renderMode, bgColor, wrapLength);
     }
 
     bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, bool cache)

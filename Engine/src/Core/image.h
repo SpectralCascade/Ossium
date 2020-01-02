@@ -1,17 +1,17 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef IMAGE_H
 #define IMAGE_H
@@ -83,10 +83,25 @@ namespace Ossium
         /// Load an image and returns true if it was successful
         bool Load(string guid_path);
 
-        /// Creates an image with a text string
+        /// Creates an image with a text string from a TrueType font.
         bool CreateFromText(
             Renderer& renderer,
-            Font& fontToUse,
+            TTF_Font* font,
+            string text,
+            SDL_Color color = Colors::RED,
+            int hinting = 0,
+            int kerning = 0,
+            int outline = 0,
+            int style = 0,
+            int renderMode = 0,
+            SDL_Color bgColor = Colors::BLACK,
+            Uint32 wrapLength = 0
+        );
+
+        /// Ditto but with a font instance instead.
+        bool CreateFromText(
+            Renderer& renderer,
+            Font& font,
             string text,
             int pointSize = 12,
             SDL_Color color = Colors::RED,
@@ -99,7 +114,7 @@ namespace Ossium
             Uint32 wrapLength = 0
         );
 
-        bool CreateFromText(Renderer& renderer, Font& fontToUse, string text, const TextStyle& style, Uint32 wrapLength);
+        bool CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength);
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
         /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.

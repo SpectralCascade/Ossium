@@ -1,12 +1,13 @@
 # depslib dependency file v1.0
-1577747806 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
+1577985057 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
+	<Ossium.h>
 	"editorview.h"
 
-1577570802 /home/tim/git/Ossium/Editor/src/Components/editorview.h
+1577887696 /home/tim/git/Ossium/Editor/src/Components/editorview.h
 	<Ossium.h>
 	"../Core/neurongui.h"
 
-1577462352 /home/tim/git/Ossium/Engine/src/Ossium.h
+1577982822 /home/tim/git/Ossium/Engine/src/Ossium.h
 	"Core/config.h"
 	"Core/init.h"
 	"Core/time.h"
@@ -26,12 +27,13 @@
 	"Core/physics.h"
 	"Components/debugdraw.h"
 	"Core/enginesystem.h"
+	"Core/texturepack.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/config.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/config.h
 	"schemamodel.h"
 	"stringconvert.h"
 
-1577211640 /home/tim/git/Ossium/Engine/src/Core/schemamodel.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/schemamodel.h
 	<SDL2/SDL.h>
 	<fstream>
 	"stringintern.h"
@@ -39,58 +41,58 @@
 	"typefactory.h"
 	"jsondata.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/stringintern.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/stringintern.h
 	<cstdio>
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/funcutils.h
+1577981531 /home/tim/git/Ossium/Engine/src/Core/funcutils.h
 	<string>
 	<functional>
 	<map>
 	"helpermacros.h"
 	"jsondata.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/helpermacros.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/helpermacros.h
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/jsondata.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/jsondata.h
 	<string>
 	<vector>
 	<unordered_map>
 	"helpermacros.h"
 
-1577360697 /home/tim/git/Ossium/Engine/src/Core/typefactory.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/typefactory.h
 	<functional>
 	"logging.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/logging.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/logging.h
 	"stringconvert.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/stringconvert.h
+1577985756 /home/tim/git/Ossium/Engine/src/Core/stringconvert.h
 	<utility>
 	<SDL2/SDL.h>
 	"typeinference.h"
 	"jsondata.h"
 	"funcutils.h"
 
-1577212869 /home/tim/git/Ossium/Engine/src/Core/typeinference.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/typeinference.h
 	<sstream>
 	<type_traits>
 	<any>
 	"helpermacros.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/init.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/init.h
 	"helpermacros.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/time.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/time.h
 	"schemamodel.h"
 
-1577488484 /home/tim/git/Ossium/Engine/src/Core/font.h
+1577983291 /home/tim/git/Ossium/Engine/src/Core/font.h
 	<string>
 	<map>
 	<SDL2/SDL_ttf.h>
 	"resourcecontroller.h"
 	"../Core/helpermacros.h"
 
-1577573577 /home/tim/git/Ossium/Engine/src/Components/text.h
+1577887615 /home/tim/git/Ossium/Engine/src/Components/text.h
 	<string>
 	"../Core/font.h"
 	"../Core/renderer.h"
@@ -98,7 +100,7 @@
 	"texture.h"
 	"../Core/helpermacros.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/renderer.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/renderer.h
 	<vector>
 	<queue>
 	<set>
@@ -107,15 +109,15 @@
 	"helpermacros.h"
 	"services.h"
 
-1577656694 /home/tim/git/Ossium/Engine/src/Core/colors.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/colors.h
 	"helpermacros.h"
 	<SDL2/SDL.h>
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/services.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/services.h
 	"logging.h"
 	"typefactory.h"
 
-1577369943 /home/tim/git/Ossium/Engine/src/Core/ecs.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/ecs.h
 	<vector>
 	<string.h>
 	<unordered_map>
@@ -127,7 +129,7 @@
 	"schemamodel.h"
 	"services.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/tree.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/tree.h
 	<string>
 	<vector>
 	<unordered_map>
@@ -135,7 +137,7 @@
 	"funcutils.h"
 	"logging.h"
 
-1577230612 /home/tim/git/Ossium/Engine/src/Components/texture.h
+1577887615 /home/tim/git/Ossium/Engine/src/Components/texture.h
 	<string>
 	"../Core/coremaths.h"
 	"../Core/component.h"
@@ -145,7 +147,7 @@
 	"../Core/resourcecontroller.h"
 	"../Core/image.h"
 
-1577138993 /home/tim/git/Ossium/Engine/src/Core/coremaths.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/coremaths.h
 	<string>
 	<Box2D/Common/b2Math.h>
 	"mathconsts.h"
@@ -161,52 +163,52 @@
 	<assert.h>
 	<float.h>
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/mathconsts.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/mathconsts.h
 
-1577129369 /home/tim/git/Ossium/Engine/src/Core/component.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/component.h
 	"transform.h"
 
-1577230489 /home/tim/git/Ossium/Engine/src/Core/transform.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/transform.h
 	"coremaths.h"
 	"ecs.h"
 	"globalservices.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/globalservices.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/globalservices.h
 	"logging.h"
 
-1577183430 /home/tim/git/Ossium/Engine/src/Core/metarect.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/metarect.h
 	<cmath>
 	"schemamodel.h"
 	"coremaths.h"
 	"ecs.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/resourcecontroller.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/resourcecontroller.h
 	<string.h>
 	<unordered_map>
 	"stringconvert.h"
 	"stringintern.h"
 	"services.h"
 
-1577573682 /home/tim/git/Ossium/Engine/src/Core/image.h
+1577964601 /home/tim/git/Ossium/Engine/src/Core/image.h
 	"schemamodel.h"
 	"resourcecontroller.h"
 	"renderer.h"
 	"font.h"
 	"colors.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/window.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/window.h
 	<string>
 	<set>
 	<SDL2/SDL.h>
 	"services.h"
 	"callback.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/callback.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/callback.h
 	<map>
 	<functional>
 	"logging.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/audio.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/audio.h
 	<SDL2/SDL.h>
 	<SDL2/SDL_mixer.h>
 	<set>
@@ -216,10 +218,10 @@
 	"resourcecontroller.h"
 	"schemamodel.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/delta.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/delta.h
 	"jsondata.h"
 
-1577230578 /home/tim/git/Ossium/Engine/src/Components/statesprite.h
+1577887615 /home/tim/git/Ossium/Engine/src/Components/statesprite.h
 	<map>
 	<utility>
 	<string>
@@ -228,23 +230,23 @@
 	"../Core/renderer.h"
 	"../Core/schemamodel.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/pixeleffects.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/pixeleffects.h
 	<SDL2/SDL.h>
 	"helpermacros.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/csvdata.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/csvdata.h
 	<string>
 	<vector>
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/circularbuffer.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/circularbuffer.h
 	<algorithm>
 	"funcutils.h"
 	"logging.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/curves.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/curves.h
 	"helpermacros.h"
 
-1577230553 /home/tim/git/Ossium/Engine/src/Components/inputgui.h
+1577887615 /home/tim/git/Ossium/Engine/src/Components/inputgui.h
 	"../Core/input.h"
 	"../Core/keyboard.h"
 	"../Core/mouse.h"
@@ -252,7 +254,7 @@
 	"../Core/component.h"
 	"../Core/callback.h"
 
-1577871757 /home/tim/git/Ossium/Engine/src/Core/input.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/input.h
 	<unordered_map>
 	<vector>
 	<functional>
@@ -261,20 +263,20 @@
 	"helpermacros.h"
 	"services.h"
 
-1577872907 /home/tim/git/Ossium/Engine/src/Core/keyboard.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/keyboard.h
 	"callback.h"
 	"input.h"
 
-1577631358 /home/tim/git/Ossium/Engine/src/Core/mouse.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/mouse.h
 	"input.h"
 	"coremaths.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/randutils.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/randutils.h
 	<functional>
 	<random>
 	"coremaths.h"
 
-1577026973 /home/tim/git/Ossium/Engine/src/Core/physics.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/physics.h
 	<Box2D/Box2D.h>
 	<functional>
 	"coremaths.h"
@@ -432,24 +434,29 @@
 1572094984 /home/tim/git/Ossium/Engine/Box2D/Box2D/Dynamics/Joints/b2WheelJoint.h
 	"Box2D/Dynamics/Joints/b2Joint.h"
 
-1577230544 /home/tim/git/Ossium/Engine/src/Components/debugdraw.h
+1577887615 /home/tim/git/Ossium/Engine/src/Components/debugdraw.h
 	<Box2D/Common/b2Draw.h>
 	"../Core/stringintern.h"
 	"text.h"
 
-1577369733 /home/tim/git/Ossium/Engine/src/Core/enginesystem.h
+1577887615 /home/tim/git/Ossium/Engine/src/Core/enginesystem.h
 	"input.h"
 	"delta.h"
 	"component.h"
 
-1577876894 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
+1577887696 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
 	<stack>
 	<Ossium.h>
 
-1577645150 source:/home/tim/git/Ossium/Editor/src/main.cpp
+1577887696 source:/home/tim/git/Ossium/Editor/src/main.cpp
 	<Ossium.h>
 	"Components/editorview.h"
 
-1577877355 source:/home/tim/git/Ossium/Editor/src/Core/neurongui.cpp
+1577887696 source:/home/tim/git/Ossium/Editor/src/Core/neurongui.cpp
 	"neurongui.h"
+
+1577984340 /home/tim/git/Ossium/Engine/src/Core/texturepack.h
+	<math.h>
+	"helpermacros.h"
+	"image.h"
 

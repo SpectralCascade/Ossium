@@ -229,9 +229,12 @@
 		<Unit filename="src/Core/schemamodel.h" />
 		<Unit filename="src/Core/services.cpp" />
 		<Unit filename="src/Core/services.h" />
+		<Unit filename="src/Core/stb_rect_pack.h" />
 		<Unit filename="src/Core/stringconvert.cpp" />
 		<Unit filename="src/Core/stringconvert.h" />
 		<Unit filename="src/Core/stringintern.h" />
+		<Unit filename="src/Core/texturepack.cpp" />
+		<Unit filename="src/Core/texturepack.h" />
 		<Unit filename="src/Core/time.cpp" />
 		<Unit filename="src/Core/time.h" />
 		<Unit filename="src/Core/transform.cpp" />
