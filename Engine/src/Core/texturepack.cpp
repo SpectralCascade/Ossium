@@ -17,6 +17,7 @@ extern "C" {
     #include <SDL2/SDL_image.h>
 }
 
+#include "utf8.h"
 #include "funcutils.h"
 #include "texturepack.h"
 #include "jsondata.h"
@@ -180,13 +181,20 @@ namespace Ossium
             string fontName = Utilities::SplitRight(path, '/', Utilities::SplitRight(path, '\\', "?"));
             // Used to extract UTF8 characters
             string utfChar = "";
+            Uint8 utfBytes = 0;
             for (unsigned int i = 0, counti = charset.length(); i < counti; i++)
             {
-                if ((unsigned char)charset[i] > 127)
+                Uint8 meta = CheckUTF8((Uint8)charset[i]);
+                if (meta)
                 {
-                    // Must be a UTF-8 encoded character (or corrupted).
+                    // UTF-8 encoded byte
+                    if (meta > 1)
+                    {
+                        utfBytes = meta;
+                    }
                     utfChar += charset[i];
-                    if (utfChar.length() >= 4)
+                    utfBytes--;
+                    if (utfBytes <= 0)
                     {
                         CreateFromUTF8(fontName, pointSize, utfChar, loaded, renderer, pixelFormatting, style);
                         utfChar.clear();
@@ -194,6 +202,7 @@ namespace Ossium
                 }
                 else
                 {
+                    // Plain old ASCII
                     CreateFromUTF8(fontName, pointSize, string() + charset[i], loaded, renderer, pixelFormatting, style);
                 }
             }

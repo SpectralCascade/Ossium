@@ -56,9 +56,9 @@ namespace Ossium::Editor
         {
             Logger::EngineLog().Info("Starting texture packing of font 'Orkney Regular'...");
             TexturePack fontPack = TexturePack();
-            if (fontPack.ImportFont("../assets/Orkney Regular.ttf", 14, *renderer))
+            if (fontPack.ImportFont("../assets/Orkney Regular.ttf", 14, *renderer) && fontPack.ImportFont("../assets/Orkney Regular.ttf", 36, *renderer, "ł¶ŧ←↓→øþßðđŋħ«»¢“”µ·£¹²³€½¾"))
             {
-                if (fontPack.PackImported(*renderer, SDL_PIXELFORMAT_ARGB8888))
+                if (fontPack.PackImported(*renderer, SDL_PIXELFORMAT_ARGB8888, true, 256))
                 {
                     fontPack.Save(*renderer, SDL_PIXELFORMAT_ARGB8888, "../cool_font_pack");
                 }

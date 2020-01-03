@@ -243,6 +243,8 @@
 		<Unit filename="src/Core/typefactory.h" />
 		<Unit filename="src/Core/typeinference.cpp" />
 		<Unit filename="src/Core/typeinference.h" />
+		<Unit filename="src/Core/utf8.cpp" />
+		<Unit filename="src/Core/utf8.h" />
 		<Unit filename="src/Core/window.cpp" />
 		<Unit filename="src/Core/window.h" />
 		<Unit filename="src/Ossium.h" />
