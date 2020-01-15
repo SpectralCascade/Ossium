@@ -24,10 +24,10 @@ namespace Ossium::Editor
     {
         TextLabel("Testing...");
         TextLabel("----------");
-        //TextLabel("I hope this works... haha ha hahahah hah ah aa ha ha hah ha h hah ha ha ahha ha hhahahahahaha ah ah ha hahahhaha ahah hahaha haha");
-        //TextLabel(":D");
+        TextLabel("I hope this works... haha ha hahahah hah ah aa ha ha hah ha h hah ha ha ahha ha hhahahahahaha ah ah ha hahahhaha ahah hahaha haha");
+        TextLabel(":D");
 
-        /*BeginHorizontal();
+        BeginHorizontal();
         TextField("Testing input...");
         Tab();
         TextField("000");
@@ -49,10 +49,10 @@ namespace Ossium::Editor
         Toggle(true);
         EndHorizontal();
 
-        Space(50);*/
+        Space(50);
 
         Space(10);
-        if (Button("Do it", 40))
+        if (Button("Generate font pack", true, 40))
         {
             Logger::EngineLog().Info("Starting texture packing of font 'Orkney Regular'...");
             TexturePack fontPack = TexturePack();
@@ -65,10 +65,10 @@ namespace Ossium::Editor
             }
         }
         Space(10);
-/*        if (Button("wow", 100, 20))
+        if (Button("wow", 100, 20))
         {
             Logger::EngineLog().Info("Wowzas");
-        }*/
+        }
 
     }
 

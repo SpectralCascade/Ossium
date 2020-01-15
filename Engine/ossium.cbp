@@ -211,6 +211,7 @@
 		<Unit filename="src/Core/keyboard.h" />
 		<Unit filename="src/Core/logging.cpp" />
 		<Unit filename="src/Core/logging.h" />
+		<Unit filename="src/Core/lrucache.h" />
 		<Unit filename="src/Core/mathconsts.h" />
 		<Unit filename="src/Core/metarect.h" />
 		<Unit filename="src/Core/mouse.cpp" />

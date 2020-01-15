@@ -18,6 +18,7 @@
 
 #include <math.h>
 
+#include "lrucache.h"
 #include "helpermacros.h"
 #include "image.h"
 
@@ -47,12 +48,11 @@ namespace Ossium
         Image* texture;
     };
 
-    struct TexturePackSchema : public Schema<TexturePackSchema, 2>
+    struct TexturePackSchema : public Schema<TexturePackSchema, 1>
     {
-        DECLARE_BASE_SCHEMA(TexturePackSchema, 2);
+        DECLARE_BASE_SCHEMA(TexturePackSchema, 1);
 
         M(vector<TextureData>, packData);
-        M(vector<int>, utterjunk) = {1, 2, 4, 8, 16, 32, 64, 128};
 
     };
 
@@ -83,6 +83,7 @@ namespace Ossium
         bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN);
 
         /// Loads up a single texture ready to be packed and generates mip maps for it if required
+        /// TODO: mipmaps can be packed more tightly if they are packed as individual textures
         bool Import(string path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_UNKNOWN, int minMipMapSize = 4);
 
         /// Imports glyphs from a TrueType font as individual textures ready for packing.
@@ -115,6 +116,7 @@ namespace Ossium
 
         /// Returns a clip rect for a given texture
         SDL_Rect GetClip(string textureId);
+
         /// Overload returns a mipmap, if the texture has a generated mipmap
         SDL_Rect GetClip(string textureId, int mipmapLevel);
 
@@ -127,8 +129,84 @@ namespace Ossium
         /// Imported textures with meta data ready to be packed.
         vector<ImportedTextureData> importedData;
 
+        /// TODO: remove these
         bool compareImportedSmallestFirst(ImportedTextureData& i, ImportedTextureData& j);
         bool compareImportedBiggestFirst(ImportedTextureData& i, ImportedTextureData& j);
+
+    };
+
+    /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    /// ! TODO: Use cute_spritebatch https://github.com/RandyGaul/cute_headers/blob/master/cute_spritebatch.h !
+    /// !       OR look into fontstash and use or roll own version https://github.com/memononen/fontstash     !
+    /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    /// Similar to TexturePack, but designed for dynamic insertion and removal of textures rather than pre-generated packs.
+    /// When possible, avoid using this and use pre-generated texture packs as dynamic texture packing is subject to fragmentation.
+    class DynamicTexturePack
+    {
+    public:
+        DynamicTexturePack(Renderer& renderer, int w = 2048, int h = 2048)
+        {
+            texture.CreateEmpty(renderer, w, h, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET);
+        }
+
+        /// Adds the surface data to the texture in an available space. If no space is available,
+        SDL_Rect Insert(SDL_Surface* surface, string id)
+        {
+            string removed = cache.Access(id, /**???*/, "");
+            if (!removed.empty())
+            {
+                auto itr = clipRects.find(removed);
+                if (itr != clipRects.end())
+                {
+                    // TODO: freeClipRects is std::set
+                    freeClipRects.insert(itr.second);
+                    clipRects.erase(itr);
+                }
+            }
+        }
+
+        /// Removes a texture clip rect entry, allowing that space to be overwritten.
+        bool Erase(string id)
+        {
+            auto itr = clipRects.find(id);
+            if (itr != clipRects.end())
+            {
+                clipRects.erase(itr);
+                cache.Erase(id);
+                return true;
+            }
+            return false;
+        }
+
+        /// Returns the clip rect for a particular id.
+        const SDL_Rect& Get(string id)
+        {
+            auto itr = clipRects.find(id);
+            if (itr != clipRects.end())
+            {
+                return itr.second();
+            }
+            return errorClip;
+        }
+
+        /// Returns a reference to the texture
+        const Image& GetTexture()
+        {
+            return texture;
+        }
+
+    private:
+        /// Map of texture ids to their clip rects within the main texture.
+        unordered_map<string, SDL_Rect> clipRects;
+
+        /// Access cache that automatically discards the least recently used data if the cache is determined to be full.
+        LRUCache<string> cache;
+
+        /// The main texture.
+        Image texture;
+
+        /// Returned by Get() when a clip rect is not found.
+        const static SDL_Rect errorClip = {0, 0, 0, 0};
 
     };
 

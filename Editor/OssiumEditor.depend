@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1577985057 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
+1578054306 source:/home/tim/git/Ossium/Editor/src/Components/editorview.cpp
 	<Ossium.h>
 	"editorview.h"
 
@@ -85,7 +85,7 @@
 1577887615 /home/tim/git/Ossium/Engine/src/Core/time.h
 	"schemamodel.h"
 
-1577983291 /home/tim/git/Ossium/Engine/src/Core/font.h
+1578054061 /home/tim/git/Ossium/Engine/src/Core/font.h
 	<string>
 	<map>
 	<SDL2/SDL_ttf.h>
@@ -444,7 +444,7 @@
 	"delta.h"
 	"component.h"
 
-1577887696 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
+1578054992 /home/tim/git/Ossium/Editor/src/Core/neurongui.h
 	<stack>
 	<Ossium.h>
 
@@ -455,7 +455,7 @@
 1577887696 source:/home/tim/git/Ossium/Editor/src/Core/neurongui.cpp
 	"neurongui.h"
 
-1577984340 /home/tim/git/Ossium/Engine/src/Core/texturepack.h
+1578054124 /home/tim/git/Ossium/Engine/src/Core/texturepack.h
 	<math.h>
 	"helpermacros.h"
 	"image.h"

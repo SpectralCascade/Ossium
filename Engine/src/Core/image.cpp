@@ -39,11 +39,6 @@ namespace Ossium
 
     REGISTER_RESOURCE(Image);
 
-    /// No values or references are copied by default. You have to call Clone() to make a deep copy.
-    Image::Image(const Image& source)
-    {
-    }
-
     Image::~Image()
     {
         Free();
@@ -99,6 +94,17 @@ namespace Ossium
             pathname = guid_path;
         }
         return tempSurface != NULL;
+    }
+
+    bool Image::CreateEmpty(Renderer& renderer, int w, int h, Uint32 pixelFormat)
+    {
+        Free();
+        texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormat, SDL_TEXTUREACCESS_STREAMING);
+        if (texture == NULL)
+        {
+            return false;
+        }
+        return true;
     }
 
     bool Image::CreateFromText(Renderer& renderer, TTF_Font* font, string text, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
@@ -397,36 +403,47 @@ namespace Ossium
         return pathname;
     }
 
+    SDL_Texture* Image::GetTexture()
+    {
+        return texture;
+    }
+
+    void* Image::GetPixels()
+    {
+        return pixels;
+    }
+
+    int Image::GetPitch()
+    {
+        return pitch;
+    }
+
+    Uint32 Image::GetPixelFormat()
+    {
+        return format;
+    }
+
     bool Image::LockPixels()
     {
-        #ifdef OSSIUM_DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        if (pixels != NULL)
+        if (texture == NULL)
         {
             return false;
         }
-        else
+        else if (pixels == NULL && SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
         {
-            if (SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
-            {
-                Logger::EngineLog().Error("Image texture lock failure! {0}", SDL_GetError());
-                return false;
-            }
+            Logger::EngineLog().Error("Image texture lock failure! {0}", SDL_GetError());
+            return false;
         }
         return true;
     }
 
     bool Image::UnlockPixels()
     {
-        #ifdef OSSIUM_DEBUG
-        SDL_assert(texture != NULL);
-        #endif
-        if (pixels == NULL)
+        if (texture == NULL)
         {
             return false;
         }
-        else
+        else if (pixels != NULL)
         {
             SDL_UnlockTexture(texture);
             pixels = NULL;

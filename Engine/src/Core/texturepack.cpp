@@ -178,7 +178,9 @@ namespace Ossium
         TTF_Font* loaded = TTF_OpenFontIndex(path.c_str(), pointSize, index);
         if (loaded != NULL)
         {
-            string fontName = Utilities::SplitRight(path, '/', Utilities::SplitRight(path, '\\', "?"));
+            // TODO: extract font name?
+            string fontName = path;
+
             // Used to extract UTF8 characters
             string utfChar = "";
             Uint8 utfBytes = 0;

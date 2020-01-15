@@ -65,16 +65,16 @@ namespace Ossium
     class TexturePack;
 
     /// This class wraps an SDL_Texture resource (an image usually stored in video memory).
+    /// TODO: swap name with Texture class
     class OSSIUM_EDL Image : public Resource
     {
     public:
         DECLARE_RESOURCE(Image);
 
         Image() = default;
-        Image(const Image& source);
         ~Image();
 
-        friend class Texture;
+        /// TODO: modify TexturePack and remove this friend statement
         friend class Ossium::TexturePack;
 
         /// Destroys the image, freeing it from memory. Does not modify the temporary SDL_Surface
@@ -84,6 +84,7 @@ namespace Ossium
         bool Load(string guid_path);
 
         /// Creates an image with a text string from a TrueType font.
+        /// TODO: move to Font
         bool CreateFromText(
             Renderer& renderer,
             TTF_Font* font,
@@ -99,6 +100,7 @@ namespace Ossium
         );
 
         /// Ditto but with a font instance instead.
+        /// TODO: move to Font
         bool CreateFromText(
             Renderer& renderer,
             Font& font,
@@ -114,7 +116,11 @@ namespace Ossium
             Uint32 wrapLength = 0
         );
 
+        /// TODO: move to Font
         bool CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength);
+
+        /// Creates an empty texture.
+        bool CreateEmpty(Renderer& renderer, int w, int h, SDL_TextureAccess access = SDL_TEXTUREACCESS_STREAMING);
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
         /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.
@@ -155,6 +161,7 @@ namespace Ossium
         /// will be set to. Note that the image must be initialised with the window's pixel format to apply pixel manipulation effects!
         /// Also note that this doesn't do it's work on the GPU, so be wary of using it frequently as it's pretty expensive
         /// Returns false on failure.
+        /// TODO: pass std::function object instead of using template
         template<class Func>
         bool ApplyEffect(Func f, SDL_Rect* clipArea = nullptr)
         {
@@ -211,11 +218,37 @@ namespace Ossium
             return false;
         };
 
-    protected:
-        /// Locks the texture so the raw pixels may be modified
+        /// Returns the main texture associated with this image
+        SDL_Texture* GetTexture();
+
+        /* TODO: Determine if these are useful or not to implement
+        /// Creates a GPU texture from the surface
+        SDL_Texture* PushGPU();
+
+        /// Converts the GPU texture to a surface
+        SDL_Surface* PopGPU();
+
+        /// Returns true if the image is using the GPU
+        bool OnGPU();
+        */
+
+        /// Locks the texture on the GPU so the raw pixels may be modified
         bool LockPixels();
-        /// Unlocks the texture so the raw pixels can no longer be modified
+
+        /// When locked, returns pixels from the GPU texture.
+        void* GetPixels();
+
+        /// When locked, returns the length of the pixel data in bytes.
+        int GetPitch();
+
+        /// Returns the pixel format
+        Uint32 GetPixelFormat();
+
+        /// Unlocks the texture on the GPU so the raw pixels can no longer be modified
         bool UnlockPixels();
+
+    protected:
+        NOCOPY(Image);
 
         /// The path used to load the current image.
         string pathname = "";
@@ -227,6 +260,7 @@ namespace Ossium
         SDL_Texture* texture = NULL;
 
         /// Outline texture (used purely for rendered text)
+        /// TODO: get rid of this
         SDL_Texture* outlineTexture = NULL;
 
         /// Image dimensions

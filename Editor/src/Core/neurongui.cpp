@@ -1,17 +1,17 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include "neurongui.h"
 
@@ -425,7 +425,7 @@ namespace Ossium::Editor
         {
             // Create the texture from scratch
             Image texture;
-            int fontSizes[2] = {1, style.ptsize};
+            vector<int> fontSizes = {style.ptsize};
             texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
 
             // Set the destination rect
@@ -465,7 +465,12 @@ namespace Ossium::Editor
             //if ( input->GetHandler<MouseHandler>()->GetMousePosition())
             // TODO: set I-beam mouse cursor when hovering
 
-            if (Button(text, style, false))
+            // Create the texture from scratch
+            Image texture;
+            vector<int> fontSizes = {textStyle.ptsize};
+            texture.CreateFromText(*renderer, *resources->Get<Font>(textStyle.fontPath, fontSizes), text, style.normalTextStyle, (Uint32)renderer->GetWidth());
+
+            if (Button(&texture, style, false))
             {
                 activeTextFieldId = textFieldCounter;
                 textFieldCursorPos = text.length() - 1;
@@ -487,22 +492,36 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            MouseHandler* mouse = input->GetHandler<MouseHandler>();
-
             // TODO: support other text styles for hover and click?
             TextStyle textStyle = style.normalTextStyle;
 
             // Create the texture from scratch
             Image texture;
-            int fontSizes[2] = {1, textStyle.ptsize};
+            vector<int> fontSizes = {textStyle.ptsize};
             texture.CreateFromText(*renderer, *resources->Get<Font>(textStyle.fontPath, fontSizes), text, textStyle, (Uint32)renderer->GetWidth());
+
+            return Button(&texture, style, invertOutline, xpadding, ypadding);
+        }
+        return false;
+    }
+
+    bool NeuronGUI::Button(Image* image, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    {
+        return Button(image, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding);
+    }
+
+    bool NeuronGUI::Button(Image* image, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    {
+        if (IsVisible())
+        {
+            MouseHandler* mouse = input->GetHandler<MouseHandler>();
 
             // Set the destination rect
             SDL_Rect dest;
             dest.x = GetLayoutPosition().x + (xpadding / 2);
             dest.y = GetLayoutPosition().y + (ypadding / 2);
-            dest.w = texture.GetWidth();
-            dest.h = texture.GetHeight();
+            dest.w = image->GetWidth();
+            dest.h = image->GetHeight();
 
             Rect buttonDest = Rect(dest.x - (xpadding / 2), dest.y - (ypadding / 2), dest.w + xpadding, dest.h + ypadding);
 
@@ -520,8 +539,8 @@ namespace Ossium::Editor
             // TODO: generate nicer buttons and pass styling arguments
             buttonDest.DrawFilled(*renderer, buttonColour);
 
-            // Render the text
-            texture.Render(renderer->GetRendererSDL(), dest);
+            // Render the image
+            image->Render(renderer->GetRendererSDL(), dest);
 
             // Button outline
             Line line(Vector2(buttonDest.x, buttonDest.y), Vector2(buttonDest.x + buttonDest.w, buttonDest.y));
