@@ -23,7 +23,7 @@ All SDL libraries are listed on the [main SDL 2 webpage](https://www.libsdl.org/
 
 At some stage I intend to write up documentation for Ossium (once I've cleaned up the code a bit). Until then, you can check up on [my website](https://timlanesoftware.com) from time to time for blog posts and articles about Ossium (and other projects I'm working on). Or you can dive into the code to better understand how different parts of the engine work for yourself. Note that the engine is constantly being updated and improved currently, so if you intend to use it for your own games and projects beware of bugs and changes over time.
 
-If building from scratch, you will need to build Box2D as a static lib and have that output in `Engine/Box2D/bin/Release` as `libBox2D.a`. Likewise, you will need to build SDL_FontCache as a static library and have it output in `Engine/SDL_FontCache/bin/Release` as `libSDL_FontCache.a`. Once these are built they must be linked correctly (if you're on Linux, the .cbp file for Ossium should be setup to link against Box2D and SDL_FontCache already - make sure you select the correct build target (likely named `ossium (Linux)` in the Code::Blocks drop down)).
+If building from scratch, you will need to build Box2D as a static lib and have that output in `Engine/Box2D/bin/Release` as `libBox2D.a`. Once built it must be linked correctly (if you're on Linux, the .cbp file for Ossium should be setup to link against Box2D already - make sure you select the correct build target (likely named `ossium (Linux)` in the Code::Blocks drop down)).
 
 # Additional notes
 I'm developing this project using Code::Blocks 17.12 on Windows 10 64-bit currently (and sometimes on (arm) Linux 64-bit)
