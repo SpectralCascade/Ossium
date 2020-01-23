@@ -19,46 +19,10 @@
 #include "schemamodel.h"
 #include "resourcecontroller.h"
 #include "renderer.h"
-#include "font.h"
 #include "colors.h"
 
 namespace Ossium
 {
-
-    enum TextRenderModes
-    {
-        RENDERTEXT_SOLID = 0,
-        RENDERTEXT_SHADED,
-        RENDERTEXT_BLEND,
-        RENDERTEXT_BLEND_WRAPPED
-    };
-
-    struct TextStyle : public Schema<TextStyle, 9>
-    {
-        DECLARE_BASE_SCHEMA(TextStyle, 9);
-
-        TextStyle(
-            string font = "",
-            int fontSize = 12,
-            SDL_Color color = Colors::BLACK,
-            int hint = 0,
-            int kern = 0,
-            int outlineThickness = 0,
-            int styling = 0,
-            int renderingMode = RENDERTEXT_BLEND,
-            SDL_Color backgroundColor = Colors::TRANSPARENT
-        );
-
-        M(string, fontPath);
-        M(int, ptsize) = 12;
-        M(SDL_Color, fg) = Colors::BLACK;
-        M(int, hinting) = 0;
-        M(int, kerning) = 0;
-        M(int, outline) = 0;
-        M(int, style) = 0;
-        M(int, rendermode) = RENDERTEXT_SOLID;
-        M(SDL_Color, bg) = Colors::TRANSPARENT;
-    };
 
     /// Forward declarations
     class Texture;
@@ -78,64 +42,36 @@ namespace Ossium
         friend class Ossium::TexturePack;
 
         /// Destroys the image, freeing it from memory. Does not modify the temporary SDL_Surface
+        /// TODO: remove me once outlineTexture is removed.
         void Free();
+        /// Frees the surface from memory, but not the GPU texture.
+        void FreeSurface();
 
         /// Load an image and returns true if it was successful
         bool Load(string guid_path);
 
-        /// Creates an image with a text string from a TrueType font.
-        /// TODO: move to Font
-        bool CreateFromText(
-            Renderer& renderer,
-            TTF_Font* font,
-            string text,
-            SDL_Color color = Colors::RED,
-            int hinting = 0,
-            int kerning = 0,
-            int outline = 0,
-            int style = 0,
-            int renderMode = 0,
-            SDL_Color bgColor = Colors::BLACK,
-            Uint32 wrapLength = 0
-        );
+        /// Creates an empty surface.
+        bool CreateEmptySurface(int w, int h, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
-        /// Ditto but with a font instance instead.
-        /// TODO: move to Font
-        bool CreateFromText(
-            Renderer& renderer,
-            Font& font,
-            string text,
-            int pointSize = 12,
-            SDL_Color color = Colors::RED,
-            int hinting = 0,
-            int kerning = 0,
-            int outline = 0,
-            int style = 0,
-            int renderMode = 0,
-            SDL_Color bgColor = Colors::BLACK,
-            Uint32 wrapLength = 0
-        );
-
-        /// TODO: move to Font
-        bool CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength);
-
-        /// Creates an empty texture.
-        bool CreateEmpty(Renderer& renderer, int w, int h, SDL_TextureAccess access = SDL_TEXTUREACCESS_STREAMING);
+        /// Frees the current surface and sets it to this. Useful if you want to generate surfaces on the fly.
+        /// NOTE: Does not make a copy of the surface data. Simply takes ownership of the reference.
+        void SetSurface(SDL_Surface* loadedSurface);
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
         /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.
         /// If cache is set to true, the original image is stored in memory as an SDL_Surface for quick initialisation without loading the image again
         /// (in addition to the modifiable SDL_Texture in video memory)! This could be useful if you want to remove all applied effects on the image frequently,
         /// as long as your target system has adequate memory capacity for storing the original image. Leave this set to false unless you know what you're doing!
-        bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, bool cache = false);
+        bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
 
         /// Shorthand method
-        bool LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, bool cache = false);
+        bool LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
 
         /// Returns true if the texture is not NULL
+        /// TODO: remove me, does same job as GetTexture().
         bool Initialised();
 
-        /// Renders the image.
+        /// Renders the GPU texture if loaded (call PushGPU() first).
         void Render(
             SDL_Renderer* renderer,
             SDL_Rect dest,
@@ -147,10 +83,22 @@ namespace Ossium
             SDL_RendererFlip flip = SDL_FLIP_NONE
         );
 
-        /// Returns the width of the image
+        // TODO: blitting method for surfaces. Not strictly essential however.
+
+        /// Returns the width of the image in GPU memory, or if not loaded in GPU memory, returns the width of the surface.
         int GetWidth();
-        /// Returns the height of the image
+        /// Returns the height of the image, or if not loaded in GPU memory, returns the height of the surface.
         int GetHeight();
+
+        /// Explicit version of GetWidth(), but returns 0 if not loaded in GPU memory (even if the surface is loaded).
+        int GetWidthGPU();
+        /// Explicit version of GetHeight(), but returns 0 if not loaded in GPU memory (even if the surface is loaded).
+        int GetHeightGPU();
+
+        /// Returns the width of the surface. Returns 0 if no surface is loaded.
+        int GetWidthSurface();
+        /// Returns the height of the surface. Returns 0 if no surface is loaded.
+        int GetHeightSurface();
 
         /// Returns the name of the loaded image, if it has one.
         string GetPathName();
@@ -178,11 +126,11 @@ namespace Ossium
                 SDL_Point pixelPos;
                 if (clipArea == nullptr)
                 {
-                    for (int i = 0, counti = (pitch / 4) * height; i < counti; i++)
+                    for (int i = 0, counti = (pitch / 4) * heightGPU; i < counti; i++)
                     {
                         pixelData = ConvertToColor(pixelArray[i], pixelFormat);
-                        pixelPos.x = i % width;
-                        pixelPos.y = i / width;
+                        pixelPos.x = i % widthGPU;
+                        pixelPos.y = i / widthGPU;
                         SDL_Color outputColor = f(pixelData, pixelPos);
                         pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColor.r, outputColor.g, outputColor.b, outputColor.a);
                     }
@@ -205,8 +153,8 @@ namespace Ossium
                             }
                         }
                         pixelData = ConvertToColor(pixelArray[i], pixelFormat);
-                        pixelPos.x = i % width;
-                        pixelPos.y = i / width;
+                        pixelPos.x = i % widthGPU;
+                        pixelPos.y = i / widthGPU;
                         SDL_Color outputColor = f(pixelData, pixelPos);
                         pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColor.r, outputColor.g, outputColor.b, outputColor.a);
                     }
@@ -218,19 +166,18 @@ namespace Ossium
             return false;
         };
 
-        /// Returns the main texture associated with this image
+        /// Copies the surface data from RAM to GPU memory (creating a GPU texture). Returns NULL upon failure (e.g. no surface is loaded).
+        /// Calling this method automatically destroys the current GPU texture if loaded.
+        SDL_Texture* PushGPU(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STREAMING);
+
+        /// Destroys the GPU texture. Returns NULL upon failure (e.g. no GPU texture is loaded).
+        void PopGPU();
+
+        /// Returns the GPU texture, or NULL if not pushed onto the GPU.
         SDL_Texture* GetTexture();
 
-        /* TODO: Determine if these are useful or not to implement
-        /// Creates a GPU texture from the surface
-        SDL_Texture* PushGPU();
-
-        /// Converts the GPU texture to a surface
-        SDL_Surface* PopGPU();
-
-        /// Returns true if the image is using the GPU
-        bool OnGPU();
-        */
+        /// Returns the loaded surface, or NULL if not loaded.
+        SDL_Surface* GetSurface();
 
         /// Locks the texture on the GPU so the raw pixels may be modified
         bool LockPixels();
@@ -242,7 +189,10 @@ namespace Ossium
         int GetPitch();
 
         /// Returns the pixel format
-        Uint32 GetPixelFormat();
+        Uint32 GetTexturePixelFormat();
+
+        /// Returns the texture access mode (whether the texture can be streamed or rendered upon or not).
+        int GetTextureAccessMode();
 
         /// Unlocks the texture on the GPU so the raw pixels can no longer be modified
         bool UnlockPixels();
@@ -263,15 +213,20 @@ namespace Ossium
         /// TODO: get rid of this
         SDL_Texture* outlineTexture = NULL;
 
-        /// Image dimensions
-        int width = 0;
-        int height = 0;
+        /// Dimensions of the GPU texture.
+        int widthGPU = 0;
+        int heightGPU = 0;
 
-        /// The pixel format
-        Uint32 format;
-        /// Pixel data; NULL unless you have locked the pixels in video memory
+        /// The pixel format in GPU memory.
+        Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
+
+        /// The access mode used for the current GPU texture.
+        int access = -1;
+
+        /// Pixel data; NULL unless you have locked the pixels in GPU memory.
         void* pixels = NULL;
-        /// 'Width' of the image as laid out in memory, in bytes
+
+        /// Width (length of each line) of the image as laid out in GPU memory, in bytes.
         int pitch = 0;
 
     };

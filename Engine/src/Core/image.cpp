@@ -15,7 +15,7 @@
 **/
 extern "C"
 {
-    #include <SDL2/SDL_image.h>
+    #include <SDL_image.h>
 }
 
 #include "image.h"
@@ -23,59 +23,38 @@ extern "C"
 namespace Ossium
 {
 
-    TextStyle::TextStyle(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
-        int styling, int renderingMode, SDL_Color backgroundColor)
-    {
-        fontPath = font;
-        ptsize = fontSize;
-        fg = color;
-        hinting = hint;
-        kerning = kern;
-        outline = outlineThickness;
-        style = styling;
-        rendermode = renderingMode;
-        bg = backgroundColor;
-    }
-
     REGISTER_RESOURCE(Image);
 
     Image::~Image()
     {
+        /// TODO: See Free() TODO, call PopGPU() instead
         Free();
-        if (tempSurface != NULL)
-        {
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
-        }
+        FreeSurface();
     }
 
+    /// TODO: remove me once outline texture is removed, PopGPU() does the job instead.
     void Image::Free()
     {
-        if (pixels != NULL)
-        {
-            UnlockPixels();
-        }
-        if (texture != NULL)
-        {
-            SDL_DestroyTexture(texture);
-            texture = NULL;
-        }
+        PopGPU();
         if (outlineTexture != NULL)
         {
             SDL_DestroyTexture(outlineTexture);
             outlineTexture = NULL;
         }
-        width = 0;
-        height = 0;
     }
 
-    bool Image::Load(string guid_path)
+    void Image::FreeSurface()
     {
         if (tempSurface != NULL)
         {
             SDL_FreeSurface(tempSurface);
             tempSurface = NULL;
         }
+    }
+
+    bool Image::Load(string guid_path)
+    {
+        FreeSurface();
         #ifdef SDL_IMAGE_H_
         tempSurface = IMG_Load(guid_path.c_str());
         if (tempSurface == NULL)
@@ -96,245 +75,34 @@ namespace Ossium
         return tempSurface != NULL;
     }
 
-    bool Image::CreateEmpty(Renderer& renderer, int w, int h, Uint32 pixelFormat)
+    bool Image::CreateEmptySurface(int w, int h, Uint32 pixelFormat)
     {
-        Free();
-        texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormat, SDL_TEXTUREACCESS_STREAMING);
-        if (texture == NULL)
+        FreeSurface();
+        tempSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, pixelFormat);
+        if (tempSurface == NULL)
         {
             return false;
         }
         return true;
     }
 
-    bool Image::CreateFromText(Renderer& renderer, TTF_Font* font, string text, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
+    void Image::SetSurface(SDL_Surface* loadedSurface)
     {
-        if (font == NULL)
-        {
-            Logger::EngineLog().Error("Failed to create text. Failure obtaining the font!");
-            return false;
-        }
-        Free();
-        if (tempSurface != NULL)
-        {
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
-        }
-        /// Configure font
-        TTF_SetFontHinting(font, hinting);
-        TTF_SetFontKerning(font, (int)kerning);
-        TTF_SetFontOutline(font, outline);
-        TTF_SetFontStyle(font, style);
-        if (outline > 0 && renderMode != RENDERTEXT_SHADED)
-        {
-            if (outlineTexture != NULL)
-            {
-                SDL_DestroyTexture(outlineTexture);
-                outlineTexture = NULL;
-            }
-            switch (renderMode)
-            {
-                case RENDERTEXT_BLEND:
-                {
-                    tempSurface = TTF_RenderUTF8_Blended(font, text.c_str(), bgColor);
-                    break;
-                }
-                case RENDERTEXT_BLEND_WRAPPED:
-                {
-                    tempSurface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), bgColor, wrapLength);
-                    break;
-                }
-                default:
-                {
-                    tempSurface = TTF_RenderUTF8_Solid(font, text.c_str(), bgColor);
-                    break;
-                }
-            }
-            if (tempSurface != NULL)
-            {
-                width = tempSurface->w;
-                height = tempSurface->h;
-                tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
-                outlineTexture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
-                SDL_FreeSurface(tempSurface);
-                tempSurface = NULL;
-                if (outlineTexture == NULL)
-                {
-                    Logger::EngineLog().Error("Failed to create outline texture from surface! SDL_Error: {0}", SDL_GetError());
-                }
-            }
-            else
-            {
-                TTF_SizeUTF8(font, text.c_str(), &width, &height);
-                if (width != 0 && height != 0)
-                {
-                    Logger::EngineLog().Error("Failed to create outline texture from text! TTF_Error: {0}", TTF_GetError());
-                }
-                else
-                {
-                    // empty text
-                }
-
-            }
-        }
-        /// Now do the actual text texture
-        TTF_SetFontOutline(font, 0);
-        switch (renderMode)
-        {
-            case RENDERTEXT_SHADED:
-            {
-                tempSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), color, bgColor);
-                break;
-            }
-            case RENDERTEXT_BLEND:
-            {
-                tempSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
-                break;
-            }
-            case RENDERTEXT_BLEND_WRAPPED:
-            {
-                tempSurface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, wrapLength);
-                break;
-            }
-            default:
-            {
-                tempSurface = TTF_RenderUTF8_Solid(font, text.c_str(), color);
-                break;
-            }
-        }
-        if (tempSurface != NULL)
-        {
-            if (width == 0 || height == 0)
-            {
-                width = tempSurface->w;
-                height = tempSurface->h;
-            }
-            tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
-            texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
-            if (texture == NULL)
-            {
-                Logger::EngineLog().Error("Failed to create texture from surface! SDL_Error: {0}", SDL_GetError());
-            }
-            else
-            {
-                pathname = "";
-            }
-        }
-        else
-        {
-            TTF_SizeUTF8(font, text.c_str(), &width, &height);
-            if (width != 0 && height != 0)
-            {
-                Logger::EngineLog().Error("Failed to create texture from text! TTF_Error: {0}", TTF_GetError());
-            }
-            else
-            {
-                width = 1;
-                height = 1;
-                // Attempted to use invisible characters or empty string, just create a single transparent pixel instead.
-                #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-                tempSurface = SDL_CreateRGBSurface(0, width, height, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-                #else
-                tempSurface = SDL_CreateRGBSurface(0, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-                #endif
-                if (tempSurface == NULL)
-                {
-                    Logger::EngineLog().Error("Failed to create surface from empty text! SDL_Error: {0}", SDL_GetError());
-                }
-                else
-                {
-                    texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
-                    SDL_FreeSurface(tempSurface);
-                    tempSurface = NULL;
-                    if (texture == NULL)
-                    {
-                        Logger::EngineLog().Error("Failed to create texture from surface! SDL_Error: {0}", SDL_GetError());
-                    }
-                    else
-                    {
-                        pathname = "";
-                    }
-                }
-            }
-        }
-
-        return texture != NULL;
+        FreeSurface();
+        tempSurface = loadedSurface;
     }
 
-    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, const TextStyle& style, Uint32 wrapLength)
-    {
-        return CreateFromText(renderer, font, text, style.ptsize, style.fg, style.hinting, style.kerning, style.outline, style.style, style.rendermode, style.bg, wrapLength);
-    }
-
-    bool Image::CreateFromText(Renderer& renderer, Font& font, string text, int pointSize, SDL_Color color, int hinting, int kerning, int outline, int style, int renderMode, SDL_Color bgColor, Uint32 wrapLength)
-    {
-        return CreateFromText(renderer, font.GetFont(pointSize), text, color, hinting, kerning, outline, style, renderMode, bgColor, wrapLength);
-    }
-
-    bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, bool cache)
+    bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, int accessMode)
     {
         Free();
-        format = pixelFormatting;
-        if (tempSurface == NULL)
-        {
-            Logger::EngineLog().Error("NULL surface, cannot initialise Image!");
-        }
-        else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN)
-        {
-            SDL_Surface* formattedSurface = NULL;
-            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
-            if (formattedSurface == NULL)
-            {
-                Logger::EngineLog().Error("Failed to format surface! SDL_Error: {0}", SDL_GetError());
-            }
-            else
-            {
-                texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormatting, SDL_TEXTUREACCESS_STREAMING, formattedSurface->w, formattedSurface->h);
-                if (texture == NULL)
-                {
-                    Logger::EngineLog().Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
-                }
-                else
-                {
-                    /// Grab pixel manipulation data
-                    SDL_LockTexture(texture, NULL, &pixels, &pitch);
-                    memcpy(pixels, formattedSurface->pixels, formattedSurface->pitch * formattedSurface->h);
-                    SDL_UnlockTexture(texture);
-                    pixels = NULL;
-                    width = formattedSurface->w;
-                    height = formattedSurface->h;
-                }
-                SDL_FreeSurface(formattedSurface);
-                formattedSurface = NULL;
-            }
-        }
-        else
-        {
-            tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
-            texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
-            if (texture == NULL)
-            {
-                Logger::EngineLog().Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
-            }
-            else
-            {
-                width = tempSurface->w;
-                height = tempSurface->h;
-            }
-        }
-        if (tempSurface != NULL && !cache)
-        {
-            SDL_FreeSurface(tempSurface);
-            tempSurface = NULL;
-        }
-        return texture != NULL;
+        bool success = PushGPU(renderer, pixelFormatting, accessMode) != NULL;
+        FreeSurface();
+        return success;
     }
 
-    bool Image::LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting, bool cache)
+    bool Image::LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting, int accessMode)
     {
-        return Load(guid_path) && Init(renderer, pixelFormatting, cache);
+        return Load(guid_path) && Init(renderer, pixelFormatting, accessMode);
     }
 
     bool Image::Initialised()
@@ -391,11 +159,32 @@ namespace Ossium
 
     int Image::GetWidth()
     {
-        return width;
+        return GetTexture() != NULL ? GetWidthGPU() : GetWidthSurface();
     }
+
     int Image::GetHeight()
     {
-        return height;
+        return GetTexture() != NULL ? GetHeightGPU() : GetHeightSurface();
+    }
+
+    int Image::GetWidthGPU()
+    {
+        return widthGPU;
+    }
+
+    int Image::GetHeightGPU()
+    {
+        return heightGPU;
+    }
+
+    int Image::GetWidthSurface()
+    {
+        return tempSurface != NULL ? tempSurface->w : 0;
+    }
+
+    int Image::GetHeightSurface()
+    {
+        return tempSurface != NULL ? tempSurface->h : 0;
     }
 
     string Image::GetPathName()
@@ -408,6 +197,93 @@ namespace Ossium
         return texture;
     }
 
+    SDL_Surface* Image::GetSurface()
+    {
+        return tempSurface;
+    }
+
+    SDL_Texture* Image::PushGPU(Renderer& renderer, Uint32 pixelFormatting, int accessMode)
+    {
+        // Free GPU memory
+        PopGPU();
+
+        // Set the formatting and access mode
+        format = pixelFormatting;
+        access = accessMode;
+
+        if (tempSurface == NULL)
+        {
+            Logger::EngineLog().Error("No surface loaded, cannot copy to GPU memory!");
+        }
+        else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN)
+        {
+            SDL_Surface* formattedSurface = NULL;
+            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
+            if (formattedSurface == NULL)
+            {
+                Logger::EngineLog().Error("Failed to format surface! SDL_Error: {0}", SDL_GetError());
+            }
+            else
+            {
+                texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormatting, accessMode, formattedSurface->w, formattedSurface->h);
+                if (texture == NULL)
+                {
+                    Logger::EngineLog().Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
+                }
+                else
+                {
+                    // Grab pixel manipulation data
+                    SDL_LockTexture(texture, NULL, &pixels, &pitch);
+                    memcpy(pixels, formattedSurface->pixels, formattedSurface->pitch * formattedSurface->h);
+                    SDL_UnlockTexture(texture);
+                    pixels = NULL;
+                    widthGPU = formattedSurface->w;
+                    heightGPU = formattedSurface->h;
+                }
+                SDL_FreeSurface(formattedSurface);
+                formattedSurface = NULL;
+            }
+        }
+        else
+        {
+            tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
+            texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
+            if (texture == NULL)
+            {
+                Logger::EngineLog().Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
+            }
+            else
+            {
+                widthGPU = tempSurface->w;
+                heightGPU = tempSurface->h;
+            }
+        }
+        // In error case, set default values
+        if (texture == NULL)
+        {
+            format = SDL_PIXELFORMAT_UNKNOWN;
+            access = -1;
+        }
+        return texture;
+    }
+
+    void Image::PopGPU()
+    {
+        if (pixels != NULL)
+        {
+            UnlockPixels();
+        }
+        if (texture != NULL)
+        {
+            SDL_DestroyTexture(texture);
+            texture = NULL;
+        }
+        format = SDL_PIXELFORMAT_UNKNOWN;
+        access = -1;
+        widthGPU = 0;
+        heightGPU = 0;
+    }
+
     void* Image::GetPixels()
     {
         return pixels;
@@ -418,9 +294,14 @@ namespace Ossium
         return pitch;
     }
 
-    Uint32 Image::GetPixelFormat()
+    Uint32 Image::GetTexturePixelFormat()
     {
         return format;
+    }
+
+    int Image::GetTextureAccessMode()
+    {
+        return access;
     }
 
     bool Image::LockPixels()
@@ -431,7 +312,7 @@ namespace Ossium
         }
         else if (pixels == NULL && SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
         {
-            Logger::EngineLog().Error("Image texture lock failure! {0}", SDL_GetError());
+            Logger::EngineLog().Error("Failed to lock GPU texture! {0}", SDL_GetError());
             return false;
         }
         return true;

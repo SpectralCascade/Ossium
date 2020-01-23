@@ -14,7 +14,7 @@
  *
 **/
 extern "C" {
-    #include <SDL2/SDL_image.h>
+    #include <SDL_image.h>
 }
 
 #include "utf8.h"
@@ -119,7 +119,7 @@ namespace Ossium
     bool TexturePack::Import(string path, Renderer& renderer, Uint32 pixelFormatting, int minMipMapSize)
     {
         Image* importedTexture = new Image();
-        if (!importedTexture->LoadAndInit(path, renderer, pixelFormatting))
+        if (!importedTexture->LoadAndInit(path, renderer, pixelFormatting, SDL_TEXTUREACCESS_STREAMING))
         {
             Logger::EngineLog().Error("Failed to import texture into texture pack with path '{0}'", path);
             return false;
@@ -138,7 +138,7 @@ namespace Ossium
             SDL_SetRenderTarget(tarGetRendererSDL, mipmappedTexture);
             SDL_RenderClear(tarGetRendererSDL);
             // Render the imported texture to the mipmapped texture
-            SDL_RenderCopy(tarGetRendererSDL, importedTexture->texture, NULL, &src);
+            SDL_RenderCopy(tarGetRendererSDL, importedTexture->GetTexture(), NULL, &src);
             // Now obtain mipmap levels and render the mipmap to texture
             SDL_Rect previousClip = {0, 0, 0, 0};
             int level = 0;
@@ -149,7 +149,7 @@ namespace Ossium
                 {
                     break;
                 }
-                SDL_RenderCopy(tarGetRendererSDL, importedTexture->texture, &src, &mipmapClip);
+                SDL_RenderCopy(tarGetRendererSDL, importedTexture->GetTexture(), &src, &mipmapClip);
                 level++;
                 previousClip = mipmapClip;
             }
@@ -157,14 +157,11 @@ namespace Ossium
             SDL_Rect targetRect = {0, 0, (src.w / 2) * 3, src.h};
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
             SDL_RenderReadPixels(tarGetRendererSDL, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
-            mipmappedTexture = SDL_CreateTextureFromSurface(tarGetRendererSDL, renderSurface);
             // Free the original imported texture and replace with mipmapped version
-            SDL_DestroyTexture(importedTexture->texture);
-            importedTexture->texture = mipmappedTexture;
-            importedTexture->width = renderSurface->w;
-            importedTexture->height = renderSurface->h;
+            importedTexture->PopGPU();
+            importedTexture->SetSurface(renderSurface);
+            importedTexture->PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING);
 
-            SDL_FreeSurface(renderSurface);
             // Reset the render target of the renderer
             SDL_SetRenderTarget(tarGetRendererSDL, originalTarget);
             mipmapped = true;
@@ -220,10 +217,19 @@ namespace Ossium
     bool TexturePack::CreateFromUTF8(string fontName, int ptSize, string utfChar, TTF_Font* font, Renderer& renderer, Uint32 pixelFormatting, int style)
     {
         Image* texture = new Image();
-        if (!texture->CreateFromText(renderer, font, utfChar, Colors::WHITE, TTF_HINTING_NONE, 0, 0, style, RENDERTEXT_BLEND, Colors::BLACK))
+        int oldStyle = TTF_GetFontStyle(font);
+        TTF_SetFontStyle(font, style >= 0 ? style : TTF_STYLE_NORMAL);
+        SDL_Surface* renderedText = TTF_RenderUTF8_Blended(font, utfChar.c_str(), Colors::WHITE);
+        TTF_SetFontStyle(font, oldStyle);
+        if (renderedText == NULL)
         {
             Logger::EngineLog().Warning("Failed to render TrueType font from UTF-8 character '{0}'!", utfChar);
             return false;
+        }
+        else
+        {
+            texture->SetSurface(renderedText);
+            texture->PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_STREAMING);
         }
 
         SDL_Rect src = {0, 0, texture->GetWidth(), texture->GetHeight()};
@@ -276,11 +282,17 @@ namespace Ossium
         SDL_Renderer* render = renderer.GetRendererSDL();
 
         // Max size is the maximum area for packing the textures, but any leftover space will be removed.
-        packedTexture.texture = SDL_CreateTexture(render, pixelFormatting, SDL_TEXTUREACCESS_TARGET, maxSize, maxSize);
-        packedTexture.width = maxSize;
-        packedTexture.height = maxSize;
+        if (packedTexture.CreateEmptySurface(maxSize, maxSize, pixelFormatting))
+        {
+            packedTexture.PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_TARGET);
+        }
+        else
+        {
+            Logger::EngineLog().Error("Failed to create texture pack!");
+            return -1;
+        }
         SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
-        SDL_SetRenderTarget(render, packedTexture.texture);
+        SDL_SetRenderTarget(render, packedTexture.GetTexture());
 
         // Marker rect is used to mark height and width of the current 'row' of textures
         //SDL_Rect markerRect = {0, 0, 0, 0};
@@ -386,10 +398,8 @@ namespace Ossium
         SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
         packedTexture.Free();
-        packedTexture.texture = SDL_CreateTextureFromSurface(render, renderSurface);
-        packedTexture.width = renderSurface->w;
-        packedTexture.height = renderSurface->h;
-        SDL_FreeSurface(renderSurface);
+        packedTexture.SetSurface(renderSurface);
+        packedTexture.PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_TARGET);
 
         // Go back to rendering wherever we were rendering before
         SDL_SetRenderTarget(render, originalTarget);
@@ -403,12 +413,12 @@ namespace Ossium
     bool TexturePack::Save(Renderer& renderer, Uint32 pixelFormatting, string path)
     {
         // Saves the texture pack as a PNG image with meta file containing clip information
-        if (packedTexture.texture != NULL)
+        if (packedTexture.GetTexture() != NULL)
         {
             // Setup target texture and surface
             SDL_Renderer* render = renderer.GetRendererSDL();
             SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
-            SDL_Rect targetRect = {0, 0, packedTexture.width, packedTexture.height};
+            SDL_Rect targetRect = {0, 0, packedTexture.GetWidth(), packedTexture.GetHeight()};
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
             if (renderSurface == NULL)
             {
@@ -425,7 +435,7 @@ namespace Ossium
 
             // Render to texture and read the pixels to an SDL_Surface
             SDL_RenderClear(render);
-            SDL_RenderCopy(render, packedTexture.texture, &targetRect, &targetRect);
+            SDL_RenderCopy(render, packedTexture.GetTexture(), &targetRect, &targetRect);
             SDL_RenderPresent(render);
             SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
             // Free the original texture and reset the render target

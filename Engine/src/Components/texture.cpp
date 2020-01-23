@@ -1,17 +1,17 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <memory>
 #include <string>
@@ -30,42 +30,23 @@ namespace Ossium
     {
 
         SDL_Rect dest = GetSDL(GetTransform()->GetWorldPosition());
-        if (source == nullptr || source->texture == NULL)
+        if (source == nullptr || source->GetTexture() == NULL)
         {
             SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
             SDL_RenderFillRect(renderer.GetRendererSDL(), &dest);
             return;
         }
 
-        if (source->outlineTexture != NULL)
-        {
-            SDL_SetTextureBlendMode(source->outlineTexture, blending);
-            SDL_SetTextureColorMod(source->outlineTexture, modulation.r, modulation.g, modulation.b);
-            SDL_SetTextureAlphaMod(source->outlineTexture, modulation.a);
-        }
-
-        SDL_SetTextureBlendMode(source->texture, blending);
-        SDL_SetTextureColorMod(source->texture, modulation.r, modulation.g, modulation.b);
-        SDL_SetTextureAlphaMod(source->texture, modulation.a);
-
         SDL_Point trueOrigin = {(int)(origin.x * width), (int)(origin.y * height)};
 
         /// Rendering time!
         if (clip.w > 0 && clip.h > 0)
         {
-            if (source->outlineTexture != NULL)
-            {
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, &clip, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
-            }
-            SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, &clip, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
+            source->Render(renderer.GetRendererSDL(), dest, &clip, &trueOrigin, GetTransform()->GetWorldRotation().GetDegrees(), modulation, blending, flip);
         }
         else
         {
-            if (source->outlineTexture != NULL)
-            {
-                SDL_RenderCopyEx(renderer.GetRendererSDL(), source->outlineTexture, NULL, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
-            }
-            SDL_RenderCopyEx(renderer.GetRendererSDL(), source->texture, NULL, &dest, GetTransform()->GetWorldRotation().GetDegrees(), &trueOrigin, flip);
+            source->Render(renderer.GetRendererSDL(), dest, NULL, &trueOrigin, GetTransform()->GetWorldRotation().GetDegrees(), modulation, blending, flip);
         }
     }
 
@@ -93,10 +74,10 @@ namespace Ossium
             clip.y = 0;
             if (src != nullptr)
             {
-                width = src->width;
-                height = src->height;
-                clip.w = src->width;
-                clip.h = src->height;
+                width = src->GetWidth();
+                height = src->GetHeight();
+                clip.w = width;
+                clip.h = height;
             }
             else
             {
@@ -113,39 +94,22 @@ namespace Ossium
             GraphicComponent::OnLoadFinish();
         }
     }
-    void Texture::SetBlendMode(SDL_BlendMode blend, bool immediate)
+    void Texture::SetBlendMode(SDL_BlendMode blend)
     {
-        if (immediate)
-        {
-            SDL_SetTextureBlendMode(source->texture, blend);
-        }
         blending = blend;
     }
-    void Texture::SetAlphaMod(Uint8 a, bool immediate)
+    void Texture::SetAlphaMod(Uint8 a)
     {
-        if (immediate)
-        {
-            SDL_SetTextureAlphaMod(source->texture, a);
-        }
         modulation.a = a;
     }
-    void Texture::SetColorMod(Uint8 r, Uint8 g, Uint8 b, bool immediate)
+    void Texture::SetColorMod(Uint8 r, Uint8 g, Uint8 b)
     {
-        if (immediate)
-        {
-            SDL_SetTextureColorMod(source->texture, r, g, b);
-        }
         modulation.r = r;
         modulation.g = g;
         modulation.b = b;
     }
-    void Texture::SetMod(SDL_Color mod, bool immediate)
+    void Texture::SetMod(SDL_Color mod)
     {
-        if (immediate)
-        {
-            SDL_SetTextureColorMod(source->texture, mod.r, mod.g, mod.b);
-            SDL_SetTextureAlphaMod(source->texture, mod.a);
-        }
         modulation = mod;
     }
     void Texture::SetRenderWidth(float percent)
@@ -204,11 +168,11 @@ namespace Ossium
     }
     int Texture::GetSourceWidth()
     {
-        return source->width;
+        return source->GetWidth();
     }
     int Texture::GetSourceHeight()
     {
-        return source->height;
+        return source->GetHeight();
     }
     SDL_Rect Texture::GetClip()
     {

@@ -20,16 +20,81 @@
 #include <map>
 extern "C"
 {
-    #include <SDL2/SDL_ttf.h>
+    #include <SDL_ttf.h>
 }
 
 #include "resourcecontroller.h"
+#include "image.h"
+#include "coremaths.h"
+#include "lrucache.h"
 #include "../Core/helpermacros.h"
 
 using namespace std;
 
 namespace Ossium
 {
+
+    enum TextRenderModes
+    {
+        RENDERTEXT_SOLID = 0,
+        RENDERTEXT_SHADED,
+        RENDERTEXT_BLEND,
+        RENDERTEXT_BLEND_WRAPPED
+    };
+
+    struct TextStyle : public Schema<TextStyle, 9>
+    {
+        DECLARE_BASE_SCHEMA(TextStyle, 9);
+
+        TextStyle(
+            string font = "",
+            int fontSize = 12,
+            SDL_Color color = Colors::BLACK,
+            int hint = 0,
+            int kern = 0,
+            int outlineThickness = 0,
+            int styling = 0,
+            int renderingMode = RENDERTEXT_BLEND,
+            SDL_Color backgroundColor = Colors::TRANSPARENT
+        );
+
+        M(string, fontPath);
+        M(int, ptsize) = 12;
+        M(SDL_Color, fg) = Colors::BLACK;
+        M(int, hinting) = 0;
+        M(int, kerning) = 0;
+        M(int, outline) = 0;
+        M(int, style) = 0;
+        M(int, rendermode) = RENDERTEXT_SOLID;
+        M(SDL_Color, bg) = Colors::TRANSPARENT;
+    };
+
+    class Glyph
+    {
+    public:
+        /// Updates the atlas index and clip rect
+        void UpdateMeta(Uint32 index, SDL_Rect quad);
+
+        /// Returns the clip rect of the glyph in the texture atlas.
+        /// Returns a clip rect with 0 width and height if not packed into the texture atlas.
+        SDL_Rect GetClip();
+
+        /// Returns the index of the glyph in the texture atlas.
+        /// Returns 0 if not packed.
+        Uint32 GetAtlasIndex();
+
+        /// The glyph image is also cached so it doesn't need to be re-rendered
+        /// if it gets removed from the atlas texture.
+        Image cached;
+
+    private:
+        /// The clip rect of the glyph in the font atlas.
+        SDL_Rect clip;
+
+        /// The index of the glyph within the atlas.
+        Uint32 atlasIndex = 0;
+
+    };
 
     class OSSIUM_EDL Font : public Resource
     {
@@ -39,51 +104,98 @@ namespace Ossium
         Font();
         ~Font();
 
-        /// Frees all the fonts
+        /// Frees everything.
         void Free();
+        /// Frees the texture atlas from GPU memory.
+        void FreeAtlas();
 
-        /// Loads a TrueType Font at different point sizes.
-        /// TODO: Update to an SDL_TTF version that is > 2.0.15 and use DPI scaling instead of point size
-        /// (TTF_SetFontSizeDPI() in the new API update).
-        bool Load(string guid_path, vector<int> pointSizes = {8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72, 96});
-        bool LoadAndInit(string guid_path, vector<int> pointSizes = {8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72, 96});
+        /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
+        bool Load(string guid_path, int maxPointSize = 96);
+        bool LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize = 96, Uint16 targetTextureSize = 1024, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256);
 
-        bool Init(string guid_path);
+        /// Takes a target size for the atlas textures
+        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256);
 
-        /// Returns the glyph clip rect for the given UTF-8 character.
-        /** Internally, if the glyph is not in the GPU texture (at the given point size) already,
-         * it first renders the glyph to a surface and then copies it to the texture.
-         * If there is not enough space in the texture, glyphs that are least used in the texture are overwritten. */
-        SDL_Rect GetGlyphClipRect(Renderer& renderer, string utf8char, int pointSize = 0, int style = TTF_STYLE_NORMAL);
+        /// Renders with a text string from a TrueType font to a single surface on the fly.
+        /**
+         *  Please note: It is not recommended that you use this method as it does not cache, so it is rather slow.
+         *  It does, however, support a wider range of options in regards to text styling, kerning, hinting and so on as well as basic text wrapping.
+         */
+        SDL_Surface* GenerateFromText(
+            Renderer& renderer,
+            string text,
+            SDL_Color color = Colors::RED,
+            int hinting = 0,
+            int kerning = 0,
+            int style = 0,
+            int renderMode = 0,
+            SDL_Color bgColor = Colors::BLACK,
+            int outline = 0,
+            Uint32 wrapLength = 0
+        );
 
-        /// Renders the font atlas texture at a given point size. You should specify the clip rect using GetGlyphClipRect()
-        /// to render an individual glyph.
-        void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, int pointSize, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-        /// Combines Render() and GetGlyphClipRect() to render a single glyph given a UTF-8 character.
-        void RenderGlyph(Renderer& renderer, string utf8char, Vector2 position, int pointSize, int style, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        /// Ditto, but bundled some parameters.
+        SDL_Surface* GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength);
+
+        /// Returns the glyph for the given UTF-8 character.
+        /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
+         * then adds it to the map and updates the cache. Note this method does NOT pack the glyph into the atlas. */
+        Glyph* GetGlyph(Renderer& renderer, string utf8char, float pointSize = 0, int style = TTF_STYLE_NORMAL);
+
+        /// Returns the render dimensions of the glyph given it's clip rect and desired point size (height).
+        Vector2 GetGlyphRenderDimensions(Glyph* glyph, float pointSize);
+
+        /// Renders the font atlas texture at a given point size.
+        void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+        /// Renders a single glyph at the chosen position, returning the ideal position for the next glyph to be rendered from (for a line of text).
+        Vector2 RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, int style, SDL_Color color = Colors::RED, bool kerning = true, bool rtl = false, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+        /// Frees all glyphs in the map and clears the LRU caches. Does not destroy the atlas texture.
+        void FreeGlyphs();
 
         /** Returns pointer to a font. If pointSize <= 0, get the current selected font. If the
          * given pointsize is unavailable, by default the current font will be returned.
          * Useful if you want to use SDL_ttf functions (e.g. to get glyph metrics). */
-        TTF_Font* GetFont(int pointSize = 0);
+        TTF_Font* GetFont();
+
+        /// Returns the size of the atlas (width and height, which are the same as it's a square).
+        Uint32 GetAtlasSize();
 
     private:
-        /// Copying is not permitted, as fonts are typically a large resource
+        /// Copying is not permitted.
         Font(const Font& thisCopy);
         Font operator=(const Font& thisCopy);
 
-        /// Path to the font so it can be reloaded if necessary, e.g. when dealing with
-        /// little memory but varying point sizes
+        /// Path to the font so it can be reloaded if necessary
         string path;
 
-        /// Pointer to currently used font in memory
-        TTF_Font* font;
+        /// Pointer to the main font in memory
+        TTF_Font* font = NULL;
 
-        /// A bank of different point sizes for the same font
-        map<int, TTF_Font*> fontBank;
+        /// The font atlas texture.
+        Image atlas;
 
-        /// Map of point sizes to dynamic texture packs.
-        map<int, DynamicTexturePack*> atlases;
+        /// The maximum glyph height of the font
+        int fontHeight;
+
+        /// Map of UTF-8 code points to cached glyphs.
+        /// TODO?: use slot_map/array instead?
+        map<Uint32, Glyph*> glyphs;
+
+        /// Keeps track of the least recently used UTF-8 code point in the texture atlas.
+        LRUCache<Uint32> textureCache;
+
+        /// Ditto but for the entire glyphs map, not just the texture atlas.
+        LRUCache<Uint32> glyphCache;
+
+        /// The loaded point size
+        int loadedPointSize = 0;
+
+        /// How many glyphs can be cached in RAM (per glyph map) at a time? This may be important to consider when dealing with large character sets (e.g. Traditional Chinese).
+        /** The total theoretical number of glyphs that could be cached is cacheLimit * FS_TOTAL, though in practice this is likely to be way lower for video games.
+         *  The lower this is, the less memory is used. */
+        Uint32 cacheLimit;
 
     };
 

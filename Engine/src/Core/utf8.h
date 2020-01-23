@@ -1,7 +1,11 @@
 #ifndef UTF8_H
 #define UTF8_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
+
+#include <string>
+
+using namespace std;
 
 namespace Ossium
 {
@@ -15,6 +19,16 @@ namespace Ossium
          *  If the byte is ASCII, returns 0.
          */
         Uint8 CheckUTF8(Uint8 byte);
+
+        /// Returns the complete 4-byte code point of a UTF-8 character.
+        Uint32 GetCodepointUTF8(string utfChar);
+
+        /// Converts a UTF-8 code point to UCS-2 (effectively the original 16-bit only UNICODE encoding).
+        /**
+         *  Don't use UCS-2 if you can avoid it. Use UTF-8 instead. This is here for dealing with the shortcomings of other libraries.
+         *  Returns 0 if conversion fails or you pass in a null terminator character.
+         */
+        Uint16 ConvertUTF8ToUCS2(string utf8Char);
 
     }
 

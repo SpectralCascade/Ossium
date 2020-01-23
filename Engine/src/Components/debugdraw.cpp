@@ -1,17 +1,17 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include "debugdraw.h"
 
@@ -63,14 +63,13 @@ namespace Ossium
             /// No need to register the text with the renderer, as the DebugDraw class gives us a renderer to use
             text = entity->AddComponent<Text>();
             text->GetTransform()->SetWorldPosition(position);
-            text->SetColor(color);
+            text->color = color;
             if (backgroundColor.a != 0)
             {
-                text->SetBackgroundColor(backgroundColor);
-                text->SetBox(true);
+                text->backgroundColor = backgroundColor;
+                text->boxed = true;
             }
-            text->SetText(str);
-            text->TextToTexture(renderer, font, fontSize);
+            text->text = str;
         }
 
         DebugText::~DebugText()

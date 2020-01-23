@@ -20,41 +20,41 @@ namespace Ossium
             cache.clear();
         }
 
+        /// Removes an element from the cache
         void Erase(const T& data)
         {
             auto itr = accessLookup.find(data);
             if (itr != accessLookup.end())
             {
-                cache.erase(itr.second);
+                cache.erase(itr->second);
                 accessLookup.erase(itr);
             }
         }
 
-        /// Moves the data to the top of the cache. If Size() >= maxSize, the element at the bottom of the cache
-        /// is removed and returned. Otherwise returns nullptr.
-        T Access(const T& data, unsigned int maxSize, T notRemovedValue)
+        void PopLRU()
         {
-            return Access(data, Size() >= maxSize);
+            if (!cache.empty())
+            {
+                Erase(cache.back());
+            }
         }
 
-        /// Moves the data to the top of the cache. If isFull == true, removes a reference and returns a pointer to it.
-        /// Otherwise returns nullptr.
-        T Access(const T& data, bool isFull, T notRemovedValue)
+        /// Returns a copy of the least recently used value.
+        T GetLRU()
         {
-            T removed = notRemovedValue;
+            return cache.back();
+        }
+
+        /// Moves the data to the top of the cache.
+        void Access(const T& data)
+        {
             auto itr = accessLookup.find(data);
             if (itr != accessLookup.end())
             {
                 // Found, just move to the top
-                cache.erase(itr.second);
-            }
-            else if (isFull)
-            {
-                removed = cache.back();
-                Erase(removed);
+                cache.erase(itr->second);
             }
             cache.push_front(data);
-            return removed;
         }
 
         unsigned int Size()
@@ -64,7 +64,7 @@ namespace Ossium
 
     private:
         list<T> cache;
-        unordered_map<T, list<typename T>::iterator> accessLookup;
+        unordered_map<T, typename list<T>::iterator> accessLookup;
 
     };
 

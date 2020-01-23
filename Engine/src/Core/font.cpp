@@ -15,11 +15,42 @@
 **/
 #include "font.h"
 #include "logging.h"
+#include "utf8.h"
 
 using namespace std;
 
 namespace Ossium
 {
+
+    TextStyle::TextStyle(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
+        int styling, int renderingMode, SDL_Color backgroundColor)
+    {
+        fontPath = font;
+        ptsize = fontSize;
+        fg = color;
+        hinting = hint;
+        kerning = kern;
+        outline = outlineThickness;
+        style = styling;
+        rendermode = renderingMode;
+        bg = backgroundColor;
+    }
+
+    SDL_Rect Glyph::GetClip()
+    {
+        return clip;
+    }
+
+    void Glyph::UpdateMeta(Uint32 index, SDL_Rect quad)
+    {
+        clip = quad;
+        atlasIndex = index;
+    }
+
+    Uint32 Glyph::GetAtlasIndex()
+    {
+        return atlasIndex;
+    }
 
     REGISTER_RESOURCE(Font);
 
@@ -35,57 +66,34 @@ namespace Ossium
 
     void Font::Free()
     {
-        font = NULL;
-        if (!fontBank.empty())
+        FreeGlyphs();
+        FreeAtlas();
+        if (font != NULL)
         {
-            if (TTF_WasInit() > 0)
-            {
-                for (auto i = fontBank.begin(); i != fontBank.end(); i++)
-                {
-                    TTF_Font* tempFont = i->second;
-                    if (tempFont != NULL)
-                    {
-                        TTF_CloseFont(tempFont);
-                        tempFont = NULL;
-                    }
-                }
-            }
-            fontBank.clear();
+            TTF_CloseFont(font);
+            font = NULL;
         }
     }
 
-    bool Font::Load(string guid_path, vector<int> pointSizes)
+    void Font::FreeAtlas()
+    {
+        atlas.PopGPU();
+    }
+
+    bool Font::Load(string guid_path, int maxPointSize)
     {
         Free();
         path = guid_path;
-        if (pointSizes.empty())
+        if (maxPointSize <= 0)
         {
-            /// Load up a single default font size
-            font = TTF_OpenFont(guid_path.c_str(), 24);
-            if (font != NULL)
-            {
-                fontBank[24] = font;
-            }
+            /// Load up a default font size
+            loadedPointSize = 24;
         }
         else
         {
-            TTF_Font* tempFont = NULL;
-            for (int ptsize : pointSizes)
-            {
-                tempFont = TTF_OpenFont(guid_path.c_str(), ptsize);
-                if (tempFont == NULL)
-                {
-                    Logger::EngineLog().Error("Failed to open font '{0}' with point size '{1}'! TTF_Error: {2}", guid_path, ptsize, TTF_GetError());
-                    continue;
-                }
-                if (font == NULL)
-                {
-                    /// Default to first provided point size
-                    font = tempFont;
-                }
-                fontBank[ptsize] = tempFont;
-            }
+            loadedPointSize = maxPointSize;
         }
+        font = TTF_OpenFont(guid_path.c_str(), loadedPointSize);
         if (font == NULL)
         {
             Logger::EngineLog().Error("Failed to open font '{0}'! TTF_Error: {1}", guid_path, TTF_GetError());
@@ -93,50 +101,218 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, vector<int> pointSizes)
+    bool Font::LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize, Uint16 targetTextureSize, Uint32 pixelFormat, Uint32 glyphCacheLimit)
     {
-        return Load(guid_path, pointSizes) && Init(guid_path);
+        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, pixelFormat, glyphCacheLimit);
     }
 
-    bool Font::Init(string guid_path)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, Uint32 pixelFormat, Uint32 glyphCacheLimit)
     {
-        return true;
-    }
-
-    SDL_Rect Font::GetGlyphClipRect(Renderer& renderer, string utfChar, int pointSize, int style)
-    {
-    }
-
-    TTF_Font* Font::GetFont(int pointSize)
-    {
-        if (pointSize > 0)
+        fontHeight = TTF_FontHeight(font);
+        if (fontHeight <= 0)
         {
-            TTF_Font* temp = NULL;
-            auto i = fontBank.find(pointSize);
-            if (i != fontBank.end())
+            Logger::EngineLog().Error("Font has invalid height!");
+            return false;
+        }
+        // Compute actual texture size using font height and target texture size
+        Uint32 actualTextureSize = targetTextureSize / fontHeight;
+
+        // Create the atlas surface and push onto the GPU.
+        atlas.CreateEmptySurface(actualTextureSize, actualTextureSize, pixelFormat);
+        cacheLimit = glyphCacheLimit;
+        if (atlas.GetSurface() != NULL)
+        {
+            return atlas.PushGPU(renderer, pixelFormat, SDL_TEXTUREACCESS_TARGET) != NULL;
+        }
+        return false;
+    }
+
+    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, SDL_Color color, int hinting, int kerning, int style, int renderMode, SDL_Color bgColor, int outline, Uint32 wrapLength)
+    {
+        TTF_Font* font = GetFont();
+        if (font == NULL)
+        {
+            Logger::EngineLog().Error("Failed to get font for on-the-fly text generation!");
+            return NULL;
+        }
+
+        // Cache original settings so they can be restored once done.
+        int oldHinting = TTF_GetFontHinting(font);
+        int oldKerning = TTF_GetFontKerning(font);
+        int oldOutline = TTF_GetFontOutline(font);
+        int oldStyle = TTF_GetFontStyle(font);
+
+        // Configure font
+        TTF_SetFontHinting(font, hinting);
+        TTF_SetFontKerning(font, (int)kerning);
+        TTF_SetFontOutline(font, outline);
+        TTF_SetFontStyle(font, style);
+
+        SDL_Surface* tempSurface = NULL;
+
+        switch (renderMode)
+        {
+            case RENDERTEXT_SHADED:
             {
-                temp = i->second;
+                tempSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), color, bgColor);
+                break;
             }
-            if (temp != NULL)
+            case RENDERTEXT_BLEND:
             {
-                font = temp;
+                tempSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+                break;
             }
-            else
+            case RENDERTEXT_BLEND_WRAPPED:
             {
-                // Dynamically attempt to load the font at the specified point size
-                temp = TTF_OpenFont(path, pointSize);
-                if (temp == NULL)
-                {
-                    Logger::EngineLog().Error("Failed to open font '{0}' at point size {1}! TTF_Error: {2}", guid_path, pointSize, TTF_GetError());
-                }
-                else
-                {
-                    fontBank[pointSize] = temp;
-                    font = temp;
-                }
+                tempSurface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, wrapLength);
+                break;
+            }
+            default:
+            {
+                tempSurface = TTF_RenderUTF8_Solid(font, text.c_str(), color);
+                break;
             }
         }
+
+        // Restore settings
+        TTF_SetFontHinting(font, oldHinting);
+        TTF_SetFontKerning(font, oldKerning);
+        TTF_SetFontOutline(font, oldOutline);
+        TTF_SetFontStyle(font, oldStyle);
+
+        return tempSurface;
+    }
+
+    Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, float pointSize, int style)
+    {
+        Uint32 codepoint = Utilities::GetCodepointUTF8(utfChar);
+
+        // Limit style to main styles; strike through and underline styles don't need to be cached as they can be easily done dynamically.
+        style = style & (TTF_STYLE_BOLD | TTF_STYLE_ITALIC);
+
+        Glyph* glyph = nullptr;
+
+        auto itr = glyphs.find(codepoint);
+        if (itr != glyphs.end())
+        {
+            // Already cached, return the glyph
+            glyphCache.Access(codepoint);
+            glyph = itr->second;
+        }
+        else
+        {
+            if (!(atlas.GetTextureAccessMode() & (SDL_TEXTUREACCESS_TARGET | SDL_TEXTUREACCESS_STREAMING)))
+            {
+                Logger::EngineLog().Error("Cannot generate font glyph as the font has not been initialised!");
+            }
+            // Attempt to add the glyph to the atlas
+            // TODO: upgrade encoding from UCS-2 to UCS-4 (or even better, UTF-8) on next SDL_TTF update.
+            // Currently the glyphs are limited due to lack of proper character encoding support in SDL_TTF.
+            Uint16 ucs2 = Utilities::ConvertUTF8ToUCS2(utfChar);
+            if (ucs2)
+            {
+                // Check if the glyph exists
+                if (TTF_GlyphIsProvided(font, ucs2))
+                {
+                    SDL_Surface* renderedGlyph = GenerateFromText(renderer, utfChar, Colors::WHITE, 0, 0, style, RENDERTEXT_BLEND);
+                    if (renderedGlyph != NULL)
+                    {
+
+                        if (glyphCache.Size() >= cacheLimit)
+                        {
+                            // Replace a glyph in the glyph cache
+                            Uint32 toReplace = glyphCache.GetLRU();
+                            // Remove from the cache
+                            glyphCache.PopLRU();
+                            auto replaceItr = glyphs.find(toReplace);
+                            if (replaceItr != glyphs.end())
+                            {
+                                // Remove the current map entry
+                                glyph = replaceItr->second;
+                                glyphs.erase(replaceItr);
+                            }
+                            else
+                            {
+                                // This should never happen. If it does there's a problem in code.
+                                Logger::EngineLog().Error("Font system failure! LRU decimal code point {0} not found in glyphs map :(", toReplace);
+                            }
+                        }
+                        else
+                        {
+                            // Create a new glyph
+                            glyph = new Glyph();
+                        }
+
+                        // Glyph manages surface memory now
+                        glyph->cached.SetSurface(renderedGlyph);
+
+                        // Add the glyph to the map and update the LRU cache
+                        glyphs[codepoint] = glyph;
+                        glyphCache.Access(codepoint);
+
+                    }
+                    else
+                    {
+                        Logger::EngineLog().Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
+                    }
+                }
+                Logger::EngineLog().Verbose("Glyph is not provided for UTF-8 character {0}.", utfChar);
+            }
+            else if (!utfChar.empty() && utfChar[0] != 0)
+            {
+                // Unsupported character
+                Logger::EngineLog().Verbose("Failed to get glyph for UTF-8 character {0} as it cannot be converted to a valid UCS-2 code point (SDL_TTF 2.0.15 limitation).", utfChar);
+            }
+
+            // Could not find glyph in font, get the empty box or question mark glyph.
+        }
+        return glyph;
+    }
+
+    Vector2 Font::GetGlyphRenderDimensions(Glyph* glyph, float pointSize)
+    {
+        // TODO: scale depending upon point size
+        return Vector2(glyph->cached.GetWidth(), glyph->cached.GetHeight());
+    }
+
+    void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    {
+        atlas.Render(renderer.GetRendererSDL(), dest, &clip, origin, angle, color, blending, flip);
+    }
+
+    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, int style, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    {
+        Vector2 size = GetGlyphRenderDimensions(glyph, pointSize);
+        // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
+        SDL_Rect dest = {(int)(position.x - (size.x / 2)), (int)(position.y - (size.y / 2)), (int)(size.x), (int)(size.y)};
+        Render(renderer, dest, glyph->GetClip(), color, blending, angle, origin, flip);
+        // TODO: kerning
+        return position + Vector2(rtl ? -size.x : size.x, 0);
+    }
+
+    void Font::FreeGlyphs()
+    {
+        for (auto itr : glyphs)
+        {
+            if (itr.second != nullptr)
+            {
+                delete itr.second;
+                itr.second = nullptr;
+            }
+        }
+        glyphs.clear();
+        glyphCache.Clear();
+        textureCache.Clear();
+    }
+
+    TTF_Font* Font::GetFont()
+    {
         return font;
+    }
+
+    Uint32 Font::GetAtlasSize()
+    {
+        return atlas.GetHeight();
     }
 
 }
