@@ -22,6 +22,10 @@ using namespace std;
 namespace Ossium
 {
 
+    //
+    // TextStyle
+    //
+
     TextStyle::TextStyle(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
         int styling, int renderingMode, SDL_Color backgroundColor)
     {
@@ -34,6 +38,15 @@ namespace Ossium
         style = styling;
         rendermode = renderingMode;
         bg = backgroundColor;
+    }
+
+    //
+    // Glyph
+    //
+
+    Glyph::Glyph(Uint32 codepoint)
+    {
+        cp = codepoint;
     }
 
     SDL_Rect Glyph::GetClip()
@@ -51,6 +64,67 @@ namespace Ossium
     {
         return atlasIndex;
     }
+
+    SDL_Rect Glyph::GetBoundingBox()
+    {
+        return bbox;
+    }
+
+    int Glyph::GetAdvance()
+    {
+        return advanceMetric;
+    }
+
+    Uint32 Glyph::GetCodePointUTF8()
+    {
+        return cp;
+    }
+
+    //
+    // GlyphBatch
+    //
+
+    GlyphBatch::GlyphBatch(int atlasLimit)
+    {
+        maxGlyphs = atlasLimit;
+        batched.reserve(atlasLimit);
+    }
+
+    bool GlyphBatch::AddGlyph(Glyph* glyph)
+    {
+        glyphs.push(glyph);
+        batched.insert(glyph);
+        return IsFull();
+    }
+
+    bool GlyphBatch::IsFull()
+    {
+        return !batched.empty() && batched.size() >= (unsigned int)maxGlyphs;
+    }
+
+    Glyph* GlyphBatch::PopGlyph()
+    {
+        if (glyphs.empty())
+        {
+            return nullptr;
+        }
+        Glyph* glyph = glyphs.top();
+        glyphs.pop();
+        return glyph;
+    }
+
+    void GlyphBatch::Clear()
+    {
+        for (unsigned int i = 0, counti = glyphs.empty() ? 0 : glyphs.size(); i < counti; i++)
+        {
+            glyphs.pop();
+        }
+        batched.clear();
+    }
+
+    //
+    // Font
+    //
 
     REGISTER_RESOURCE(Font);
 
@@ -183,7 +257,7 @@ namespace Ossium
         return tempSurface;
     }
 
-    Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, float pointSize, int style)
+    Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style)
     {
         Uint32 codepoint = Utilities::GetCodepointUTF8(utfChar);
 
@@ -240,7 +314,7 @@ namespace Ossium
                         else
                         {
                             // Create a new glyph
-                            glyph = new Glyph();
+                            glyph = new Glyph(codepoint);
                         }
 
                         // Glyph manages surface memory now
@@ -256,7 +330,10 @@ namespace Ossium
                         Logger::EngineLog().Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
                     }
                 }
-                Logger::EngineLog().Verbose("Glyph is not provided for UTF-8 character {0}.", utfChar);
+                else
+                {
+                    Logger::EngineLog().Verbose("Glyph is not provided for UTF-8 character {0}.", utfChar);
+                }
             }
             else if (!utfChar.empty() && utfChar[0] != 0)
             {
@@ -264,15 +341,117 @@ namespace Ossium
                 Logger::EngineLog().Verbose("Failed to get glyph for UTF-8 character {0} as it cannot be converted to a valid UCS-2 code point (SDL_TTF 2.0.15 limitation).", utfChar);
             }
 
-            // Could not find glyph in font, get the empty box or question mark glyph.
+            if (glyph == nullptr)
+            {
+                // Check to make sure we don't get a recursive loop and stack overflow
+                if (utfChar != "�")
+                {
+                    // Could not find glyph in font, try and get the empty box/question mark glyph (replacement character U+FFFD).
+                    return GetGlyph(renderer, "�", TTF_STYLE_NORMAL);
+                }
+                else
+                {
+                    // Wow, something has either gone horribly wrong or the font doesn't support the Unicode replacement glyph for some reason?!
+                    Logger::EngineLog().Error("Failed to find replacement glyph U+FFFD in font! Glyph could not be created.");
+                }
+            }
+
         }
         return glyph;
     }
 
-    Vector2 Font::GetGlyphRenderDimensions(Glyph* glyph, float pointSize)
+    Uint32 Font::PackGlyphs(Renderer& renderer, vector<Glyph*> renderGlyphs)
     {
-        // TODO: scale depending upon point size
-        return Vector2(glyph->cached.GetWidth(), glyph->cached.GetHeight());
+        Uint32 packed = 0;
+
+        // Configure renderer
+        SDL_Renderer* render = renderer.GetRendererSDL();
+
+        SDL_Texture* target = atlas.GetTexture();
+        if (target == NULL)
+        {
+            Logger::EngineLog().Warning("Font atlas is uninitialised, cannot pack glyphs!");
+            return 0;
+        }
+
+        // Set render target to atlas
+        SDL_Texture* oldTarget = SDL_GetRenderTarget(render);
+        SDL_SetRenderTarget(render, target);
+
+        // Configure blending
+        SDL_BlendMode blend = SDL_BLENDMODE_NONE;
+        SDL_GetRenderDrawBlendMode(render, &blend);
+        SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_NONE);
+
+        for (unsigned int i = 0, counti = renderGlyphs.empty() ? 0 : min(renderGlyphs.size(), GetAtlasMaxGlyphs()); i < counti; i++)
+        {
+            Glyph* glyph = renderGlyphs[i];
+            if (glyph == nullptr)
+            {
+                continue;
+            }
+            // First check if we have already packed the glyph
+            Uint32 index = glyph->GetAtlasIndex();
+            if (index != 0)
+            {
+                // Already packed, just update the cache
+                textureCache.Access(index);
+                continue;
+            }
+
+            // Find a spot for the glyph to be rendered
+            if (textureCache.Size() == GetAtlasMaxGlyphs())
+            {
+                // Overwrite LRU index
+                index = textureCache.GetLRU();
+            }
+            else
+            {
+                // Use the next available index (must be non-zero, hence +1).
+                index = textureCache.Size() + 1;
+            }
+            // Update atlas cache
+            textureCache.Access(index);
+
+            SDL_Rect dest = GetAtlasCell(index, 1);
+            if (dest.w != 0 && dest.h != 0)
+            {
+
+                // Render the glyph to the atlas.
+                if (glyph->cached.GetWidth() > dest.w || glyph->cached.GetHeight() > dest.h)
+                {
+                    Logger::EngineLog().Warning("Attempting to pack glyph that is bigger than the atlas cell size! It'll be a bit squashed.");
+                }
+                // TODO: IMPORTANT: rather than squishing unevenly, scale down and store the scale difference for later.
+                dest.w = min(dest.w, glyph->cached.GetWidth());
+                dest.h = min(dest.h, glyph->cached.GetHeight());
+
+                glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
+                SDL_Rect clip = glyph->GetClip();
+                SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
+                glyph->cached.PopGPU();
+
+                // Update glyph metrics
+                glyph->UpdateMeta(index, dest);
+                TTF_GlyphMetrics(font, (Uint16)glyph->cp, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
+                glyph->bbox.w -= glyph->bbox.x;
+                glyph->bbox.h -= glyph->bbox.y;
+
+                packed++;
+            }
+            else
+            {
+                // :( invalid index
+                continue;
+            }
+
+        }
+
+        // Reconfigure renderer back to how it was originally
+        SDL_SetRenderTarget(render, oldTarget);
+        SDL_SetRenderDrawBlendMode(render, blend);
+
+        return packed;
     }
 
     void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
@@ -282,7 +461,8 @@ namespace Ossium
 
     Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, int style, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        Vector2 size = GetGlyphRenderDimensions(glyph, pointSize);
+        // TODO: proper sizing with point size
+        Vector2 size = Vector2(glyph->cached.GetWidth(), glyph->cached.GetHeight());
         // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
         SDL_Rect dest = {(int)(position.x - (size.x / 2)), (int)(position.y - (size.y / 2)), (int)(size.x), (int)(size.y)};
         Render(renderer, dest, glyph->GetClip(), color, blending, angle, origin, flip);
@@ -313,6 +493,41 @@ namespace Ossium
     Uint32 Font::GetAtlasSize()
     {
         return atlas.GetHeight();
+    }
+
+    Uint32 Font::GetAtlasMaxGlyphs()
+    {
+        return GetAtlasSize() / GetAtlasCellSize();
+    }
+
+    int Font::GetAtlasCellSize()
+    {
+        // Add 2 pixels as padding to prevent bleeding
+        return TTF_FontHeight(font) + 2;
+    }
+
+    SDL_Rect Font::GetAtlasCell(Uint32 index, int padding)
+    {
+        SDL_Rect rect = {0, 0, 0, 0};
+        if (index < 1 || index > GetAtlasMaxGlyphs() || atlas.GetTexture() != NULL)
+        {
+            Logger::EngineLog().Warning("Failed to get atlas cell for index {0} (note: index must be between 1 and {1} inclusive and atlas must be initialised)", index, GetAtlasMaxGlyphs());
+            return rect;
+        }
+        int linearPosition = ((index - 1) * GetAtlasCellSize());
+        rect.x = linearPosition % atlas.GetWidth();
+        rect.y = (linearPosition - rect.x) / atlas.GetWidth();
+        rect.w = GetAtlasCellSize();
+        rect.h = rect.w;
+        if (padding > 0)
+        {
+            // Add pixel padding on all sides to prevent bleeding
+            rect.x += padding;
+            rect.y += padding;
+            rect.w -= padding * 2;
+            rect.h -= padding * 2;
+        }
+        return rect;
     }
 
 }

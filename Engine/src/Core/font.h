@@ -18,6 +18,8 @@
 
 #include <string>
 #include <map>
+#include <unordered_set>
+#include <stack>
 extern "C"
 {
     #include <SDL_ttf.h>
@@ -69,30 +71,88 @@ namespace Ossium
         M(SDL_Color, bg) = Colors::TRANSPARENT;
     };
 
+    // Forward declaration
+    class Font;
+
     class Glyph
     {
     public:
+        friend class Font;
+
+        Glyph(Uint32 codepoint);
+
         /// Updates the atlas index and clip rect
         void UpdateMeta(Uint32 index, SDL_Rect quad);
 
         /// Returns the clip rect of the glyph in the texture atlas.
-        /// Returns a clip rect with 0 width and height if not packed into the texture atlas.
         SDL_Rect GetClip();
 
         /// Returns the index of the glyph in the texture atlas.
         /// Returns 0 if not packed.
         Uint32 GetAtlasIndex();
 
-        /// The glyph image is also cached so it doesn't need to be re-rendered
-        /// if it gets removed from the atlas texture.
-        Image cached;
+        /// Returns the bounding box of the rendered glyph.
+        SDL_Rect GetBoundingBox();
+
+        /// Returns the pixel advance to the next glyph origin.
+        int GetAdvance();
+
+        /// Returns the UTF-8 code point
+        Uint32 GetCodePointUTF8();
 
     private:
         /// The clip rect of the glyph in the font atlas.
         SDL_Rect clip;
 
+        /// The rendered glyph's bounding box
+        SDL_Rect bbox;
+
+        /// Distance from this glyph's origin to the next glyph origin. Always positive, even for RTL glyphs.
+        int advanceMetric;
+
         /// The index of the glyph within the atlas.
         Uint32 atlasIndex = 0;
+
+        /// UTF-8 code point
+        Uint32 cp;
+
+        /// The glyph image is also cached so it doesn't need to be re-rendered
+        /// if it gets removed from the atlas texture.
+        Image cached;
+
+    };
+
+    /// Helper class for batching glyphs rendered to the font atlas.
+    /** Rather than rendering a glyph to the atlas, then immediately rendering the atlas, this is used to render a batch of glyphs
+     *  to the atlas if they're not already in the atlas. Then you can render the glyphs from the atlas texture all at once when the batch is full
+     *  (or you don't need to add any more glyphs). */
+    class GlyphBatch
+    {
+    public:
+        /// Takes the maximum glyphs that can fit in the atlas (maxGlyphs).
+        GlyphBatch(int atlasLimit);
+
+        /// Adds a glyph to the batch. Returns true when the batch is full, at which point all the glyphs should be rendered.
+        bool AddGlyph(Glyph* glyph);
+
+        /// Removes and returns a glyph from the batch.
+        Glyph* PopGlyph();
+
+        /// Is this batch full?
+        bool IsFull();
+
+        /// Clears the batch.
+        void Clear();
+
+    private:
+        /// Atlas glyph limit
+        int maxGlyphs;
+
+        /// Stack of glyphs that expands as more are added to the batch.
+        stack<Glyph*> glyphs;
+
+        /// When the size of this set == maxGlyphs, the batch is full and should be emptied.
+        unordered_set<Glyph*> batched;
 
     };
 
@@ -118,8 +178,8 @@ namespace Ossium
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
-         *  Please note: It is not recommended that you use this method as it does not cache, so it is rather slow.
-         *  It does, however, support a wider range of options in regards to text styling, kerning, hinting and so on as well as basic text wrapping.
+         *  Please note: It is not recommended that you use this method for real-time text rendering as it does not cache glyphs, so it is rather slow.
+         *  It does, however, support more out-of-the-box options in regards to text styling, kerning, hinting and so on as well as basic text wrapping.
          */
         SDL_Surface* GenerateFromText(
             Renderer& renderer,
@@ -139,11 +199,12 @@ namespace Ossium
 
         /// Returns the glyph for the given UTF-8 character.
         /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
-         * then adds it to the map and updates the cache. Note this method does NOT pack the glyph into the atlas. */
-        Glyph* GetGlyph(Renderer& renderer, string utf8char, float pointSize = 0, int style = TTF_STYLE_NORMAL);
+         *  then adds it to the map and updates the cache. Note this does NOT pack the glyph into the atlas. */
+        Glyph* GetGlyph(Renderer& renderer, string utf8char, int style = TTF_STYLE_NORMAL);
 
-        /// Returns the render dimensions of the glyph given it's clip rect and desired point size (height).
-        Vector2 GetGlyphRenderDimensions(Glyph* glyph, float pointSize);
+        /// Packs a given glyph into the font atlas if it isn't already packed. Returns the number of glyphs that were successfully packed.
+        /// Note that if the size of renderGlyphs is greater than GetAtlasMaxGlyphs() then only the first GetAtlasMaxGlyphs() glyphs will be packed.
+        Uint32 PackGlyphs(Renderer& renderer, vector<Glyph*> renderGlyphs);
 
         /// Renders the font atlas texture at a given point size.
         void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -154,13 +215,20 @@ namespace Ossium
         /// Frees all glyphs in the map and clears the LRU caches. Does not destroy the atlas texture.
         void FreeGlyphs();
 
-        /** Returns pointer to a font. If pointSize <= 0, get the current selected font. If the
-         * given pointsize is unavailable, by default the current font will be returned.
-         * Useful if you want to use SDL_ttf functions (e.g. to get glyph metrics). */
+        /// Returns pointer to a font. Useful if you want to use SDL_ttf functions directly.
         TTF_Font* GetFont();
 
-        /// Returns the size of the atlas (width and height, which are the same as it's a square).
+        /// Returns the size of the atlas (pixel width and height, which are the same as it's a square).
         Uint32 GetAtlasSize();
+
+        /// Returns the maximum number of glyphs that can fit in the atlas.
+        Uint32 GetAtlasMaxGlyphs();
+
+        /// Returns the size of a single glyph cell in the atlas.
+        int GetAtlasCellSize();
+
+        /// Returns the clip rect for a cell within the atlas, with optional padding. Returns rect with 0 width and height on error (e.g. index out of range).
+        SDL_Rect GetAtlasCell(Uint32 index, int padding = 0);
 
     private:
         /// Copying is not permitted.
