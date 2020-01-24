@@ -16,6 +16,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add directory="../Box2D/" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -28,7 +29,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
-					<Add directory="Box2D/" />
+					<Add directory="../Box2D/" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

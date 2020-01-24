@@ -1,4 +1,0 @@
-name=fancy animation,spritesheet=assets/sprite_test.png,loopable=true,duration=1300,tween=true,,,,,,,,,
-Time position (ms),cliparea x:,cliparea y:,cliparea w:,cliparea h:,position x:,position y:,render width:,render height:,origin x:,origin y:,direction x:,direction y:,transition type:
-0,0,0,64,56,0:12,0:12,1,1,0.5,0.5,0
-700,0,0,64,56,0:8,100:8,1,1,0.5,0.5,0
