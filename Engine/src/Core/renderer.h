@@ -88,6 +88,9 @@ namespace Ossium
             /// Overload takes individual values for convenience
             void SetDrawColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 0xFF);
 
+            /// Returns the current draw color
+            SDL_Color GetDrawColor();
+
             /// Sets the renderer blend mode. By default the renderer is set to SDL_BLENDMODE_BLEND.
             void SetBlendmode(SDL_BlendMode blending);
 

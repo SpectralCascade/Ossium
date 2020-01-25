@@ -42,7 +42,6 @@ namespace Ossium
         friend class Ossium::TexturePack;
 
         /// Destroys the image, freeing it from memory. Does not modify the temporary SDL_Surface
-        /// TODO: remove me once outlineTexture is removed.
         void Free();
         /// Frees the surface from memory, but not the GPU texture.
         void FreeSurface();
@@ -208,10 +207,6 @@ namespace Ossium
 
         /// A representation of the image in video memory
         SDL_Texture* texture = NULL;
-
-        /// Outline texture (used purely for rendered text)
-        /// TODO: get rid of this
-        SDL_Texture* outlineTexture = NULL;
 
         /// Dimensions of the GPU texture.
         int widthGPU = 0;

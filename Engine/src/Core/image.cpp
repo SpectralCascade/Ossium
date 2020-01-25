@@ -27,20 +27,8 @@ namespace Ossium
 
     Image::~Image()
     {
-        /// TODO: See Free() TODO, call PopGPU() instead
-        Free();
-        FreeSurface();
-    }
-
-    /// TODO: remove me once outline texture is removed, PopGPU() does the job instead.
-    void Image::Free()
-    {
         PopGPU();
-        if (outlineTexture != NULL)
-        {
-            SDL_DestroyTexture(outlineTexture);
-            outlineTexture = NULL;
-        }
+        FreeSurface();
     }
 
     void Image::FreeSurface()
@@ -94,7 +82,7 @@ namespace Ossium
 
     bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, int accessMode)
     {
-        Free();
+        PopGPU();
         bool success = PushGPU(renderer, pixelFormatting, accessMode) != NULL;
         FreeSurface();
         return success;
@@ -127,13 +115,6 @@ namespace Ossium
             return;
         }
 
-        if (outlineTexture != NULL)
-        {
-            SDL_SetTextureBlendMode(outlineTexture, blending);
-            SDL_SetTextureColorMod(outlineTexture, modulation.r, modulation.g, modulation.b);
-            SDL_SetTextureAlphaMod(outlineTexture, modulation.a);
-        }
-
         SDL_SetTextureBlendMode(texture, blending);
         SDL_SetTextureColorMod(texture, modulation.r, modulation.g, modulation.b);
         SDL_SetTextureAlphaMod(texture, modulation.a);
@@ -141,18 +122,10 @@ namespace Ossium
         /// Rendering time!
         if (clip && clip->w > 0 && clip->h > 0)
         {
-            if (outlineTexture != NULL)
-            {
-                SDL_RenderCopyEx(renderer, outlineTexture, clip, &dest, rotation, origin, flip);
-            }
             SDL_RenderCopyEx(renderer, texture, clip, &dest, rotation, origin, flip);
         }
         else
         {
-            if (outlineTexture != NULL)
-            {
-                SDL_RenderCopyEx(renderer, outlineTexture, NULL, &dest, rotation, origin, flip);
-            }
             SDL_RenderCopyEx(renderer, texture, NULL, &dest, rotation, origin, flip);
         }
     }

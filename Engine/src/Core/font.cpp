@@ -325,10 +325,6 @@ namespace Ossium
                         // Glyph manages surface memory now
                         glyph->cached.SetSurface(renderedGlyph);
 
-                        // Add the glyph to the map and update the LRU cache
-                        glyphs[codepoint] = glyph;
-                        glyphCache.Access(codepoint);
-
                     }
                     else
                     {
@@ -346,22 +342,12 @@ namespace Ossium
                 Logger::EngineLog().Verbose("Failed to get glyph for UTF-8 character {0} as it cannot be converted to a valid UCS-2 code point (SDL_TTF 2.0.15 limitation).", utfChar);
             }
 
-            if (glyph == nullptr)
-            {
-                // Check to make sure we don't get a recursive loop and stack overflow
-                if (utfChar != "�")
-                {
-                    // Could not find glyph in font, try and get the empty box/question mark glyph (replacement character U+FFFD).
-                    return GetGlyph(renderer, "�", TTF_STYLE_NORMAL);
-                }
-                else
-                {
-                    // Wow, something has either gone horribly wrong or the font doesn't support the Unicode replacement glyph for some reason?!
-                    Logger::EngineLog().Error("Failed to find replacement glyph U+FFFD in font! Glyph could not be created.");
-                }
-            }
-
         }
+
+        // Add the glyph to the map and update the LRU cache
+        glyphs[codepoint] = glyph;
+        glyphCache.Access(codepoint);
+
         return glyph;
     }
 
@@ -474,10 +460,25 @@ namespace Ossium
 
     Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, int style, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
+        if (glyph == nullptr)
+        {
+            // Invalid glyph, render a box instead
+            int boxPadding = fontHeight / 10;
+            dest.x += boxPadding;
+            dest.w = (fontHeight / 2);
+            dest.h = (fontHeight / 3) * 2;
+            dest.y += fontHeight / 8;
+            SDL_Color oldColor = renderer.GetDrawColor();
+            renderer.SetDrawColor(color);
+            SDL_RenderDrawRect(renderer.GetRendererSDL(), &dest);
+            renderer.SetDrawColor(oldColor);
+            return position + Vector2(rtl ? -(boxPadding * 2 + dest.w) : (boxPadding * 2 + dest.w), 0);
+        }
         // TODO: proper sizing with point size
         Vector2 size = Vector2(glyph->cached.GetWidth(), glyph->cached.GetHeight());
         // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
-        SDL_Rect dest = {(int)(position.x), (int)(position.y), (int)(size.x), (int)(size.y)};
+        dest = {dest.x, dest.y, (int)(size.x), (int)(size.y)};
         Render(renderer, dest, glyph->GetClip(), color, blending, angle, origin, flip);
         // TODO: kerning
         size.x = glyph->GetAdvance();
