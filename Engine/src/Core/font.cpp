@@ -424,6 +424,7 @@ namespace Ossium
             textureCache.Access(index);
 
             SDL_Rect dest = GetAtlasCell(index);
+            //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
 
             if (dest.w != 0 && dest.h != 0)
             {
@@ -512,7 +513,8 @@ namespace Ossium
 
     Uint32 Font::GetAtlasMaxGlyphs()
     {
-        return GetAtlasSize() / GetAtlasCellSize();
+        int total = GetAtlasSize() / GetAtlasCellSize();
+        return total * total;
     }
 
     int Font::GetAtlasCellSize()

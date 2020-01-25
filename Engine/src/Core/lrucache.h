@@ -55,6 +55,7 @@ namespace Ossium
                 cache.erase(itr->second);
             }
             cache.push_front(data);
+            accessLookup[data] = cache.begin();
         }
 
         unsigned int Size()
