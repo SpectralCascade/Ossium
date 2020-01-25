@@ -151,8 +151,8 @@ namespace Ossium
         /// Atlas glyph limit
         int maxGlyphs;
 
-        /// Stack of glyphs that expands as more are added to the batch.
-        stack<Glyph*> glyphs;
+        /// Double ended queue of glyphs that expands as more are added to the batch.
+        deque<Glyph*> glyphs;
 
         /// When the size of this set == maxGlyphs, the batch is full and should be emptied.
         unordered_set<Glyph*> batched;

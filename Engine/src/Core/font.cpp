@@ -92,7 +92,7 @@ namespace Ossium
 
     bool GlyphBatch::AddGlyph(Glyph* glyph)
     {
-        glyphs.push(glyph);
+        glyphs.push_back(glyph);
         batched.insert(glyph);
         return IsFull();
     }
@@ -113,17 +113,14 @@ namespace Ossium
         {
             return nullptr;
         }
-        Glyph* glyph = glyphs.top();
-        glyphs.pop();
+        Glyph* glyph = glyphs.front();
+        glyphs.pop_front();
         return glyph;
     }
 
     void GlyphBatch::Clear()
     {
-        for (unsigned int i = 0, counti = glyphs.empty() ? 0 : glyphs.size(); i < counti; i++)
-        {
-            glyphs.pop();
-        }
+        glyphs.clear();
         batched.clear();
     }
 
@@ -480,9 +477,10 @@ namespace Ossium
         // TODO: proper sizing with point size
         Vector2 size = Vector2(glyph->cached.GetWidth(), glyph->cached.GetHeight());
         // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
-        SDL_Rect dest = {(int)(position.x - (size.x / 2)), (int)(position.y - (size.y / 2)), (int)(size.x), (int)(size.y)};
+        SDL_Rect dest = {(int)(position.x), (int)(position.y), (int)(size.x), (int)(size.y)};
         Render(renderer, dest, glyph->GetClip(), color, blending, angle, origin, flip);
         // TODO: kerning
+        size.x = glyph->GetAdvance();
         return position + Vector2(rtl ? -size.x : size.x, 0);
     }
 
@@ -532,7 +530,7 @@ namespace Ossium
         }
         int linearPosition = ((index - 1) * GetAtlasCellSize());
         rect.x = linearPosition % atlas.GetWidth();
-        rect.y = (linearPosition - rect.x) / atlas.GetWidth();
+        rect.y = ((linearPosition - rect.x) / atlas.GetWidth()) * GetAtlasCellSize();
         rect.w = GetAtlasCellSize();
         rect.h = rect.w;
         if (padding > 0)
