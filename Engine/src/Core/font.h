@@ -189,9 +189,9 @@ namespace Ossium
             string text,
             SDL_Color color = Colors::RED,
             int hinting = 0,
-            int kerning = 0,
+            int kerning = 1,
             int style = 0,
-            int renderMode = 0,
+            int renderMode = RENDERTEXT_BLEND_WRAPPED,
             SDL_Color bgColor = Colors::BLACK,
             int outline = 0,
             Uint32 wrapLength = 0

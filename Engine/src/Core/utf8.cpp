@@ -45,7 +45,7 @@ namespace Ossium
             }
             else
             {
-                for (Uint8 i = bytes - 1; i >= 0; i--)
+                for (int i = bytes - 1; i >= 0; i--)
                 {
                     codepoint |= (unsigned char)(utf8Char[bytes - i - 1]) << (i * 8);
                 }
