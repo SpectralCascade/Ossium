@@ -215,7 +215,7 @@ namespace Ossium
         {
             Logger::EngineLog().Error("No surface loaded, cannot copy to GPU memory!");
         }
-        else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN)
+        else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN && accessMode != SDL_TEXTUREACCESS_STATIC)
         {
             SDL_Surface* formattedSurface = NULL;
             formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
@@ -230,16 +230,17 @@ namespace Ossium
                 {
                     Logger::EngineLog().Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
                 }
-                else
+                else if (accessMode == SDL_TEXTUREACCESS_STREAMING)
                 {
-                    // Grab pixel manipulation data
+                    // Copy surface pixels to texture
                     SDL_LockTexture(texture, NULL, &pixels, &pitch);
                     memcpy(pixels, formattedSurface->pixels, formattedSurface->pitch * formattedSurface->h);
                     SDL_UnlockTexture(texture);
-                    pixels = NULL;
-                    widthGPU = formattedSurface->w;
-                    heightGPU = formattedSurface->h;
                 }
+                pixels = NULL;
+                widthGPU = formattedSurface->w;
+                heightGPU = formattedSurface->h;
+
                 SDL_FreeSurface(formattedSurface);
                 formattedSurface = NULL;
             }

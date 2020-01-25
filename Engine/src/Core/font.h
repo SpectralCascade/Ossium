@@ -141,6 +141,9 @@ namespace Ossium
         /// Is this batch full?
         bool IsFull();
 
+        /// Returns the number of glyphs in the stack.
+        Uint32 Size();
+
         /// Clears the batch.
         void Clear();
 
@@ -171,10 +174,10 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize = 96, Uint16 targetTextureSize = 1024, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256);
+        bool LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize = 96, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256);
 
         /// Takes a target size for the atlas textures
-        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256);
+        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -228,7 +231,7 @@ namespace Ossium
         int GetAtlasCellSize();
 
         /// Returns the clip rect for a cell within the atlas, with optional padding. Returns rect with 0 width and height on error (e.g. index out of range).
-        SDL_Rect GetAtlasCell(Uint32 index, int padding = 0);
+        SDL_Rect GetAtlasCell(Uint32 index);
 
     private:
         /// Copying is not permitted.
@@ -246,6 +249,9 @@ namespace Ossium
 
         /// The maximum glyph height of the font
         int fontHeight;
+
+        /// Padding around each cell in the font atlas
+        int padding;
 
         /// Map of UTF-8 code points to cached glyphs.
         /// TODO?: use slot_map/array instead?

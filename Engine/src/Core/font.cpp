@@ -102,6 +102,11 @@ namespace Ossium
         return !batched.empty() && batched.size() >= (unsigned int)maxGlyphs;
     }
 
+    Uint32 GlyphBatch::Size()
+    {
+        return glyphs.empty() ? 0 : glyphs.size();
+    }
+
     Glyph* GlyphBatch::PopGlyph()
     {
         if (glyphs.empty())
@@ -175,13 +180,15 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize, Uint16 targetTextureSize, Uint32 pixelFormat, Uint32 glyphCacheLimit)
+    bool Font::LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit)
     {
-        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, pixelFormat, glyphCacheLimit);
+        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, Uint32 pixelFormat, Uint32 glyphCacheLimit)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit)
     {
+        padding = atlasPadding;
+
         fontHeight = TTF_FontHeight(font);
         if (fontHeight <= 0)
         {
@@ -189,7 +196,7 @@ namespace Ossium
             return false;
         }
         // Compute actual texture size using font height and target texture size
-        Uint32 actualTextureSize = targetTextureSize / fontHeight;
+        Uint32 actualTextureSize = (targetTextureSize / fontHeight) * GetAtlasCellSize();
 
         // Create the atlas surface and push onto the GPU.
         atlas.CreateEmptySurface(actualTextureSize, actualTextureSize, pixelFormat);
@@ -315,6 +322,7 @@ namespace Ossium
                         {
                             // Create a new glyph
                             glyph = new Glyph(codepoint);
+                            //Logger::EngineLog().Verbose("Created new glyph from code point {0}.", codepoint);
                         }
 
                         // Glyph manages surface memory now
@@ -390,12 +398,14 @@ namespace Ossium
             {
                 continue;
             }
+
             // First check if we have already packed the glyph
             Uint32 index = glyph->GetAtlasIndex();
             if (index != 0)
             {
                 // Already packed, just update the cache
                 textureCache.Access(index);
+                packed++;
                 continue;
             }
 
@@ -413,10 +423,10 @@ namespace Ossium
             // Update atlas cache
             textureCache.Access(index);
 
-            SDL_Rect dest = GetAtlasCell(index, 1);
+            SDL_Rect dest = GetAtlasCell(index);
+
             if (dest.w != 0 && dest.h != 0)
             {
-
                 // Render the glyph to the atlas.
                 if (glyph->cached.GetWidth() > dest.w || glyph->cached.GetHeight() > dest.h)
                 {
@@ -426,8 +436,10 @@ namespace Ossium
                 dest.w = min(dest.w, glyph->cached.GetWidth());
                 dest.h = min(dest.h, glyph->cached.GetHeight());
 
+                //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
+
                 glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
-                SDL_Rect clip = glyph->GetClip();
+                SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
                 SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
                 glyph->cached.PopGPU();
 
@@ -446,6 +458,9 @@ namespace Ossium
             }
 
         }
+
+        // Render everything
+        SDL_RenderPresent(render);
 
         // Reconfigure renderer back to how it was originally
         SDL_SetRenderTarget(render, oldTarget);
@@ -502,14 +517,13 @@ namespace Ossium
 
     int Font::GetAtlasCellSize()
     {
-        // Add 2 pixels as padding to prevent bleeding
-        return TTF_FontHeight(font) + 2;
+        return fontHeight + (padding * 2);
     }
 
-    SDL_Rect Font::GetAtlasCell(Uint32 index, int padding)
+    SDL_Rect Font::GetAtlasCell(Uint32 index)
     {
         SDL_Rect rect = {0, 0, 0, 0};
-        if (index < 1 || index > GetAtlasMaxGlyphs() || atlas.GetTexture() != NULL)
+        if (index < 1 || index > GetAtlasMaxGlyphs() || atlas.GetTexture() == NULL)
         {
             Logger::EngineLog().Warning("Failed to get atlas cell for index {0} (note: index must be between 1 and {1} inclusive and atlas must be initialised)", index, GetAtlasMaxGlyphs());
             return rect;
@@ -521,7 +535,7 @@ namespace Ossium
         rect.h = rect.w;
         if (padding > 0)
         {
-            // Add pixel padding on all sides to prevent bleeding
+            // Get the true destination rect with padding
             rect.x += padding;
             rect.y += padding;
             rect.w -= padding * 2;
