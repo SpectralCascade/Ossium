@@ -81,50 +81,6 @@ namespace Ossium
     }
 
     //
-    // GlyphBatch
-    //
-
-    GlyphBatch::GlyphBatch(int atlasLimit)
-    {
-        maxGlyphs = atlasLimit;
-        batched.reserve(atlasLimit);
-    }
-
-    bool GlyphBatch::AddGlyph(Glyph* glyph)
-    {
-        glyphs.push_back(glyph);
-        batched.insert(glyph);
-        return IsFull();
-    }
-
-    bool GlyphBatch::IsFull()
-    {
-        return !batched.empty() && batched.size() >= (unsigned int)maxGlyphs;
-    }
-
-    Uint32 GlyphBatch::Size()
-    {
-        return glyphs.empty() ? 0 : glyphs.size();
-    }
-
-    Glyph* GlyphBatch::PopGlyph()
-    {
-        if (glyphs.empty())
-        {
-            return nullptr;
-        }
-        Glyph* glyph = glyphs.front();
-        glyphs.pop_front();
-        return glyph;
-    }
-
-    void GlyphBatch::Clear()
-    {
-        glyphs.clear();
-        batched.clear();
-    }
-
-    //
     // Font
     //
 
@@ -351,9 +307,15 @@ namespace Ossium
         return glyph;
     }
 
-    Uint32 Font::PackGlyphs(Renderer& renderer, vector<Glyph*> renderGlyphs)
+    void Font::BatchPackBegin(Renderer& renderer)
     {
-        Uint32 packed = 0;
+        batched = 0;
+
+        if (IsBatchPacking())
+        {
+            // Batching is still in progress, so no need to configure the renderer
+            return;
+        }
 
         // Configure renderer
         SDL_Renderer* render = renderer.GetRendererSDL();
@@ -362,95 +324,122 @@ namespace Ossium
         if (target == NULL)
         {
             Logger::EngineLog().Warning("Font atlas is uninitialised, cannot pack glyphs!");
-            return 0;
+            return;
         }
 
         // Set render target to atlas
-        SDL_Texture* oldTarget = SDL_GetRenderTarget(render);
+        originalTarget = SDL_GetRenderTarget(render);
         SDL_SetRenderTarget(render, target);
 
-        // Configure blending
-        SDL_BlendMode blend = SDL_BLENDMODE_NONE;
-        SDL_GetRenderDrawBlendMode(render, &blend);
+        // Configure blending so old pixels are overwritten when glyphs are packed.
+        SDL_GetRenderDrawBlendMode(render, &originalBlending);
         SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_NONE);
-
-        for (unsigned int i = 0, counti = renderGlyphs.empty() ? 0 : min(renderGlyphs.size(), GetAtlasMaxGlyphs()); i < counti; i++)
+        if (originalBlending == SDL_BLENDMODE_INVALID)
         {
-            Glyph* glyph = renderGlyphs[i];
-            if (glyph == nullptr)
-            {
-                continue;
-            }
-
-            // First check if we have already packed the glyph
-            Uint32 index = glyph->GetAtlasIndex();
-            if (index != 0)
-            {
-                // Already packed, just update the cache
-                textureCache.Access(index);
-                packed++;
-                continue;
-            }
-
-            // Find a spot for the glyph to be rendered
-            if (textureCache.Size() == GetAtlasMaxGlyphs())
-            {
-                // Overwrite LRU index
-                index = textureCache.GetLRU();
-            }
-            else
-            {
-                // Use the next available index (must be non-zero, hence +1).
-                index = textureCache.Size() + 1;
-            }
-            // Update atlas cache
-            textureCache.Access(index);
-
-            SDL_Rect dest = GetAtlasCell(index);
-            //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
-
-            if (dest.w != 0 && dest.h != 0)
-            {
-                // Render the glyph to the atlas.
-                if (glyph->cached.GetWidth() > dest.w || glyph->cached.GetHeight() > dest.h)
-                {
-                    Logger::EngineLog().Warning("Attempting to pack glyph that is bigger than the atlas cell size! It'll be a bit squashed.");
-                }
-                // TODO: IMPORTANT: rather than squishing unevenly, scale down and store the scale difference for later.
-                dest.w = min(dest.w, glyph->cached.GetWidth());
-                dest.h = min(dest.h, glyph->cached.GetHeight());
-
-                //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
-
-                glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
-                SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
-                SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
-                glyph->cached.PopGPU();
-
-                // Update glyph metrics
-                glyph->UpdateMeta(index, dest);
-                TTF_GlyphMetrics(font, (Uint16)glyph->cp, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
-                glyph->bbox.w -= glyph->bbox.x;
-                glyph->bbox.h -= glyph->bbox.y;
-
-                packed++;
-            }
-            else
-            {
-                // :( invalid index
-                continue;
-            }
-
+            // Just in case something went wrong getting the blend mode
+            originalBlending = SDL_BLENDMODE_NONE;
         }
 
-        // Render everything
-        SDL_RenderPresent(render);
+    }
 
-        // Reconfigure renderer back to how it was originally
-        SDL_SetRenderTarget(render, oldTarget);
-        SDL_SetRenderDrawBlendMode(render, blend);
+    Uint32 Font::BatchPackGlyph(Renderer& renderer, Glyph* glyph)
+    {
+        if (glyph == nullptr)
+        {
+            // Early out
+            return batched;
+        }
 
-        return packed;
+        // First check if the glyph is already packed
+        Uint32 index = glyph->GetAtlasIndex();
+        if (index != 0)
+        {
+            // Already packed, just update the cache and early out.
+            textureCache.Access(index);
+            return batched;
+        }
+
+        // Find a spot for the glyph to be rendered
+        if (textureCache.Size() == GetAtlasMaxGlyphs())
+        {
+            // Overwrite LRU index
+            index = textureCache.GetLRU();
+        }
+        else
+        {
+            // Use the next available index (must be non-zero, hence +1).
+            index = textureCache.Size() + 1;
+        }
+
+        // Update atlas cache
+        textureCache.Access(index);
+
+        SDL_Rect dest = GetAtlasCell(index);
+        //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
+
+        if (dest.w != 0 && dest.h != 0)
+        {
+            SDL_Renderer* render = renderer.GetRendererSDL();
+
+            // Render the glyph to the atlas.
+            if (glyph->cached.GetWidth() > dest.w || glyph->cached.GetHeight() > dest.h)
+            {
+                Logger::EngineLog().Warning("Attempting to pack glyph that is bigger than the atlas cell size! It'll be a bit squashed.");
+            }
+            // TODO: IMPORTANT: rather than squishing unevenly, scale down and store the scale difference for later.
+            dest.w = min(dest.w, glyph->cached.GetWidth());
+            dest.h = min(dest.h, glyph->cached.GetHeight());
+
+            //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
+
+            glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
+            SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
+            SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
+            glyph->cached.PopGPU();
+
+            // Update glyph metrics
+            glyph->UpdateMeta(index, dest);
+            TTF_GlyphMetrics(font, (Uint16)glyph->cp, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
+            glyph->bbox.w -= glyph->bbox.x;
+            glyph->bbox.h -= glyph->bbox.y;
+
+            batched++;
+        }
+
+        return batched;
+    }
+
+    void Font::BatchPackEnd(Renderer& renderer)
+    {
+        if (IsBatchPacking())
+        {
+            SDL_Renderer* render = renderer.GetRendererSDL();
+
+            if (batched != 0)
+            {
+                // Render everything
+                SDL_RenderPresent(render);
+                batched = 0;
+            }
+
+            // Reconfigure renderer back to how it was originally
+            SDL_SetRenderTarget(render, originalTarget);
+            SDL_SetRenderDrawBlendMode(render, originalBlending);
+
+            // When originalBlending == SDL_BLENDMODE_INVALID, batching is not in progress.
+            originalBlending = SDL_BLENDMODE_INVALID;
+            originalTarget = NULL;
+        }
+    }
+
+    Uint32 Font::GetBatchPackTotal()
+    {
+        return batched;
+    }
+
+    bool Font::IsBatchPacking()
+    {
+        return originalBlending != SDL_BLENDMODE_INVALID;
     }
 
     void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)

@@ -122,43 +122,6 @@ namespace Ossium
 
     };
 
-    /// Helper class for batching glyphs rendered to the font atlas.
-    /** Rather than rendering a glyph to the atlas, then immediately rendering the atlas, this is used to render a batch of glyphs
-     *  to the atlas if they're not already in the atlas. Then you can render the glyphs from the atlas texture all at once when the batch is full
-     *  (or you don't need to add any more glyphs). */
-    class GlyphBatch
-    {
-    public:
-        /// Takes the maximum glyphs that can fit in the atlas (maxGlyphs).
-        GlyphBatch(int atlasLimit);
-
-        /// Adds a glyph to the batch. Returns true when the batch is full, at which point all the glyphs should be rendered.
-        bool AddGlyph(Glyph* glyph);
-
-        /// Removes and returns a glyph from the batch.
-        Glyph* PopGlyph();
-
-        /// Is this batch full?
-        bool IsFull();
-
-        /// Returns the number of glyphs in the stack.
-        Uint32 Size();
-
-        /// Clears the batch.
-        void Clear();
-
-    private:
-        /// Atlas glyph limit
-        int maxGlyphs;
-
-        /// Double ended queue of glyphs that expands as more are added to the batch.
-        deque<Glyph*> glyphs;
-
-        /// When the size of this set == maxGlyphs, the batch is full and should be emptied.
-        unordered_set<Glyph*> batched;
-
-    };
-
     class OSSIUM_EDL Font : public Resource
     {
     public:
@@ -205,9 +168,25 @@ namespace Ossium
          *  then adds it to the map and updates the cache. Note this does NOT pack the glyph into the atlas. */
         Glyph* GetGlyph(Renderer& renderer, string utf8char, int style = TTF_STYLE_NORMAL);
 
-        /// Packs a given glyph into the font atlas if it isn't already packed. Returns the number of glyphs that were successfully packed.
-        /// Note that if the size of renderGlyphs is greater than GetAtlasMaxGlyphs() then only the first GetAtlasMaxGlyphs() glyphs will be packed.
-        Uint32 PackGlyphs(Renderer& renderer, vector<Glyph*> renderGlyphs);
+        /// TODO: add support for alternative packing mode that doesn't use render targets (maybe cache the texture surface and modify that instead).
+        /// Targets the texture atlas for rendering. Returns the original render target.
+        void BatchPackBegin(Renderer& renderer);
+
+        /// Pre-renders a glyph to the font atlas but doesn't call RenderPresent().
+        /** You should call this between BatchPackBegin() and BatchPackEnd(). Returns the number of glyphs that have been packed since BatchPackBegin() was last called.
+         *  When the return value == GetAtlasMaxGlyphs(), you should call BatchPackEnd(), otherwise you'll render over other glyphs in the batch.
+         *  Note: if this method returns 0, it doesn't necessarily mean there was an error packing the glyph - in circumstances where the glyph is already packed,
+         *  the return value does not change. You can check if there was an error packing the glyph by checking glyph->GetAtlasIndex() > 0. */
+        Uint32 BatchPackGlyph(Renderer& renderer, Glyph* glyph);
+
+        /// Renders any outstanding pack batch and resets the renderer to it's configuration before batching.
+        void BatchPackEnd(Renderer& renderer);
+
+        /// Returns the total number of glyphs currently batched.
+        Uint32 GetBatchPackTotal();
+
+        /// Returns true when glyph batch packing is in progress.
+        bool IsBatchPacking();
 
         /// Renders the font atlas texture at a given point size.
         void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -270,6 +249,15 @@ namespace Ossium
         /** The total theoretical number of glyphs that could be cached is cacheLimit * FS_TOTAL, though in practice this is likely to be way lower for video games.
          *  The lower this is, the less memory is used. */
         Uint32 cacheLimit;
+
+        /// The number of glyphs that have been batched so far. This is reset to zero when BatchPackBegin() or BatchPackEnd() are called.
+        Uint32 batched = 0;
+
+        /// The renderer target texture when batch packing begins
+        SDL_Texture* originalTarget = NULL;
+
+        /// The renderer blending mode when batch packing begins. When invalid, batching is not in progress.
+        SDL_BlendMode originalBlending = SDL_BLENDMODE_INVALID;
 
     };
 
