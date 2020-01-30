@@ -154,7 +154,7 @@ namespace Ossium
             int hinting = 0,
             int kerning = 1,
             int style = 0,
-            int renderMode = RENDERTEXT_BLEND_WRAPPED,
+            int renderMode = RENDERTEXT_BLEND,
             SDL_Color bgColor = Colors::BLACK,
             int outline = 0,
             Uint32 wrapLength = 0

@@ -261,7 +261,7 @@ namespace Ossium
                             auto replaceItr = glyphs.find(toReplace);
                             if (replaceItr != glyphs.end())
                             {
-                                // Remove the current map entry
+                                // Remove the current map entry and set the glyph code point
                                 glyph = replaceItr->second;
                                 glyphs.erase(replaceItr);
                             }
@@ -280,6 +280,12 @@ namespace Ossium
 
                         // Glyph manages surface memory now
                         glyph->cached.SetSurface(renderedGlyph);
+                        glyph->cp = codepoint;
+
+                        // Set glyph metrics
+                        TTF_GlyphMetrics(font, ucs2, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
+                        glyph->bbox.w -= glyph->bbox.x;
+                        glyph->bbox.h -= glyph->bbox.y;
 
                     }
                     else
@@ -399,9 +405,6 @@ namespace Ossium
 
             // Update glyph metrics
             glyph->UpdateMeta(index, dest);
-            TTF_GlyphMetrics(font, (Uint16)glyph->cp, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
-            glyph->bbox.w -= glyph->bbox.x;
-            glyph->bbox.h -= glyph->bbox.y;
 
             batched++;
         }
