@@ -20,7 +20,7 @@
 
 extern "C"
 {
-    #include <SDL.h>
+    #include <SDL2/SDL.h>
 }
 
 namespace Ossium

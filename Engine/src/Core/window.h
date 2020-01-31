@@ -20,7 +20,7 @@
 #include <set>
 extern "C"
 {
-    #include <SDL.h>
+    #include <SDL2/SDL.h>
 }
 
 #include "services.h"

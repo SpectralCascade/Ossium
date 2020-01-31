@@ -21,7 +21,7 @@
 #include <unordered_map>
 extern "C"
 {
-    #include <SDL_ttf.h>
+    #include <SDL2/SDL_ttf.h>
 }
 
 #include "resourcecontroller.h"

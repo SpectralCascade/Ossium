@@ -15,7 +15,7 @@
 **/
 extern "C"
 {
-    #include <SDL_image.h>
+    #include <SDL2/SDL_image.h>
 }
 
 #include "image.h"
