@@ -18,8 +18,7 @@
 
 #include <string>
 #include <map>
-#include <unordered_set>
-#include <stack>
+#include <unordered_map>
 extern "C"
 {
     #include <SDL_ttf.h>
@@ -71,6 +70,30 @@ namespace Ossium
         M(SDL_Color, bg) = Colors::TRANSPARENT;
     };
 
+    // Glyphs are different depending not only on their UTF-8 code point, but also their style and outline thickness in pixels.
+    // Because the maximum UTF-8 code point is 0x1FFFFF, we have 11 spare bits to use for style and outline data :D
+    typedef Uint32 GlyphID;
+
+    //                                                  [style]
+    //                                          [outline]||||[   UTF-8 reserved   ]
+    const static Uint32 GLYPH_UTF8_MASK     =   0b00000000000111111111111111111111;
+
+    //                                                  [style]
+    //                                          [outline]||||[   UTF-8 reserved   ]
+    const static Uint32 GLYPH_STYLE_MASK    =   0b00000001111000000000000000000000;
+    const static Uint32 GLYPH_STYLE_SHIFT   =   21;
+
+    //                                          [style]
+    //                                          [outline]||||[   UTF-8 reserved   ]
+    const static Uint32 GLYPH_OUTLINE_MASK  =   0b11111110000000000000000000000000;
+    const static Uint32 GLYPH_OUTLINE_SHIFT =   25;
+
+    /// Creates a glyph ID
+    static inline GlyphID CreateGlyphID(Uint32 codepoint, Uint32 style, Uint32 outline)
+    {
+        return codepoint | (style << GLYPH_STYLE_SHIFT) | (outline << GLYPH_OUTLINE_SHIFT);
+    }
+
     // Forward declaration
     class Font;
 
@@ -79,7 +102,7 @@ namespace Ossium
     public:
         friend class Font;
 
-        Glyph(Uint32 codepoint);
+        Glyph(Uint32 codepoint, Uint32 style, Uint32 outline);
 
         /// Updates the atlas index and clip rect
         void UpdateMeta(Uint32 index, SDL_Rect quad);
@@ -100,6 +123,9 @@ namespace Ossium
         /// Returns the UTF-8 code point
         Uint32 GetCodePointUTF8();
 
+        /// Returns glyph type information (UTF-8 code point, style, outline thickness in pixels).
+        GlyphID GetID();
+
     private:
         /// The clip rect of the glyph in the font atlas.
         SDL_Rect clip;
@@ -113,8 +139,8 @@ namespace Ossium
         /// The index of the glyph within the atlas.
         Uint32 atlasIndex = 0;
 
-        /// UTF-8 code point
-        Uint32 cp;
+        /// The unique identifier for this rendered glyph, consisting of the UTF-8 code point, render style and outline thickness.
+        GlyphID type;
 
         /// The glyph image is also cached so it doesn't need to be re-rendered
         /// if it gets removed from the atlas texture.
@@ -166,7 +192,7 @@ namespace Ossium
         /// Returns the glyph for the given UTF-8 character.
         /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
          *  then adds it to the map and updates the cache. Note this does NOT pack the glyph into the atlas. */
-        Glyph* GetGlyph(Renderer& renderer, string utf8char, int style = TTF_STYLE_NORMAL);
+        Glyph* GetGlyph(Renderer& renderer, string utf8char, int style = TTF_STYLE_NORMAL, int outline = 0);
 
         /// TODO: add support for alternative packing mode that doesn't use render targets (maybe cache the texture surface and modify that instead).
         /// Targets the texture atlas for rendering. Returns the original render target.
@@ -192,7 +218,7 @@ namespace Ossium
         void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Renders a single glyph at the chosen position, returning the ideal position for the next glyph to be rendered from (for a line of text).
-        Vector2 RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, int style, SDL_Color color = Colors::RED, bool kerning = true, bool rtl = false, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        Vector2 RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color = Colors::RED, bool kerning = true, bool rtl = false, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Frees all glyphs in the map and clears the LRU caches. Does not destroy the atlas texture.
         void FreeGlyphs();
@@ -232,22 +258,24 @@ namespace Ossium
         /// Padding around each cell in the font atlas
         int padding;
 
-        /// Map of UTF-8 code points to cached glyphs.
+        /// Map of IDs to cached glyphs.
         /// TODO?: use slot_map/array instead?
-        map<Uint32, Glyph*> glyphs;
+        unordered_map<GlyphID, Glyph*> glyphs;
 
-        /// Keeps track of the least recently used UTF-8 code point in the texture atlas.
+        /// Maps atlas indexes to glyph ids.
+        map<Uint32, GlyphID> atlasGlyphMap;
+
+        /// Keeps track of the least recently used glyph in the texture atlas.
         LRUCache<Uint32> textureCache;
 
-        /// Ditto but for the entire glyphs map, not just the texture atlas.
-        LRUCache<Uint32> glyphCache;
+        /// Ditto but for the entire glyphs map, not just the texture atlas (as the cache can be larger than the atlas).
+        LRUCache<GlyphID> glyphCache;
 
         /// The loaded point size
         int loadedPointSize = 0;
 
         /// How many glyphs can be cached in RAM (per glyph map) at a time? This may be important to consider when dealing with large character sets (e.g. Traditional Chinese).
-        /** The total theoretical number of glyphs that could be cached is cacheLimit * FS_TOTAL, though in practice this is likely to be way lower for video games.
-         *  The lower this is, the less memory is used. */
+        /** The lower this is, the less memory is used, but performance could drop if you're using a large number of unique glyphs. */
         Uint32 cacheLimit;
 
         /// The number of glyphs that have been batched so far. This is reset to zero when BatchPackBegin() or BatchPackEnd() are called.

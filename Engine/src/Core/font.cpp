@@ -44,9 +44,9 @@ namespace Ossium
     // Glyph
     //
 
-    Glyph::Glyph(Uint32 codepoint)
+    Glyph::Glyph(Uint32 codepoint, Uint32 style, Uint32 outline)
     {
-        cp = codepoint;
+        type = CreateGlyphID(codepoint, style, outline);
     }
 
     SDL_Rect Glyph::GetClip()
@@ -77,7 +77,12 @@ namespace Ossium
 
     Uint32 Glyph::GetCodePointUTF8()
     {
-        return cp;
+        return type & GLYPH_UTF8_MASK;
+    }
+
+    GlyphID Glyph::GetID()
+    {
+        return type;
     }
 
     //
@@ -177,10 +182,19 @@ namespace Ossium
         int oldStyle = TTF_GetFontStyle(font);
 
         // Configure font
-        TTF_SetFontHinting(font, hinting);
         TTF_SetFontKerning(font, (int)kerning);
-        TTF_SetFontOutline(font, outline);
-        TTF_SetFontStyle(font, style);
+        if (oldHinting != hinting)
+        {
+            TTF_SetFontHinting(font, hinting);
+        }
+        if (outline != oldOutline)
+        {
+            TTF_SetFontOutline(font, outline);
+        }
+        if (style != oldStyle)
+        {
+            TTF_SetFontStyle(font, style);
+        }
 
         SDL_Surface* tempSurface = NULL;
 
@@ -209,28 +223,37 @@ namespace Ossium
         }
 
         // Restore settings
-        TTF_SetFontHinting(font, oldHinting);
         TTF_SetFontKerning(font, oldKerning);
-        TTF_SetFontOutline(font, oldOutline);
-        TTF_SetFontStyle(font, oldStyle);
+        if (oldHinting != hinting)
+        {
+            TTF_SetFontHinting(font, oldHinting);
+        }
+        if (outline != oldOutline)
+        {
+            TTF_SetFontOutline(font, oldOutline);
+        }
+        if (style != oldStyle)
+        {
+            TTF_SetFontStyle(font, oldStyle);
+        }
 
         return tempSurface;
     }
 
-    Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style)
+    Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style, int outline)
     {
-        Uint32 codepoint = Utilities::GetCodepointUTF8(utfChar);
+        GlyphID id = CreateGlyphID(Utilities::GetCodepointUTF8(utfChar), style, outline);
 
-        // Limit style to main styles; strike through and underline styles don't need to be cached as they can be easily done dynamically.
+        // Limit style to main styles; strike through and underline styles don't need to be cached as they can be drawn dynamically.
         style = style & (TTF_STYLE_BOLD | TTF_STYLE_ITALIC);
 
         Glyph* glyph = nullptr;
 
-        auto itr = glyphs.find(codepoint);
+        auto itr = glyphs.find(id);
         if (itr != glyphs.end())
         {
             // Already cached, return the glyph
-            glyphCache.Access(codepoint);
+            glyphCache.Access(id);
             glyph = itr->second;
         }
         else
@@ -261,7 +284,7 @@ namespace Ossium
                             auto replaceItr = glyphs.find(toReplace);
                             if (replaceItr != glyphs.end())
                             {
-                                // Remove the current map entry and set the glyph code point
+                                // Remove the current map entry
                                 glyph = replaceItr->second;
                                 glyphs.erase(replaceItr);
                             }
@@ -274,13 +297,13 @@ namespace Ossium
                         else
                         {
                             // Create a new glyph
-                            glyph = new Glyph(codepoint);
+                            glyph = new Glyph(id & GLYPH_UTF8_MASK, (id & GLYPH_STYLE_MASK) >> GLYPH_STYLE_SHIFT, (id & GLYPH_OUTLINE_MASK) >> GLYPH_OUTLINE_SHIFT);
                             //Logger::EngineLog().Verbose("Created new glyph from code point {0}.", codepoint);
                         }
 
                         // Glyph manages surface memory now
                         glyph->cached.SetSurface(renderedGlyph);
-                        glyph->cp = codepoint;
+                        glyph->type = id;
 
                         // Set glyph metrics
                         TTF_GlyphMetrics(font, ucs2, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
@@ -307,8 +330,8 @@ namespace Ossium
         }
 
         // Add the glyph to the map and update the LRU cache
-        glyphs[codepoint] = glyph;
-        glyphCache.Access(codepoint);
+        glyphs[id] = glyph;
+        glyphCache.Access(id);
 
         return glyph;
     }
@@ -368,8 +391,28 @@ namespace Ossium
         // Find a spot for the glyph to be rendered
         if (textureCache.Size() == GetAtlasMaxGlyphs())
         {
-            // Overwrite LRU index
+            // Overwrite LRU index, replace the glyph that was there
             index = textureCache.GetLRU();
+            auto mapped = atlasGlyphMap.find(index);
+            bool failedReplace = true;
+            if (mapped != atlasGlyphMap.end())
+            {
+                auto glyphItr = glyphs.find(mapped->second);
+                if (glyphItr != glyphs.end())
+                {
+                    if (glyphItr->second != nullptr)
+                    {
+                        // Replaced glyph is unpacked
+                        //Logger::EngineLog().Verbose("LRU character = {0}, replacing with {1}", (char)glyphItr->second->GetCodePointUTF8(), (char)glyph->GetCodePointUTF8());
+                        glyphItr->second->atlasIndex = 0;
+                    }
+                    failedReplace = false;
+                }
+            }
+            if (failedReplace)
+            {
+                Logger::EngineLog().Error("Failed to find mapped glyph for atlas index {0}! Either the cache is smaller than GetAtlasMaxGlyphs() or this font is not initialised.", index);
+            }
         }
         else
         {
@@ -379,8 +422,10 @@ namespace Ossium
 
         // Update atlas cache
         textureCache.Access(index);
+        atlasGlyphMap[index] = glyph->GetID();
 
         SDL_Rect dest = GetAtlasCell(index);
+        SDL_Rect cell = dest;
         //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
 
         if (dest.w != 0 && dest.h != 0)
@@ -398,6 +443,11 @@ namespace Ossium
 
             //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
 
+            // Overwrite whatever was in the atlas cell before
+            SDL_SetRenderDrawColor(render, 0, 0, 0, 0xFF);
+            SDL_RenderFillRect(render, &cell);
+
+            // Render the actual glyph
             glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
             SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
             SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
@@ -450,7 +500,7 @@ namespace Ossium
         atlas.Render(renderer.GetRendererSDL(), dest, &clip, origin, angle, color, blending, flip);
     }
 
-    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, int style, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         if (glyph == nullptr)
