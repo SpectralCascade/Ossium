@@ -425,7 +425,12 @@ namespace Ossium
         atlasGlyphMap[index] = glyph->GetID();
 
         SDL_Rect dest = GetAtlasCell(index);
+        // Get the full cell destination so we can clear it
         SDL_Rect cell = dest;
+        cell.x -= padding;
+        cell.y -= padding;
+        cell.w += padding * 2;
+        cell.h += padding * 2;
         //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
 
         if (dest.w != 0 && dest.h != 0)
