@@ -97,6 +97,8 @@ namespace Ossium
         string ToString();
         void FromString(string str);
 
+        const static Vector2 Zero;
+
     };
 
     struct OSSIUM_EDL Rotation : public b2Rot
