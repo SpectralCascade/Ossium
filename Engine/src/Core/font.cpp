@@ -475,8 +475,6 @@ namespace Ossium
 
             if (batched != 0)
             {
-                // Render everything
-                SDL_RenderPresent(render);
                 batched = 0;
             }
 
