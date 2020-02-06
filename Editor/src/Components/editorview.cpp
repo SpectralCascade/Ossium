@@ -52,7 +52,7 @@ namespace Ossium::Editor
         Space(50);
 
         Space(10);
-        if (Button("Generate font pack", true, 40))
+        /*if (Button("Generate font pack", true, 40))
         {
             Logger::EngineLog().Info("Starting texture packing of font 'Orkney Regular'...");
             TexturePack fontPack = TexturePack();
@@ -63,7 +63,7 @@ namespace Ossium::Editor
                     fontPack.Save(*renderer, SDL_PIXELFORMAT_ARGB8888, "../cool_font_pack");
                 }
             }
-        }
+        }*/
         Space(10);
         if (Button("wow", 100, 20))
         {

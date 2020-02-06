@@ -74,7 +74,7 @@ namespace Ossium
     void TexturePack::FreePack()
     {
         packData.clear();
-        packedTexture.Free();
+        packedTexture.PopGPU();
     }
 
     void TexturePack::FreeImported()
@@ -397,7 +397,6 @@ namespace Ossium
         SDL_Rect targetRect = {0, 0, finalWidth, finalHeight};
         SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
-        packedTexture.Free();
         packedTexture.SetSurface(renderSurface);
         packedTexture.PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_TARGET);
 

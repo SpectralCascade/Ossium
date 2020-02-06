@@ -138,7 +138,7 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int maxMipmaps)
+    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int maxMipmaps)
     {
         return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit, maxMipmaps);
     }
@@ -240,6 +240,11 @@ namespace Ossium
         }
 
         return tempSurface;
+    }
+
+    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength)
+    {
+        return GenerateFromText(renderer, text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength);
     }
 
     Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style, int outline)

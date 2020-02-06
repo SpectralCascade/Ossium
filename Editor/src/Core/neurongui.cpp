@@ -425,8 +425,11 @@ namespace Ossium::Editor
         {
             // Create the texture from scratch
             Image texture;
-            vector<int> fontSizes = {style.ptsize};
-            texture.CreateFromText(*renderer, *resources->Get<Font>(style.fontPath, fontSizes), text, style, (Uint32)renderer->GetWidth());
+            texture.SetSurface(resources->Get<Font>(style.fontPath, style.ptsize, *renderer)->GenerateFromText(*renderer, text, style, (Uint32)renderer->GetWidth()));
+            if (texture.GetSurface() != NULL)
+            {
+                texture.PushGPU(*renderer);
+            }
 
             // Set the destination rect
             SDL_Rect dest;
@@ -467,8 +470,11 @@ namespace Ossium::Editor
 
             // Create the texture from scratch
             Image texture;
-            vector<int> fontSizes = {textStyle.ptsize};
-            texture.CreateFromText(*renderer, *resources->Get<Font>(textStyle.fontPath, fontSizes), text, style.normalTextStyle, (Uint32)renderer->GetWidth());
+            texture.SetSurface(resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer)->GenerateFromText(*renderer, text, style.normalTextStyle, (Uint32)renderer->GetWidth()));
+            if (texture.GetSurface() != NULL)
+            {
+                texture.PushGPU(*renderer);
+            }
 
             if (Button(&texture, style, false))
             {
@@ -497,8 +503,11 @@ namespace Ossium::Editor
 
             // Create the texture from scratch
             Image texture;
-            vector<int> fontSizes = {textStyle.ptsize};
-            texture.CreateFromText(*renderer, *resources->Get<Font>(textStyle.fontPath, fontSizes), text, textStyle, (Uint32)renderer->GetWidth());
+            texture.SetSurface(resources->Get<Font>(textStyle.fontPath, textStyle.ptsize, *renderer)->GenerateFromText(*renderer, text, textStyle, (Uint32)renderer->GetWidth()));
+            if (texture.GetSurface() != NULL)
+            {
+                texture.PushGPU(*renderer);
+            }
 
             return Button(&texture, style, invertOutline, xpadding, ypadding);
         }

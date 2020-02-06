@@ -163,7 +163,7 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize = 96, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = -1);
+        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = -1);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph.
         bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = -1);
