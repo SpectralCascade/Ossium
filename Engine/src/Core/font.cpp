@@ -138,14 +138,15 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit)
+    bool Font::LoadAndInit(string guid_path, Renderer& renderer, int maxPointSize, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int maxMipmaps)
     {
-        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit);
+        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit, maxMipmaps);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int maxMipmaps)
     {
         padding = atlasPadding;
+        mipmapDepth = maxMipmaps;
 
         fontHeight = TTF_FontHeight(font);
         if (fontHeight <= 0)
@@ -153,6 +154,7 @@ namespace Ossium
             Logger::EngineLog().Error("Font has invalid height!");
             return false;
         }
+
         // Compute actual texture size using font height and target texture size
         Uint32 actualTextureSize = (targetTextureSize / fontHeight) * GetAtlasCellSize();
 
@@ -449,7 +451,7 @@ namespace Ossium
             //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
 
             // Overwrite whatever was in the atlas cell before
-            SDL_SetRenderDrawColor(render, 0, 0, 0, 0xFF);
+            SDL_SetRenderDrawColor(render, 0xFF, 0xFF, 0xFF, 0);
             SDL_RenderFillRect(render, &cell);
 
             // Render the actual glyph
