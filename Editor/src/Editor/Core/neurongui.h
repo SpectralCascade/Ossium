@@ -230,7 +230,7 @@ namespace Ossium::Editor
              int buttonWidth = 8,
              int buttonHeight = 8,
              NeuronClickableStyle style = NeuronStyles::NEURON_SLIDER_STYLE,
-             bool invertOutline = true,
+             bool invertOutline = false,
              Uint32 xpadding = 4,
              Uint32 ypadding = 4
         );
