@@ -464,10 +464,6 @@ namespace Ossium::Editor
             if (activeTextFieldId == textFieldCounter)
             {
                 string textInput = keyboard->GetTextInput();
-                if (textInput.empty())
-                {
-                    keyboard->SetTextInput(text);
-                }
                 // Accept text input
                 text = keyboard->GetTextInput();
                 //textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, 0, text.length());
@@ -491,6 +487,7 @@ namespace Ossium::Editor
                 textFieldCursorPos = text.length() - 1;
                 Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
                 keyboard->StartTextInput();
+                keyboard->SetTextInput(text);
             }
 
         }
