@@ -36,7 +36,7 @@ namespace Ossium::Editor
 
         Space(20);
 
-        testSlider = Slider(testSlider);
+        testSlider = Slider(testSlider, -1, 1);
 
         Space(50);
 

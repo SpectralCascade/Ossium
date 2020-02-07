@@ -649,7 +649,7 @@ namespace Ossium::Editor
 
                 // Move directly to mouse x
                 sliderValue = Utilities::Clamp(
-                    ((mpos.x - slotDest.x) / (float)length) * (maxValue - minValue),
+                    ((((mpos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
                     minValue,
                     maxValue
                 );
