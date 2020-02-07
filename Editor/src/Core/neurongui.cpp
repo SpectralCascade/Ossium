@@ -695,7 +695,7 @@ namespace Ossium::Editor
             textDest.w = valueText.GetWidth();
             textDest.h = valueText.GetHeight();
             textDest.x = slotDest.x + slotDest.w + buttonDest.w + 2;
-            textDest.y = slotDest.y - (textDest.h / 2);
+            textDest.y = slotDest.y - (textDest.h / 2) + (slotDest.h / 2);
 
             valueText.Render(renderer->GetRendererSDL(), textDest);
 
@@ -705,8 +705,11 @@ namespace Ossium::Editor
                 buttonDest.h + ypadding * 2
             ));
 
-            // Update the mouse pressed state
-            DidClick(mpos);
+            if (hovered || slotDest.Contains(mpos))
+            {
+                // Update the mouse pressed state
+                DidClick(mpos);
+            }
 
         }
         return sliderValue;
