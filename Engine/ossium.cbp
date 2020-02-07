@@ -260,7 +260,12 @@
 		<Unit filename="src/Core/utf8.h" />
 		<Unit filename="src/Core/window.cpp" />
 		<Unit filename="src/Core/window.h" />
+		<Unit filename="src/Editor/Components/editorview.cpp" />
+		<Unit filename="src/Editor/Components/editorview.h" />
+		<Unit filename="src/Editor/Core/neurongui.cpp" />
+		<Unit filename="src/Editor/Core/neurongui.h" />
 		<Unit filename="src/Ossium.h" />
+		<Unit filename="src/OssiumEditor.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
