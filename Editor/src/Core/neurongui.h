@@ -40,6 +40,7 @@ namespace Ossium::Editor
         M(TextStyle, styleTextField);
         M(TextStyle, styleDropdownText);
         M(TextStyle, styleButtonText);
+        M(SDL_Color, backgroundColor) = Color(200, 200, 200);
     };
 
     struct NeuronClickableStyle : public Schema<NeuronClickableStyle, 10>
@@ -105,6 +106,7 @@ namespace Ossium::Editor
         extern TextStyle NEURON_TEXT_NORMAL_STYLE;
         extern TextStyle NEURON_TEXT_INVERSE_STYLE;
         extern NeuronClickableStyle NEURON_BUTTON_STYLE;
+        extern NeuronClickableStyle NEURON_SLIDER_STYLE;
         extern NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE;
         extern NeuronClickableStyle NEURON_TEXTFIELD_STYLE;
         extern NeuronClickableStyle NEURON_CHECKBOX_STYLE;
@@ -219,6 +221,19 @@ namespace Ossium::Editor
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
         bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
         bool Toggle(bool toggleValue, NeuronClickableStyle style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
+
+        float Slider(
+             float sliderValue,
+             float minValue = 0.0f,
+             float maxValue = 1.0f,
+             int length = 50,
+             int buttonWidth = 8,
+             int buttonHeight = 8,
+             NeuronClickableStyle style = NeuronStyles::NEURON_SLIDER_STYLE,
+             bool invertOutline = true,
+             Uint32 xpadding = 4,
+             Uint32 ypadding = 4
+        );
 
         /// Displays a drop-down list of items when clicked. Returns the selected item.
         /*template<typename T>

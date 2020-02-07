@@ -137,6 +137,10 @@ namespace Ossium::Editor
             Color(0, 255, 255),
             NEURON_TEXT_NORMAL_STYLE
         );
+        NeuronClickableStyle NEURON_SLIDER_STYLE = NeuronClickableStyle(
+            Color(0, 255, 255),
+            NEURON_TEXT_NORMAL_STYLE
+        );
         NeuronClickableStyle NEURON_TEXTFIELD_STYLE = NeuronClickableStyle(
             Color(205, 205, 205) - 40,
             Color(205, 205, 205),
@@ -278,7 +282,7 @@ namespace Ossium::Editor
         // Immediate-mode GUI i/o
         OnGUI();
         // Render GUI
-        renderer->SetDrawColor(Color(200, 200, 200));
+        renderer->SetDrawColor(backgroundColor);
         SDL_RenderPresent(renderer->GetRendererSDL());
     }
 
@@ -461,8 +465,8 @@ namespace Ossium::Editor
             {
                 // Accept text input
                 text = keyboard->GetTextInput();
-                textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, 0, text.length());
-                text.insert(textFieldCursorPos, "|");
+                //textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, 0, text.length());
+                //text.insert(textFieldCursorPos, "|");
             }
 
             //if ( input->GetHandler<MouseHandler>()->GetMousePosition())
@@ -594,6 +598,118 @@ namespace Ossium::Editor
         }
 
         return toggleValue;
+    }
+
+    float NeuronGUI::Slider(float sliderValue, float minValue, float maxValue, int length, int buttonWidth, int buttonHeight, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    {
+        if (IsVisible())
+        {
+            MouseHandler* mouse = input->GetHandler<MouseHandler>();
+            Vector2 mpos = mouse->GetMousePosition();
+
+            // Draw the slot first
+            Rect slotDest = Rect(
+                GetLayoutPosition().x + (xpadding / 2) + (buttonWidth / 2),
+                GetLayoutPosition().y + ypadding + (buttonHeight / 4),
+                (float)length,
+                buttonHeight / 2
+            );
+
+            // Render the slider slot
+            slotDest.DrawFilled(*renderer, Color(backgroundColor.r / 2, backgroundColor.g / 2, backgroundColor.b / 2));
+
+            // Slot outline
+            Line line(Vector2(slotDest.x, slotDest.y), Vector2(slotDest.x + slotDest.w, slotDest.y));
+            line.Draw(*renderer, Alpha(style.bottomEdgeColor, 200));
+            line.b = Vector2(slotDest.x, slotDest.y + slotDest.h);
+            line.Draw(*renderer, Alpha(style.rightEdgeColor, 200));
+            line.a.x += slotDest.w;
+            line.b.x = line.a.x;
+            line.Draw(*renderer, Alpha(style.leftEdgeColor, 200));
+            line.a = Vector2(slotDest.x, slotDest.y + slotDest.h);
+            line.Draw(*renderer, Alpha(style.topEdgeColor, 200));
+
+            // Get the current button rect and last mouse state data
+            SDL_Rect dest;
+            dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
+            dest.y = GetLayoutPosition().y + ypadding;
+            dest.w = buttonWidth;
+            dest.h = buttonHeight;
+
+            Rect oldButtonDest = Rect(dest.x, dest.y, dest.w, dest.h);
+            bool wasHovered = oldButtonDest.Contains(lastMousePos);
+
+            // Check how much the slider has been moved in this frame and change the slider value accordingly
+            if (mousePressed && (wasHovered || slotDest.Contains(lastMousePos)))
+            {
+                // Calculate using mouse movement change
+                /*Vector2 diff = mpos - lastMousePos;
+                float change = Utilities::Clamp((int)diff.x, -length, length);
+                sliderValue = Utilities::Clamp(sliderValue + ((change / (float)length) * (maxValue - minValue)), minValue, maxValue);*/
+
+                // Move directly to mouse x
+                sliderValue = Utilities::Clamp(
+                    ((mpos.x - slotDest.x) / (float)length) * (maxValue - minValue),
+                    minValue,
+                    maxValue
+                );
+
+                // Update the button rect
+                dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
+            }
+
+            Rect buttonDest = Rect(dest.x, dest.y, dest.w, dest.h);
+
+            bool hovered = buttonDest.Contains(mpos);
+            bool pressed = mouse->LeftPressed();
+
+            SDL_Color buttonColour = hovered ?
+                (pressed ?
+                    style.clickColor : // Pressed colour
+                    style.hoverColor   // Hovered colour
+                ) : style.normalColor; // Not hovered colour
+
+            // Render the button
+            buttonDest.DrawFilled(*renderer, buttonColour);
+
+            // Button outline
+            line = Line(Vector2(buttonDest.x, buttonDest.y), Vector2(buttonDest.x + buttonDest.w, buttonDest.y));
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.bottomEdgeColor : style.topEdgeColor);
+            line.b = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.rightEdgeColor : style.leftEdgeColor);
+            line.a.x += buttonDest.w;
+            line.b.x = line.a.x;
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.leftEdgeColor : style.rightEdgeColor);
+            line.a = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
+            line.Draw(*renderer, invertOutline && pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
+
+            // Draw float value
+            Image valueText;
+            valueText.SetSurface(
+                resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer)->GenerateFromText(
+                    *renderer, Utilities::ToString(sliderValue), style.normalTextStyle, (Uint32)renderer->GetWidth()
+                )
+            );
+            valueText.PushGPU(*renderer);
+            SDL_Rect textDest;
+            textDest.w = valueText.GetWidth();
+            textDest.h = valueText.GetHeight();
+            textDest.x = slotDest.x + slotDest.w + buttonDest.w + 2;
+            textDest.y = slotDest.y - (textDest.h / 2);
+
+            valueText.Render(renderer->GetRendererSDL(), textDest);
+
+            // Move along
+            Move(Vector2(
+                GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL ? slotDest.w + xpadding * 2 + valueText.GetWidth() + 4 : buttonDest.w + xpadding,
+                buttonDest.h + ypadding * 2
+            ));
+
+            // Update the mouse pressed state
+            DidClick(mpos);
+
+        }
+        return sliderValue;
     }
 
 }

@@ -460,7 +460,7 @@
 	"helpermacros.h"
 	"image.h"
 
-1581026553 source:c:\users\2013b\git\ossium\editor\src\components\editorview.cpp
+1581027813 source:c:\users\2013b\git\ossium\editor\src\components\editorview.cpp
 	<Ossium.h>
 	"editorview.h"
 
@@ -580,7 +580,7 @@
 	"helpermacros.h"
 	"services.h"
 
-1580468079 c:\users\2013b\git\ossium\engine\src\core\colors.h
+1581090579 c:\users\2013b\git\ossium\engine\src\core\colors.h
 	"helpermacros.h"
 	<SDL2/SDL.h>
 
@@ -918,18 +918,24 @@
 	<SDL2/SDL.h>
 	<string>
 
-1578395318 c:\users\2013b\git\ossium\editor\src\components\editorview.h
+1581028356 c:\users\2013b\git\ossium\editor\src\components\editorview.h
 	<Ossium.h>
 	"../Core/neurongui.h"
 
-1579098266 c:\users\2013b\git\ossium\editor\src\core\neurongui.h
+1581090423 c:\users\2013b\git\ossium\editor\src\core\neurongui.h
 	<stack>
 	<Ossium.h>
 
-1578395318 source:c:\users\2013b\git\ossium\editor\src\main.cpp
+1581028351 source:c:\users\2013b\git\ossium\editor\src\main.cpp
 	<Ossium.h>
-	"Components/editorview.h"
+	"Examples/simple_demo_window.h"
 
-1581026645 source:c:\users\2013b\git\ossium\editor\src\core\neurongui.cpp
+1581092246 source:c:\users\2013b\git\ossium\editor\src\core\neurongui.cpp
 	"neurongui.h"
+
+1581092291 source:c:\users\2013b\git\ossium\editor\src\examples\simple_demo_window.cpp
+	"simple_demo_window.h"
+
+1581091763 c:\users\2013b\git\ossium\editor\src\examples\simple_demo_window.h
+	"../Components/editorview.h"
 

@@ -59,6 +59,10 @@ namespace Ossium
 
     /// Returns an SDL_Color from raw values
     OSSIUM_EDL SDL_Color Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
+
+    /// Returns the original colour with a specified alpha value set.
+    OSSIUM_EDL SDL_Color Alpha(SDL_Color color, Uint8 a);
+
     /// Ditto, but const.
     OSSIUM_EDL SDL_Color constexpr ColorConst(const Uint8 r, const Uint8 g, const Uint8 b)
     {

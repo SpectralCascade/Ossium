@@ -12,12 +12,20 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-g" />
 					<Add option="-std=c++1z" />
+					<Add option="-g" />
 					<Add option="-DDEBUG" />
-					<Add directory="Box2D/" />
+					<Add directory="../Engine/Box2D" />
+					<Add directory="../Engine/src" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include/SDL2" />
 				</Compiler>
 				<Linker>
+					<Add option="-Wl,--whole-archive ../Engine/bin/ossium/libossium.a -Wl,--no-whole-archive" />
+					<Add option="../Engine/Box2D/bin/Release/libBox2D.a" />
 					<Add option="-lmingw32" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
@@ -26,8 +34,8 @@
 					<Add option="-lSDL2_ttf" />
 					<Add option="-lSDL2_net" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="Box2D/bin/Release" />
+					<Add directory="../Engine/Box2D/bin/Release" />
+					<Add directory="../Engine/bin/ossium" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -38,10 +46,13 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++1z" />
-					<Add directory="Box2D/" />
+					<Add directory="../Engine/Box2D" />
+					<Add directory="../Engine/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-Wl,--whole-archive ../Engine/bin/ossium/libossium.a -Wl,--no-whole-archive" />
+					<Add option="../Engine/Box2D/bin/Release/libBox2D.a" />
 					<Add option="-lmingw32" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
@@ -51,7 +62,8 @@
 					<Add option="-lSDL2_net" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="Box2D/bin/Release" />
+					<Add directory="../Engine/Box2D/bin/Release" />
+					<Add directory="../Engine/bin/ossium" />
 				</Linker>
 			</Target>
 			<Target title="Debug (Linux)">
@@ -112,6 +124,8 @@
 		<Unit filename="src/Core/editorlayout.h" />
 		<Unit filename="src/Core/neurongui.cpp" />
 		<Unit filename="src/Core/neurongui.h" />
+		<Unit filename="src/Examples/simple_demo_window.cpp" />
+		<Unit filename="src/Examples/simple_demo_window.h" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
