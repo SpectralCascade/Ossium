@@ -475,7 +475,7 @@ namespace Ossium::Editor
 
             // Create the texture from scratch
             Image texture;
-            texture.SetSurface(resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer)->GenerateFromText(*renderer, text, style.normalTextStyle, (Uint32)renderer->GetWidth()));
+            texture.SetSurface(resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer)->GenerateFromText(*renderer, text.empty() ? " " : text, style.normalTextStyle, (Uint32)renderer->GetWidth()));
             if (texture.GetSurface() != NULL)
             {
                 texture.PushGPU(*renderer);

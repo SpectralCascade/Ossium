@@ -14,6 +14,7 @@
  *
 **/
 #include "keyboard.h"
+#include "utf8.h"
 
 namespace Ossium
 {
@@ -94,6 +95,14 @@ namespace Ossium
                 return string();
             }
             string lastChar;
+            Uint8 u8bytes = Utilities::CheckUTF8(textInput.back());
+            while (u8bytes == 1)
+            {
+                // Handle UTF-8
+                lastChar.insert(0, 1, textInput.back());
+                textInput.pop_back();
+                u8bytes = Utilities::CheckUTF8(textInput.back());
+            }
             lastChar += textInput.back();
             textInput.pop_back();
             return lastChar;
