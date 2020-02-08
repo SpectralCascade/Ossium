@@ -238,6 +238,10 @@ namespace Ossium
         /// Returns the clip rect for a cell within the atlas, with optional padding. Returns rect with 0 width and height on error (e.g. index out of range).
         SDL_Rect GetAtlasCell(Uint32 index);
 
+        /// Returns the maximum font height for a given point size in pixels.
+        /// If a negative value is given, returns the font height for the loaded font size.
+        float GetFontHeight(float pointSize = -1);
+
     private:
         /// Copying is not permitted.
         Font(const Font& thisCopy);
@@ -254,6 +258,9 @@ namespace Ossium
 
         /// The maximum glyph height of the font
         int fontHeight;
+
+        /// Font height / point size
+        float pointFactor;
 
         /// Padding around each cell in the font atlas
         int padding;

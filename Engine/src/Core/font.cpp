@@ -151,9 +151,11 @@ namespace Ossium
         fontHeight = TTF_FontHeight(font);
         if (fontHeight <= 0)
         {
-            Logger::EngineLog().Error("Font has invalid height!");
+            Logger::EngineLog().Error("Font has invalid height! Cannot initialise.");
             return false;
         }
+
+        pointFactor = loadedPointSize / fontHeight;
 
         // Compute actual texture size using font height and target texture size
         Uint32 actualTextureSize = (targetTextureSize / fontHeight) * GetAtlasCellSize();
@@ -513,27 +515,28 @@ namespace Ossium
     Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
+        int maxHeight = (int)ceil(GetFontHeight(pointSize));
         if (glyph == nullptr)
         {
             // Invalid glyph, render a box instead
-            int boxPadding = fontHeight / 10;
+            int boxPadding = maxHeight / 10;
             dest.x += boxPadding;
-            dest.w = (fontHeight / 2);
-            dest.h = (fontHeight / 3) * 2;
-            dest.y += fontHeight / 8;
+            dest.w = (maxHeight / 2);
+            dest.h = (maxHeight / 3) * 2;
+            dest.y += maxHeight / 8;
             SDL_Color oldColor = renderer.GetDrawColor();
             renderer.SetDrawColor(color);
             SDL_RenderDrawRect(renderer.GetRendererSDL(), &dest);
             renderer.SetDrawColor(oldColor);
             return position + Vector2(rtl ? -(boxPadding * 2 + dest.w) : (boxPadding * 2 + dest.w), 0);
         }
-        // TODO: proper sizing with point size
-        Vector2 size = Vector2(glyph->cached.GetWidth(), glyph->cached.GetHeight());
+        float scale = (pointSize / loadedPointSize);
+        Vector2 size = Vector2(round(glyph->cached.GetWidth() * scale), round(glyph->cached.GetHeight() * scale));
         // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
-        dest = {dest.x, dest.y, (int)(size.x), (int)(size.y)};
+        dest = {dest.x, dest.y, (int)size.x, (int)size.y};
         Render(renderer, dest, glyph->GetClip(), color, blending, angle, origin, flip);
         // TODO: kerning
-        size.x = glyph->GetAdvance();
+        size.x = round(glyph->GetAdvance() * scale);
         return position + Vector2(rtl ? -size.x : size.x, 0);
     }
 
@@ -595,6 +598,16 @@ namespace Ossium
             rect.h -= padding * 2;
         }
         return rect;
+    }
+
+    float Font::GetFontHeight(float pointSize)
+    {
+        if (pointSize <= 0)
+        {
+            // TODO: check that this is accurate; suspect there might be a rounding issue for TTF_GetFontHeight at certain point sizes
+            return fontHeight;
+        }
+        return pointFactor * pointSize;
     }
 
 }
