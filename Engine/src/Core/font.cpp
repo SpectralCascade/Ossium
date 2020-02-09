@@ -155,7 +155,8 @@ namespace Ossium
             return false;
         }
 
-        pointFactor = loadedPointSize / fontHeight;
+        fontAscent = TTF_FontAscent(font);
+        fontDescent = TTF_FontDescent(font);
 
         if (mipDepth == 0)
         {
@@ -618,7 +619,37 @@ namespace Ossium
             // TODO: check that this is accurate; suspect there might be a rounding issue for TTF_GetFontHeight at certain point sizes
             return fontHeight;
         }
-        return pointFactor * pointSize;
+        return fontHeight * ((float)loadedPointSize / (float)pointSize);
+    }
+
+    float Font::GetFontAscent(float pointSize)
+    {
+        if (pointSize <= 0)
+        {
+            return fontAscent;
+        }
+        return fontAscent * ((float)loadedPointSize / (float)pointSize);
+    }
+
+    float Font::GetFontDescent(float pointSize)
+    {
+        if (pointSize <= 0)
+        {
+            return fontDescent;
+        }
+        return fontDescent * ((float)loadedPointSize / (float)pointSize);
+    }
+
+    float Font::GetUnderlinePosition(float pointSize)
+    {
+        // This is more or less how SDL_TTF does it internally
+        return GetFontAscent(pointSize) - (GetFontDescent(pointSize) / 2.0f) - 1.0f;
+    }
+
+    float Font::GetStrikethroughPosition(float pointSize)
+    {
+        // This is more or less how SDL_TTF does it internally
+        return GetFontHeight(pointSize) / 2.0f;
     }
 
     SDL_Rect Font::GetMipMapClip(SDL_Rect src, Uint8 level)

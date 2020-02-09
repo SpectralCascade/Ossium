@@ -239,8 +239,24 @@ namespace Ossium
         SDL_Rect GetAtlasCell(Uint32 index);
 
         /// Returns the maximum font height for a given point size in pixels.
-        /// If a negative value is given, returns the font height for the loaded font size.
+        /// A negative point size returns the value for the loaded (maximum) point size in pixels.
         float GetFontHeight(float pointSize = -1);
+
+        /// Returns the font ascent for the given point size in pixels.
+        /// A negative point size returns the value for the loaded (maximum) point size in pixels.
+        float GetFontAscent(float pointSize = -1);
+
+        /// Returns the font descent for the given point size in pixels.
+        /// A negative point size returns the value for the loaded (maximum) point size in pixels.
+        float GetFontDescent(float pointSize = -1);
+
+        /// Returns the relative Y position for an underline for the given point size in pixels.
+        /// A negative point size returns the value for the loaded (maximum) point size in pixels.
+        float GetUnderlinePosition(float pointSize = -1.0f);
+
+        /// Returns the relative Y position for a strike-through line for the given point size in pixels.
+        /// A negative point size returns the value for the loaded (maximum) point size in pixels.
+        float GetStrikethroughPosition(float pointSize = -1.0f);
 
     private:
         /// Copying is not permitted.
@@ -259,8 +275,11 @@ namespace Ossium
         /// The maximum glyph height of the font
         int fontHeight;
 
-        /// Font height / point size
-        float pointFactor;
+        /// Font ascent
+        int fontAscent;
+
+        /// Font descent
+        int fontDescent;
 
         /// Padding around each cell in the font atlas
         int padding;
