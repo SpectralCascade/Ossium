@@ -165,8 +165,8 @@ namespace Ossium
         bool Load(string guid_path, int maxPointSize = 96);
         bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = -1);
 
-        /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph.
-        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = -1);
+        /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
+        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, Uint8 mipDepth = 0);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -215,7 +215,7 @@ namespace Ossium
         bool IsBatchPacking();
 
         /// Renders the font atlas texture at a given point size.
-        void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Renders a single glyph at the chosen position, returning the ideal position for the next glyph to be rendered from (for a line of text).
         Vector2 RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color = Colors::RED, bool kerning = true, bool rtl = false, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -266,7 +266,16 @@ namespace Ossium
         int padding;
 
         /// The maximum number of mipmaps that should be generated per glyph.
-        int mipmapDepth;
+        Uint8 mipmapDepth;
+
+        /// The relative offset for each mipmap level.
+        vector<SDL_Rect> mipOffsets;
+
+        /// Returns the mipmap clip rect for a given source and level
+        SDL_Rect GetMipMapClip(SDL_Rect src, Uint8 level);
+
+        /// Returns the linear percentage that a particular mipmap should be filtered by (using alpha blending instead of true trilinear filtering) for a given point size.
+        float GetMipMapLerp(float pointSize);
 
         /// Map of IDs to cached glyphs.
         /// TODO?: use slot_map/array instead?

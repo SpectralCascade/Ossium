@@ -143,10 +143,10 @@ namespace Ossium
         return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit, maxMipmaps);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int maxMipmaps)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, Uint8 mipDepth)
     {
         padding = atlasPadding;
-        mipmapDepth = maxMipmaps;
+        mipOffsets.clear();
 
         fontHeight = TTF_FontHeight(font);
         if (fontHeight <= 0)
@@ -156,6 +156,30 @@ namespace Ossium
         }
 
         pointFactor = loadedPointSize / fontHeight;
+
+        if (mipDepth == 0)
+        {
+            // Automatically calculate mipmap depth for minimum 8 points font size
+            mipmapDepth = (int)ceil(sqrt((float)loadedPointSize / 8.0f));
+        }
+        else
+        {
+            mipmapDepth = mipDepth;
+        }
+
+        // Compute mipmap offsets
+        SDL_Rect offsetRect = {0, 0, fontHeight, fontHeight};
+        mipOffsets.push_back(offsetRect);
+        offsetRect.x = fontHeight;
+        offsetRect.w = (int)round((float)fontHeight / 2.0f);
+        offsetRect.h = offsetRect.w;
+        for (Uint8 i = 1; i < mipmapDepth; i++)
+        {
+            mipOffsets.push_back(offsetRect);
+            offsetRect.y += offsetRect.h;
+            offsetRect.w = (int)round((float)offsetRect.w / 2.0f);
+            offsetRect.h = offsetRect.w;
+        }
 
         // Compute actual texture size using font height and target texture size
         Uint32 actualTextureSize = (targetTextureSize / fontHeight) * GetAtlasCellSize();
@@ -181,7 +205,6 @@ namespace Ossium
 
         // Cache original settings so they can be restored once done.
         int oldHinting = TTF_GetFontHinting(font);
-        int oldKerning = TTF_GetFontKerning(font);
         int oldOutline = TTF_GetFontOutline(font);
         int oldStyle = TTF_GetFontStyle(font);
 
@@ -226,21 +249,6 @@ namespace Ossium
             }
         }
 
-        // Restore settings
-        TTF_SetFontKerning(font, oldKerning);
-        if (oldHinting != hinting)
-        {
-            TTF_SetFontHinting(font, oldHinting);
-        }
-        if (outline != oldOutline)
-        {
-            TTF_SetFontOutline(font, oldOutline);
-        }
-        if (style != oldStyle)
-        {
-            TTF_SetFontStyle(font, oldStyle);
-        }
-
         return tempSurface;
     }
 
@@ -251,10 +259,11 @@ namespace Ossium
 
     Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style, int outline)
     {
-        GlyphID id = CreateGlyphID(Utilities::GetCodepointUTF8(utfChar), style, outline);
-
         // Limit style to main styles; strike through and underline styles don't need to be cached as they can be drawn dynamically.
         style = style & (TTF_STYLE_BOLD | TTF_STYLE_ITALIC);
+
+        Uint32 utfCodepoint = Utilities::GetCodepointUTF8(utfChar);
+        GlyphID id = CreateGlyphID(utfCodepoint, style, outline);
 
         Glyph* glyph = nullptr;
 
@@ -306,7 +315,7 @@ namespace Ossium
                         else
                         {
                             // Create a new glyph
-                            glyph = new Glyph(id & GLYPH_UTF8_MASK, (id & GLYPH_STYLE_MASK) >> GLYPH_STYLE_SHIFT, (id & GLYPH_OUTLINE_MASK) >> GLYPH_OUTLINE_SHIFT);
+                            glyph = new Glyph(utfCodepoint, style, outline);
                             //Logger::EngineLog().Verbose("Created new glyph from code point {0}.", codepoint);
                         }
 
@@ -434,6 +443,7 @@ namespace Ossium
         atlasGlyphMap[index] = glyph->GetID();
 
         SDL_Rect dest = GetAtlasCell(index);
+        Logger::EngineLog().Info("Atlas cell = {0}", dest);
         // Get the full cell destination so we can clear it
         SDL_Rect cell = dest;
         cell.x -= padding;
@@ -507,9 +517,9 @@ namespace Ossium
         return originalBlending != SDL_BLENDMODE_INVALID;
     }
 
-    void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        atlas.Render(renderer.GetRendererSDL(), dest, &clip, origin, angle, color, blending, flip);
+        atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
     }
 
     Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
@@ -534,7 +544,8 @@ namespace Ossium
         Vector2 size = Vector2(round(glyph->cached.GetWidth() * scale), round(glyph->cached.GetHeight() * scale));
         // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
         dest = {dest.x, dest.y, (int)size.x, (int)size.y};
-        Render(renderer, dest, glyph->GetClip(), color, blending, angle, origin, flip);
+        SDL_Rect clip = glyph->GetClip();
+        Render(renderer, dest, &clip, color, blending, angle, origin, flip);
         // TODO: kerning
         size.x = round(glyph->GetAdvance() * scale);
         return position + Vector2(rtl ? -size.x : size.x, 0);
@@ -608,6 +619,14 @@ namespace Ossium
             return fontHeight;
         }
         return pointFactor * pointSize;
+    }
+
+    SDL_Rect Font::GetMipMapClip(SDL_Rect src, Uint8 level)
+    {
+        SDL_Rect mipMapClip = mipOffsets.empty() ? (SDL_Rect){0, 0, 0, 0} : (level >= mipOffsets.size() ? mipOffsets.back() : mipOffsets[level]);
+        mipMapClip.x += src.x;
+        mipMapClip.y += src.y;
+        return mipMapClip;
     }
 
 }

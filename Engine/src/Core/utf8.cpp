@@ -50,6 +50,8 @@ namespace Ossium
                     codepoint |= (unsigned char)(utf8Char[bytes - i - 1]) << (i * 8);
                 }
             }
+            // Chop off invalid bits, Unicode only defines 21 bits worth of code points
+            codepoint &= 0b00000000000111111111111111111111;
 
             return codepoint;
         }
