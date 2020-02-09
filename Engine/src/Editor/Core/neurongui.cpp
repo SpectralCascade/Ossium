@@ -507,12 +507,15 @@ namespace Ossium::Editor
             // TODO: support other text styles for hover and click?
             TextStyle textStyle = style.normalTextStyle;
 
-            // Create the texture from scratch
+            // Generate the texture
             Image texture;
-            texture.SetSurface(resources->Get<Font>(textStyle.fontPath, textStyle.ptsize, *renderer)->GenerateFromText(*renderer, text, textStyle, (Uint32)renderer->GetWidth()));
-            if (texture.GetSurface() != NULL)
+            if (!text.empty())
             {
-                texture.PushGPU(*renderer);
+                texture.SetSurface(resources->Get<Font>(textStyle.fontPath, textStyle.ptsize, *renderer)->GenerateFromText(*renderer, text, textStyle, (Uint32)renderer->GetWidth()));
+                if (texture.GetSurface() != NULL)
+                {
+                    texture.PushGPU(*renderer);
+                }
             }
 
             return Button(&texture, style, invertOutline, xpadding, ypadding);
