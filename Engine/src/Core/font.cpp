@@ -444,7 +444,7 @@ namespace Ossium
         atlasGlyphMap[index] = glyph->GetID();
 
         SDL_Rect dest = GetAtlasCell(index);
-        Logger::EngineLog().Info("Atlas cell = {0}", dest);
+        //Logger::EngineLog().Info("Atlas cell = {0}", dest);
         // Get the full cell destination so we can clear it
         SDL_Rect cell = dest;
         cell.x -= padding;
@@ -619,7 +619,7 @@ namespace Ossium
             // TODO: check that this is accurate; suspect there might be a rounding issue for TTF_GetFontHeight at certain point sizes
             return fontHeight;
         }
-        return fontHeight * ((float)loadedPointSize / (float)pointSize);
+        return fontHeight * ((float)pointSize / (float)loadedPointSize);
     }
 
     float Font::GetFontAscent(float pointSize)
@@ -628,7 +628,7 @@ namespace Ossium
         {
             return fontAscent;
         }
-        return fontAscent * ((float)loadedPointSize / (float)pointSize);
+        return fontAscent * ((float)pointSize / (float)loadedPointSize);
     }
 
     float Font::GetFontDescent(float pointSize)
@@ -637,7 +637,7 @@ namespace Ossium
         {
             return fontDescent;
         }
-        return fontDescent * ((float)loadedPointSize / (float)pointSize);
+        return fontDescent * ((float)pointSize / (float)loadedPointSize);
     }
 
     float Font::GetUnderlinePosition(float pointSize)
