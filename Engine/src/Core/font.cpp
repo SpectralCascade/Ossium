@@ -585,7 +585,7 @@ namespace Ossium
         atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
     }
 
-    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         int maxHeight = (int)ceil(GetFontHeight(pointSize));
@@ -607,11 +607,31 @@ namespace Ossium
         int size = round(glyph->cached.GetHeight() * scale);
         dest = {dest.x, dest.y, size, size};
         SDL_Rect clip = glyph->GetClip();
-        // TODO: trilinear filtering/alpha blending
-        float level = GetMipMapLevel(pointSize, loadedPointSize);
-        clip = GetMipMapClip(clip, (int)level);
 
-        Render(renderer, dest, &clip, color, blending, angle, origin, flip);
+        float level = GetMipMapLevel(pointSize, loadedPointSize);
+
+        // TODO: nice mipmap blending/compositing
+        /*if (blending == SDL_BLENDMODE_BLEND && mipBias > 0.000001f && mipBias < 0.999999f && level > 0.0f && level < (float)mipmapDepth)
+        {
+            // Trilinear filtering, kinda
+            SDL_Rect smallMip = GetMipMapClip(clip, (int)level + 1);
+            clip = GetMipMapClip(clip, (int)level);
+
+            float fraction = ((1.0f - (level - (float)((int)level))) + mipBias) * 0.5f;
+
+            // Calculate how much we should blend the main mipmap at this level
+            Uint8 mipBlend = (Uint8)round((float)color.a * fraction);
+
+            SDL_Color smallColor = Alpha(color, 255 - (mipBlend / 2));
+            color = Alpha(color, mipBlend);
+            Render(renderer, dest, &clip, color, blending, angle, origin, flip);
+            Render(renderer, dest, &smallMip, smallColor, blending, angle, origin, flip);
+        }
+        else
+        {*/
+            clip = GetMipMapClip(clip, /*mipBias >= 1.0f ? (int)level - 1 : */(int)level);
+            Render(renderer, dest, &clip, color, blending, angle, origin, flip);
+        //}
 
         size = round(glyph->GetAdvance() * scale);
         return position + Vector2(rtl ? -size : size, 0);
@@ -724,6 +744,10 @@ namespace Ossium
 
     SDL_Rect Font::GetMipMapClip(SDL_Rect src, int level)
     {
+        if (level < 0)
+        {
+            level = 0;
+        }
         SDL_Rect mipMapClip = mipOffsets.empty() ? (SDL_Rect){0, 0, 0, 0} : ((unsigned int)level >= mipOffsets.size() ? mipOffsets.back() : mipOffsets[level]);
         mipMapClip.x += src.x;
         mipMapClip.y += src.y;
@@ -738,7 +762,7 @@ namespace Ossium
         }
         else if (pointSize >= mainPointSize)
         {
-            return (float)level + (mainPointSize / pointSize) - 1.0f;
+            return (float)level + (mainPointSize / (pointSize * 0.5f)) - 2.0f;
         }
         return GetMipMapLevel(pointSize, mainPointSize * 0.5f, level + 1);
     }

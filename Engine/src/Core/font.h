@@ -219,7 +219,22 @@ namespace Ossium
         void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Renders a single glyph at the chosen position, returning the ideal position for the next glyph to be rendered from (for a line of text).
-        Vector2 RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color = Colors::RED, bool kerning = true, bool rtl = false, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        /// mipBias indicates how mipmap blending (trilinear filtering) should be applied. A value <= 0.0f doesn't apply any mipmap blending, 0.5f applies even mipmap blending,
+        /// and 1.0f or above uses the larger mipmap instead.
+        Vector2 RenderGlyph(
+            Renderer& renderer,
+            Glyph* glyph,
+            Vector2 position,
+            float pointSize,
+            SDL_Color color = Colors::RED,
+            bool kerning = true,
+            bool rtl = false,
+            SDL_BlendMode blending = SDL_BLENDMODE_BLEND,
+            float mipBias = 0.5f,
+            double angle = 0.0,
+            SDL_Point* origin = NULL,
+            SDL_RendererFlip flip = SDL_FLIP_NONE
+        );
 
         /// Frees all glyphs in the map and clears the LRU caches. Does not destroy the atlas texture.
         void FreeGlyphs();
