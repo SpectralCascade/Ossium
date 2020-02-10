@@ -66,6 +66,14 @@ namespace Ossium
     bool Image::CreateEmptySurface(int w, int h, Uint32 pixelFormat)
     {
         FreeSurface();
+        if (pixelFormat == SDL_PIXELFORMAT_UNKNOWN)
+        {
+            pixelFormat = format;
+        }
+        else
+        {
+            format = pixelFormat;
+        }
         tempSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, pixelFormat);
         if (tempSurface == NULL)
         {
@@ -74,16 +82,62 @@ namespace Ossium
         return true;
     }
 
-    void Image::SetSurface(SDL_Surface* loadedSurface)
+    void Image::SetSurface(SDL_Surface* loadedSurface, Uint32 pixelFormat)
     {
         FreeSurface();
         tempSurface = loadedSurface;
+        if (pixelFormat != SDL_PIXELFORMAT_UNKNOWN)
+        {
+            SetSurfaceFormat(pixelFormat);
+            format = pixelFormat;
+        }
+        else
+        {
+            SetSurfaceFormat(format);
+        }
+    }
+
+    void Image::SetSurfaceFormat(Uint32 pixelFormat)
+    {
+        if (format != pixelFormat)
+        {
+            if (pixelFormat == SDL_PIXELFORMAT_UNKNOWN)
+            {
+                Logger::EngineLog().Warning("Cannot set surface format to unknown surface format!");
+                return;
+            }
+            if (tempSurface != NULL && tempSurface->format->format != pixelFormat)
+            {
+                SDL_Surface* formatted = NULL;
+                formatted = SDL_ConvertSurfaceFormat(tempSurface, pixelFormat, 0);
+                if (formatted != NULL)
+                {
+                    SDL_FreeSurface(tempSurface);
+                    tempSurface = formatted;
+                }
+                else
+                {
+                    Logger::EngineLog().Error("Failed to convert surface format from {0} to {1}!", SDL_GetPixelFormatName(format), SDL_GetPixelFormatName(pixelFormat));
+                }
+            }
+            format = pixelFormat;
+        }
+    }
+
+    Uint32 Image::GetSurfacePixelFormat()
+    {
+        return format;
+    }
+
+    Uint32 Image::GetTexturePixelFormat()
+    {
+        return textureFormat;
     }
 
     bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, int accessMode)
     {
         PopGPU();
-        bool success = PushGPU(renderer, pixelFormatting, accessMode) != NULL;
+        bool success = PushGPU(renderer, accessMode) != NULL;
         FreeSurface();
         return success;
     }
@@ -175,63 +229,39 @@ namespace Ossium
         return tempSurface;
     }
 
-    SDL_Texture* Image::PushGPU(Renderer& renderer, Uint32 pixelFormatting, int accessMode)
+    SDL_Texture* Image::PushGPU(Renderer& renderer, int accessMode)
     {
-        // Free GPU memory
+        // Free GPU memory if in use
         PopGPU();
 
-        // Set the formatting and access mode
-        format = pixelFormatting;
+        // Set the access mode
         access = accessMode;
 
         if (tempSurface == NULL)
         {
             Logger::EngineLog().Error("No surface loaded, cannot copy to GPU memory!");
         }
-        else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN && accessMode != SDL_TEXTUREACCESS_STATIC)
+        else if (accessMode != SDL_TEXTUREACCESS_STATIC)
         {
-            // TODO: consider whether we should set the current surface to the formatted surface or not
-            SDL_Surface* formattedSurface = NULL;
-            formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
-            if (formattedSurface == NULL)
+            texture = SDL_CreateTexture(renderer.GetRendererSDL(), format, accessMode, tempSurface->w, tempSurface->h);
+            if (texture == NULL)
             {
-                Logger::EngineLog().Error("Failed to format surface! SDL_Error: {0}", SDL_GetError());
+                Logger::EngineLog().Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
             }
-            else
+            else if (accessMode == SDL_TEXTUREACCESS_STREAMING)
             {
-                texture = SDL_CreateTexture(renderer.GetRendererSDL(), pixelFormatting, accessMode, formattedSurface->w, formattedSurface->h);
-                if (texture == NULL)
-                {
-                    Logger::EngineLog().Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
-                }
-                else if (accessMode == SDL_TEXTUREACCESS_STREAMING)
-                {
-                    // Copy surface pixels to texture
-                    SDL_LockTexture(texture, NULL, &pixels, &pitch);
-                    memcpy(pixels, formattedSurface->pixels, formattedSurface->pitch * formattedSurface->h);
-                    SDL_UnlockTexture(texture);
-                }
-                pixels = NULL;
-                widthGPU = formattedSurface->w;
-                heightGPU = formattedSurface->h;
-
-                SDL_FreeSurface(formattedSurface);
-                formattedSurface = NULL;
+                // Copy surface pixels to texture
+                SDL_LockTexture(texture, NULL, &pixels, &pitch);
+                memcpy(pixels, tempSurface->pixels, tempSurface->pitch * tempSurface->h);
+                SDL_UnlockTexture(texture);
             }
+            pixels = NULL;
+            textureFormat = format;
+            widthGPU = tempSurface->w;
+            heightGPU = tempSurface->h;
         }
         else
         {
-            if (pixelFormatting == SDL_PIXELFORMAT_UNKNOWN)
-            {
-                pixelFormatting = SDL_PIXELFORMAT_ARGB8888;
-            }
-            if (tempSurface->format->format != pixelFormatting)
-            {
-                // NOTE: this permanently changes the surface format of the associated surface
-                SDL_Surface* oldSurface = tempSurface;
-                tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
-                SDL_FreeSurface(oldSurface);
-            }
             texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
             if (texture == NULL)
             {
@@ -243,10 +273,9 @@ namespace Ossium
                 heightGPU = tempSurface->h;
             }
         }
-        // In error case, set default values
+        // In error case, reset access mode
         if (texture == NULL)
         {
-            format = SDL_PIXELFORMAT_UNKNOWN;
             access = -1;
         }
         return texture;
@@ -263,7 +292,7 @@ namespace Ossium
             SDL_DestroyTexture(texture);
             texture = NULL;
         }
-        format = SDL_PIXELFORMAT_UNKNOWN;
+        textureFormat = SDL_PIXELFORMAT_UNKNOWN;
         access = -1;
         widthGPU = 0;
         heightGPU = 0;
@@ -277,11 +306,6 @@ namespace Ossium
     int Image::GetPitch()
     {
         return pitch;
-    }
-
-    Uint32 Image::GetTexturePixelFormat()
-    {
-        return format;
     }
 
     int Image::GetTextureAccessMode()

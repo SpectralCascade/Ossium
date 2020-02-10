@@ -155,12 +155,13 @@ namespace Ossium
             }
             SDL_RenderPresent(tarGetRendererSDL);
             SDL_Rect targetRect = {0, 0, (src.w / 2) * 3, src.h};
-            SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+            SDL_Surface* renderSurface = SDL_CreateRGBSurfaceWithFormat(0, targetRect.w, targetRect.h, 32, SDL_PIXELFORMAT_ARGB8888);
             SDL_RenderReadPixels(tarGetRendererSDL, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
+
             // Free the original imported texture and replace with mipmapped version
             importedTexture->PopGPU();
             importedTexture->SetSurface(renderSurface);
-            importedTexture->PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING);
+            importedTexture->PushGPU(renderer, SDL_TEXTUREACCESS_STREAMING);
 
             // Reset the render target of the renderer
             SDL_SetRenderTarget(tarGetRendererSDL, originalTarget);
@@ -229,7 +230,7 @@ namespace Ossium
         else
         {
             texture->SetSurface(renderedText);
-            texture->PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_STREAMING);
+            texture->PushGPU(renderer, SDL_TEXTUREACCESS_STREAMING);
         }
 
         SDL_Rect src = {0, 0, texture->GetWidth(), texture->GetHeight()};
@@ -284,7 +285,7 @@ namespace Ossium
         // Max size is the maximum area for packing the textures, but any leftover space will be removed.
         if (packedTexture.CreateEmptySurface(maxSize, maxSize, pixelFormatting))
         {
-            packedTexture.PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_TARGET);
+            packedTexture.PushGPU(renderer, SDL_TEXTUREACCESS_TARGET);
         }
         else
         {
@@ -395,10 +396,10 @@ namespace Ossium
 
         // Now remove all unused texture space
         SDL_Rect targetRect = {0, 0, finalWidth, finalHeight};
-        SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+        SDL_Surface* renderSurface = SDL_CreateRGBSurfaceWithFormat(0, targetRect.w, targetRect.h, 32, SDL_PIXELFORMAT_ARGB8888);
         SDL_RenderReadPixels(render, &targetRect, SDL_PIXELFORMAT_ARGB8888, renderSurface->pixels, renderSurface->pitch);
         packedTexture.SetSurface(renderSurface);
-        packedTexture.PushGPU(renderer, pixelFormatting, SDL_TEXTUREACCESS_TARGET);
+        packedTexture.PushGPU(renderer, SDL_TEXTUREACCESS_TARGET);
 
         // Go back to rendering wherever we were rendering before
         SDL_SetRenderTarget(render, originalTarget);

@@ -217,7 +217,7 @@ namespace Ossium
         atlas.CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat);
         if (atlas.GetSurface() != NULL)
         {
-            return atlas.PushGPU(renderer, pixelFormat, SDL_TEXTUREACCESS_TARGET) != NULL;
+            return atlas.PushGPU(renderer, SDL_TEXTUREACCESS_TARGET) != NULL;
         }
         return false;
     }
@@ -536,7 +536,7 @@ namespace Ossium
             SDL_RenderFillRect(render, &cell);
 
             // Render the actual glyph
-            glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING);
+            glyph->cached.PushGPU(renderer, SDL_TEXTUREACCESS_STREAMING);
             SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
             SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
 

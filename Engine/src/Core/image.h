@@ -28,8 +28,7 @@ namespace Ossium
     class Texture;
     class TexturePack;
 
-    /// This class wraps an SDL_Texture resource (an image usually stored in video memory).
-    /// TODO: swap name with Texture class
+    /// This class wraps a single SDL_Surface (an image stored in RAM) and/or a single SDL_Texture (an image usually stored in GPU memory).
     class OSSIUM_EDL Image : public Resource
     {
     public:
@@ -49,12 +48,24 @@ namespace Ossium
         /// Load an image and returns true if it was successful
         bool Load(string guid_path);
 
-        /// Creates an empty surface.
-        bool CreateEmptySurface(int w, int h, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        /// Creates an empty surface. Optionally specify a pixel format, if not specified the last set surface pixel format will be used.
+        bool CreateEmptySurface(int w, int h, Uint32 pixelFormat = SDL_PIXELFORMAT_UNKNOWN);
 
         /// Frees the current surface and sets it to this. Useful if you want to generate surfaces on the fly.
         /// NOTE: Does not make a copy of the surface data. Simply takes ownership of the reference.
-        void SetSurface(SDL_Surface* loadedSurface);
+        /// Optionally specify a pixel format, if not specified the last set surface pixel format will be used.
+        void SetSurface(SDL_Surface* loadedSurface, Uint32 pixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+
+        /// Sets the surface pixel format to use. Whenever SetSurface() or CreateEmptySurface() are called, this method is automatically called.
+        /// Recreates the surface with the specified format if it doesn't have the same format already.
+        void SetSurfaceFormat(Uint32 pixelFormat);
+
+        /// Returns the surface pixel format. Returns SDL_PIXELFORMAT_UNKNOWN if no surface is loaded.
+        Uint32 GetSurfacePixelFormat();
+
+        /// Returns the texture pixel format. Returns SDL_PIXELFORMAT_UNKNOWN if no texture is created.
+        /// Note the only way to set the texture format is to call SetSurfaceFormat() and then call PushGPU() again.
+        Uint32 GetTexturePixelFormat();
 
         /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
         /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.
@@ -82,7 +93,7 @@ namespace Ossium
             SDL_RendererFlip flip = SDL_FLIP_NONE
         );
 
-        // TODO: blitting method for surfaces. Not strictly essential however.
+        // TODO: blitting method for surfaces. Not strictly essential however, can just use SDL directly for now
 
         /// Returns the width of the image in GPU memory, or if not loaded in GPU memory, returns the width of the surface.
         int GetWidth();
@@ -167,9 +178,9 @@ namespace Ossium
 
         /// Copies the surface data from RAM to GPU memory (creating a GPU texture). Returns NULL upon failure (e.g. no surface is loaded).
         /// Calling this method automatically destroys the current GPU texture if loaded.
-        SDL_Texture* PushGPU(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STREAMING);
+        SDL_Texture* PushGPU(Renderer& renderer, int accessMode = SDL_TEXTUREACCESS_STREAMING);
 
-        /// Destroys the GPU texture. Returns NULL upon failure (e.g. no GPU texture is loaded).
+        /// Destroys the GPU texture if one .
         void PopGPU();
 
         /// Returns the GPU texture, or NULL if not pushed onto the GPU.
@@ -186,9 +197,6 @@ namespace Ossium
 
         /// When locked, returns the length of the pixel data in bytes.
         int GetPitch();
-
-        /// Returns the pixel format
-        Uint32 GetTexturePixelFormat();
 
         /// Returns the texture access mode (whether the texture can be streamed or rendered upon or not).
         int GetTextureAccessMode();
@@ -212,8 +220,11 @@ namespace Ossium
         int widthGPU = 0;
         int heightGPU = 0;
 
-        /// The pixel format in GPU memory.
-        Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
+        /// The pixel format of the surface.
+        Uint32 format = SDL_PIXELFORMAT_ARGB8888;
+
+        /// The pixel format of the texture.
+        Uint32 textureFormat = SDL_PIXELFORMAT_UNKNOWN;
 
         /// The access mode used for the current GPU texture.
         int access = -1;
