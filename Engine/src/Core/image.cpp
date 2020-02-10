@@ -190,6 +190,7 @@ namespace Ossium
         }
         else if (pixelFormatting != SDL_PIXELFORMAT_UNKNOWN && accessMode != SDL_TEXTUREACCESS_STATIC)
         {
+            // TODO: consider whether we should set the current surface to the formatted surface or not
             SDL_Surface* formattedSurface = NULL;
             formattedSurface = SDL_ConvertSurfaceFormat(tempSurface, pixelFormatting, 0);
             if (formattedSurface == NULL)
@@ -220,7 +221,17 @@ namespace Ossium
         }
         else
         {
-            tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
+            if (pixelFormatting == SDL_PIXELFORMAT_UNKNOWN)
+            {
+                pixelFormatting = SDL_PIXELFORMAT_ARGB8888;
+            }
+            if (tempSurface->format->format != pixelFormatting)
+            {
+                // NOTE: this permanently changes the surface format of the associated surface
+                SDL_Surface* oldSurface = tempSurface;
+                tempSurface = SDL_ConvertSurfaceFormat(tempSurface, SDL_PIXELFORMAT_ARGB8888, 0);
+                SDL_FreeSurface(oldSurface);
+            }
             texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
             if (texture == NULL)
             {

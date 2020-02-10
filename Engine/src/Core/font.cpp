@@ -469,7 +469,7 @@ namespace Ossium
         }
 
         // Find a spot for the glyph to be rendered
-        if (textureCache.Size() == GetAtlasMaxGlyphs())
+        if (textureCache.Size() >= GetAtlasMaxGlyphs())
         {
             // Overwrite LRU index, replace the glyph that was there
             index = textureCache.GetLRU();
@@ -536,10 +536,9 @@ namespace Ossium
             SDL_RenderFillRect(render, &cell);
 
             // Render the actual glyph
-            glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
+            glyph->cached.PushGPU(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING);
             SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
             SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
-            glyph->cached.PopGPU();
 
             // Update glyph metrics
             glyph->UpdateMeta(index, dest);
