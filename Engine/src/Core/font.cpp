@@ -143,7 +143,7 @@ namespace Ossium
         return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit, maxMipmaps);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, Uint8 mipDepth)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int mipDepth)
     {
         padding = atlasPadding;
         mipOffsets.clear();
@@ -155,13 +155,16 @@ namespace Ossium
             return false;
         }
 
+        // Compute cell size
+        cellSize = {fontHeight + (padding * 2) + (int)ceil((float)fontHeight * 1.5f), fontHeight + (padding * 2)};
+
         fontAscent = TTF_FontAscent(font);
         fontDescent = TTF_FontDescent(font);
 
-        if (mipDepth == 0)
+        if (mipDepth <= 0)
         {
             // Automatically calculate mipmap depth for minimum 8 points font size
-            mipmapDepth = (int)ceil(sqrt((float)loadedPointSize / 8.0f));
+            mipmapDepth = (int)(sqrt((float)loadedPointSize / 8.0f));
         }
         else
         {
@@ -174,7 +177,7 @@ namespace Ossium
         offsetRect.x = fontHeight;
         offsetRect.w = (int)round((float)fontHeight / 2.0f);
         offsetRect.h = offsetRect.w;
-        for (Uint8 i = 1; i < mipmapDepth; i++)
+        for (int i = 0; i < mipmapDepth; i++)
         {
             mipOffsets.push_back(offsetRect);
             offsetRect.y += offsetRect.h;
@@ -182,12 +185,36 @@ namespace Ossium
             offsetRect.h = offsetRect.w;
         }
 
+        // Open up the font at different mipmap levels
+        for (auto f : mipmapFonts)
+        {
+            if (f != NULL)
+            {
+                TTF_CloseFont(f);
+            }
+            f = NULL;
+        }
+        mipmapFonts.clear();
+        float pointSize = (float)loadedPointSize;
+        for (int level = 0; level < mipmapDepth; level++)
+        {
+            pointSize = pointSize * 0.5f;
+            Logger::EngineLog().Info("Loading font '{0}' at point size {1}", guid_path, pointSize);
+            mipmapFonts.push_back(TTF_OpenFont(guid_path.c_str(), (int)pointSize));
+            if (mipmapFonts.back() == NULL)
+            {
+                Logger::EngineLog().Error("TTF_Error opening font: {0}", TTF_GetError());
+            }
+        }
+
         // Compute actual texture size using font height and target texture size
-        Uint32 actualTextureSize = (targetTextureSize / fontHeight) * GetAtlasCellSize();
+        actualTextureSize = {(targetTextureSize / cellSize.x) * cellSize.x, (targetTextureSize / cellSize.y) * cellSize.y};
+        maxAtlasGlyphs = (actualTextureSize.x / cellSize.x) * (actualTextureSize.y / cellSize.y);
+
+        cacheLimit = glyphCacheLimit;
 
         // Create the atlas surface and push onto the GPU.
-        atlas.CreateEmptySurface(actualTextureSize, actualTextureSize, pixelFormat);
-        cacheLimit = glyphCacheLimit;
+        atlas.CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat);
         if (atlas.GetSurface() != NULL)
         {
             return atlas.PushGPU(renderer, pixelFormat, SDL_TEXTUREACCESS_TARGET) != NULL;
@@ -195,33 +222,35 @@ namespace Ossium
         return false;
     }
 
-    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, SDL_Color color, int hinting, int kerning, int style, int renderMode, SDL_Color bgColor, int outline, Uint32 wrapLength)
+    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, SDL_Color color, int hinting, int kerning, int style, int renderMode, SDL_Color bgColor, int outline, Uint32 wrapLength, TTF_Font* f)
     {
-        TTF_Font* font = GetFont();
-        if (font == NULL)
+        if (f == NULL)
         {
-            Logger::EngineLog().Error("Failed to get font for on-the-fly text generation!");
-            return NULL;
+            f = font;
+            if (f == NULL)
+            {
+                Logger::EngineLog().Error("TTF Font is not loaded for on-the-fly text generation!");
+                return NULL;
+            }
         }
 
-        // Cache original settings so they can be restored once done.
-        int oldHinting = TTF_GetFontHinting(font);
-        int oldOutline = TTF_GetFontOutline(font);
-        int oldStyle = TTF_GetFontStyle(font);
+        int oldHinting = TTF_GetFontHinting(f);
+        int oldOutline = TTF_GetFontOutline(f);
+        int oldStyle = TTF_GetFontStyle(f);
 
         // Configure font
-        TTF_SetFontKerning(font, (int)kerning);
+        TTF_SetFontKerning(f, (int)kerning);
         if (oldHinting != hinting)
         {
-            TTF_SetFontHinting(font, hinting);
+            TTF_SetFontHinting(f, hinting);
         }
         if (outline != oldOutline)
         {
-            TTF_SetFontOutline(font, outline);
+            TTF_SetFontOutline(f, outline);
         }
         if (style != oldStyle)
         {
-            TTF_SetFontStyle(font, style);
+            TTF_SetFontStyle(f, style);
         }
 
         SDL_Surface* tempSurface = NULL;
@@ -230,22 +259,22 @@ namespace Ossium
         {
             case RENDERTEXT_SHADED:
             {
-                tempSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), color, bgColor);
+                tempSurface = TTF_RenderUTF8_Shaded(f, text.c_str(), color, bgColor);
                 break;
             }
             case RENDERTEXT_BLEND:
             {
-                tempSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+                tempSurface = TTF_RenderUTF8_Blended(f, text.c_str(), color);
                 break;
             }
             case RENDERTEXT_BLEND_WRAPPED:
             {
-                tempSurface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, wrapLength);
+                tempSurface = TTF_RenderUTF8_Blended_Wrapped(f, text.c_str(), color, wrapLength);
                 break;
             }
             default:
             {
-                tempSurface = TTF_RenderUTF8_Solid(font, text.c_str(), color);
+                tempSurface = TTF_RenderUTF8_Solid(f, text.c_str(), color);
                 break;
             }
         }
@@ -253,9 +282,9 @@ namespace Ossium
         return tempSurface;
     }
 
-    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength)
+    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f)
     {
-        return GenerateFromText(renderer, text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength);
+        return GenerateFromText(renderer, text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength, f);
     }
 
     Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style, int outline)
@@ -290,10 +319,11 @@ namespace Ossium
                 // Check if the glyph exists
                 if (TTF_GlyphIsProvided(font, ucs2))
                 {
-                    SDL_Surface* renderedGlyph = GenerateFromText(renderer, utfChar, Colors::WHITE, 0, 0, style, RENDERTEXT_BLEND);
-                    if (renderedGlyph != NULL)
+                    // Render the main glyph
+                    SDL_Surface* created = GenerateFromText(renderer, utfChar, Colors::WHITE, 0, 0, style, RENDERTEXT_BLEND, Colors::BLACK, outline, 0, font);
+                    SDL_Surface* renderedGlyph = SDL_CreateRGBSurfaceWithFormat(0, GetAtlasCellSize().x, GetAtlasCellSize().y, 32, created->format->format);
+                    if (created != NULL && renderedGlyph != NULL && SDL_BlitSurface(created, NULL, renderedGlyph, NULL) == 0)
                     {
-
                         if (glyphCache.Size() >= cacheLimit)
                         {
                             // Replace a glyph in the glyph cache
@@ -320,6 +350,32 @@ namespace Ossium
                             //Logger::EngineLog().Verbose("Created new glyph from code point {0}.", codepoint);
                         }
 
+                        // Render mipmaps
+                        for (int level = 0; level < mipmapDepth; level++)
+                        {
+                            SDL_Rect dest = mipOffsets[level + 1];
+                            TTF_Font* mipFont = mipmapFonts[level];
+                            if (mipFont == NULL)
+                            {
+                                // TODO?: resort to manual scaling down? At this point we shouldn't be using mipmaps if they can't be generated.
+                            }
+                            else
+                            {
+                                SDL_Surface* mipped = GenerateFromText(renderer, utfChar, Colors::WHITE, 0, 0, style, RENDERTEXT_BLEND, Colors::BLACK, outline, 0, mipFont);
+                                if (mipped != NULL)
+                                {
+                                    //Logger::EngineLog().Info("Blitting from {0} onto {1} (surface = {2})", Vector2(mipped->w, mipped->h), dest, Vector2(renderedGlyph->w, renderedGlyph->h));
+                                    SDL_BlitSurface(mipped, NULL, renderedGlyph, &dest);
+                                    SDL_FreeSurface(mipped);
+                                    mipped = NULL;
+                                }
+                                else
+                                {
+                                    Logger::EngineLog().Error("Failed to blit mipmap level {0} for glyph character {1} [{2}]!", level, utfChar, utfCodepoint);
+                                }
+                            }
+                        }
+
                         // Glyph manages surface memory now
                         glyph->cached.SetSurface(renderedGlyph);
                         glyph->type = id;
@@ -333,6 +389,11 @@ namespace Ossium
                     else
                     {
                         Logger::EngineLog().Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
+                    }
+                    if (created != NULL)
+                    {
+                        SDL_FreeSurface(created);
+                        created = NULL;
                     }
                 }
                 else
@@ -447,6 +508,7 @@ namespace Ossium
         //Logger::EngineLog().Info("Atlas cell = {0}", dest);
         // Get the full cell destination so we can clear it
         SDL_Rect cell = dest;
+        // TODO: remove padding
         cell.x -= padding;
         cell.y -= padding;
         cell.w += padding * 2;
@@ -463,6 +525,7 @@ namespace Ossium
                 Logger::EngineLog().Warning("Attempting to pack glyph that is bigger than the atlas cell size! It'll be a bit squashed.");
             }
             // TODO: IMPORTANT: rather than squishing unevenly, scale down and store the scale difference for later.
+            // Even better, scale down at glyph creation time instead of here and do it properly (i.e. next closest point size).
             dest.w = min(dest.w, glyph->cached.GetWidth());
             dest.h = min(dest.h, glyph->cached.GetHeight());
 
@@ -542,14 +605,17 @@ namespace Ossium
             return position + Vector2(rtl ? -(boxPadding * 2 + dest.w) : (boxPadding * 2 + dest.w), 0);
         }
         float scale = (pointSize / loadedPointSize);
-        Vector2 size = Vector2(round(glyph->cached.GetWidth() * scale), round(glyph->cached.GetHeight() * scale));
-        // TODO: position based on glyph metrics such as baseline position etc. rather than using the centre of the glyph
-        dest = {dest.x, dest.y, (int)size.x, (int)size.y};
+        int size = round(glyph->cached.GetHeight() * scale);
+        dest = {dest.x, dest.y, size, size};
         SDL_Rect clip = glyph->GetClip();
+        // TODO: trilinear filtering/alpha blending
+        float level = GetMipMapLevel(pointSize, loadedPointSize);
+        clip = GetMipMapClip(clip, (int)level);
+
         Render(renderer, dest, &clip, color, blending, angle, origin, flip);
-        // TODO: kerning
-        size.x = round(glyph->GetAdvance() * scale);
-        return position + Vector2(rtl ? -size.x : size.x, 0);
+
+        size = round(glyph->GetAdvance() * scale);
+        return position + Vector2(rtl ? -size : size, 0);
     }
 
     void Font::FreeGlyphs()
@@ -579,13 +645,17 @@ namespace Ossium
 
     Uint32 Font::GetAtlasMaxGlyphs()
     {
-        int total = GetAtlasSize() / GetAtlasCellSize();
-        return total * total;
+        return maxAtlasGlyphs;
     }
 
-    int Font::GetAtlasCellSize()
+    SDL_Point Font::GetAtlasCellSize()
     {
-        return fontHeight + (padding * 2);
+        return cellSize;
+    }
+
+    int Font::GetAtlasMipSize(int level)
+    {
+        return GetMipMapClip({0, 0, 0, 0}, level).w;
     }
 
     SDL_Rect Font::GetAtlasCell(Uint32 index)
@@ -596,11 +666,12 @@ namespace Ossium
             Logger::EngineLog().Warning("Failed to get atlas cell for index {0} (note: index must be between 1 and {1} inclusive and atlas must be initialised)", index, GetAtlasMaxGlyphs());
             return rect;
         }
-        int linearPosition = ((index - 1) * GetAtlasCellSize());
-        rect.x = linearPosition % atlas.GetWidth();
-        rect.y = ((linearPosition - rect.x) / atlas.GetWidth()) * GetAtlasCellSize();
-        rect.w = GetAtlasCellSize();
-        rect.h = rect.w;
+        int linearPosition = ((index - 1) * cellSize.x);
+        rect.x = linearPosition % actualTextureSize.x;
+        rect.y = (int)(linearPosition / actualTextureSize.x) * cellSize.y;
+        rect.w = cellSize.x;
+        rect.h = cellSize.y;
+        // TODO: remove padding, all glyphs are the same colour in the atlas so there *shouldn't* be bleeding issues.
         if (padding > 0)
         {
             // Get the true destination rect with padding
@@ -652,12 +723,25 @@ namespace Ossium
         return GetFontHeight(pointSize) / 2.0f;
     }
 
-    SDL_Rect Font::GetMipMapClip(SDL_Rect src, Uint8 level)
+    SDL_Rect Font::GetMipMapClip(SDL_Rect src, int level)
     {
-        SDL_Rect mipMapClip = mipOffsets.empty() ? (SDL_Rect){0, 0, 0, 0} : (level >= mipOffsets.size() ? mipOffsets.back() : mipOffsets[level]);
+        SDL_Rect mipMapClip = mipOffsets.empty() ? (SDL_Rect){0, 0, 0, 0} : ((unsigned int)level >= mipOffsets.size() ? mipOffsets.back() : mipOffsets[level]);
         mipMapClip.x += src.x;
         mipMapClip.y += src.y;
         return mipMapClip;
+    }
+
+    float Font::GetMipMapLevel(float pointSize, float mainPointSize, int level)
+    {
+        if (pointSize < 0.0f)
+        {
+            return 0.0f;
+        }
+        else if (pointSize >= mainPointSize)
+        {
+            return (float)level + (mainPointSize / pointSize) - 1.0f;
+        }
+        return GetMipMapLevel(pointSize, mainPointSize * 0.5f, level + 1);
     }
 
 }

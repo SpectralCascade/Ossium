@@ -40,7 +40,7 @@ namespace Ossium
 
     REGISTER_RESOURCE(TexturePack);
 
-    SDL_Rect GetMipMapClip(SDL_Rect src, int level, Uint16 minSize)
+    SDL_Rect GetMipMapClipTP(SDL_Rect src, int level, Uint16 minSize)
     {
         SDL_Rect mipMapClip = {src.x + src.w, src.y, src.w / 2, src.h / 2};
         int offset = src.h;
@@ -144,7 +144,7 @@ namespace Ossium
             int level = 0;
             while (true)
             {
-                SDL_Rect mipmapClip = GetMipMapClip(src, level, minMipMapSize);
+                SDL_Rect mipmapClip = GetMipMapClipTP(src, level, minMipMapSize);
                 if (previousClip.h == mipmapClip.h)
                 {
                     break;
@@ -484,7 +484,7 @@ namespace Ossium
 
     SDL_Rect TexturePack::GetClip(string textureId, int mipmapLevel)
     {
-        return GetMipMapClip(GetClip(textureId), mipmapLevel);
+        return GetMipMapClipTP(GetClip(textureId), mipmapLevel);
     }
 
     bool TexturePack::compareImportedSmallestFirst(ImportedTextureData& i, ImportedTextureData& j)

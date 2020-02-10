@@ -61,7 +61,7 @@ namespace Ossium
     /// Returns the clip rect for a specified mipmap level of a given source clip rect
     /** Min size is used as the baseline multiplier
      * (e.g. when minSize = 16, level n = 16, level n - 1 = 32, level n - 2 = 64, etc.) **/
-    SDL_Rect GetMipMapClip(SDL_Rect src, int level = 0, Uint16 minSize = 4);
+    SDL_Rect GetMipMapClipTP(SDL_Rect src, int level = 0, Uint16 minSize = 4);
 
     class TexturePack : public Resource, public TexturePackSchema
     {

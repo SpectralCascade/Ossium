@@ -163,10 +163,10 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = -1);
+        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = 0);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, Uint8 mipDepth = 0);
+        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -183,11 +183,12 @@ namespace Ossium
             int renderMode = RENDERTEXT_BLEND,
             SDL_Color bgColor = Colors::BLACK,
             int outline = 0,
-            Uint32 wrapLength = 0
+            Uint32 wrapLength = 0,
+            TTF_Font* f = NULL
         );
 
         /// Ditto, but bundled some parameters.
-        SDL_Surface* GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength);
+        SDL_Surface* GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f = NULL);
 
         /// Returns the glyph for the given UTF-8 character.
         /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
@@ -232,8 +233,11 @@ namespace Ossium
         /// Returns the maximum number of glyphs that can fit in the atlas.
         Uint32 GetAtlasMaxGlyphs();
 
-        /// Returns the size of a single glyph cell in the atlas.
-        int GetAtlasCellSize();
+        /// Returns the dimensions of a single glyph cell in the atlas, including mipmaps.
+        SDL_Point GetAtlasCellSize();
+
+        /// Returns the size of a mipmap in the atlas at the specified level. Note that width and height are the same for individual mipmaps.
+        int GetAtlasMipSize(int level);
 
         /// Returns the clip rect for a cell within the atlas, with optional padding. Returns rect with 0 width and height on error (e.g. index out of range).
         SDL_Rect GetAtlasCell(Uint32 index);
@@ -269,32 +273,44 @@ namespace Ossium
         /// Pointer to the main font in memory
         TTF_Font* font = NULL;
 
+        /// Pointers to fonts at different point sizes for mipmaps
+        vector<TTF_Font*> mipmapFonts;
+
         /// The font atlas texture.
         Image atlas;
 
-        /// The maximum glyph height of the font
-        int fontHeight;
+        /// The maximum glyph height of the font.
+        int fontHeight = 0;
 
-        /// Font ascent
-        int fontAscent;
+        /// Font ascent.
+        int fontAscent = 0;
 
-        /// Font descent
-        int fontDescent;
+        /// Font descent.
+        int fontDescent = 0;
 
-        /// Padding around each cell in the font atlas
-        int padding;
+        /// Padding around each cell in the font atlas.
+        int padding = 0;
+
+        /// The size of an atlas cell, including mipmaps.
+        SDL_Point cellSize = {0, 0};
+
+        /// The dimensions of the entire atlas texture.
+        SDL_Point actualTextureSize = {0, 0};
 
         /// The maximum number of mipmaps that should be generated per glyph.
-        Uint8 mipmapDepth;
+        int mipmapDepth = 0;
 
-        /// The relative offset for each mipmap level.
+        /// The maximum number of glyphs in the texture atlas.
+        Uint32 maxAtlasGlyphs = 0;
+
+        /// The relative mipmap rect for each mipmap level.
         vector<SDL_Rect> mipOffsets;
 
-        /// Returns the mipmap clip rect for a given source and level
-        SDL_Rect GetMipMapClip(SDL_Rect src, Uint8 level);
+        /// Returns the mipmap clip rect for a given source and level.
+        SDL_Rect GetMipMapClip(SDL_Rect src, int level);
 
-        /// Returns the linear percentage that a particular mipmap should be filtered by (using alpha blending instead of true trilinear filtering) for a given point size.
-        float GetMipMapLerp(float pointSize);
+        /// Returns the mipmap level for a given point size. The decimal part indicates the bias towards the next mipmap level.
+        float GetMipMapLevel(float pointSize, float mainPointSize, int level = 0);
 
         /// Map of IDs to cached glyphs.
         /// TODO?: use slot_map/array instead?
@@ -314,7 +330,7 @@ namespace Ossium
 
         /// How many glyphs can be cached in RAM (per glyph map) at a time? This may be important to consider when dealing with large character sets (e.g. Traditional Chinese).
         /** The lower this is, the less memory is used, but performance could drop if you're using a large number of unique glyphs. */
-        Uint32 cacheLimit;
+        Uint32 cacheLimit = 0;
 
         /// The number of glyphs that have been batched so far. This is reset to zero when BatchPackBegin() or BatchPackEnd() are called.
         Uint32 batched = 0;

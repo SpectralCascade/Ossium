@@ -6,54 +6,6 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/ossium" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-std=c++1z" />
-					<Add option="-g" />
-					<Add option="-DDEBUG" />
-					<Add directory="Box2D/" />
-				</Compiler>
-				<Linker>
-					<Add option="-lmingw32" />
-					<Add option="-lSDL2main" />
-					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
-					<Add option="-lSDL2_mixer" />
-					<Add option="-lSDL2_ttf" />
-					<Add option="-lSDL2_net" />
-					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="Box2D/bin/Release" />
-				</Linker>
-			</Target>
-			<Target title="Release">
-				<Option output="bin/Release/ossium" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
-				<Option type="0" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add option="-std=c++1z" />
-					<Add directory="Box2D/" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-					<Add option="-lmingw32" />
-					<Add option="-lSDL2main" />
-					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
-					<Add option="-lSDL2_mixer" />
-					<Add option="-lSDL2_ttf" />
-					<Add option="-lSDL2_net" />
-					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="Box2D/bin/Release" />
-				</Linker>
-			</Target>
 			<Target title="ossium">
 				<Option output="bin/ossium/ossium" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
@@ -110,28 +62,6 @@
 					<Add library="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib/libSDL2_ttf.dll.a" />
 					<Add library="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib/libSDL2_mixer.dll.a" />
 					<Add library="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib/libSDL2_image.dll.a" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="Box2D/bin/Release" />
-				</Linker>
-			</Target>
-			<Target title="Debug (Linux)">
-				<Option output="bin/Debug/ossium" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-					<Add option="-std=c++1z" />
-					<Add option="-DDEBUG" />
-					<Add directory="Box2D/" />
-				</Compiler>
-				<Linker>
-					<Add option="-lSDL2main" />
-					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
-					<Add option="-lSDL2_mixer" />
-					<Add option="-lSDL2_ttf" />
-					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
