@@ -277,6 +277,12 @@ namespace Ossium
         /// A negative point size returns the value for the loaded (maximum) point size in pixels.
         float GetStrikethroughPosition(float pointSize = -1.0f);
 
+        /// Returns the mipmap clip rect for a given source and level.
+        SDL_Rect GetMipMapClip(SDL_Rect src, int level);
+
+        /// Returns the mipmap level for a given point size. The decimal part indicates the bias towards the next mipmap level.
+        float GetMipMapLevel(float pointSize, float mainPointSize, int level = 0);
+
     private:
         /// Copying is not permitted.
         Font(const Font& thisCopy);
@@ -320,12 +326,6 @@ namespace Ossium
 
         /// The relative mipmap rect for each mipmap level.
         vector<SDL_Rect> mipOffsets;
-
-        /// Returns the mipmap clip rect for a given source and level.
-        SDL_Rect GetMipMapClip(SDL_Rect src, int level);
-
-        /// Returns the mipmap level for a given point size. The decimal part indicates the bias towards the next mipmap level.
-        float GetMipMapLevel(float pointSize, float mainPointSize, int level = 0);
 
         /// Map of IDs to cached glyphs.
         /// TODO?: use slot_map/array instead?
