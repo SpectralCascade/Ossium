@@ -105,7 +105,7 @@ namespace Ossium
         Glyph(Uint32 codepoint, Uint32 style, Uint32 outline);
 
         /// Updates the atlas index and clip rect
-        void UpdateMeta(Uint32 index, SDL_Rect quad);
+        void UpdateMeta(Uint32 index, SDL_Rect quad, float inverseScaling);
 
         /// Returns the clip rect of the glyph in the texture atlas.
         SDL_Rect GetClip();
@@ -126,6 +126,9 @@ namespace Ossium
         /// Returns glyph type information (UTF-8 code point, style, outline thickness in pixels).
         GlyphID GetID();
 
+        /// Some glyphs cannot fit in font atlas cell unless downscaled, so this is what the scale factor is for.
+        float GetInverseScaleFactor();
+
     private:
         /// The clip rect of the glyph in the font atlas.
         SDL_Rect clip;
@@ -135,6 +138,9 @@ namespace Ossium
 
         /// Distance from this glyph's origin to the next glyph origin. Always positive, even for RTL glyphs.
         int advanceMetric;
+
+        /// Some glyphs are downscaled slightly
+        float inverseScale = 1.0f;
 
         /// The index of the glyph within the atlas.
         Uint32 atlasIndex = 0;
