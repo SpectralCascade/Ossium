@@ -169,10 +169,10 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int maxMipmaps = 0);
+        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize = 1024, int atlasPadding = 1, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0);
+        bool Init(string guid_path, Renderer& renderer, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -314,9 +314,6 @@ namespace Ossium
 
         /// Font descent.
         int fontDescent = 0;
-
-        /// Padding around each cell in the font atlas.
-        int padding = 0;
 
         /// The size of an atlas cell, including mipmaps.
         SDL_Point cellSize = {0, 0};

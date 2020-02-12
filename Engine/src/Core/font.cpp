@@ -144,14 +144,13 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int maxMipmaps)
+    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 pixelFormat, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
     {
-        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, targetTextureSize, atlasPadding, pixelFormat, glyphCacheLimit, maxMipmaps);
+        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, pixelFormat, glyphCacheLimit, mipDepth, targetTextureSize);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint16 targetTextureSize, int atlasPadding, Uint32 pixelFormat, Uint32 glyphCacheLimit, int mipDepth)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint32 pixelFormat, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
     {
-        padding = atlasPadding;
         mipOffsets.clear();
 
         fontHeight = TTF_FontHeight(font);
@@ -162,7 +161,7 @@ namespace Ossium
         }
 
         // Compute cell size
-        cellSize = {fontHeight + (padding * 2) + (int)ceil((float)fontHeight * 1.5f), fontHeight + (padding * 2)};
+        cellSize = {fontHeight + (int)ceil((float)fontHeight * 1.5f), fontHeight};
 
         fontAscent = TTF_FontAscent(font);
         fontDescent = TTF_FontDescent(font);
@@ -211,6 +210,14 @@ namespace Ossium
             {
                 Logger::EngineLog().Error("TTF_Error opening font: {0}", TTF_GetError());
             }
+        }
+
+        if (targetTextureSize == 0)
+        {
+            // Use max texture size
+            SDL_RendererInfo renderInfo;
+            SDL_GetRendererInfo(renderer.GetRendererSDL(), &renderInfo);
+            targetTextureSize = min(renderInfo.max_texture_width, renderInfo.max_texture_height);
         }
 
         // Compute actual texture size using font height and target texture size
@@ -552,12 +559,6 @@ namespace Ossium
         SDL_Rect dest = GetAtlasCell(index);
         //Logger::EngineLog().Info("Atlas cell = {0}", dest);
         // Get the full cell destination so we can clear it
-        SDL_Rect cell = dest;
-        // TODO: remove padding
-        cell.x -= padding;
-        cell.y -= padding;
-        cell.w += padding * 2;
-        cell.h += padding * 2;
         //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
 
         if (dest.w != 0 && dest.h != 0)
@@ -577,7 +578,7 @@ namespace Ossium
 
             // Overwrite whatever was in the atlas cell before
             SDL_SetRenderDrawColor(render, 0xFF, 0xFF, 0xFF, 0);
-            SDL_RenderFillRect(render, &cell);
+            SDL_RenderFillRect(render, &dest);
 
             // Render the actual glyph
             glyph->cached.PushGPU(renderer, SDL_TEXTUREACCESS_STREAMING);
@@ -734,15 +735,6 @@ namespace Ossium
         rect.y = (int)(linearPosition / actualTextureSize.x) * cellSize.y;
         rect.w = cellSize.x;
         rect.h = cellSize.y;
-        // TODO: remove padding, all glyphs are the same colour in the atlas so there *shouldn't* be bleeding issues.
-        if (padding > 0)
-        {
-            // Get the true destination rect with padding
-            rect.x += padding;
-            rect.y += padding;
-            rect.w -= padding * 2;
-            rect.h -= padding * 2;
-        }
         return rect;
     }
 
