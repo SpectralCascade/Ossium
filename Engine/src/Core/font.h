@@ -172,7 +172,7 @@ namespace Ossium
         bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(string guid_path, Renderer& renderer, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0);
+        bool Init(string guid_path, Renderer& renderer, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**

@@ -216,12 +216,21 @@ namespace Ossium
         {
             // Use max texture size
             SDL_RendererInfo renderInfo;
-            SDL_GetRendererInfo(renderer.GetRendererSDL(), &renderInfo);
-            targetTextureSize = min(renderInfo.max_texture_width, renderInfo.max_texture_height);
+            if (SDL_GetRendererInfo(renderer.GetRendererSDL(), &renderInfo) < 0)
+            {
+                Logger::EngineLog().Error("Failed to get renderer info to generate font atlas! Using texture size of 1024. SDL_Error: {0}", SDL_GetError());
+                targetTextureSize = 1024;
+            }
+            else
+            {
+                // Absolute min = 1024, absolute max = 8192. Actual size can be anywhere in between.
+                targetTextureSize = max(1024, min(8192, min(renderInfo.max_texture_width, renderInfo.max_texture_height)));
+                Logger::EngineLog().Verbose("Auto-detected font atlas size to be {0} (max texture dimensions = {1}x{2}, engine limit = {3})", targetTextureSize, renderInfo.max_texture_width, renderInfo.max_texture_height, 8192);
+            }
         }
 
         // Compute actual texture size using font height and target texture size
-        actualTextureSize = {(targetTextureSize / cellSize.x) * cellSize.x, (targetTextureSize / cellSize.y) * cellSize.y};
+        actualTextureSize = {((int)targetTextureSize / cellSize.x) * cellSize.x, ((int)targetTextureSize / cellSize.y) * cellSize.y};
         maxAtlasGlyphs = (actualTextureSize.x / cellSize.x) * (actualTextureSize.y / cellSize.y);
 
         cacheLimit = glyphCacheLimit;
@@ -230,7 +239,10 @@ namespace Ossium
         atlas.CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat);
         if (atlas.GetSurface() != NULL)
         {
-            return atlas.PushGPU(renderer, SDL_TEXTUREACCESS_TARGET) != NULL;
+            bool success = atlas.PushGPU(renderer, SDL_TEXTUREACCESS_TARGET) != NULL;
+            // Free RAM
+            atlas.FreeSurface();
+            return success;
         }
         return false;
     }
