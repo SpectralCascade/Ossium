@@ -184,7 +184,7 @@ namespace Ossium
 
         fontAscent = TTF_FontAscent(font);
         fontDescent = TTF_FontDescent(font);
-        lineDiff = min(fontHeight + 1, TTF_FontLineSkip(font));
+        lineDiff = max(fontHeight + 1, TTF_FontLineSkip(font));
 
         if (mipDepth <= 0)
         {

@@ -1,8 +1,12 @@
 #ifndef TEXTLAYOUT_H
 #define TEXTLAYOUT_H
 
+#include <stack>
+
 #include "font.h"
 #include "schemamodel.h"
+
+using namespace std;
 
 namespace Ossium
 {

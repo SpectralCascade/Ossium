@@ -34,3 +34,4 @@
 #include "Core/enginesystem.h"
 #include "Core/texturepack.h"
 #include "Core/utf8.h"
+#include "Core/textlayout.h"

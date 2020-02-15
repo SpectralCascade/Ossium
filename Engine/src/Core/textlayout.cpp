@@ -41,6 +41,7 @@ namespace Ossium
         // Keep track of glyphs that have been batch packed.
         vector<GlyphBatch> batched;
         GlyphBatch currentBatch = GlyphBatch(position, mainColor, mainStyle);
+        GlyphBatch wordBatch = currentBatch;
 
         // For line break tracking
         string currentWord;
@@ -82,7 +83,8 @@ namespace Ossium
                         // Now parse the tag itself.
                         if (!tagText.empty())
                         {
-                            int oldStyle = style;
+                            Uint32 oldUnderlineTags = underlineTags;
+                            Uint32 oldStrikeTags = strikeTags;
                             if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, style))
                             {
                                 Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
@@ -93,7 +95,7 @@ namespace Ossium
                                 mainColor = colours.top();
                                 updateBatched = true;
                             }
-                            if (oldStyle != style)
+                            if (underlineTags != oldUnderlineTags || strikeTags != oldStrikeTags)
                             {
                                 updateBatched = true;
                             }
@@ -101,7 +103,7 @@ namespace Ossium
                             {
                                 batched.push_back(currentBatch);
                                 currentBatch.glyphs.clear();
-                                currentBatch.additiveStyle = mainStyle;
+                                currentBatch.additiveStyle = style;
                                 currentBatch.color = mainColor;
                                 currentBatch.position = position;
                             }
@@ -119,39 +121,51 @@ namespace Ossium
             {
                 // Pack the glyph. If the batch reaches the maximum number of atlas glyphs, render all the glyphs to the atlas, then render the text string so far.
                 //Logger::EngineLog().Info("Packing glyph for {0}...", utfChar);
-                Glyph* toBatch = font.GetGlyph(renderer, utfChar, style);
+                Glyph* toBatch = font.GetGlyph(renderer, utfChar, (boldTags > 0 ? TTF_STYLE_BOLD : 0) | (italicTags > 0 ? TTF_STYLE_ITALIC : 0));
 
                 // Increase approximate layout position (not taking kerning into account).
                 position += toBatch->GetChange(font.GetLoadedPointSize(), pointSize, direction);
 
-                // Check if we are in bounds. If not, start a new glyph batch for the next line.
-                switch (direction)
-                {
-                case Typographic::TextDirection::LEFT_TO_RIGHT:
-                    if (position.x >= boundingBox.x + boundingBox.w)
-                    {
-                        position.x = boundingBox.x;
-                        position.y += font.GetLineDifference(pointSize);
-                    }
-                    break;
-                case Typographic::TextDirection::RIGHT_TO_LEFT:
-                    if (position.x <= boundingBox.x)
-                    {
-                        position.x = boundingBox.x + boundingBox.w;
-                        position.y += font.GetLineDifference(pointSize);
-                    }
-                    break;
-                case Typographic::TextDirection::TOP_TO_BOTTOM:
-                    if (position.y >= boundingBox.y + boundingBox.h)
-                    {
-                        position.y = boundingBox.y;
-                        position.x += font.GetLineDifference(pointSize);
-                    }
-                    break;
-                }
+                currentBatch.glyphs.push_back(toBatch);
 
                 if (lineWrap)
                 {
+                    bool lineChange = false;
+                    // Check if we are in bounds. If not, start a new glyph batch for the next line.
+                    switch (direction)
+                    {
+                    case Typographic::TextDirection::LEFT_TO_RIGHT:
+                        if (position.x >= boundingBox.x + boundingBox.w)
+                        {
+                            position.x = boundingBox.x;
+                            position.y += font.GetLineDifference(pointSize);
+                            lineChange = true;
+                        }
+                        break;
+                    case Typographic::TextDirection::RIGHT_TO_LEFT:
+                        if (position.x <= boundingBox.x)
+                        {
+                            position.x = boundingBox.x + boundingBox.w;
+                            position.y += font.GetLineDifference(pointSize);
+                            lineChange = true;
+                        }
+                        break;
+                    case Typographic::TextDirection::TOP_TO_BOTTOM:
+                        if (position.y >= boundingBox.y + boundingBox.h)
+                        {
+                            position.y = boundingBox.y;
+                            position.x += font.GetLineDifference(pointSize);
+                            lineChange = true;
+                        }
+                        break;
+                    }
+                    if (lineChange && !currentBatch.glyphs.empty())
+                    {
+                        batched.push_back(currentBatch);
+                        currentBatch.glyphs.clear();
+                        currentBatch.position = position;
+                    }
+
                     if (bytes <= 1)
                     {
                         // Line break after certain delimiters
@@ -171,13 +185,16 @@ namespace Ossium
                     }
                 }
 
-                currentBatch.glyphs.push_back(toBatch);
                 if (font.BatchPackGlyph(renderer, toBatch) >= font.GetAtlasMaxGlyphs() - 1)
                 {
                     font.BatchPackEnd(renderer);
 
-                    batched.push_back(currentBatch);
-                    currentBatch.glyphs.clear();
+                    if (!currentBatch.glyphs.empty())
+                    {
+                        batched.push_back(currentBatch);
+                        currentBatch.glyphs.clear();
+                        currentBatch.position = position;
+                    }
 
                     // At this point, render all batched glyphs before continuing with a new batch
                     for (auto batch : batched)
@@ -192,6 +209,14 @@ namespace Ossium
             }
         }
         font.BatchPackEnd(renderer);
+
+        if (!currentBatch.glyphs.empty())
+        {
+            batched.push_back(currentBatch);
+            currentBatch.glyphs.clear();
+            currentBatch.position = position;
+        }
+
         // Render any remaining batches
         for (auto batch : batched)
         {
@@ -206,15 +231,15 @@ namespace Ossium
         bool success = true;
         if (tagText[0] == '/' && tagTextLength > 1)
         {
-            if (tagText[0] == 'b')
+            if (tagText[1] == 'b')
             {
                 boldTags = max((Uint32)0, boldTags - 1);
             }
-            else if (tagText[0] == 'i')
+            else if (tagText[1] == 'i')
             {
                 italicTags = max((Uint32)0, italicTags - 1);
             }
-            else if (tagText[0] == 'u')
+            else if (tagText[1] == 'u')
             {
                 underlineTags = max((Uint32)0, underlineTags - 1);
                 if (underlineTags == 0)
@@ -222,7 +247,7 @@ namespace Ossium
                     style = style & TTF_STYLE_STRIKETHROUGH;
                 }
             }
-            else if (tagText[0] == 's')
+            else if (tagText[1] == 's')
             {
                 strikeTags = max((Uint32)0, strikeTags - 1);
                 if (strikeTags == 0)
