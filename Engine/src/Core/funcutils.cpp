@@ -240,6 +240,33 @@ namespace Ossium
             return value;
         }
 
+        Uint32 ToUint32FromHex(const string& data)
+        {
+            Uint32 value = 0;
+            for (auto c : data)
+            {
+                value << 4;
+                if (c >= '0' && c <= '9')
+                {
+                    value |= (int)(c - '0');
+                }
+                else if (c >= 'A' && c <= 'F')
+                {
+                    value |= (int)((c + 10) - 'A');
+                }
+                else if (c >= 'a' && c <= 'f')
+                {
+                    value |= (int)((c + 10) - 'a' );
+                }
+                else
+                {
+                    Logger::EngineLog().Warning("Failed to convert string '{0}' to integer from hexadecimal!", data);
+                    break;
+                }
+            }
+            return value;
+        }
+
         float ToFloat(const string& data)
         {
             stringstream str;

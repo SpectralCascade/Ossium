@@ -35,6 +35,18 @@ using namespace std;
 namespace Ossium
 {
 
+    namespace Typographic
+    {
+
+        enum TextDirection
+        {
+            LEFT_TO_RIGHT = 0,
+            RIGHT_TO_LEFT,
+            TOP_TO_BOTTOM
+        };
+
+    }
+
     enum TextRenderModes
     {
         RENDERTEXT_SOLID = 0,
@@ -119,6 +131,9 @@ namespace Ossium
 
         /// Returns the pixel advance to the next glyph origin.
         int GetAdvance();
+
+        /// Computes the difference vector to the next glyph for a given point size and direction.
+        Vector2 GetChange(float originalPointSize, float pointSize, Typographic::TextDirection direction);
 
         /// Returns the UTF-8 code point
         Uint32 GetCodePointUTF8();
@@ -234,7 +249,7 @@ namespace Ossium
             float pointSize,
             SDL_Color color = Colors::RED,
             bool kerning = true,
-            bool rtl = false,
+            Typographic::TextDirection direction = Typographic::TextDirection::LEFT_TO_RIGHT,
             SDL_BlendMode blending = SDL_BLENDMODE_BLEND,
             float mipBias = 0.5f,
             double angle = 0.0,
@@ -275,6 +290,9 @@ namespace Ossium
         /// A negative point size returns the value for the loaded (maximum) point size in pixels.
         float GetFontDescent(float pointSize = -1);
 
+        /// Returns the optimal difference between each text line in pixels.
+        float GetLineDifference(float pointSize = -1);
+
         /// Returns the relative Y position for an underline for the given point size in pixels.
         /// A negative point size returns the value for the loaded (maximum) point size in pixels.
         float GetUnderlinePosition(float pointSize = -1.0f);
@@ -282,6 +300,9 @@ namespace Ossium
         /// Returns the relative Y position for a strike-through line for the given point size in pixels.
         /// A negative point size returns the value for the loaded (maximum) point size in pixels.
         float GetStrikethroughPosition(float pointSize = -1.0f);
+
+        /// Returns the point size that was specified when loading the font.
+        int GetLoadedPointSize();
 
         /// Returns the mipmap clip rect for a given source and level.
         SDL_Rect GetMipMapClip(SDL_Rect src, int level);
@@ -314,6 +335,9 @@ namespace Ossium
 
         /// Font descent.
         int fontDescent = 0;
+
+        /// The vertical difference between each line of text.
+        int lineDiff = 0;
 
         /// The size of an atlas cell, including mipmaps.
         SDL_Point cellSize = {0, 0};

@@ -384,6 +384,7 @@ namespace Ossium
     /// This doesn't actually convert ids to valid pointers; it merely attempts to map
     /// the ids to valid pointers. The relevant ECS object does that once all objects are serialised.
     /// Note schema members only support pointer types to Entity and Component-derived types, if the type is invalid the member is made null.
+    /// TODO: make SchemaReferable more developer-friendly (with regards to reference mapping).
     #define REFPTR_FROM_STRING(TYPE)                                                                                                            \
     [this](void* member, const char* strtype, string data)                                                                                      \
     {                                                                                                                                           \

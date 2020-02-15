@@ -19,6 +19,7 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <SDL2/SDL_types.h>
 
 #include "helpermacros.h"
 #include "jsondata.h"
@@ -73,8 +74,10 @@ namespace Ossium
         /// Does this string represent a string value?
         OSSIUM_EDL bool IsString(const string& data);
 
-        /// Convert a string to an int
+        /// Convert a decimal string to an int.
         OSSIUM_EDL int ToInt(const string& data);
+        /// Convert an ASCII hex string to a Uint32.
+        OSSIUM_EDL Uint32 ToUint32FromHex(const string& data);
         /// Convert a string to a float
         OSSIUM_EDL float ToFloat(const string& data);
         /// Convert a string to a bool

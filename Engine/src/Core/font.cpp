@@ -76,6 +76,25 @@ namespace Ossium
         return advanceMetric;
     }
 
+    Vector2 Glyph::GetChange(float originalPointSize, float pointSize, Typographic::TextDirection direction)
+    {
+        Vector2 change = Vector2::Zero;
+        switch (direction)
+        {
+        case Typographic::TextDirection::LEFT_TO_RIGHT:
+            change.x += advanceMetric * (pointSize / originalPointSize);
+            break;
+        case Typographic::TextDirection::RIGHT_TO_LEFT:
+            change.x -= advanceMetric * (pointSize / originalPointSize);
+            break;
+        case Typographic::TextDirection::TOP_TO_BOTTOM:
+            float scale = (float)clip.h * (pointSize / originalPointSize);
+            change.y += scale + ceil(scale / 12.0f);
+            break;
+        }
+        return change;
+    }
+
     Uint32 Glyph::GetCodePointUTF8()
     {
         return type & GLYPH_UTF8_MASK;
@@ -165,6 +184,7 @@ namespace Ossium
 
         fontAscent = TTF_FontAscent(font);
         fontDescent = TTF_FontDescent(font);
+        lineDiff = min(fontHeight + 1, TTF_FontLineSkip(font));
 
         if (mipDepth <= 0)
         {
@@ -204,11 +224,11 @@ namespace Ossium
         for (int level = 0; level < mipmapDepth; level++)
         {
             pointSize = pointSize * 0.5f;
-            Logger::EngineLog().Info("Loading font '{0}' at point size {1}", guid_path, pointSize);
+            //Logger::EngineLog().Info("Loading font '{0}' at point size {1}", guid_path, pointSize);
             mipmapFonts.push_back(TTF_OpenFont(guid_path.c_str(), (int)pointSize));
             if (mipmapFonts.back() == NULL)
             {
-                Logger::EngineLog().Error("TTF_Error opening font: {0}", TTF_GetError());
+                Logger::EngineLog().Error("TTF_Error opening font '{0}': {1}", guid_path, TTF_GetError());
             }
         }
 
@@ -224,8 +244,9 @@ namespace Ossium
             else
             {
                 // Absolute min = 1024, absolute max = 8192. Actual size can be anywhere in between.
+                // TODO?: customisable limit? Some future devices might handle super sized textures well, who knows...
                 targetTextureSize = max(1024, min(8192, min(renderInfo.max_texture_width, renderInfo.max_texture_height)));
-                Logger::EngineLog().Verbose("Auto-detected font atlas size to be {0} (max texture dimensions = {1}x{2}, engine limit = {3})", targetTextureSize, renderInfo.max_texture_width, renderInfo.max_texture_height, 8192);
+                Logger::EngineLog().Verbose("Automatically set font atlas size to be {0} (max texture dimensions = {1}x{2}, engine limit = {3})", targetTextureSize, renderInfo.max_texture_width, renderInfo.max_texture_height, 8192);
             }
         }
 
@@ -642,7 +663,7 @@ namespace Ossium
         atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
     }
 
-    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, bool rtl, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         int maxHeight = (int)ceil(GetFontHeight(pointSize));
@@ -658,7 +679,15 @@ namespace Ossium
             renderer.SetDrawColor(color);
             SDL_RenderDrawRect(renderer.GetRendererSDL(), &dest);
             renderer.SetDrawColor(oldColor);
-            return position + Vector2(rtl ? -(boxPadding * 2 + dest.w) : (boxPadding * 2 + dest.w), 0);
+            return position + Vector2(
+                direction == Typographic::TextDirection::LEFT_TO_RIGHT ?
+                    (boxPadding * 2 + dest.w) :
+                        (direction == Typographic::TextDirection::RIGHT_TO_LEFT ?
+                            -(boxPadding * 2 + dest.w) : 0
+                        ),
+                direction == Typographic::TextDirection::TOP_TO_BOTTOM ?
+                    dest.h : 0
+            );
         }
         float scale = (pointSize / loadedPointSize);
         int size = round((float)glyph->cached.GetHeight() * scale * glyph->GetInverseScaleFactor());
@@ -690,8 +719,13 @@ namespace Ossium
         Render(renderer, dest, &clip, color, blending, angle, origin, flip);
         //}
 
-        size = round((float)glyph->GetAdvance() * scale);
-        return position + Vector2(rtl ? -size : size, 0);
+        return position + Vector2(
+            direction == Typographic::TextDirection::LEFT_TO_RIGHT ?
+                round((float)glyph->GetAdvance() * scale) : (
+                    direction == Typographic::TextDirection::TOP_TO_BOTTOM ? 0 : -round((float)glyph->GetAdvance() * scale)
+                ),
+            direction == Typographic::TextDirection::TOP_TO_BOTTOM ? dest.h : 0
+        );
     }
 
     void Font::FreeGlyphs()
@@ -778,6 +812,15 @@ namespace Ossium
         return fontDescent * ((float)pointSize / (float)loadedPointSize);
     }
 
+    float Font::GetLineDifference(float pointSize)
+    {
+        if (pointSize <= 0)
+        {
+            return lineDiff;
+        }
+        return lineDiff * ((float)pointSize / (float)loadedPointSize);
+    }
+
     float Font::GetUnderlinePosition(float pointSize)
     {
         // This is more or less how SDL_TTF does it internally
@@ -788,6 +831,11 @@ namespace Ossium
     {
         // This is more or less how SDL_TTF does it internally
         return GetFontHeight(pointSize) / 2.0f;
+    }
+
+    int Font::GetLoadedPointSize()
+    {
+        return loadedPointSize;
     }
 
     SDL_Rect Font::GetMipMapClip(SDL_Rect src, int level)
