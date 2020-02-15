@@ -104,7 +104,7 @@ namespace Ossium
                                 batched.push_back(currentBatch);
                                 currentBatch.glyphs.clear();
                                 currentBatch.additiveStyle = style;
-                                currentBatch.color = mainColor;
+                                currentBatch.color = colours.top();
                                 currentBatch.position = position;
                             }
                             tagText.clear();
@@ -289,18 +289,18 @@ namespace Ossium
                 // Get the actual colour
                 tagText = Utilities::SplitRight(tagText, '#', "FF0000");
                 tagTextLength = tagText.length();
-                Uint8 alpha = 0xFF;
                 SDL_Color mainColor = colors.top();
 
                 Uint32 converted = Utilities::ToUint32FromHex(tagText);
                 switch (tagTextLength)
                 {
-                case 8:
-                    alpha = converted & 0x000000FF;
-                    converted = converted >> 8;
                 case 6:
-                    mainColor = Color(converted & 0x00FF0000, converted & 0x0000FF00, converted & 0x000000FF, alpha);
+                    converted = converted << 8;
+                    converted |= 0x000000FF;
+                case 8:
+                    mainColor = Color((converted & 0xFF000000) >> 24, (converted & 0x00FF0000) >> 16, (converted & 0x0000FF00) >> 8, converted & 0x000000FF);
                     colors.push(mainColor);
+                    //Logger::EngineLog().Info("converted color = {0}, original text = {1} [{2}]", converted, tagText, old);
                     break;
                 default:
                     Logger::EngineLog().Warning("Invalid color tag '<{0}>'!", tagText);

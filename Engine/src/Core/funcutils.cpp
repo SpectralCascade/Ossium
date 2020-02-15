@@ -245,18 +245,18 @@ namespace Ossium
             Uint32 value = 0;
             for (auto c : data)
             {
-                value << 4;
+                value = value << 4;
                 if (c >= '0' && c <= '9')
                 {
-                    value |= (int)(c - '0');
+                    value |= (Uint32)(c - '0');
                 }
                 else if (c >= 'A' && c <= 'F')
                 {
-                    value |= (int)((c + 10) - 'A');
+                    value |= (Uint32)((c + 10) - 'A');
                 }
                 else if (c >= 'a' && c <= 'f')
                 {
-                    value |= (int)((c + 10) - 'a' );
+                    value |= (Uint32)((c + 10) - 'a');
                 }
                 else
                 {
