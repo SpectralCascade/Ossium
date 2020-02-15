@@ -30,14 +30,13 @@ namespace Ossium
         bool isTag = false;
         bool isEscaped = false;
         string tagText;
-        Uint32 boldTags = 0;
-        Uint32 italicTags = 0;
-        Uint32 underlineTags = 0;
-        Uint32 strikeTags = 0;
+        Uint32 boldTags = mainStyle & TTF_STYLE_BOLD ? 1 : 0;
+        Uint32 italicTags = mainStyle & TTF_STYLE_ITALIC ? 1 : 0;
+        Uint32 underlineTags = mainStyle & TTF_STYLE_UNDERLINE ? 1 : 0;
+        Uint32 strikeTags = mainStyle & TTF_STYLE_STRIKETHROUGH ? 1 : 0;
         stack<SDL_Color> colours;
         colours.push(mainColor);
-        stack<int> styles;
-        styles.push(mainStyle);
+        int style = mainStyle & (TTF_STYLE_UNDERLINE | TTF_STYLE_STRIKETHROUGH);
 
         // Keep track of glyphs that have been batch packed.
         vector<GlyphBatch> batched;
@@ -83,7 +82,8 @@ namespace Ossium
                         // Now parse the tag itself.
                         if (!tagText.empty())
                         {
-                            if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, styles))
+                            int oldStyle = style;
+                            if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, style))
                             {
                                 Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
                             }
@@ -93,9 +93,8 @@ namespace Ossium
                                 mainColor = colours.top();
                                 updateBatched = true;
                             }
-                            if (mainStyle != styles.top())
+                            if (oldStyle != style)
                             {
-                                mainStyle = styles.top();
                                 updateBatched = true;
                             }
                             if (updateBatched)
@@ -201,7 +200,7 @@ namespace Ossium
         batched.clear();
     }
 
-    bool TextLayout::ParseTag(string tagText, int& boldTags, int& italicTags, int& underlineTags, int& strikeTags, stack<SDL_Color>& colors, int& style)
+    bool TextLayout::ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, int& style)
     {
         unsigned int tagTextLength = tagText.length();
         bool success = true;
@@ -209,15 +208,15 @@ namespace Ossium
         {
             if (tagText[0] == 'b')
             {
-                boldTags = max(0, boldTags - 1);
+                boldTags = max((Uint32)0, boldTags - 1);
             }
             else if (tagText[0] == 'i')
             {
-                italicTags = max(0, italicTags - 1);
+                italicTags = max((Uint32)0, italicTags - 1);
             }
             else if (tagText[0] == 'u')
             {
-                underlineTags = max(0, underlineTags - 1);
+                underlineTags = max((Uint32)0, underlineTags - 1);
                 if (underlineTags == 0)
                 {
                     style = style & TTF_STYLE_STRIKETHROUGH;
@@ -225,7 +224,7 @@ namespace Ossium
             }
             else if (tagText[0] == 's')
             {
-                strikeTags = max(0, strikeTags - 1);
+                strikeTags = max((Uint32)0, strikeTags - 1);
                 if (strikeTags == 0)
                 {
                     style = style & TTF_STYLE_UNDERLINE;
@@ -273,13 +272,13 @@ namespace Ossium
                 {
                 case 8:
                     alpha = converted & 0x000000FF;
-                    converted >> 8;
+                    converted = converted >> 8;
                 case 6:
                     mainColor = Color(converted & 0x00FF0000, converted & 0x0000FF00, converted & 0x000000FF, alpha);
                     colors.push(mainColor);
                     break;
                 default:
-                    Logger::EngineLog().Warning("Invalid color tag in string '{0}'!", text);
+                    Logger::EngineLog().Warning("Invalid color tag '<{0}>'!", tagText);
                     success = false;
                     break;
                 }
@@ -335,13 +334,13 @@ namespace Ossium
 */
     Vector2 TextLayout::RenderBatch(Renderer& renderer, GlyphBatch& batch, float pointSize, Font& font)
     {
+        Vector2 startPos = batch.position;
         for (auto glyph : batch.glyphs)
         {
             batch.position = font.RenderGlyph(
                 renderer,
                 glyph,
-                direction == Typographic::TextDirection::RIGHT_TO_LEFT && glyph != nullptr ?
-                    batch.position - ((float)glyph->GetClip().w * (pointSize / (float)font.GetLoadedPointSize())) : batch.position,
+                batch.position,
                 pointSize,
                 batch.color,
                 kerning,
@@ -351,13 +350,13 @@ namespace Ossium
         if (batch.additiveStyle & TTF_STYLE_UNDERLINE)
         {
             Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
-            Line underline(startPos + underlinePos, position + underlinePos);
+            Line underline(startPos + underlinePos, batch.position + underlinePos);
             underline.Draw(renderer, batch.color);
         }
         if (batch.additiveStyle & TTF_STYLE_STRIKETHROUGH)
         {
             Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
-            Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);
+            Line strikethrough(startPos + strikethroughPos, batch.position + strikethroughPos);
             strikethrough.Draw(renderer, batch.color);
         }
         return batch.position;

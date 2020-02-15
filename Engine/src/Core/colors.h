@@ -76,6 +76,16 @@ namespace Ossium
     /// Returns an SDL_Color from a 24 bit hex code
     OSSIUM_EDL SDL_Color Color(HexCode rgb);
 
+    OSSIUM_EDL inline bool operator==(const SDL_Color& a, const SDL_Color& b)
+    {
+        return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.b;
+    }
+
+    OSSIUM_EDL inline bool operator!=(const SDL_Color& a, const SDL_Color& b)
+    {
+        return a.r != b.r || a.g != b.g || a.b != b.b || a.a != b.b;
+    }
+
 }
 
 #endif // COLORS_H

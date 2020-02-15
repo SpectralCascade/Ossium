@@ -50,7 +50,7 @@ namespace Ossium
     class Font;
 
     /// Internal helper structure for text layout and stylistic details.
-    static struct GlyphBatch
+    struct GlyphBatch
     {
         GlyphBatch() = default;
         GlyphBatch(Vector2 startPos, SDL_Color mainColor, int addStyle);
@@ -93,7 +93,7 @@ namespace Ossium
 
     private:
         /// Attempts to parse a tag. Returns false on invalid tag.
-        bool ParseTag(string tagText, int& boldTags, int& italicTags, int& underlineTags, int& strikeTags, stack<SDL_Color>& colors, int& style);
+        bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, int& style);
 
         /// Renders a batch of glyphs and returns the difference vector.
         Vector2 RenderBatch(Renderer& renderer, GlyphBatch& batch, float pointSize, Font& font);
