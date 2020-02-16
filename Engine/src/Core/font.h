@@ -312,6 +312,9 @@ namespace Ossium
         /// Returns the mipmap level for a given point size. The decimal part indicates the bias towards the next mipmap level.
         float GetMipMapLevel(float pointSize, float mainPointSize, int level = 0);
 
+        /// Returns the dimensions for invalid glyphs (except non-printable ASCII characters, which should typically have 0 width and height).
+        Vector2 GetInvalidGlyphDimensions(float pointSize);
+
     private:
         /// Copying is not permitted.
         Font(const Font& thisCopy);
@@ -340,6 +343,12 @@ namespace Ossium
 
         /// The vertical difference between each line of text.
         int lineDiff = 0;
+
+        /// The dimensions used for all invalid glyphs (except non-printable ASCII characters), not including the horizontal advance padding.
+        Vector2 invalidDimensions;
+
+        /// The horizontal advance padding for invalid glyphs.
+        float invalidPadding;
 
         /// The size of an atlas cell, including mipmaps.
         SDL_Point cellSize = {0, 0};

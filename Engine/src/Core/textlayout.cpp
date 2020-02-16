@@ -12,16 +12,17 @@ namespace Ossium
     // TextLine
     //
 
-    TextLine::TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle)
+    TextLine::TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle, Vector2 invalidGlyphDimensions)
     {
         segments.push_back((TextLineSegment){0, startStyle, startColor});
         glyphScale = pointSize / originalPointSize;
+        invalidDimensions = invalidGlyphDimensions;
     }
 
     void TextLine::AddGlyph(Glyph* glyph)
     {
         glyphs.push_back(glyph);
-        width += (float)glyph->GetAdvance();
+        width += glyph != nullptr ? (float)glyph->GetAdvance() : invalidDimensions.x;
     }
 
     void TextLine::BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color)
@@ -37,7 +38,15 @@ namespace Ossium
 
     float TextLine::GetRenderedWidth()
     {
-        return glyphs.empty() ? 0 : ((width - (float)glyphs.back()->GetAdvance()) + (float)glyphs.back()->GetBoundingBox().w) * glyphScale;
+        if (glyphs.empty())
+        {
+            return 0;
+        }
+        else if (glyphs.back() == nullptr)
+        {
+            return GetWidth();
+        }
+        return ((width - (float)glyphs.back()->GetAdvance()) + ((float)glyphs.back()->GetBoundingBox().w)) * glyphScale;
     }
 
     TextLineSegment TextLine::GetCurrentSegment()
@@ -76,10 +85,9 @@ namespace Ossium
 
         // Each line of text
         vector<TextLine> lines;
-        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style));
+        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
 
-        Vector2 position = Vector2(boundingBox.x, boundingBox.y);
-        Vector2 linePosition = position;
+        Vector2 linePosition = Vector2(boundingBox.x, boundingBox.y);
 
         // Batch pack each glyph
         font.BatchPackBegin(renderer);
@@ -143,22 +151,21 @@ namespace Ossium
                 }
             }
 
-            if (!isTag && !wasTag)
+            // Exclude tags and non-printable ASCII characters
+            if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
                 // Pack the glyph.
                 Glyph* toBatch = font.GetGlyph(renderer, utfChar, (boldTags > 0 ? TTF_STYLE_BOLD : TTF_STYLE_NORMAL) | (italicTags > 0 ? TTF_STYLE_ITALIC : TTF_STYLE_NORMAL));
 
                 bool lineChange = false;
 
-                // If there is more than one glyph on the line, and the line exceeds the bounding box, wrap to a new line.
-                if (lineWrap && lines.back().GetGlyphs().size() > 0)
+                // If there is more than one glyph on the line, and the line exceeds the bounding box, OR there is a newline character, wrap to a new line.
+                if (lineWrap && ((lines.back().GetGlyphs().size() > 0) && (!(ignoreWhitespace && utfChar[0] == ' ')) &&
+                    (lines.back().GetWidth() + (toBatch != nullptr ? toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetFontHeight(pointSize) * 0.5f) >= boundingBox.w))
+                )
                 {
-                    // Check if we are in bounds. If not, start a new glyph batch for the next line.
-                    if (lines.back().GetWidth() + (toBatch != nullptr ? toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetFontHeight(pointSize) * 0.5f) >= boundingBox.w)
-                    {
-                        lineChange = true;
-                        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style));
-                    }
+                    lineChange = true;
+                    lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
                 }
 
                 // Add glyph to the current line
@@ -191,6 +198,11 @@ namespace Ossium
                     // Then continue batching
                     font.BatchPackBegin(renderer);
                 }
+            }
+            else if (utfChar[0] == '\n')
+            {
+                // Add newline
+                lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
             }
         }
         font.BatchPackEnd(renderer);

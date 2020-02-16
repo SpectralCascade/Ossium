@@ -24,15 +24,18 @@ namespace Ossium
 
     }
 
-    struct TextLayoutSchema : public Schema<TextLayoutSchema, 6>
+    struct TextLayoutSchema : public Schema<TextLayoutSchema, 7>
     {
-        DECLARE_BASE_SCHEMA(TextLayoutSchema, 6);
+        DECLARE_BASE_SCHEMA(TextLayoutSchema, 7);
 
         /// Text alignment when rendered
         M(Typographic::TextAlignment, alignment) = Typographic::TextAlignment::LEFT_ALIGNED;
 
         /// Should the text be wrapped if it exceeds the bounding box when rendered?
         M(bool, lineWrap) = true;
+
+        /// Should white space be ignored when line-wrapping?
+        M(bool, ignoreWhitespace) = true;
 
         /// Should words be broken if they're too long and exceed the bounding box? Only applicable when line wrapping.
         M(bool, wordBreak) = false;
@@ -65,7 +68,7 @@ namespace Ossium
     class TextLine
     {
     public:
-        TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle);
+        TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle, Vector2 invalidGlyphDimensions);
 
         /// Adds a glyph to the current line segment.
         void AddGlyph(Glyph* glyph);
@@ -100,6 +103,10 @@ namespace Ossium
 
         /// Used while computing width.
         float glyphScale;
+
+        /// Used for null glyph dimensions.
+        Vector2 invalidDimensions;
+
     };
 
     /// Basic text layout renderer.

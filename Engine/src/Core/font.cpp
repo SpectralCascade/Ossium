@@ -177,6 +177,8 @@ namespace Ossium
         fontAscent = TTF_FontAscent(font);
         fontDescent = TTF_FontDescent(font);
         lineDiff = max(fontHeight + 1, TTF_FontLineSkip(font));
+        invalidDimensions = Vector2((float)fontHeight / 2.0f, ((float)fontHeight / 3.0f) * 2.0f);
+        invalidPadding = (float)fontHeight / 10.0f;
 
         if (mipDepth <= 0)
         {
@@ -658,29 +660,27 @@ namespace Ossium
     Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
-        int maxHeight = (int)ceil(GetFontHeight(pointSize));
+        float scale = (pointSize / loadedPointSize);
         if (glyph == nullptr)
         {
             // Invalid glyph, render a box instead
-            int boxPadding = maxHeight / 10;
-            dest.x += boxPadding;
-            dest.w = (maxHeight / 2);
-            dest.h = (maxHeight / 3) * 2;
-            dest.y += maxHeight / 8;
+            dest.x += invalidPadding * scale;
+            dest.w = invalidDimensions.x * scale;
+            dest.h = invalidDimensions.y * scale;
+            dest.y += invalidPadding * scale;
             SDL_Color oldColor = renderer.GetDrawColor();
             renderer.SetDrawColor(color);
             SDL_RenderDrawRect(renderer.GetRendererSDL(), &dest);
             renderer.SetDrawColor(oldColor);
             return position + Vector2(
                 direction == Typographic::TextDirection::LEFT_TO_RIGHT ?
-                    (boxPadding * 2 + dest.w) :
+                    (invalidPadding * 2 + dest.w) :
                         (direction == Typographic::TextDirection::RIGHT_TO_LEFT ?
-                            -(boxPadding * 2 + dest.w) : 0
+                            -(invalidPadding * 2 + dest.w) : 0
                         ),
                 0
             );
         }
-        float scale = (pointSize / loadedPointSize);
         int size = round((float)glyph->cached.GetHeight() * scale * glyph->GetInverseScaleFactor());
         dest = {dest.x, dest.y, size, size};
         SDL_Rect clip = glyph->GetClip();
@@ -781,7 +781,7 @@ namespace Ossium
             // TODO: check that this is accurate; suspect there might be a rounding issue for TTF_GetFontHeight at certain point sizes
             return fontHeight;
         }
-        return fontHeight * ((float)pointSize / (float)loadedPointSize);
+        return fontHeight * (pointSize / (float)loadedPointSize);
     }
 
     float Font::GetFontAscent(float pointSize)
@@ -790,7 +790,7 @@ namespace Ossium
         {
             return fontAscent;
         }
-        return fontAscent * ((float)pointSize / (float)loadedPointSize);
+        return fontAscent * (pointSize / (float)loadedPointSize);
     }
 
     float Font::GetFontDescent(float pointSize)
@@ -799,7 +799,7 @@ namespace Ossium
         {
             return fontDescent;
         }
-        return fontDescent * ((float)pointSize / (float)loadedPointSize);
+        return fontDescent * (pointSize / (float)loadedPointSize);
     }
 
     float Font::GetLineDifference(float pointSize)
@@ -808,7 +808,7 @@ namespace Ossium
         {
             return lineDiff;
         }
-        return lineDiff * ((float)pointSize / (float)loadedPointSize);
+        return lineDiff * (pointSize / (float)loadedPointSize);
     }
 
     float Font::GetUnderlinePosition(float pointSize)
@@ -851,6 +851,11 @@ namespace Ossium
             return (float)level + (mainPointSize / (pointSize * 0.5f)) - 2.0f;
         }
         return GetMipMapLevel(pointSize, mainPointSize * 0.5f, level + 1);
+    }
+
+    Vector2 Font::GetInvalidGlyphDimensions(float pointSize)
+    {
+        return Vector2(invalidDimensions.x + (invalidPadding * 2.0f), invalidDimensions.y) * (pointSize / (float)loadedPointSize);
     }
 
 }

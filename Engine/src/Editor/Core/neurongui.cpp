@@ -265,6 +265,9 @@ namespace Ossium::Editor
                         textFieldCursorPos++;
                         Refresh();
                         break;
+                    case SDLK_RETURN:
+                        keyboard->SetTextInput(keyboard->GetTextInput() + '\n');
+                        break;
                     default:
                         break;
                 }
