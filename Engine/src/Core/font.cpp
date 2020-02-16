@@ -76,23 +76,15 @@ namespace Ossium
         return advanceMetric;
     }
 
-    Vector2 Glyph::GetChange(float originalPointSize, float pointSize, Typographic::TextDirection direction)
+    float Glyph::GetChange(float originalPointSize, float pointSize)
     {
-        Vector2 change = Vector2::Zero;
-        switch (direction)
-        {
-        case Typographic::TextDirection::LEFT_TO_RIGHT:
-            change.x += advanceMetric * (pointSize / originalPointSize);
-            break;
-        case Typographic::TextDirection::RIGHT_TO_LEFT:
-            change.x -= advanceMetric * (pointSize / originalPointSize);
-            break;
-        case Typographic::TextDirection::TOP_TO_BOTTOM:
-            float scale = (float)clip.h * (pointSize / originalPointSize);
-            change.y += scale + ceil(scale / 12.0f);
-            break;
-        }
-        return change;
+        return (float)advanceMetric * (pointSize / originalPointSize);
+    }
+
+    Vector2 Glyph::GetDimensions(float originalPointSize, float pointSize)
+    {
+        float scale = (pointSize / originalPointSize);
+        return Vector2(scale * (float)bbox.w, scale * (float)bbox.h);
     }
 
     Uint32 Glyph::GetCodePointUTF8()
@@ -461,8 +453,8 @@ namespace Ossium
 
                             // Set glyph metrics
                             TTF_GlyphMetrics(font, ucs2, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
-                            glyph->bbox.w -= glyph->bbox.x;
-                            glyph->bbox.h -= glyph->bbox.y;
+                            glyph->bbox.w = max(glyph->bbox.w - glyph->bbox.x, created->w);
+                            glyph->bbox.h = max(glyph->bbox.h - glyph->bbox.y, created->h);
                             glyph->UpdateMeta(glyph->GetAtlasIndex(), glyph->GetClip(), inverseScale);
                         }
                         else
@@ -685,8 +677,7 @@ namespace Ossium
                         (direction == Typographic::TextDirection::RIGHT_TO_LEFT ?
                             -(boxPadding * 2 + dest.w) : 0
                         ),
-                direction == Typographic::TextDirection::TOP_TO_BOTTOM ?
-                    dest.h : 0
+                0
             );
         }
         float scale = (pointSize / loadedPointSize);
@@ -721,10 +712,9 @@ namespace Ossium
 
         return position + Vector2(
             direction == Typographic::TextDirection::LEFT_TO_RIGHT ?
-                round((float)glyph->GetAdvance() * scale) : (
-                    direction == Typographic::TextDirection::TOP_TO_BOTTOM ? 0 : -round((float)glyph->GetAdvance() * scale)
-                ),
-            direction == Typographic::TextDirection::TOP_TO_BOTTOM ? dest.h : 0
+                round((float)glyph->GetAdvance() * scale) :
+                -round((float)glyph->GetAdvance() * scale),
+            0
         );
     }
 

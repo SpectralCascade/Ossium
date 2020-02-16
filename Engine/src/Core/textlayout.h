@@ -53,24 +53,53 @@ namespace Ossium
     // Forward declarations
     class Font;
 
-    /// Internal helper structure for text layout and stylistic details.
-    struct GlyphBatch
+    /// Internal helper struct for TextLines which stores information about a particular segment within a text line.
+    struct TextLineSegment
     {
-        GlyphBatch() = default;
-        GlyphBatch(Vector2 startPos, SDL_Color mainColor, int addStyle);
-
-        /// The position the glyphs are rendered from.
-        Vector2 position;
-
-        /// The color the glyphs are rendered in.
+        Uint32 index;
+        Uint8 style;
         SDL_Color color;
+    };
 
-        /// The additive style the glyphs are rendered in
-        /// (i.e. normal, underline or strikethrough but NOT bold or italic as those styles are pre-rendered in the glyph).
-        int additiveStyle;
+    /// Helper class for laying out a single line of text.
+    class TextLine
+    {
+    public:
+        TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle);
 
-        /// Glyphs to render, in sequential order.
+        /// Adds a glyph to the current line segment.
+        void AddGlyph(Glyph* glyph);
+
+        /// Begins a new segment. Use this whenever you need to insert glyphs that have a different style or colour to the current segment.
+        void BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color);
+
+        /// Returns the advance-based width of the line, scaled according to the point size of the glyphs. Does not account for kerning.
+        float GetWidth();
+
+        /// Returns the width of the line accounting for the bounding box of the final glyph instead of it's advance.
+        float GetRenderedWidth();
+
+        /// Returns the last segment begun.
+        TextLineSegment GetCurrentSegment();
+
+        /// Returns all glyphs on the line.
+        const vector<Glyph*>& GetGlyphs();
+
+        /// Returns all segments.
+        const vector<TextLineSegment>& GetSegments();
+
+    private:
+        /// Sub-sections of the line that have different styles.
+        vector<TextLineSegment> segments;
+
+        /// The raw width of this line (the sum of all glyph advance widths).
+        float width = 0;
+
+        /// All glyphs on this line in sequential order.
         vector<Glyph*> glyphs;
+
+        /// Used while computing width.
+        float glyphScale;
     };
 
     /// Basic text layout renderer.
@@ -93,14 +122,14 @@ namespace Ossium
             If you want to ignore tags in some parts of your text, you can use backslash \ before angle brackets < or >. Use double-backslash to show a single, literal backslash.
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
         */
-        void Render(Renderer& renderer, string text, Vector2 position, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor = Colors::BLACK, int mainStyle = TTF_STYLE_NORMAL, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
+        void Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor = Colors::BLACK, int mainStyle = TTF_STYLE_NORMAL, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
+
+        /// Renders a line of glyphs.
+        void RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font);
 
     private:
         /// Attempts to parse a tag. Returns false on invalid tag.
-        bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, int& style);
-
-        /// Renders a batch of glyphs and returns the difference vector.
-        Vector2 RenderBatch(Renderer& renderer, GlyphBatch& batch, float pointSize, Font& font);
+        bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style);
 
     };
 

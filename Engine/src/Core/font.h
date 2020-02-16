@@ -41,8 +41,7 @@ namespace Ossium
         enum TextDirection
         {
             LEFT_TO_RIGHT = 0,
-            RIGHT_TO_LEFT,
-            TOP_TO_BOTTOM
+            RIGHT_TO_LEFT
         };
 
     }
@@ -116,7 +115,7 @@ namespace Ossium
 
         Glyph(Uint32 codepoint, Uint32 style, Uint32 outline);
 
-        /// Updates the atlas index and clip rect
+        /// Updates the atlas index and clip rect.
         void UpdateMeta(Uint32 index, SDL_Rect quad, float inverseScaling);
 
         /// Returns the clip rect of the glyph in the texture atlas.
@@ -126,16 +125,19 @@ namespace Ossium
         /// Returns 0 if not packed.
         Uint32 GetAtlasIndex();
 
-        /// Returns the bounding box of the rendered glyph.
+        /// The glyph metrics bounding box
         SDL_Rect GetBoundingBox();
 
         /// Returns the pixel advance to the next glyph origin.
         int GetAdvance();
 
-        /// Computes the difference vector to the next glyph for a given point size and direction.
-        Vector2 GetChange(float originalPointSize, float pointSize, Typographic::TextDirection direction);
+        /// Computes the difference to the next glyph for a given point size.
+        float GetChange(float originalPointSize, float pointSize);
 
-        /// Returns the UTF-8 code point
+        /// Computes the dimensions of the glyph at a given point size.
+        Vector2 GetDimensions(float originalPointSize, float pointSize);
+
+        /// Returns the UTF-8 code point.
         Uint32 GetCodePointUTF8();
 
         /// Returns glyph type information (UTF-8 code point, style, outline thickness in pixels).
@@ -148,11 +150,11 @@ namespace Ossium
         /// The clip rect of the glyph in the font atlas.
         SDL_Rect clip;
 
-        /// The rendered glyph's bounding box
-        SDL_Rect bbox;
-
         /// Distance from this glyph's origin to the next glyph origin. Always positive, even for RTL glyphs.
         int advanceMetric;
+
+        /// The bounding box
+        SDL_Rect bbox;
 
         /// Some glyphs are downscaled slightly
         float inverseScale = 1.0f;

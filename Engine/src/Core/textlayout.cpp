@@ -9,23 +9,59 @@ namespace Ossium
 {
 
     //
-    // GlyphBatch
+    // TextLine
     //
 
-    GlyphBatch::GlyphBatch(Vector2 startPos, SDL_Color mainColor, int addStyle)
+    TextLine::TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle)
     {
-        position = startPos;
-        color = mainColor;
-        additiveStyle = addStyle;
+        segments.push_back((TextLineSegment){0, startStyle, startColor});
+        glyphScale = pointSize / originalPointSize;
+    }
+
+    void TextLine::AddGlyph(Glyph* glyph)
+    {
+        glyphs.push_back(glyph);
+        width += (float)glyph->GetAdvance();
+    }
+
+    void TextLine::BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color)
+    {
+        AddGlyph(glyph);
+        segments.push_back((TextLineSegment){segments.size(), style, color});
+    }
+
+    float TextLine::GetWidth()
+    {
+        return width * glyphScale;
+    }
+
+    float TextLine::GetRenderedWidth()
+    {
+        return glyphs.empty() ? 0 : ((width - (float)glyphs.back()->GetAdvance()) + (float)glyphs.back()->GetBoundingBox().w) * glyphScale;
+    }
+
+    TextLineSegment TextLine::GetCurrentSegment()
+    {
+        return segments.back();
+    }
+
+    const vector<Glyph*>& TextLine::GetGlyphs()
+    {
+        return glyphs;
+    }
+
+    const vector<TextLineSegment>& TextLine::GetSegments()
+    {
+        return segments;
     }
 
     //
     // TextLayout
     //
 
-    void TextLayout::Render(Renderer& renderer, string text, Vector2 position, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor, int mainStyle, bool applyMarkup, string lineBreakCharacters)
+    void TextLayout::Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor, int mainStyle, bool applyMarkup, string lineBreakCharacters)
     {
-        // Markup helper variables for parsing tags
+        // Markup helper variables for keeping track of tags
         // TODO: make tags more extensible?
         bool isTag = false;
         bool isEscaped = false;
@@ -36,16 +72,14 @@ namespace Ossium
         Uint32 strikeTags = mainStyle & TTF_STYLE_STRIKETHROUGH ? 1 : 0;
         stack<SDL_Color> colours;
         colours.push(mainColor);
-        int style = mainStyle & (TTF_STYLE_UNDERLINE | TTF_STYLE_STRIKETHROUGH);
+        Uint8 style = (Uint8)(mainStyle & (TTF_STYLE_UNDERLINE | TTF_STYLE_STRIKETHROUGH));
 
-        // Keep track of glyphs that have been batch packed.
-        vector<GlyphBatch> batched;
-        GlyphBatch currentBatch = GlyphBatch(position, mainColor, mainStyle);
-        GlyphBatch wordBatch = currentBatch;
+        // Each line of text
+        vector<TextLine> lines;
+        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style));
 
-        // For line break tracking
-        string currentWord;
-        Vector2 safeBreak = position;
+        Vector2 position = Vector2(boundingBox.x, boundingBox.y);
+        Vector2 linePosition = position;
 
         // Batch pack each glyph
         font.BatchPackBegin(renderer);
@@ -56,6 +90,7 @@ namespace Ossium
             string utfChar = text.substr(i, bytes);
             i += bytes;
 
+            bool addLineSegment = false;
             bool wasTag = isTag;
             if (applyMarkup)
             {
@@ -89,23 +124,14 @@ namespace Ossium
                             {
                                 Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
                             }
-                            bool updateBatched = false;
                             if (mainColor != colours.top())
                             {
                                 mainColor = colours.top();
-                                updateBatched = true;
+                                addLineSegment = true;
                             }
-                            if (underlineTags != oldUnderlineTags || strikeTags != oldStrikeTags)
+                            else if (underlineTags != oldUnderlineTags || strikeTags != oldStrikeTags)
                             {
-                                updateBatched = true;
-                            }
-                            if (updateBatched)
-                            {
-                                batched.push_back(currentBatch);
-                                currentBatch.glyphs.clear();
-                                currentBatch.additiveStyle = style;
-                                currentBatch.color = colours.top();
-                                currentBatch.position = position;
+                                addLineSegment = true;
                             }
                             tagText.clear();
                         }
@@ -119,89 +145,48 @@ namespace Ossium
 
             if (!isTag && !wasTag)
             {
-                // Pack the glyph. If the batch reaches the maximum number of atlas glyphs, render all the glyphs to the atlas, then render the text string so far.
-                //Logger::EngineLog().Info("Packing glyph for {0}...", utfChar);
-                Glyph* toBatch = font.GetGlyph(renderer, utfChar, (boldTags > 0 ? TTF_STYLE_BOLD : 0) | (italicTags > 0 ? TTF_STYLE_ITALIC : 0));
+                // Pack the glyph.
+                Glyph* toBatch = font.GetGlyph(renderer, utfChar, (boldTags > 0 ? TTF_STYLE_BOLD : TTF_STYLE_NORMAL) | (italicTags > 0 ? TTF_STYLE_ITALIC : TTF_STYLE_NORMAL));
 
-                // Increase approximate layout position (not taking kerning into account).
-                position += toBatch->GetChange(font.GetLoadedPointSize(), pointSize, direction);
+                bool lineChange = false;
 
-                currentBatch.glyphs.push_back(toBatch);
-
-                if (lineWrap)
+                // If there is more than one glyph on the line, and the line exceeds the bounding box, wrap to a new line.
+                if (lineWrap && lines.back().GetGlyphs().size() > 0)
                 {
-                    bool lineChange = false;
                     // Check if we are in bounds. If not, start a new glyph batch for the next line.
-                    switch (direction)
+                    if (lines.back().GetWidth() + (toBatch != nullptr ? toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetFontHeight(pointSize) * 0.5f) >= boundingBox.w)
                     {
-                    case Typographic::TextDirection::LEFT_TO_RIGHT:
-                        if (position.x >= boundingBox.x + boundingBox.w)
-                        {
-                            position.x = boundingBox.x;
-                            position.y += font.GetLineDifference(pointSize);
-                            lineChange = true;
-                        }
-                        break;
-                    case Typographic::TextDirection::RIGHT_TO_LEFT:
-                        if (position.x <= boundingBox.x)
-                        {
-                            position.x = boundingBox.x + boundingBox.w;
-                            position.y += font.GetLineDifference(pointSize);
-                            lineChange = true;
-                        }
-                        break;
-                    case Typographic::TextDirection::TOP_TO_BOTTOM:
-                        if (position.y >= boundingBox.y + boundingBox.h)
-                        {
-                            position.y = boundingBox.y;
-                            position.x += font.GetLineDifference(pointSize);
-                            lineChange = true;
-                        }
-                        break;
-                    }
-                    if (lineChange && !currentBatch.glyphs.empty())
-                    {
-                        batched.push_back(currentBatch);
-                        currentBatch.glyphs.clear();
-                        currentBatch.position = position;
-                    }
-
-                    if (bytes <= 1)
-                    {
-                        // Line break after certain delimiters
-                        for (auto c : lineBreakCharacters)
-                        {
-                            if (c == utfChar[0])
-                            {
-                                safeBreak = position;
-                                currentWord.clear();
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        currentWord += utfChar;
+                        lineChange = true;
+                        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style));
                     }
                 }
 
+                // Add glyph to the current line
+                if (addLineSegment && !lineChange)
+                {
+                    lines.back().BeginSegment(toBatch, style, mainColor);
+                }
+                else
+                {
+                    lines.back().AddGlyph(toBatch);
+                }
+
+                // If the batch reaches the maximum number of atlas glyphs, render all the glyphs to the atlas, then render the text lines so far.
                 if (font.BatchPackGlyph(renderer, toBatch) >= font.GetAtlasMaxGlyphs() - 1)
                 {
                     font.BatchPackEnd(renderer);
 
-                    if (!currentBatch.glyphs.empty())
+                    // Render all lines except for the last line.
+                    // TODO: account for lines which use up more glyphs than allowed in font atlas!
+                    for (Uint32 i = 0, counti = lines.size() - 1; i < counti; i++)
                     {
-                        batched.push_back(currentBatch);
-                        currentBatch.glyphs.clear();
-                        currentBatch.position = position;
+                        RenderLine(renderer, lines[i], linePosition, pointSize, font);
+                        linePosition.y += font.GetLineDifference(pointSize);
                     }
-
-                    // At this point, render all batched glyphs before continuing with a new batch
-                    for (auto batch : batched)
-                    {
-                        RenderBatch(renderer, batch, pointSize, font);
-                    }
-                    batched.clear();
+                    // Remove the lines that have been rendered, but not the last line.
+                    TextLine current = lines.back();
+                    lines.clear();
+                    lines.push_back(current);
 
                     // Then continue batching
                     font.BatchPackBegin(renderer);
@@ -210,22 +195,55 @@ namespace Ossium
         }
         font.BatchPackEnd(renderer);
 
-        if (!currentBatch.glyphs.empty())
+        // Render all remaining lines
+        for (TextLine line : lines)
         {
-            batched.push_back(currentBatch);
-            currentBatch.glyphs.clear();
-            currentBatch.position = position;
+            RenderLine(renderer, line, linePosition, pointSize, font);
+            linePosition.y += font.GetLineDifference(pointSize);
         }
 
-        // Render any remaining batches
-        for (auto batch : batched)
-        {
-            RenderBatch(renderer, batch, pointSize, font);
-        }
-        batched.clear();
     }
 
-    bool TextLayout::ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, int& style)
+    void TextLayout::RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font)
+    {
+        if (line.GetGlyphs().empty())
+        {
+            // Early out
+            return;
+        }
+
+        Vector2 startPos = position;
+        for (Uint32 i = 0, counti = line.GetSegments().size(); i < counti; i++)
+        {
+            Uint32 nextSegment = i + 1 < line.GetSegments().size() ? line.GetSegments()[i + 1].index : line.GetGlyphs().size();
+            for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
+            {
+                position = font.RenderGlyph(
+                    renderer,
+                    line.GetGlyphs()[index],
+                    position,
+                    pointSize,
+                    line.GetSegments()[i].color,
+                    kerning,
+                    direction
+                );
+            }
+            if (line.GetSegments()[i].style & TTF_STYLE_UNDERLINE)
+            {
+                Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
+                Line underline(startPos + underlinePos, position + underlinePos);
+                underline.Draw(renderer, line.GetSegments()[i].color);
+            }
+            if (line.GetSegments()[i].style & TTF_STYLE_STRIKETHROUGH)
+            {
+                Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
+                Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);
+                strikethrough.Draw(renderer, line.GetSegments()[i].color);
+            }
+        }
+    }
+
+    bool TextLayout::ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style)
     {
         unsigned int tagTextLength = tagText.length();
         bool success = true;
@@ -244,7 +262,7 @@ namespace Ossium
                 underlineTags = max((Uint32)0, underlineTags - 1);
                 if (underlineTags == 0)
                 {
-                    style = style & TTF_STYLE_STRIKETHROUGH;
+                    style = style & ~TTF_STYLE_UNDERLINE;
                 }
             }
             else if (tagText[1] == 's')
@@ -252,7 +270,7 @@ namespace Ossium
                 strikeTags = max((Uint32)0, strikeTags - 1);
                 if (strikeTags == 0)
                 {
-                    style = style & TTF_STYLE_UNDERLINE;
+                    style = style & ~TTF_STYLE_STRIKETHROUGH;
                 }
             }
             else if (tagText == "/color" && colors.size() > 1)
@@ -277,12 +295,12 @@ namespace Ossium
             else if (tagText[0] == 'u')
             {
                 underlineTags++;
-                style |= TTF_STYLE_UNDERLINE;
+                style = style | TTF_STYLE_UNDERLINE;
             }
             else if (tagText[0] == 's')
             {
                 strikeTags++;
-                style |= TTF_STYLE_STRIKETHROUGH;
+                style = style | TTF_STYLE_STRIKETHROUGH;
             }
             else if (tagTextLength >= 13 && tagText.substr(0, 7) == "color=#")
             {
@@ -300,10 +318,8 @@ namespace Ossium
                 case 8:
                     mainColor = Color((converted & 0xFF000000) >> 24, (converted & 0x00FF0000) >> 16, (converted & 0x0000FF00) >> 8, converted & 0x000000FF);
                     colors.push(mainColor);
-                    //Logger::EngineLog().Info("converted color = {0}, original text = {1} [{2}]", converted, tagText, old);
                     break;
                 default:
-                    Logger::EngineLog().Warning("Invalid color tag '<{0}>'!", tagText);
                     success = false;
                     break;
                 }
@@ -314,77 +330,6 @@ namespace Ossium
             }
         }
         return success;
-    }
-/*
-    unsigned int TextLayout::DrawLine(Renderer& renderer, const string& text, Vector2& position, Font& font, unsigned int start, unsigned int end, Uint32& lastID, double angle = 0.0, float deltaTime = 0.0, float waveAmount = 0.0f, float waveSpeed = 10.0f, float phaseIncrement = 45.0f, float psize = 24.0f, int style = TTF_STYLE_NORMAL, float mipBias = 0.5f)
-    {
-        static float a;
-        a += deltaTime * waveSpeed;
-        float yoffset = sin(a) * waveAmount;
-        float inc = 0.0f;
-
-        while (start < end)
-        {
-            inc += phaseIncrement;
-            yoffset = sin(a + inc) * waveAmount;
-
-            // Extract UTF-8 character
-            Uint8 bytes = (Uint8)max((int)Utilities::CheckUTF8(text[start]), 1);
-            string utfChar = text.substr(start, bytes);
-            start += bytes;
-
-            Glyph* glyph = font.GetGlyph(renderer, utfChar, style);
-            if (glyph != nullptr)
-            {
-                if (lastID != 0 && direction != Typographic::TextDirection::TOP_TO_BOTTOM)
-                {
-                    // Apply kerning manually
-                    position.x += TTF_GetFontKerningSizeGlyphs(font.GetFont(), (Uint16)lastID, (Uint16)glyph->GetCodePointUTF8());
-                }
-                lastID = glyph->GetID();
-            }
-            else
-            {
-                lastID = 0;
-            }
-            position.y += yoffset;
-            position = font.RenderGlyph(renderer, glyph, position, psize, Colors::GREEN, true, false, SDL_BLENDMODE_BLEND, mipBias, angle);
-            position.y -= yoffset;
-
-            //Logger::EngineLog().Info("Rendering character {0} [index {1} until {2}]", (char)glyph->GetCodePointUTF8(), start, end);
-            //style = (style + 1) % 3;
-        }
-        return start;
-    }
-*/
-    Vector2 TextLayout::RenderBatch(Renderer& renderer, GlyphBatch& batch, float pointSize, Font& font)
-    {
-        Vector2 startPos = batch.position;
-        for (auto glyph : batch.glyphs)
-        {
-            batch.position = font.RenderGlyph(
-                renderer,
-                glyph,
-                batch.position,
-                pointSize,
-                batch.color,
-                kerning,
-                direction
-            );
-        }
-        if (batch.additiveStyle & TTF_STYLE_UNDERLINE)
-        {
-            Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
-            Line underline(startPos + underlinePos, batch.position + underlinePos);
-            underline.Draw(renderer, batch.color);
-        }
-        if (batch.additiveStyle & TTF_STYLE_STRIKETHROUGH)
-        {
-            Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
-            Line strikethrough(startPos + strikethroughPos, batch.position + strikethroughPos);
-            strikethrough.Draw(renderer, batch.color);
-        }
-        return batch.position;
     }
 
 }
