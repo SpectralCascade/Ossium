@@ -237,10 +237,14 @@ namespace Ossium
             }
             else
             {
-                // Absolute min = 1024, absolute max = 8192. Actual size can be anywhere in between.
-                // TODO?: customisable limit? Some future devices might handle super sized textures well, who knows...
+                // Absolute minimum = 1024, absolute max = 8192. Actual size selected can be anywhere in between depending on cell size.
                 targetTextureSize = max(1024, min(8192, min(renderInfo.max_texture_width, renderInfo.max_texture_height)));
-                Logger::EngineLog().Verbose("Automatically set font atlas size to be {0} (max texture dimensions = {1}x{2}, engine limit = {3})", targetTextureSize, renderInfo.max_texture_width, renderInfo.max_texture_height, 8192);
+                // Compute number of possible glyphs given this configuration
+                actualTextureSize = {((int)targetTextureSize / cellSize.x) * cellSize.x, ((int)targetTextureSize / cellSize.y) * cellSize.y};
+                float approxGlyphs = (actualTextureSize.x / cellSize.x) * (actualTextureSize.y / cellSize.y);
+                float scaleFactor = approxGlyphs > (float)ABSOLUTE_MAXIMUM_ATLAS_GLYPHS ? (float)ABSOLUTE_MAXIMUM_ATLAS_GLYPHS / approxGlyphs : 1.0f;
+                // Scale down if exceeding the maximum allowed number of glyphs
+                targetTextureSize = (Uint32)max(1024.0f, min(8192.0f, scaleFactor * (float)targetTextureSize));
             }
         }
 
@@ -248,7 +252,16 @@ namespace Ossium
         actualTextureSize = {((int)targetTextureSize / cellSize.x) * cellSize.x, ((int)targetTextureSize / cellSize.y) * cellSize.y};
         maxAtlasGlyphs = (actualTextureSize.x / cellSize.x) * (actualTextureSize.y / cellSize.y);
 
-        cacheLimit = glyphCacheLimit;
+        if (glyphCacheLimit == 0)
+        {
+            // Automatically set cache limit based on maximum atlas glyphs.
+            cacheLimit = Uint32((float)maxAtlasGlyphs * 1.5f);
+        }
+        else
+        {
+            cacheLimit = glyphCacheLimit;
+        }
+        Logger::EngineLog().Verbose("Font {0} has atlas size: {1}, max glyphs: {2}, cache limit: {3}, mipmap depth: {4}", guid_path, actualTextureSize.x, maxAtlasGlyphs, cacheLimit, mipmapDepth);
 
         // Create the atlas surface and push onto the GPU.
         atlas.CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat);
