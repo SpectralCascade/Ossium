@@ -315,11 +315,12 @@ namespace Ossium
         /// Returns the dimensions for invalid glyphs.
         Vector2 GetInvalidGlyphDimensions(float pointSize);
 
-        /// Removes all glyphs from the atlas texture.
+        /// Removes the specified number of glyphs from the atlas texture. If quantity = 0, removes all glyphs from the atlas.
         /**
             Only call this if you know what you're doing, as misuse will slow down text rendering! You've been warned.
+            Useful for purging glyphs that haven't been used for a while, as it removes glyphs in order of least recently rendered.
         */
-        void ClearAtlas();
+        void ClearAtlas(Uint32 quantity = 0);
 
     private:
         /// Copying is not permitted.

@@ -56,7 +56,7 @@ namespace Ossium
     // Forward declarations
     class Font;
 
-    /// Internal helper struct for TextLines which stores information about a particular segment within a text line.
+    /// Helper struct for TextLines which stores information about a particular segment within a text line.
     struct TextLineSegment
     {
         Uint32 index;
@@ -93,6 +93,9 @@ namespace Ossium
 
         /// Clears all glyphs and line segments (except for the original segment).
         void Clear(bool resetWidth = true);
+
+        /// Returns a new line with the glyphs and segments copied over from the specified index onwards.
+        TextLine GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions);
 
     private:
         /// Sub-sections of the line that have different styles.
@@ -131,10 +134,11 @@ namespace Ossium
             of your choosing, in the format #RRGGBBAA (red, red, green, green, blue, blue, alpha, alpha), or alternatively #RRGGBB.
             If you want to ignore tags in some parts of your text, you can use backslash \ before angle brackets < or >. Use double-backslash to show a single, literal backslash.
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
+            Also takes natural line break characters (ASCII only) that are used for line wrapping without breaking words.
         */
         void Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor = Colors::BLACK, int mainStyle = TTF_STYLE_NORMAL, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
 
-        /// Renders a line of glyphs.
+        /// Renders a single line of glyphs.
         void RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font);
 
     private:

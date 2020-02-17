@@ -76,6 +76,60 @@ namespace Ossium
         }
     }
 
+    TextLine TextLine::GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions)
+    {
+        if (lineBreakIndex >= glyphs.size() || lineSegmentBreakIndex >= segments.size())
+        {
+            Logger::EngineLog().Warning("Failed to get new TextLine for line break index {0} [segment break index {1}]!", lineBreakIndex, lineSegmentBreakIndex);
+            return TextLine(originalPointSize, pointSize, segments[0].color, segments[0].style, invalidGlyphDimensions);
+        }
+        TextLineSegment& segment = segments[lineSegmentBreakIndex];
+
+        if (segments[lineSegmentBreakIndex].index == lineBreakIndex + 1)
+        {
+            Logger::EngineLog().Debug("Removing line segment index {0}", lineSegmentBreakIndex);
+            segments.erase(segments.begin() + lineSegmentBreakIndex);
+        }
+
+        Uint32 totalSegments = segments.size();
+
+        TextLine nextLine = TextLine(originalPointSize, pointSize, segment.color, segment.style, invalidGlyphDimensions);
+
+        string debugOut;
+
+        // Move everything after the line break index into the new line
+        for (Uint32 segmentIndex = lineSegmentBreakIndex; segmentIndex < totalSegments; segmentIndex++)
+        {
+            // Get start index, according to segment or original line break character
+            Uint32 glyphIndex = max(segment.index, lineBreakIndex + 1);
+
+            // Now add the glyphs to the new line until we reach the next segment
+            for (Uint32 countUp = glyphIndex, nextSegment = (lineSegmentBreakIndex < segments.size() - 1 ? segments[lineSegmentBreakIndex + 1].index : glyphs.size());
+                 countUp < nextSegment; countUp++)
+            {
+                nextLine.AddGlyph(glyphs[glyphIndex]);
+                // Remove the glyph pointer we just copied
+                glyphs.erase(glyphs.begin() + glyphIndex);
+                debugOut += (char)nextLine.glyphs.back()->GetCodePointUTF8();
+            }
+
+            if (lineSegmentBreakIndex < segments.size() - 1)
+            {
+                // Remove the segment from this line
+                segments.erase(segments.begin() + lineSegmentBreakIndex + 1);
+                // Copy the segment to the new line along with the first glyph
+                nextLine.BeginSegment(glyphs[glyphIndex], segment.style, segment.color);
+                debugOut += (char)nextLine.glyphs.back()->GetCodePointUTF8();
+                // Remove the first glyph pointer we just copied
+                glyphs.erase(glyphs.begin() + glyphIndex);
+                // Get the current segment
+                segment = segments[lineSegmentBreakIndex];
+            }
+        }
+        Logger::EngineLog().Debug("Created line with text {0}", debugOut);
+        return nextLine;
+    }
+
     //
     // TextLayout
     //
@@ -100,6 +154,11 @@ namespace Ossium
         lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
 
         Vector2 linePosition = Vector2(boundingBox.x, boundingBox.y);
+
+        // Keeps track of the last ideal place in the line to make a line break
+        Uint32 lineBreakIndex = 0;
+        // Counts line segment indices
+        Uint32 lineSegmentCounter = 0;
 
         // Batch pack each glyph
         font.BatchPackBegin(renderer);
@@ -171,7 +230,7 @@ namespace Ossium
 
                 bool lineChange = false;
 
-                // If there is more than one glyph on the line, and the line exceeds the bounding box, OR there is a newline character, wrap to a new line.
+                // If there is more than one glyph on the line and the line exceeds the bounding box, wrap to a new line.
                 if (lineWrap && ((lines.back().GetGlyphs().size() > 0) && (!(ignoreWhitespace && utfChar[0] == ' ')) &&
                     (lines.back().GetWidth() + (toBatch != nullptr ?
                         toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= boundingBox.w
@@ -179,13 +238,26 @@ namespace Ossium
                 )
                 {
                     lineChange = true;
-                    lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
+                    // Should we break the line at the current glyph, or the last ideal break glyph?
+                    if (wordBreak)
+                    {
+                        // Break mid-word (current glyph).
+                        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
+                    }
+                    else if (lineBreakIndex > 0)
+                    {
+                        // Natural line break at end of a word or statement or whatever.
+                        lines.push_back(lines.back().GetNewline(lineBreakIndex, lineSegmentCounter, font.GetLoadedPointSize(), pointSize, font.GetInvalidGlyphDimensions(pointSize)));
+                    }
+                    lineBreakIndex = 0;
+                    lineSegmentCounter = 0;
                 }
 
                 // Add glyph to the current line
                 if (addLineSegment && !lineChange)
                 {
                     lines.back().BeginSegment(toBatch, style, mainColor);
+                    lineSegmentCounter++;
                 }
                 else
                 {
@@ -208,16 +280,36 @@ namespace Ossium
                     TextLine current = lines.back();
                     lines.clear();
                     lines.push_back(current);
+                    lineBreakIndex = 0;
+                    lineSegmentCounter = 0;
 
                     // Then continue batching
                     font.BatchPackBegin(renderer);
+                }
+
+                if (lineWrap)
+                {
+                    if (bytes <= 1 && !lines.back().GetGlyphs().empty())
+                    {
+                        for (auto c : lineBreakCharacters)
+                        {
+                            if (utfChar[0] == c)
+                            {
+                                lineBreakIndex = lines.back().GetGlyphs().size() - 1;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             else if (utfChar[0] == '\n')
             {
                 // Add newline
                 lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
+                lineBreakIndex = 0;
+                lineSegmentCounter = 0;
             }
+
         }
         font.BatchPackEnd(renderer);
 

@@ -733,6 +733,7 @@ namespace Ossium
             }
         }
         glyphs.clear();
+        atlasGlyphMap.clear();
         glyphCache.Clear();
         textureCache.Clear();
     }
@@ -862,19 +863,28 @@ namespace Ossium
         return Vector2(invalidDimensions.x + (invalidPadding * 2.0f), invalidDimensions.y) * (pointSize / (float)loadedPointSize);
     }
 
-    void Font::ClearAtlas()
+    void Font::ClearAtlas(Uint32 quantity)
     {
-        for (auto itr : atlasGlyphMap)
+        if (quantity == 0)
         {
-            auto found = glyphs.find(itr.second);
-            if (found != glyphs.end() && found->second != nullptr)
-            {
-                // Remove the glyph from the atlas
-                found->second->atlasIndex = 0;
-            }
+            quantity = maxAtlasGlyphs;
         }
-        atlasGlyphMap.clear();
-        textureCache.Clear();
+        for (Uint32 i = 0, counti = min(quantity, atlasGlyphMap.empty() ? 0 : atlasGlyphMap.size()); i < counti; i++)
+        {
+            Uint32 index = textureCache.GetLRU();
+            auto id = atlasGlyphMap.find(index);
+            if (id != atlasGlyphMap.end())
+            {
+                auto found = glyphs.find(id->second);
+                if (found != glyphs.end() && found->second != nullptr)
+                {
+                    // Remove the glyph from the atlas
+                    found->second->atlasIndex = 0;
+                }
+            }
+            textureCache.PopLRU();
+            atlasGlyphMap.erase(id);
+        }
     }
 
 }
