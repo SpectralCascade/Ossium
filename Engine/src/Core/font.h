@@ -186,10 +186,10 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0);
+        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(string guid_path, Renderer& renderer, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0);
+        bool Init(string guid_path, Renderer& renderer, Uint32 glyphCacheLimit = 256, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -312,8 +312,14 @@ namespace Ossium
         /// Returns the mipmap level for a given point size. The decimal part indicates the bias towards the next mipmap level.
         float GetMipMapLevel(float pointSize, float mainPointSize, int level = 0);
 
-        /// Returns the dimensions for invalid glyphs (except non-printable ASCII characters, which should typically have 0 width and height).
+        /// Returns the dimensions for invalid glyphs.
         Vector2 GetInvalidGlyphDimensions(float pointSize);
+
+        /// Removes all glyphs from the atlas texture.
+        /**
+            Only call this if you know what you're doing, as misuse will slow down text rendering! You've been warned.
+        */
+        void ClearAtlas();
 
     private:
         /// Copying is not permitted.

@@ -91,6 +91,9 @@ namespace Ossium
         /// Returns all segments.
         const vector<TextLineSegment>& GetSegments();
 
+        /// Clears all glyphs and line segments (except for the original segment).
+        void Clear(bool resetWidth = true);
+
     private:
         /// Sub-sections of the line that have different styles.
         vector<TextLineSegment> segments;

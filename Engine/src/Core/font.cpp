@@ -155,12 +155,12 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 pixelFormat, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
+    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
     {
-        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, pixelFormat, glyphCacheLimit, mipDepth, targetTextureSize);
+        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, glyphCacheLimit, mipDepth, targetTextureSize, pixelFormat);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint32 pixelFormat, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
+    bool Font::Init(string guid_path, Renderer& renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
     {
         mipOffsets.clear();
 
@@ -562,7 +562,6 @@ namespace Ossium
                     if (glyphItr->second != nullptr)
                     {
                         // Replaced glyph is unpacked
-                        //Logger::EngineLog().Verbose("LRU character = {0}, replacing with {1}", (char)glyphItr->second->GetCodePointUTF8(), (char)glyph->GetCodePointUTF8());
                         glyphItr->second->atlasIndex = 0;
                     }
                     failedReplace = false;
@@ -584,9 +583,6 @@ namespace Ossium
         atlasGlyphMap[index] = glyph->GetID();
 
         SDL_Rect dest = GetAtlasCell(index);
-        //Logger::EngineLog().Info("Atlas cell = {0}", dest);
-        // Get the full cell destination so we can clear it
-        //Logger::EngineLog().Verbose("Packing glyph at index {0} ({1}), max glyphs = {2}, texture cache size = {3}", index, dest, GetAtlasMaxGlyphs(), textureCache.Size());
 
         if (dest.w != 0 && dest.h != 0)
         {
@@ -683,6 +679,14 @@ namespace Ossium
         }
         int size = round((float)glyph->cached.GetHeight() * scale * glyph->GetInverseScaleFactor());
         dest = {dest.x, dest.y, size, size};
+
+        // If glyph is not already in the atlas, pack it now. Note this is less efficient than batch packing multiple glyphs at once.
+        if (glyph->GetAtlasIndex() == 0)
+        {
+            BatchPackBegin(renderer);
+            BatchPackGlyph(renderer, glyph);
+            BatchPackEnd(renderer);
+        }
         SDL_Rect clip = glyph->GetClip();
 
         float level = GetMipMapLevel(pointSize, loadedPointSize);
@@ -856,6 +860,21 @@ namespace Ossium
     Vector2 Font::GetInvalidGlyphDimensions(float pointSize)
     {
         return Vector2(invalidDimensions.x + (invalidPadding * 2.0f), invalidDimensions.y) * (pointSize / (float)loadedPointSize);
+    }
+
+    void Font::ClearAtlas()
+    {
+        for (auto itr : atlasGlyphMap)
+        {
+            auto found = glyphs.find(itr.second);
+            if (found != glyphs.end() && found->second != nullptr)
+            {
+                // Remove the glyph from the atlas
+                found->second->atlasIndex = 0;
+            }
+        }
+        atlasGlyphMap.clear();
+        textureCache.Clear();
     }
 
 }

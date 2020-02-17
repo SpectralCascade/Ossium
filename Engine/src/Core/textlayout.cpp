@@ -64,6 +64,18 @@ namespace Ossium
         return segments;
     }
 
+    void TextLine::Clear(bool resetWidth)
+    {
+        glyphs.clear();
+        TextLineSegment original = segments[0];
+        segments.clear();
+        segments.push_back(original);
+        if (resetWidth)
+        {
+            width = 0;
+        }
+    }
+
     //
     // TextLayout
     //
@@ -161,7 +173,9 @@ namespace Ossium
 
                 // If there is more than one glyph on the line, and the line exceeds the bounding box, OR there is a newline character, wrap to a new line.
                 if (lineWrap && ((lines.back().GetGlyphs().size() > 0) && (!(ignoreWhitespace && utfChar[0] == ' ')) &&
-                    (lines.back().GetWidth() + (toBatch != nullptr ? toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetFontHeight(pointSize) * 0.5f) >= boundingBox.w))
+                    (lines.back().GetWidth() + (toBatch != nullptr ?
+                        toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= boundingBox.w
+                    ))
                 )
                 {
                     lineChange = true;
@@ -178,16 +192,16 @@ namespace Ossium
                     lines.back().AddGlyph(toBatch);
                 }
 
-                // If the batch reaches the maximum number of atlas glyphs, render all the glyphs to the atlas, then render the text lines so far.
-                if (font.BatchPackGlyph(renderer, toBatch) >= font.GetAtlasMaxGlyphs() - 1)
+                // If the batch reaches the maximum number of atlas glyphs, stop batching. If possible, render all lines except for latest line.
+                // If there is only one line ready for rendering, then stop batching altogether until there are more lines.
+                if ((font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs() || lines.size() > 1) && font.BatchPackGlyph(renderer, toBatch) >= font.GetAtlasMaxGlyphs() - 1)
                 {
                     font.BatchPackEnd(renderer);
 
-                    // Render all lines except for the last line.
-                    // TODO: account for lines which use up more glyphs than allowed in font atlas!
-                    for (Uint32 i = 0, counti = lines.size() - 1; i < counti; i++)
+                    // Render all lines except for the last line (unless there is only one line available, in which case it gets rendered up to the last line wrap break).
+                    for (Uint32 lineIndex = 0, countLines = lines.size() - 1; lineIndex < countLines; lineIndex++)
                     {
-                        RenderLine(renderer, lines[i], linePosition, pointSize, font);
+                        RenderLine(renderer, lines[lineIndex], linePosition, pointSize, font);
                         linePosition.y += font.GetLineDifference(pointSize);
                     }
                     // Remove the lines that have been rendered, but not the last line.
@@ -211,6 +225,7 @@ namespace Ossium
         for (TextLine line : lines)
         {
             RenderLine(renderer, line, linePosition, pointSize, font);
+            linePosition.x = boundingBox.x;
             linePosition.y += font.GetLineDifference(pointSize);
         }
 
