@@ -26,24 +26,28 @@ def InsertCopyright(path, args):
     with open(path) as file:
         newHeader = False
         firstLine = True
-        for line in file.readlines():
-            if (firstLine and not newHeader and startIdent not in line):
-                newHeader = True
-                outputStr += args[0]
-            else:
-                firstLine = False
-            if (inserting):
-                if (endIdent in line):
-                    inserting = False
-                    # skip the new line
-                    continue
+        try:
+            for line in file.readlines():
+                if (firstLine and not newHeader and startIdent not in line):
+                    newHeader = True
+                    outputStr += args[0]
                 else:
-                    continue
-            elif (startIdent in line):
-                inserting = True
-                outputStr += args[0]
-            else:
-                outputStr += line
+                    firstLine = False
+                if (inserting):
+                    if (endIdent in line):
+                        inserting = False
+                        # skip the new line
+                        continue
+                    else:
+                        continue
+                elif (startIdent in line):
+                    inserting = True
+                    outputStr += args[0]
+                else:
+                    outputStr += line
+        except UnicodeDecodeError as error:
+            print("Warning: Could not insert copyright! UnicodeDecodeError: ", error)
+            return
     with open(path, "w+") as file:
         file.write(outputStr)
 
