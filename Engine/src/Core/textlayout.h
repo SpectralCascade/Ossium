@@ -154,10 +154,10 @@ namespace Ossium
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
             Also takes natural line break characters (ASCII only) that are used for line wrapping without breaking words.
         */
-        void Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor = Colors::BLACK, int mainStyle = TTF_STYLE_NORMAL, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
+        Rect Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor = Colors::BLACK, int mainStyle = TTF_STYLE_NORMAL, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
 
         /// Renders a single line of glyphs.
-        void RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font);
+        Rect RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font);
 
     private:
         /// Attempts to parse a tag. Returns false on invalid tag.

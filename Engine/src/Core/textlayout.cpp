@@ -176,7 +176,7 @@ namespace Ossium
     // TextLayout
     //
 
-    void TextLayout::Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor, int mainStyle, bool applyMarkup, string lineBreakCharacters)
+    Rect TextLayout::Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor, int mainStyle, bool applyMarkup, string lineBreakCharacters)
     {
         // Markup helper variables for keeping track of tags
         // TODO: make tags more extensible?
@@ -196,11 +196,19 @@ namespace Ossium
         lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
 
         Vector2 linePosition = Vector2(boundingBox.x, boundingBox.y);
+        Vector2 minLinePosition = Vector2(
+            alignment == Typographic::TextAlignment::LEFT_ALIGNED ?
+                linePosition.x : (alignment == Typographic::TextAlignment::CENTERED ?
+                    boundingBox.x + (boundingBox.w / 2) : boundingBox.x + boundingBox.w),
+            boundingBox.y
+        );
 
         // Keeps track of the last ideal place in the line to make a line break
         Uint32 lineBreakIndex = 0;
         // Counts line segment indices
         Uint32 lineSegmentCounter = 0;
+
+        Vector2 dimensions = Vector2::Zero;
 
         // Batch pack each glyph
         font.BatchPackBegin(renderer);
@@ -327,7 +335,9 @@ namespace Ossium
                             linePosition.x = boundingBox.x;
                             break;
                         }
-                        RenderLine(renderer, lines[lineIndex], linePosition, pointSize, font);
+                        Rect rendered = RenderLine(renderer, lines[lineIndex], linePosition, pointSize, font);
+                        dimensions = dimensions.Max(Vector2(rendered.w, dimensions.y + rendered.h));
+                        minLinePosition = minLinePosition.Min(linePosition);
                         linePosition.y += font.GetLineDifference(pointSize);
                     }
                     // Remove the lines that have been rendered, but not the last line.
@@ -382,18 +392,23 @@ namespace Ossium
                 linePosition.x = boundingBox.x;
                 break;
             }
-            RenderLine(renderer, line, linePosition, pointSize, font);
+            Rect rendered = RenderLine(renderer, line, linePosition, pointSize, font);
+            dimensions = dimensions.Max(Vector2(rendered.w, dimensions.y + rendered.h));
+            minLinePosition = minLinePosition.Min(linePosition);
             linePosition.y += font.GetLineDifference(pointSize);
         }
 
+        return Rect(minLinePosition.x, minLinePosition.y, dimensions.x, dimensions.y);
     }
 
-    void TextLayout::RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font)
+    Rect TextLayout::RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font)
     {
+        Vector2 maxVec = Vector2::Zero;
+
         if (line.GetGlyphs().empty())
         {
             // Early out
-            return;
+            return Rect(position.x, position.y, 0, 0);
         }
 
         Vector2 startPos = position;
@@ -402,29 +417,35 @@ namespace Ossium
             Uint32 nextSegment = i + 1 < line.GetSegments().size() ? line.GetSegments()[i + 1].index : line.GetGlyphs().size();
             for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
             {
+                Glyph* glyph = line.GetGlyphs()[index];
                 position = font.RenderGlyph(
                     renderer,
-                    line.GetGlyphs()[index],
+                    glyph,
                     position,
                     pointSize,
                     line.GetSegments()[i].color,
                     kerning,
                     direction
                 );
+                maxVec = maxVec.Max(glyph != nullptr ? glyph->GetDimensions(font.GetLoadedPointSize(), pointSize) : font.GetInvalidGlyphDimensions(pointSize));
             }
             if (line.GetSegments()[i].style & TTF_STYLE_UNDERLINE)
             {
                 Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
                 Line underline(startPos + underlinePos, position + underlinePos);
+                maxVec = maxVec.Max(underline.a);
                 underline.Draw(renderer, line.GetSegments()[i].color);
             }
             if (line.GetSegments()[i].style & TTF_STYLE_STRIKETHROUGH)
             {
                 Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
                 Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);
+                maxVec = maxVec.Max(strikethrough.a);
                 strikethrough.Draw(renderer, line.GetSegments()[i].color);
             }
+            maxVec = maxVec.Max(position - startPos);
         }
+        return Rect(startPos.x, startPos.y, maxVec.x, maxVec.y);
     }
 
     bool TextLayout::ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style)
