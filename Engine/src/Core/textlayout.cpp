@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <stack>
 
@@ -39,6 +39,26 @@ namespace Ossium
     {
         glyphs.push_back(glyph);
         width += glyph != nullptr ? (float)glyph->GetAdvance() : invalidDimensions.x;
+    }
+
+    Glyph* TextLine::PopGlyph()
+    {
+        Glyph* glyph = nullptr;
+        if (!glyphs.empty())
+        {
+            glyph = glyphs.back();
+            glyphs.pop_back();
+            width -= glyph != nullptr ? (float)glyph->GetAdvance() : invalidDimensions.x;
+        }
+        return glyph;
+    }
+
+    void TextLine::PopWhitespace()
+    {
+        while (!glyphs.empty() && glyphs.back()->GetCodePointUTF8() == 32)
+        {
+            PopGlyph();
+        }
     }
 
     void TextLine::BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color)
@@ -92,7 +112,7 @@ namespace Ossium
         }
     }
 
-    TextLine TextLine::GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions)
+    TextLine TextLine::GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions, bool removeWhitespace)
     {
         if (lineBreakIndex >= glyphs.size() || lineSegmentBreakIndex >= segments.size())
         {
@@ -142,7 +162,13 @@ namespace Ossium
                 segment = segments[lineSegmentBreakIndex];
             }
         }
-        Logger::EngineLog().Debug("Created line with text {0}", debugOut);
+        width -= nextLine.width;
+
+        if (removeWhitespace)
+        {
+            PopWhitespace();
+        }
+
         return nextLine;
     }
 
@@ -289,6 +315,18 @@ namespace Ossium
                     // Render all lines except for the last line (unless there is only one line available, in which case it gets rendered up to the last line wrap break).
                     for (Uint32 lineIndex = 0, countLines = lines.size() - 1; lineIndex < countLines; lineIndex++)
                     {
+                        switch (alignment)
+                        {
+                        case Typographic::TextAlignment::RIGHT_ALIGNED:
+                            linePosition.x = (boundingBox.x + boundingBox.w) - ceil(lines[lineIndex].GetRenderedWidth());
+                            break;
+                        case Typographic::TextAlignment::CENTERED:
+                            linePosition.x = (boundingBox.x + (boundingBox.w / 2)) - ceil(lines[lineIndex].GetRenderedWidth() / 2.0f);
+                            break;
+                        default:
+                            linePosition.x = boundingBox.x;
+                            break;
+                        }
                         RenderLine(renderer, lines[lineIndex], linePosition, pointSize, font);
                         linePosition.y += font.GetLineDifference(pointSize);
                     }
@@ -332,8 +370,19 @@ namespace Ossium
         // Render all remaining lines
         for (TextLine line : lines)
         {
+            switch (alignment)
+            {
+            case Typographic::TextAlignment::RIGHT_ALIGNED:
+                linePosition.x = (boundingBox.x + boundingBox.w) - ceil(line.GetRenderedWidth());
+                break;
+            case Typographic::TextAlignment::CENTERED:
+                linePosition.x = (boundingBox.x + (boundingBox.w / 2)) - ceil(line.GetRenderedWidth() / 2.0f);
+                break;
+            default:
+                linePosition.x = boundingBox.x;
+                break;
+            }
             RenderLine(renderer, line, linePosition, pointSize, font);
-            linePosition.x = boundingBox.x;
             linePosition.y += font.GetLineDifference(pointSize);
         }
 

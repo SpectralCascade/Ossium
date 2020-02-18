@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef TEXTLAYOUT_H
 #define TEXTLAYOUT_H
@@ -63,10 +63,6 @@ namespace Ossium
         /// (requires Harfbuzz or similar text-layout library to do the work).
         M(bool, kerning) = true;
 
-        /// The last string to be rendered. If this matches the input string again, we don't need to update the layout.
-        /// TODO: implement
-        M(string, cachedText);
-
     };
 
     // Forward declarations
@@ -89,6 +85,12 @@ namespace Ossium
         /// Adds a glyph to the current line segment.
         void AddGlyph(Glyph* glyph);
 
+        /// Removes a glyph from the end of the line.
+        Glyph* PopGlyph();
+
+        /// Removes all whitespace glyphs from the end of the line.
+        void PopWhitespace();
+
         /// Begins a new segment. Use this whenever you need to insert glyphs that have a different style or colour to the current segment.
         void BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color);
 
@@ -110,8 +112,8 @@ namespace Ossium
         /// Clears all glyphs and line segments (except for the original segment).
         void Clear(bool resetWidth = true);
 
-        /// Returns a new line with the glyphs and segments copied over from the specified index onwards.
-        TextLine GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions);
+        /// Returns a new line with the glyphs and segments copied over from the specified index onwards. Removes any leftover white space from the end of this line.
+        TextLine GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions, bool removeWhitespace = true);
 
     private:
         /// Sub-sections of the line that have different styles.
