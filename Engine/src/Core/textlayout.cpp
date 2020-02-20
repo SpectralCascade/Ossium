@@ -35,33 +35,33 @@ namespace Ossium
         invalidDimensions = invalidGlyphDimensions;
     }
 
-    void TextLine::AddGlyph(Glyph* glyph)
+    void TextLine::AddGlyph(GlyphMeta glyph)
     {
         glyphs.push_back(glyph);
-        width += glyph != nullptr ? (float)glyph->GetAdvance() : invalidDimensions.x;
+        width += glyph.GetCodepoint() != 0 ? (float)glyph.GetAdvance() : invalidDimensions.x;
     }
 
-    Glyph* TextLine::PopGlyph()
+    GlyphMeta TextLine::PopGlyph()
     {
-        Glyph* glyph = nullptr;
+        GlyphMeta glyph;
         if (!glyphs.empty())
         {
             glyph = glyphs.back();
             glyphs.pop_back();
-            width -= glyph != nullptr ? (float)glyph->GetAdvance() : invalidDimensions.x;
+            width -= glyph.GetCodepoint() != 0 ? (float)glyph.GetAdvance() : invalidDimensions.x;
         }
         return glyph;
     }
 
     void TextLine::PopWhitespace()
     {
-        while (!glyphs.empty() && glyphs.back()->GetCodePointUTF8() == 32)
+        while (!glyphs.empty() && glyphs.back().GetCodepoint() == 32)
         {
             PopGlyph();
         }
     }
 
-    void TextLine::BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color)
+    void TextLine::BeginSegment(GlyphMeta glyph, Uint8 style, SDL_Color color)
     {
         AddGlyph(glyph);
         segments.push_back((TextLineSegment){segments.size(), style, color});
@@ -78,11 +78,11 @@ namespace Ossium
         {
             return 0;
         }
-        else if (glyphs.back() == nullptr)
+        else if (glyphs.back().GetCodepoint() == 0)
         {
             return GetWidth();
         }
-        return ((width - (float)glyphs.back()->GetAdvance()) + ((float)glyphs.back()->GetBoundingBox().w)) * glyphScale;
+        return ((width - (float)glyphs.back().GetAdvance()) + ((float)glyphs.back().GetDimensions().x)) * glyphScale;
     }
 
     TextLineSegment TextLine::GetCurrentSegment()
@@ -90,7 +90,7 @@ namespace Ossium
         return segments.back();
     }
 
-    const vector<Glyph*>& TextLine::GetGlyphs()
+    const vector<GlyphMeta>& TextLine::GetGlyphs()
     {
         return glyphs;
     }
@@ -146,7 +146,7 @@ namespace Ossium
                 nextLine.AddGlyph(glyphs[glyphIndex]);
                 // Remove the glyph pointer we just copied
                 glyphs.erase(glyphs.begin() + glyphIndex);
-                debugOut += (char)nextLine.glyphs.back()->GetCodePointUTF8();
+                debugOut += (char)nextLine.glyphs.back().GetCodepoint();
             }
 
             if (lineSegmentBreakIndex < segments.size() - 1)
@@ -155,7 +155,7 @@ namespace Ossium
                 segments.erase(segments.begin() + lineSegmentBreakIndex + 1);
                 // Copy the segment to the new line along with the first glyph
                 nextLine.BeginSegment(glyphs[glyphIndex], segment.style, segment.color);
-                debugOut += (char)nextLine.glyphs.back()->GetCodePointUTF8();
+                debugOut += (char)nextLine.glyphs.back().GetCodepoint();
                 // Remove the first glyph pointer we just copied
                 glyphs.erase(glyphs.begin() + glyphIndex);
                 // Get the current segment
@@ -276,14 +276,14 @@ namespace Ossium
             if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
                 // Pack the glyph.
-                Glyph* toBatch = font.GetGlyph(renderer, utfChar, (boldTags > 0 ? TTF_STYLE_BOLD : TTF_STYLE_NORMAL) | (italicTags > 0 ? TTF_STYLE_ITALIC : TTF_STYLE_NORMAL));
+                GlyphMeta toBatch = font.GetGlyphMeta(Utilities::GetCodepointUTF8(utfChar));
 
                 bool lineChange = false;
 
                 // If there is more than one glyph on the line and the line exceeds the bounding box, wrap to a new line.
                 if (lineWrap && ((lines.back().GetGlyphs().size() > 0) && (!(ignoreWhitespace && utfChar[0] == ' ')) &&
-                    (lines.back().GetWidth() + (toBatch != nullptr ?
-                        toBatch->GetDimensions(font.GetLoadedPointSize(), pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= boundingBox.w
+                    (lines.back().GetWidth() + (toBatch.GetCodepoint() != 0 ?
+                        toBatch.GetDimensions(pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= boundingBox.w
                     ))
                 )
                 {
@@ -314,9 +314,10 @@ namespace Ossium
                     lines.back().AddGlyph(toBatch);
                 }
 
+                GlyphID id = CreateGlyphID(toBatch.GetCodepoint(), style, 0, 0);
                 // If the batch reaches the maximum number of atlas glyphs, stop batching. If possible, render all lines except for latest line.
                 // If there is only one line ready for rendering, then stop batching altogether until there are more lines.
-                if ((font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs() || lines.size() > 1) && font.BatchPackGlyph(renderer, toBatch) >= font.GetAtlasMaxGlyphs() - 1)
+                if ((font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs() || lines.size() > 1) && font.BatchPackGlyph(renderer, id) >= font.GetAtlasMaxGlyphs() - 1)
                 {
                     font.BatchPackEnd(renderer);
 
@@ -417,8 +418,9 @@ namespace Ossium
             Uint32 nextSegment = i + 1 < line.GetSegments().size() ? line.GetSegments()[i + 1].index : line.GetGlyphs().size();
             for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
             {
-                Glyph* glyph = line.GetGlyphs()[index];
-                position = font.RenderGlyph(
+                GlyphMeta meta = line.GetGlyphs()[index];
+                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style, 0, 0);
+                font.RenderGlyph(
                     renderer,
                     glyph,
                     position,
@@ -427,7 +429,8 @@ namespace Ossium
                     kerning,
                     direction
                 );
-                maxVec = maxVec.Max(glyph != nullptr ? glyph->GetDimensions(font.GetLoadedPointSize(), pointSize) : font.GetInvalidGlyphDimensions(pointSize));
+                position += Vector2(direction == Typographic::TextDirection::LEFT_TO_RIGHT ? meta.GetAdvance(pointSize) : -meta.GetAdvance(pointSize), 0);
+                maxVec = maxVec.Max((glyph & GLYPH_UNICODE_MASK) != 0 ? meta.GetDimensions(pointSize) : font.GetInvalidGlyphDimensions(pointSize));
             }
             if (line.GetSegments()[i].style & TTF_STYLE_UNDERLINE)
             {

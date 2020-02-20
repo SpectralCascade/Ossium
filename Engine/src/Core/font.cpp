@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include "font.h"
 #include "logging.h"
@@ -42,65 +42,74 @@ namespace Ossium
     }
 
     //
-    // Glyph
+    // GlyphID
     //
 
-    Glyph::Glyph(Uint32 codepoint, Uint32 style, Uint32 outline)
+    GlyphID CreateGlyphID(Uint32 codepoint, Uint8 style, Uint8 hinting, Uint8 outline)
     {
-        type = CreateGlyphID(codepoint, style, outline);
+        return codepoint | (((Uint32)style << GLYPH_STYLE_SHIFT) & GLYPH_STYLE_MASK) | (((Uint32)hinting << GLYPH_HINTING_SHIFT) & GLYPH_HINTING_MASK) | (((Uint32)outline << GLYPH_OUTLINE_SHIFT) & GLYPH_OUTLINE_MASK);
     }
 
-    SDL_Rect Glyph::GetClip()
+    //
+    // GlyphMeta
+    //
+
+    GlyphMeta::GlyphMeta()
     {
-        return clip;
+        cp = 0;
     }
 
-    void Glyph::UpdateMeta(Uint32 index, SDL_Rect quad, float inverseScaling)
+    GlyphMeta::GlyphMeta(Uint32 codepoint, Font& font)
     {
-        clip = quad;
-        atlasIndex = index;
-        inverseScale = inverseScaling;
+        cp = codepoint;
+        TTF_Font* f = font.GetFont();
+        if (f != NULL)
+        {
+            loadedPointSize = font.GetLoadedPointSize();
+            if (TTF_GlyphIsProvided(f, codepoint))
+            {
+                int minx, miny, maxx, maxy, advance;
+                TTF_GlyphMetrics(f, cp, &minx, &maxx, &miny, &maxy, &advance);
+                advanceMetric = advance;
+                dimensions = Vector2(maxx - minx, maxy - miny);
+            }
+            else
+            {
+                dimensions = font.GetInvalidGlyphDimensions(loadedPointSize);
+                advanceMetric = dimensions.x;
+            }
+        }
+        else
+        {
+            Logger::EngineLog().Error("Failed to get glyph metrics from font, font is not loaded!");
+        }
     }
 
-    Uint32 Glyph::GetAtlasIndex()
+    float GlyphMeta::GetAdvance(float pointSize)
     {
-        return atlasIndex;
+        return (float)advanceMetric * (pointSize / loadedPointSize);
     }
 
-    SDL_Rect Glyph::GetBoundingBox()
+    Vector2 GlyphMeta::GetDimensions(float pointSize)
     {
-        return bbox;
+        float scale = (pointSize / loadedPointSize);
+        return Vector2(scale * dimensions.x, scale * dimensions.y);
     }
 
-    int Glyph::GetAdvance()
+    float GlyphMeta::GetAdvance()
     {
-        return advanceMetric;
+        return (float)advanceMetric;
     }
 
-    float Glyph::GetChange(float originalPointSize, float pointSize)
+    Vector2 GlyphMeta::GetDimensions()
     {
-        return (float)advanceMetric * (pointSize / originalPointSize);
+        return dimensions;
     }
 
-    Vector2 Glyph::GetDimensions(float originalPointSize, float pointSize)
-    {
-        float scale = (pointSize / originalPointSize);
-        return Vector2(scale * (float)bbox.w, scale * (float)bbox.h);
-    }
 
-    Uint32 Glyph::GetCodePointUTF8()
+    Uint32 GlyphMeta::GetCodepoint()
     {
-        return type & GLYPH_UTF8_MASK;
-    }
-
-    GlyphID Glyph::GetID()
-    {
-        return type;
-    }
-
-    float Glyph::GetInverseScaleFactor()
-    {
-        return inverseScale;
+        return cp;
     }
 
     //
@@ -341,13 +350,13 @@ namespace Ossium
         return GenerateFromText(renderer, text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength, f);
     }
 
-    Glyph* Font::GetGlyph(Renderer& renderer, string utfChar, int style, int outline)
+    Font::Glyph* Font::GetGlyph(Renderer& renderer, GlyphID id)
     {
-        // Limit style to main styles; strike through and underline styles don't need to be cached as they can be drawn dynamically.
-        style = style & (TTF_STYLE_BOLD | TTF_STYLE_ITALIC);
+        int outline = (id & GLYPH_OUTLINE_MASK) >> GLYPH_OUTLINE_SHIFT;
+        int hinting = (id & GLYPH_HINTING_MASK) >> GLYPH_HINTING_SHIFT;
+        int style = (id & GLYPH_STYLE_MASK) >> GLYPH_STYLE_SHIFT;
 
-        Uint32 utfCodepoint = Utilities::GetCodepointUTF8(utfChar);
-        GlyphID id = CreateGlyphID(utfCodepoint, style, outline);
+        Uint32 codepoint = id & GLYPH_UNICODE_MASK;
 
         Glyph* glyph = nullptr;
 
@@ -364,140 +373,138 @@ namespace Ossium
             {
                 Logger::EngineLog().Error("Cannot generate font glyph as the font has not been initialised!");
             }
-            // Attempt to add the glyph to the atlas
-            // TODO: upgrade encoding from UCS-2 to UCS-4 (or even better, UTF-8) on next SDL_TTF update.
+            // Check if the glyph exists in the font.
+            // TODO: upgrade encoding from UCS-2 to UCS-4 on next SDL_TTF update.
             // Currently the glyphs are limited due to lack of proper character encoding support in SDL_TTF.
-            Uint16 ucs2 = Utilities::ConvertUTF8ToUCS2(utfChar);
-            if (ucs2)
+            if (TTF_GlyphIsProvided(font, (Uint16)codepoint))
             {
-                // Check if the glyph exists
-                if (TTF_GlyphIsProvided(font, ucs2))
+                // Configure font
+                if (hinting != TTF_GetFontHinting(font))
                 {
-                    // Render the main glyph
-                    SDL_Surface* created = GenerateFromText(renderer, utfChar, Colors::WHITE, 0, 0, style, RENDERTEXT_BLEND, Colors::BLACK, outline, 0, font);
-                    SDL_Surface* renderedGlyph = SDL_CreateRGBSurfaceWithFormat(0, GetAtlasCellSize().x, GetAtlasCellSize().y, 32, created->format->format);
-                    if (created != NULL && renderedGlyph != NULL)
+                    TTF_SetFontHinting(font, hinting);
+                }
+                if (outline != TTF_GetFontOutline(font))
+                {
+                    TTF_SetFontOutline(font, outline);
+                }
+                if (style != (TTF_GetFontStyle(font) & (TTF_STYLE_BOLD | TTF_STYLE_ITALIC)))
+                {
+                    TTF_SetFontStyle(font, style);
+                }
+                // Render the glyph
+                // TODO: ditto regarding converting encoding from UCS-2 to UCS-4 when SDL_TTF gets updated
+                SDL_Surface* renderedGlyph = TTF_RenderGlyph_Blended(font, (Uint16)codepoint, Colors::WHITE);
+                SDL_Surface* created = SDL_CreateRGBSurfaceWithFormat(0, GetAtlasCellSize().x, GetAtlasCellSize().y, 32, renderedGlyph->format->format);
+                if (created != NULL && renderedGlyph != NULL)
+                {
+                    // First, get the scaling correct
+                    float inverseScale = 1.0f;
+                    int maxSize = GetAtlasMipSize(0);
+                    if (renderedGlyph->w > maxSize)
                     {
-                        // First, get the scaling correct
-                        float inverseScale = 1.0f;
-                        int maxSize = GetAtlasMipSize(0);
-                        if (created->w > maxSize)
+                        inverseScale = (float)renderedGlyph->w / (float)maxSize;
+                    }
+                    if (renderedGlyph->h > GetAtlasMipSize(0))
+                    {
+                        float rescaled = (float)renderedGlyph->h / (float)maxSize;
+                        if (rescaled < inverseScale)
                         {
-                            inverseScale = (float)created->w / (float)maxSize;
+                            inverseScale = rescaled;
                         }
-                        if (created->h > GetAtlasMipSize(0))
-                        {
-                            float rescaled = (float)created->h / (float)maxSize;
-                            if (rescaled < inverseScale)
-                            {
-                                inverseScale = rescaled;
-                            }
-                        }
+                    }
 
-                        bool blitSuccess = false;
-                        if (inverseScale != 1.0f)
-                        {
-                            Logger::EngineLog().Verbose("Glyph '{0}' is too large for atlas cell, downscaling. Scaling artifacts may be present. Upscale factor is {1}.", utfChar, inverseScale);
-                            // Scale the glyph when blitting it
-                            float scale = (1.0f / inverseScale);
-                            SDL_Rect dest = {0, 0, (int)((float)created->w * scale), (int)((float)created->h * scale)};
-                            blitSuccess = SDL_BlitScaled(created, NULL, renderedGlyph, &dest) == 0;
-                        }
-                        else
-                        {
-                            blitSuccess = SDL_BlitSurface(created, NULL, renderedGlyph, NULL) == 0;
-                        }
-
-                        if (blitSuccess)
-                        {
-                            // Update the cache
-                            if (glyphCache.Size() >= cacheLimit)
-                            {
-                                // Replace a glyph in the glyph cache
-                                Uint32 toReplace = glyphCache.GetLRU();
-                                // Remove from the cache
-                                glyphCache.PopLRU();
-                                auto replaceItr = glyphs.find(toReplace);
-                                if (replaceItr != glyphs.end())
-                                {
-                                    // Remove the current map entry
-                                    glyph = replaceItr->second;
-                                    glyphs.erase(replaceItr);
-                                }
-                                else
-                                {
-                                    // This should never happen. If it does there's a problem in code.
-                                    Logger::EngineLog().Error("Font system failure! LRU decimal code point {0} not found in glyphs map :(", toReplace);
-                                }
-                            }
-                            else
-                            {
-                                // Create a new glyph
-                                glyph = new Glyph(utfCodepoint, style, outline);
-                                //Logger::EngineLog().Verbose("Created new glyph from code point {0}.", codepoint);
-                            }
-
-                            // Render mipmaps
-                            for (int level = 0; level < mipmapDepth; level++)
-                            {
-                                SDL_Rect dest = mipOffsets[level + 1];
-                                TTF_Font* mipFont = mipmapFonts[level];
-                                if (mipFont == NULL)
-                                {
-                                    // TODO?: resort to manual scaling down? At this point we shouldn't be using mipmaps if they can't be generated.
-                                }
-                                else
-                                {
-                                    SDL_Surface* mipped = GenerateFromText(renderer, utfChar, Colors::WHITE, 0, 0, style, RENDERTEXT_BLEND, Colors::BLACK, outline, 0, mipFont);
-                                    if (mipped != NULL)
-                                    {
-                                        //Logger::EngineLog().Info("Blitting from {0} onto {1} (surface = {2})", Vector2(mipped->w, mipped->h), dest, Vector2(renderedGlyph->w, renderedGlyph->h));
-                                        SDL_BlitSurface(mipped, NULL, renderedGlyph, &dest);
-                                        SDL_FreeSurface(mipped);
-                                        mipped = NULL;
-                                    }
-                                    else
-                                    {
-                                        Logger::EngineLog().Error("Failed to blit mipmap level {0} for glyph character {1} [{2}]!", level, utfChar, utfCodepoint);
-                                    }
-                                }
-                            }
-
-                            // Glyph manages surface memory now
-                            glyph->cached.SetSurface(renderedGlyph);
-                            glyph->type = id;
-
-                            // Set glyph metrics
-                            TTF_GlyphMetrics(font, ucs2, &glyph->bbox.x, &glyph->bbox.y, &glyph->bbox.w, &glyph->bbox.h, &glyph->advanceMetric);
-                            glyph->bbox.w = max(glyph->bbox.w - glyph->bbox.x, created->w);
-                            glyph->bbox.h = max(glyph->bbox.h - glyph->bbox.y, created->h);
-                            glyph->UpdateMeta(glyph->GetAtlasIndex(), glyph->GetClip(), inverseScale);
-                        }
-                        else
-                        {
-                            Logger::EngineLog().Error("Failed to blit glyph. SDL_Error: {0}", SDL_GetError());
-                        }
-
+                    bool blitSuccess = false;
+                    if (inverseScale != 1.0f)
+                    {
+                        Logger::EngineLog().Verbose("Glyph [Codepoint: {0}] is too large for atlas cell, downscaling. Scaling artifacts may be present. Upscale factor is {1}.", codepoint, inverseScale);
+                        // Scale the glyph when blitting it
+                        float scale = (1.0f / inverseScale);
+                        SDL_Rect dest = {0, 0, (int)((float)renderedGlyph->w * scale), (int)((float)renderedGlyph->h * scale)};
+                        blitSuccess = SDL_BlitScaled(renderedGlyph, NULL, created, &dest) == 0;
                     }
                     else
                     {
-                        Logger::EngineLog().Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
+                        blitSuccess = SDL_BlitSurface(renderedGlyph, NULL, created, NULL) == 0;
                     }
-                    if (created != NULL)
+
+                    if (blitSuccess)
                     {
-                        SDL_FreeSurface(created);
-                        created = NULL;
+                        // Update the cache
+                        if (glyphCache.Size() >= cacheLimit)
+                        {
+                            // Replace a glyph in the glyph cache
+                            Uint32 toReplace = glyphCache.GetLRU();
+                            // Remove from the cache
+                            glyphCache.PopLRU();
+                            auto replaceItr = glyphs.find(toReplace);
+                            if (replaceItr != glyphs.end())
+                            {
+                                // Remove the current map entry
+                                glyph = replaceItr->second;
+                                glyphs.erase(replaceItr);
+                            }
+                            else
+                            {
+                                // This should never happen. If it does there's a problem in code.
+                                Logger::EngineLog().Error("Font system failure! LRU decimal code point {0} not found in glyphs map :(", toReplace);
+                            }
+                        }
+                        else
+                        {
+                            // Create a new glyph
+                            glyph = new Glyph();
+                        }
+
+                        // Render mipmaps
+                        for (int level = 0; level < mipmapDepth; level++)
+                        {
+                            SDL_Rect dest = mipOffsets[level + 1];
+                            TTF_Font* mipFont = mipmapFonts[level];
+                            if (mipFont == NULL)
+                            {
+                                // TODO?: resort to manual scaling down? At this point we shouldn't be using mipmaps if they can't be generated.
+                            }
+                            else
+                            {
+                                // TODO: downscale mips that are too large
+                                SDL_Surface* mipped = TTF_RenderGlyph_Blended(mipFont, codepoint, Colors::WHITE);
+                                if (mipped != NULL)
+                                {
+                                    //Logger::EngineLog().Info("Blitting from {0} onto {1} (surface = {2})", Vector2(mipped->w, mipped->h), dest, Vector2(renderedGlyph->w, renderedGlyph->h));
+                                    SDL_BlitSurface(mipped, NULL, created, &dest);
+                                    SDL_FreeSurface(mipped);
+                                    mipped = NULL;
+                                }
+                                else
+                                {
+                                    Logger::EngineLog().Error("Failed to blit mipmap level {0} for glyph [Codepoint {1}]!", level, codepoint);
+                                }
+                            }
+                        }
+
+                        // Glyph manages surface memory now
+                        glyph->cached.SetSurface(created);
+                        glyph->inverseScale = inverseScale;
                     }
+                    else
+                    {
+                        Logger::EngineLog().Error("Failed to blit glyph. SDL_Error: {0}", SDL_GetError());
+                    }
+
                 }
                 else
                 {
-                    Logger::EngineLog().Verbose("Glyph is not provided for UTF-8 character {0}.", utfChar);
+                    Logger::EngineLog().Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
+                }
+                if (renderedGlyph != NULL)
+                {
+                    SDL_FreeSurface(renderedGlyph);
+                    renderedGlyph = NULL;
                 }
             }
-            else if (!utfChar.empty() && utfChar[0] != 0)
+            else
             {
-                // Unsupported character
-                Logger::EngineLog().Verbose("Failed to get glyph for UTF-8 character {0} as it cannot be converted to a valid UCS-2 code point (SDL_TTF 2.0.15 limitation).", utfChar);
+                Logger::EngineLog().Verbose("Glyph is not provided for UTF-8 character [Codepoint {0}].", codepoint);
             }
 
         }
@@ -507,6 +514,11 @@ namespace Ossium
         glyphCache.Access(id);
 
         return glyph;
+    }
+
+    GlyphMeta Font::GetGlyphMeta(Uint32 codepoint)
+    {
+        return GlyphMeta(codepoint, *this);
     }
 
     void Font::BatchPackBegin(Renderer& renderer)
@@ -544,7 +556,8 @@ namespace Ossium
 
     }
 
-    Uint32 Font::BatchPackGlyph(Renderer& renderer, Glyph* glyph)
+    // Private method
+    Uint32 Font::BatchPackGlyph(Renderer& renderer, GlyphID id, Glyph* glyph)
     {
         if (glyph == nullptr)
         {
@@ -553,7 +566,7 @@ namespace Ossium
         }
 
         // First check if the glyph is already packed
-        Uint32 index = glyph->GetAtlasIndex();
+        Uint32 index = glyph->atlasIndex;
         if (index != 0)
         {
             // Already packed, just update the cache and early out.
@@ -594,7 +607,7 @@ namespace Ossium
 
         // Update atlas cache
         textureCache.Access(index);
-        atlasGlyphMap[index] = glyph->GetID();
+        atlasGlyphMap[index] = id;
 
         SDL_Rect dest = GetAtlasCell(index);
 
@@ -622,13 +635,20 @@ namespace Ossium
             SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
             SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
 
-            // Update glyph metrics
-            glyph->UpdateMeta(index, dest, glyph->GetInverseScaleFactor());
+            // Update atlas meta in the glyph
+            glyph->atlasIndex = index;
+            glyph->clip = dest;
 
             batched++;
         }
 
         return batched;
+    }
+
+    // Public overload
+    Uint32 Font::BatchPackGlyph(Renderer& renderer, GlyphID id)
+    {
+        return BatchPackGlyph(renderer, id, GetGlyph(renderer, id));
     }
 
     void Font::BatchPackEnd(Renderer& renderer)
@@ -667,8 +687,9 @@ namespace Ossium
         atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
     }
 
-    Vector2 Font::RenderGlyph(Renderer& renderer, Glyph* glyph, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    bool Font::RenderGlyph(Renderer& renderer, GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        Glyph* glyph = GetGlyph(renderer, id);
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         float scale = (pointSize / loadedPointSize);
         if (glyph == nullptr)
@@ -682,58 +703,25 @@ namespace Ossium
             renderer.SetDrawColor(color);
             SDL_RenderDrawRect(renderer.GetRendererSDL(), &dest);
             renderer.SetDrawColor(oldColor);
-            return position + Vector2(
-                direction == Typographic::TextDirection::LEFT_TO_RIGHT ?
-                    (invalidPadding * 2 + dest.w) :
-                        (direction == Typographic::TextDirection::RIGHT_TO_LEFT ?
-                            -(invalidPadding * 2 + dest.w) : 0
-                        ),
-                0
-            );
+            return false;
         }
-        int size = round((float)glyph->cached.GetHeight() * scale * glyph->GetInverseScaleFactor());
+        int size = round((float)glyph->cached.GetHeight() * scale * glyph->inverseScale);
         dest = {dest.x, dest.y, size, size};
 
         // If glyph is not already in the atlas, pack it now. Note this is less efficient than batch packing multiple glyphs at once.
-        if (glyph->GetAtlasIndex() == 0)
+        if (glyph->atlasIndex == 0)
         {
             BatchPackBegin(renderer);
-            BatchPackGlyph(renderer, glyph);
+            BatchPackGlyph(renderer, id, glyph);
             BatchPackEnd(renderer);
         }
-        SDL_Rect clip = glyph->GetClip();
+        SDL_Rect clip = glyph->clip;
 
         float level = GetMipMapLevel(pointSize, loadedPointSize);
 
-        // TODO: nice mipmap blending/compositing
-        /*if (blending == SDL_BLENDMODE_BLEND && mipBias > 0.000001f && mipBias < 0.999999f && level > 0.0f && level < (float)mipmapDepth)
-        {
-            // Trilinear filtering, kinda
-            SDL_Rect smallMip = GetMipMapClip(clip, (int)level + 1);
-            clip = GetMipMapClip(clip, (int)level);
-
-            float fraction = ((1.0f - (level - (float)((int)level))) + mipBias) * 0.5f;
-
-            // Calculate how much we should blend the main mipmap at this level
-            Uint8 mipBlend = (Uint8)round((float)color.a * fraction);
-
-            SDL_Color smallColor = Alpha(color, 255 - (mipBlend / 2));
-            color = Alpha(color, mipBlend);
-            Render(renderer, dest, &clip, color, blending, angle, origin, flip);
-            Render(renderer, dest, &smallMip, smallColor, blending, angle, origin, flip);
-        }
-        else
-        {*/
         clip = GetMipMapClip(clip, /*mipBias >= 1.0f ? (int)level - 1 : */(int)level);
         Render(renderer, dest, &clip, color, blending, angle, origin, flip);
-        //}
-
-        return position + Vector2(
-            direction == Typographic::TextDirection::LEFT_TO_RIGHT ?
-                round((float)glyph->GetAdvance() * scale) :
-                -round((float)glyph->GetAdvance() * scale),
-            0
-        );
+        return true;
     }
 
     void Font::FreeGlyphs()

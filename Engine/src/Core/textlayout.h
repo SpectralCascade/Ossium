@@ -83,16 +83,16 @@ namespace Ossium
         TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle, Vector2 invalidGlyphDimensions);
 
         /// Adds a glyph to the current line segment.
-        void AddGlyph(Glyph* glyph);
+        void AddGlyph(GlyphMeta glyph);
 
         /// Removes a glyph from the end of the line.
-        Glyph* PopGlyph();
+        GlyphMeta PopGlyph();
 
         /// Removes all whitespace glyphs from the end of the line.
         void PopWhitespace();
 
         /// Begins a new segment. Use this whenever you need to insert glyphs that have a different style or colour to the current segment.
-        void BeginSegment(Glyph* glyph, Uint8 style, SDL_Color color);
+        void BeginSegment(GlyphMeta glyph, Uint8 style, SDL_Color color);
 
         /// Returns the advance-based width of the line, scaled according to the point size of the glyphs. Does not account for kerning.
         float GetWidth();
@@ -104,7 +104,7 @@ namespace Ossium
         TextLineSegment GetCurrentSegment();
 
         /// Returns all glyphs on the line.
-        const vector<Glyph*>& GetGlyphs();
+        const vector<GlyphMeta>& GetGlyphs();
 
         /// Returns all segments.
         const vector<TextLineSegment>& GetSegments();
@@ -123,7 +123,7 @@ namespace Ossium
         float width = 0;
 
         /// All glyphs on this line in sequential order.
-        vector<Glyph*> glyphs;
+        vector<GlyphMeta> glyphs;
 
         /// Used while computing width.
         float glyphScale;

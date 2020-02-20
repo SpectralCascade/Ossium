@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef FONT_H
 #define FONT_H
@@ -86,90 +86,71 @@ namespace Ossium
     // Because the maximum UTF-8 code point is 0x1FFFFF, we have 11 spare bits to use for style and outline data :D
     typedef Uint32 GlyphID;
 
-    //                                                  [style]
-    //                                          [outline]||||[   UTF-8 reserved   ]
-    const static Uint32 GLYPH_UTF8_MASK     =   0b00000000000111111111111111111111;
+    //                                         [hinting]
+    //                                            ||[style]
+    //                                   [outline]||||[   UTF-8 reserved   ]
+    const Uint32 GLYPH_UNICODE_MASK  =   0b00000000000111111111111111111111;
 
-    //                                                  [style]
-    //                                          [outline]||||[   UTF-8 reserved   ]
-    const static Uint32 GLYPH_STYLE_MASK    =   0b00000001111000000000000000000000;
-    const static Uint32 GLYPH_STYLE_SHIFT   =   21;
+    //                                         [hinting]
+    //                                            ||[style]
+    //                                   [outline]||||[   UTF-8 reserved   ]
+    const Uint32 GLYPH_STYLE_MASK    =   0b00000000011000000000000000000000;
+    const Uint32 GLYPH_STYLE_SHIFT   =   21;
 
-    //                                          [style]
-    //                                          [outline]||||[   UTF-8 reserved   ]
-    const static Uint32 GLYPH_OUTLINE_MASK  =   0b11111110000000000000000000000000;
-    const static Uint32 GLYPH_OUTLINE_SHIFT =   25;
+    //                                         [hinting]
+    //                                            ||[style]
+    //                                   [outline]||||[   UTF-8 reserved   ]
+    const Uint32 GLYPH_HINTING_MASK  =   0b00000001100000000000000000000000;
+    const Uint32 GLYPH_HINTING_SHIFT =   23;
+
+    //                                         [hinting]
+    //                                            ||[style]
+    //                                   [outline]||||[   UTF-8 reserved   ]
+    const Uint32 GLYPH_OUTLINE_MASK  =   0b11111110000000000000000000000000;
+    const Uint32 GLYPH_OUTLINE_SHIFT =   25;
 
     /// Creates a glyph ID
-    static inline GlyphID CreateGlyphID(Uint32 codepoint, Uint32 style, Uint32 outline)
-    {
-        return codepoint | (style << GLYPH_STYLE_SHIFT) | (outline << GLYPH_OUTLINE_SHIFT);
-    }
+    GlyphID CreateGlyphID(Uint32 codepoint, Uint8 style, Uint8 hinting, Uint8 outline);
 
     // Forward declaration
     class Font;
 
-    class Glyph
+    /// Contains meta data about a particular glyph.
+    class GlyphMeta
     {
     public:
-        friend class Font;
-
-        Glyph(Uint32 codepoint, Uint32 style, Uint32 outline);
-
-        /// Updates the atlas index and clip rect.
-        void UpdateMeta(Uint32 index, SDL_Rect quad, float inverseScaling);
-
-        /// Returns the clip rect of the glyph in the texture atlas.
-        SDL_Rect GetClip();
-
-        /// Returns the index of the glyph in the texture atlas.
-        /// Returns 0 if not packed.
-        Uint32 GetAtlasIndex();
-
-        /// The glyph metrics bounding box
-        SDL_Rect GetBoundingBox();
-
-        /// Returns the pixel advance to the next glyph origin.
-        int GetAdvance();
+        /// Default constructor initialises codepoint to zero.
+        GlyphMeta();
+        /// Constructor loads metrics from a given font
+        GlyphMeta(Uint32 codepoint, Font& font);
 
         /// Computes the difference to the next glyph for a given point size.
-        float GetChange(float originalPointSize, float pointSize);
+        float GetAdvance(float pointSize);
 
         /// Computes the dimensions of the glyph at a given point size.
-        Vector2 GetDimensions(float originalPointSize, float pointSize);
+        Vector2 GetDimensions(float pointSize);
 
-        /// Returns the UTF-8 code point.
-        Uint32 GetCodePointUTF8();
+        /// Returns the advance at the loaded point size.
+        float GetAdvance();
 
-        /// Returns glyph type information (UTF-8 code point, style, outline thickness in pixels).
-        GlyphID GetID();
+        /// Returns the dimensions at the loaded point size.
+        Vector2 GetDimensions();
 
-        /// Some glyphs cannot fit in font atlas cell unless downscaled, so this is what the scale factor is for.
-        float GetInverseScaleFactor();
+        /// Returns the Unicode codepoint.
+        Uint32 GetCodepoint();
 
     private:
-        /// The clip rect of the glyph in the font atlas.
-        SDL_Rect clip;
+        /// The loaded point size of the font, cached here to account for scaling.
+        Uint16 loadedPointSize;
 
         /// Distance from this glyph's origin to the next glyph origin. Always positive, even for RTL glyphs.
-        int advanceMetric;
+        Uint16 advanceMetric;
 
-        /// The bounding box
-        SDL_Rect bbox;
+        /// The dimensions of the glyph
+        Vector2 dimensions;
 
-        /// Some glyphs are downscaled slightly
-        float inverseScale = 1.0f;
-
-        /// The index of the glyph within the atlas.
-        Uint32 atlasIndex = 0;
-
-        /// The unique identifier for this rendered glyph, consisting of the UTF-8 code point, render style and outline thickness.
-        GlyphID type;
-
-        /// The glyph image is also cached so it doesn't need to be re-rendered
-        /// if it gets removed from the atlas texture.
-        Image cached;
-
+        /// Unicode codepoint
+        Uint32 cp;
     };
 
     class OSSIUM_EDL Font : public Resource
@@ -214,10 +195,8 @@ namespace Ossium
         /// Ditto, but bundled some parameters.
         SDL_Surface* GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f = NULL);
 
-        /// Returns the glyph for the given UTF-8 character.
-        /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
-         *  then adds it to the map and updates the cache. Note this does NOT pack the glyph into the atlas. */
-        Glyph* GetGlyph(Renderer& renderer, string utf8char, int style = TTF_STYLE_NORMAL, int outline = 0);
+        /// Returns meta data about a particular glyph.
+        GlyphMeta GetGlyphMeta(Uint32 codepoint);
 
         /// TODO: add support for alternative packing mode that doesn't use render targets (maybe cache the texture surface and modify that instead).
         /// Targets the texture atlas for rendering. Returns the original render target.
@@ -228,7 +207,7 @@ namespace Ossium
          *  When the return value == GetAtlasMaxGlyphs(), you should call BatchPackEnd(), otherwise you'll render over other glyphs in the batch.
          *  Note: if this method returns 0, it doesn't necessarily mean there was an error packing the glyph - in circumstances where the glyph is already packed,
          *  the return value does not change. You can check if there was an error packing the glyph by checking glyph->GetAtlasIndex() > 0. */
-        Uint32 BatchPackGlyph(Renderer& renderer, Glyph* glyph);
+        Uint32 BatchPackGlyph(Renderer& renderer, GlyphID id);
 
         /// Renders any outstanding pack batch and resets the renderer to it's configuration before batching.
         void BatchPackEnd(Renderer& renderer);
@@ -242,12 +221,11 @@ namespace Ossium
         /// Renders the font atlas texture at a given point size.
         void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-        /// Renders a single glyph at the chosen position, returning the ideal position for the next glyph to be rendered from (for a line of text).
-        /// mipBias indicates how mipmap blending (trilinear filtering) should be applied. A value <= 0.0f doesn't apply any mipmap blending, 0.5f applies even mipmap blending,
-        /// and 1.0f or above uses the larger mipmap instead.
-        Vector2 RenderGlyph(
+        /// Renders a single glyph at the chosen position. Returns true if the glyph is valid and rendered successfully, otherwise renders an invalid glyph box and returns false.
+        /// TODO: provide alternate method to render the invalid glyph box
+        bool RenderGlyph(
             Renderer& renderer,
-            Glyph* glyph,
+            GlyphID id,
             Vector2 position,
             float pointSize,
             SDL_Color color = Colors::RED,
@@ -324,6 +302,33 @@ namespace Ossium
         void ClearAtlas(Uint32 quantity = 0);
 
     private:
+        /// Internal structure for caching a single glyph and storing relevant meta data for the font atlas.
+        class Glyph
+        {
+        public:
+            /// The clip rect of the glyph in the font atlas.
+            SDL_Rect clip;
+
+            /// Some glyphs are downscaled slightly when packed in the font atlas.
+            float inverseScale = 1.0f;
+
+            /// The index of the glyph within the atlas.
+            Uint32 atlasIndex = 0;
+
+            /// The glyph image is also cached so it doesn't need to be re-rendered
+            /// if it gets removed from the atlas texture.
+            Image cached;
+
+        };
+
+        /// Returns the glyph for the given UTF-8 character.
+        /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
+         *  then adds it to the map and updates the cache. Note this does NOT pack the glyph into the atlas. */
+        Glyph* GetGlyph(Renderer& renderer, GlyphID id);
+
+        /// Internal method for batching a glyph.
+        Uint32 BatchPackGlyph(Renderer& renderer, GlyphID id, Glyph* glyph);
+
         /// Copying is not permitted.
         Font(const Font& thisCopy);
         Font operator=(const Font& thisCopy);
@@ -370,7 +375,8 @@ namespace Ossium
         /// The maximum number of glyphs in the texture atlas.
         Uint32 maxAtlasGlyphs = 0;
 
-        /// The absolute maximum number of glyphs that can be packed in the font atlas at any one time.
+        /// A very rough limit specifying the *target* maximum number of glyphs that can be packed in the font atlas at any one time.
+        /// TODO: rename, this isn't accurate - it's partly dependant on atlas size vs font height, this just acts as a rough limiter.
         const Uint32 ABSOLUTE_MAXIMUM_ATLAS_GLYPHS = 1024;
 
         /// The relative mipmap rect for each mipmap level.

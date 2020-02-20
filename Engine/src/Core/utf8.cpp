@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include "utf8.h"
 
@@ -54,50 +54,26 @@ namespace Ossium
 
             Uint8 bytes = CheckUTF8(utf8Char[0]);
 
-            if (bytes <= 0)
-            {
-                // Assume ASCII
-                codepoint = (Uint32)utf8Char[0];
-            }
-            else
-            {
-                for (int i = bytes - 1; i >= 0; i--)
-                {
-                    codepoint |= (unsigned char)(utf8Char[bytes - i - 1]) << (i * 8);
-                }
-            }
-            // Chop off invalid bits, Unicode only defines 21 bits worth of code points
-            codepoint &= 0b00000000000111111111111111111111;
-
-            return codepoint;
-        }
-
-        Uint16 ConvertUTF8ToUCS2(string utf8Char)
-        {
-            // TODO: unit test, ∅ (empty set) should be converted to (hex) U+2205 (decimal 8709).
-
-            if (utf8Char.empty())
-            {
-                return 0;
-            }
-
-            Uint16 ucs2Char = 0;
-            Uint8 bytes = CheckUTF8((Uint8)utf8Char[0]);
-
             if (bytes <= 1)
             {
-                ucs2Char = utf8Char[0];
+                codepoint = utf8Char[0];
             }
             else if (bytes == 2)
             {
-                ucs2Char = ((Uint8)utf8Char[0] & 0x1F) << 6 | ((Uint8)utf8Char[1] & 0x3F);
+                codepoint = ((Uint8)utf8Char[0] & 0x1F) << 6 | ((Uint8)utf8Char[1] & 0x3F);
             }
             else if (bytes == 3)
             {
-                ucs2Char = ((Uint8)utf8Char[0] & 0x0F) << 12 | ((Uint8)utf8Char[1] & 0x3F) << 6 | ((Uint8)utf8Char[2] & 0x3F);
+                codepoint = ((Uint8)utf8Char[0] & 0x0F) << 12 | ((Uint8)utf8Char[1] & 0x3F) << 6 | ((Uint8)utf8Char[2] & 0x3F);
             }
+            else
+            {
+                codepoint = ((Uint8)utf8Char[0] & 0x07) << 18 | ((Uint8)utf8Char[1] & 0x3F) << 12 | ((Uint8)utf8Char[2] & 0x3F) << 6 | ((Uint8)utf8Char[3] & 0x3F);
+            }
+            // Chop off any invalid bits, Unicode only defines 21 bits worth of code points
+            codepoint &= 0b00000000000111111111111111111111;
 
-            return ucs2Char;
+            return codepoint;
         }
 
     }
