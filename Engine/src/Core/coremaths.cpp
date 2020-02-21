@@ -446,6 +446,15 @@ namespace Ossium
         return (SDL_Rect){(int)round(x), (int)round(y), (int)round(w), (int)round(h)};
     }
 
+    bool Rect::operator==(const Rect& rect)
+    {
+        return rect.x == x && rect.y == y && rect.w == w && rect.h == h;
+    }
+    bool Rect::operator!=(const Rect& rect)
+    {
+        return !(*this == rect);
+    }
+
     ///
     /// Polygon
     ///

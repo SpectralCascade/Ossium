@@ -262,6 +262,9 @@ namespace Ossium
             return y + h;
         };
 
+        bool operator==(const Rect& rect);
+        bool operator!=(const Rect& rect);
+
         /// Returns the  SDL_Rect equivalent of this rect for convenience
         SDL_Rect SDL();
 

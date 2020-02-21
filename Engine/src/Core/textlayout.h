@@ -40,12 +40,25 @@ namespace Ossium
 
     }
 
-    struct TextLayoutSchema : public Schema<TextLayoutSchema, 7>
+    struct TextLayoutSchema : public Schema<TextLayoutSchema, 9>
     {
-        DECLARE_BASE_SCHEMA(TextLayoutSchema, 7);
+        DECLARE_BASE_SCHEMA(TextLayoutSchema, 9);
+
+        /// The default colour of the text.
+        M(SDL_Color, mainColor) = Colors::BLACK;
+
+        /// The default style of the text.
+        M(int, mainStyle) = TTF_STYLE_NORMAL;
+
+    protected:
+        /// Size of the text.
+        M(float, pointSize);
 
         /// Text alignment when rendered
         M(Typographic::TextAlignment, alignment) = Typographic::TextAlignment::LEFT_ALIGNED;
+
+        /// The direction of the text; differs between languages.
+        M(Typographic::TextDirection, direction) = Typographic::TextDirection::LEFT_TO_RIGHT;
 
         /// Should the text be wrapped if it exceeds the bounding box when rendered?
         M(bool, lineWrap) = true;
@@ -56,11 +69,8 @@ namespace Ossium
         /// Should words be broken if they're too long and exceed the bounding box? Only applicable when line wrapping.
         M(bool, wordBreak) = false;
 
-        /// The direction of the text; differs between languages.
-        M(Typographic::TextDirection, direction) = Typographic::TextDirection::LEFT_TO_RIGHT;
-
         /// Should kerning be applied to the text? Note this does not always work with modern fonts at the time of writing.
-        /// (requires Harfbuzz or similar text-layout library to do the work).
+        /// (requires Harfbuzz or similar text shaping library to do the work).
         M(bool, kerning) = true;
 
     };
@@ -115,6 +125,9 @@ namespace Ossium
         /// Returns a new line with the glyphs and segments copied over from the specified index onwards. Removes any leftover white space from the end of this line.
         TextLine GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions, bool removeWhitespace = true);
 
+        /// The start position of this line.
+        Vector2 position;
+
     private:
         /// Sub-sections of the line that have different styles.
         vector<TextLineSegment> segments;
@@ -145,7 +158,16 @@ namespace Ossium
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, TextLayoutSchema);
 
-        /// Renders some text within a specified bounding box. By default it supports some markup tags as described below.
+        /// Renders the text in the current layout.
+        void Render(Renderer& renderer, Font& font, Vector2 position);
+
+        /// Sets the bounding box. Note that this method triggers computation of layout on the next Update() or Render() method call.
+        void SetBounds(Vector2 bounds);
+
+        /// Returns the bounding box.
+        Vector2 GetBounds();
+
+        /// Sets the text string to be used. If the string is different to the cached string, also triggers layout computation on next Update() or Render().
         /**
             Given a text string with <i>these tags</i> will produce italic text, while <b>these tags</b> will produce bold text.
             You can also specify coloured text with <color=#FF0000FF>these tags</color> where #FF0000FF can be replaced with a hexadecimal colour code
@@ -154,14 +176,77 @@ namespace Ossium
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
             Also takes natural line break characters (ASCII only) that are used for line wrapping without breaking words.
         */
-        Rect Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor = Colors::BLACK, int mainStyle = TTF_STYLE_NORMAL, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
+        void SetText(string str);
 
-        /// Renders a single line of glyphs.
-        Rect RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font);
+        /// Returns the text string currently used to compute layout.
+        string GetText();
+
+        /// If the layout has been modified, this method will recompute the layout.
+        void Update(Renderer& renderer, Font& font);
+
+        /// Returns the dimensions of the text layout.
+        Vector2 GetSize();
+
+        /// Returns the text alignment mode
+        Typographic::TextAlignment GetAlignment();
+
+        /// Returns the text direction
+        Typographic::TextDirection GetDirection();
+
+        /// Returns true if kerning is applied to text.
+        bool IsKerning();
+
+        /// Returns true if line wrapping is applied.
+        bool IsLineWrapping();
+
+        /// Returns true if line wrapping can break words.
+        bool IsWordBreaking();
+
+        /// Returns true if end line white-space is ignored when line wrapping.
+        bool IsIgnoringWhitespace();
+
+        /// Returns the point size.
+        float GetPointSize();
+
+        // Associated setters, should be self explanatory.
+        void SetAlignment(Typographic::TextAlignment alignMode);
+        void SetDirection(Typographic::TextDirection textDirection);
+        void SetKerning(bool kern);
+        void SetLineWrapping(bool wrap);
+        void SetWordBreaking(bool midwordBreak);
+        void SetIgnoringWhitespace(bool ignoreSpaces);
+        void SetPointSize(float ptSize);
 
     private:
         /// Attempts to parse a tag. Returns false on invalid tag.
         bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style);
+
+        /// Computes the text layout, parses tags and batch packs as many glyphs from the text string as possible.
+        void ComputeLayout(Renderer& renderer, Font& font, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
+
+        /// Computes the positions of each line.
+        void ComputeLinePositions(Font& font);
+
+        /// Renders a single line of glyphs.
+        void RenderLine(Renderer& renderer, Vector2 position, TextLine& line, Font& font);
+
+        /// All lines of glyphs.
+        vector<TextLine> lines;
+
+        /// The bounding box dimensions of this text layout.
+        Vector2 bbox;
+
+        /// The text to layout and render.
+        string text;
+
+        /// Flag that indicates whether the positioning of lines should be updated.
+        bool updateLines = true;
+
+        /// Flag that indicates whether the layout should be recomputed.
+        bool updateAll = true;
+
+        /// The dimensions of the computed text layout.
+        Vector2 size = Vector2::Zero;
 
     };
 

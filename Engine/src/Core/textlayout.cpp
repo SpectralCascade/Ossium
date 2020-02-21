@@ -176,10 +176,64 @@ namespace Ossium
     // TextLayout
     //
 
-    Rect TextLayout::Render(Renderer& renderer, string text, Font& font, float pointSize, Rect boundingBox, SDL_Color mainColor, int mainStyle, bool applyMarkup, string lineBreakCharacters)
+    void TextLayout::Render(Renderer& renderer, Font& font, Vector2 position)
     {
-        // Markup helper variables for keeping track of tags
-        // TODO: make tags more extensible?
+        // Update just in case anything has changed
+        Update(renderer, font);
+
+        for (auto line : lines)
+        {
+            RenderLine(renderer, position, line, font);
+        }
+    }
+
+    void TextLayout::RenderLine(Renderer& renderer, Vector2 position, TextLine& line, Font& font)
+    {
+        if (line.GetGlyphs().empty())
+        {
+            // Early out
+            return;
+        }
+
+        position += line.position;
+        Vector2 startPos = position;
+
+        for (Uint32 i = 0, counti = line.GetSegments().size(); i < counti; i++)
+        {
+            Uint32 nextSegment = i + 1 < line.GetSegments().size() ? line.GetSegments()[i + 1].index : line.GetGlyphs().size();
+            for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
+            {
+                GlyphMeta meta = line.GetGlyphs()[index];
+                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style, 0, 0);
+                font.RenderGlyph(
+                    renderer,
+                    glyph,
+                    position,
+                    pointSize,
+                    line.GetSegments()[i].color,
+                    kerning,
+                    direction
+                );
+                position.x += direction == Typographic::TextDirection::LEFT_TO_RIGHT ? meta.GetAdvance(pointSize) : -meta.GetAdvance(pointSize);
+            }
+            if (line.GetSegments()[i].style & TTF_STYLE_UNDERLINE)
+            {
+                Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
+                Line underline(startPos + underlinePos, position + underlinePos);
+                underline.Draw(renderer, line.GetSegments()[i].color);
+            }
+            if (line.GetSegments()[i].style & TTF_STYLE_STRIKETHROUGH)
+            {
+                Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
+                Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);
+                strikethrough.Draw(renderer, line.GetSegments()[i].color);
+            }
+        }
+
+    }
+
+    void TextLayout::ComputeLayout(Renderer& renderer, Font& font, bool applyMarkup, string lineBreakCharacters)
+    {
         bool isTag = false;
         bool isEscaped = false;
         string tagText;
@@ -191,26 +245,20 @@ namespace Ossium
         colours.push(mainColor);
         Uint8 style = (Uint8)(mainStyle & (TTF_STYLE_UNDERLINE | TTF_STYLE_STRIKETHROUGH));
 
-        // Each line of text
-        vector<TextLine> lines;
+        lines.clear();
         lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
 
-        Vector2 linePosition = Vector2(boundingBox.x, boundingBox.y);
-        Vector2 minLinePosition = Vector2(
-            alignment == Typographic::TextAlignment::LEFT_ALIGNED ?
-                linePosition.x : (alignment == Typographic::TextAlignment::CENTERED ?
-                    boundingBox.x + (boundingBox.w / 2) : boundingBox.x + boundingBox.w),
-            boundingBox.y
-        );
+        if (text.empty())
+        {
+            // Early out
+            return;
+        }
 
         // Keeps track of the last ideal place in the line to make a line break
         Uint32 lineBreakIndex = 0;
         // Counts line segment indices
         Uint32 lineSegmentCounter = 0;
 
-        Vector2 dimensions = Vector2::Zero;
-
-        // Batch pack each glyph
         font.BatchPackBegin(renderer);
         for (unsigned int i = 0, counti = text.length(); i < counti;)
         {
@@ -276,14 +324,14 @@ namespace Ossium
             if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
                 // Pack the glyph.
-                GlyphMeta toBatch = font.GetGlyphMeta(Utilities::GetCodepointUTF8(utfChar));
+                GlyphMeta glyph = font.GetGlyphMeta(Utilities::GetCodepointUTF8(utfChar));
 
                 bool lineChange = false;
 
                 // If there is more than one glyph on the line and the line exceeds the bounding box, wrap to a new line.
                 if (lineWrap && ((lines.back().GetGlyphs().size() > 0) && (!(ignoreWhitespace && utfChar[0] == ' ')) &&
-                    (lines.back().GetWidth() + (toBatch.GetCodepoint() != 0 ?
-                        toBatch.GetDimensions(pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= boundingBox.w
+                    (lines.back().GetWidth() + (glyph.GetCodepoint() != 0 ?
+                        glyph.GetDimensions(pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= bbox.x
                     ))
                 )
                 {
@@ -306,50 +354,19 @@ namespace Ossium
                 // Add glyph to the current line
                 if (addLineSegment && !lineChange)
                 {
-                    lines.back().BeginSegment(toBatch, style, mainColor);
+                    lines.back().BeginSegment(glyph, style, mainColor);
                     lineSegmentCounter++;
                 }
                 else
                 {
-                    lines.back().AddGlyph(toBatch);
+                    lines.back().AddGlyph(glyph);
                 }
 
-                GlyphID id = CreateGlyphID(toBatch.GetCodepoint(), style, 0, 0);
-                // If the batch reaches the maximum number of atlas glyphs, stop batching. If possible, render all lines except for latest line.
-                // If there is only one line ready for rendering, then stop batching altogether until there are more lines.
-                if ((font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs() || lines.size() > 1) && font.BatchPackGlyph(renderer, id) >= font.GetAtlasMaxGlyphs() - 1)
+                // Only pack while this batch has space in the font atlas.
+                if (font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs())
                 {
-                    font.BatchPackEnd(renderer);
-
-                    // Render all lines except for the last line (unless there is only one line available, in which case it gets rendered up to the last line wrap break).
-                    for (Uint32 lineIndex = 0, countLines = lines.size() - 1; lineIndex < countLines; lineIndex++)
-                    {
-                        switch (alignment)
-                        {
-                        case Typographic::TextAlignment::RIGHT_ALIGNED:
-                            linePosition.x = (boundingBox.x + boundingBox.w) - ceil(lines[lineIndex].GetRenderedWidth());
-                            break;
-                        case Typographic::TextAlignment::CENTERED:
-                            linePosition.x = (boundingBox.x + (boundingBox.w / 2)) - ceil(lines[lineIndex].GetRenderedWidth() / 2.0f);
-                            break;
-                        default:
-                            linePosition.x = boundingBox.x;
-                            break;
-                        }
-                        Rect rendered = RenderLine(renderer, lines[lineIndex], linePosition, pointSize, font);
-                        dimensions = dimensions.Max(Vector2(rendered.w, dimensions.y + rendered.h));
-                        minLinePosition = minLinePosition.Min(linePosition);
-                        linePosition.y += font.GetLineDifference(pointSize);
-                    }
-                    // Remove the lines that have been rendered, but not the last line.
-                    TextLine current = lines.back();
-                    lines.clear();
-                    lines.push_back(current);
-                    lineBreakIndex = 0;
-                    lineSegmentCounter = 0;
-
-                    // Then continue batching
-                    font.BatchPackBegin(renderer);
+                    // Batch pack glyphs now to save processing time during rendering.
+                    font.BatchPackGlyph(renderer, CreateGlyphID(glyph.GetCodepoint(), style, 0, 0));
                 }
 
                 if (lineWrap)
@@ -366,6 +383,7 @@ namespace Ossium
                         }
                     }
                 }
+
             }
             else if (utfChar[0] == '\n')
             {
@@ -378,77 +396,178 @@ namespace Ossium
         }
         font.BatchPackEnd(renderer);
 
-        // Render all remaining lines
-        for (TextLine line : lines)
+        // Update line positioning
+        ComputeLinePositions(font);
+
+        updateAll = false;
+
+    }
+
+    void TextLayout::ComputeLinePositions(Font& font)
+    {
+        float lineY = 0;
+        for (TextLine& line : lines)
         {
             switch (alignment)
             {
             case Typographic::TextAlignment::RIGHT_ALIGNED:
-                linePosition.x = (boundingBox.x + boundingBox.w) - ceil(line.GetRenderedWidth());
+                line.position.x = bbox.x - ceil(line.GetRenderedWidth());
                 break;
             case Typographic::TextAlignment::CENTERED:
-                linePosition.x = (boundingBox.x + (boundingBox.w / 2)) - ceil(line.GetRenderedWidth() / 2.0f);
+                line.position.x = (bbox.x / 2) - ceil(line.GetRenderedWidth() / 2.0f);
                 break;
             default:
-                linePosition.x = boundingBox.x;
+                line.position.x = 0;
                 break;
             }
-            Rect rendered = RenderLine(renderer, line, linePosition, pointSize, font);
-            dimensions = dimensions.Max(Vector2(rendered.w, dimensions.y + rendered.h));
-            minLinePosition = minLinePosition.Min(linePosition);
-            linePosition.y += font.GetLineDifference(pointSize);
+            line.position.y = lineY;
+            lineY += font.GetLineDifference(pointSize);
+            size = size.Max(Vector2(line.GetRenderedWidth(), lineY));
         }
-
-        return Rect(minLinePosition.x, minLinePosition.y, dimensions.x, dimensions.y);
+        updateLines = false;
     }
 
-    Rect TextLayout::RenderLine(Renderer& renderer, TextLine& line, Vector2 position, float pointSize, Font& font)
+    void TextLayout::SetBounds(Vector2 bounds)
     {
-        Vector2 maxVec = Vector2::Zero;
-
-        if (line.GetGlyphs().empty())
+        if (bbox != bounds)
         {
-            // Early out
-            return Rect(position.x, position.y, 0, 0);
+            bbox = bounds;
+            updateAll = true;
         }
+    }
 
-        Vector2 startPos = position;
-        for (Uint32 i = 0, counti = line.GetSegments().size(); i < counti; i++)
+    Vector2 TextLayout::GetBounds()
+    {
+        return bbox;
+    }
+
+    void TextLayout::SetText(string str)
+    {
+        if (str.empty() || str.size() != (text.empty() ? 0 : text.size()) || text != str)
         {
-            Uint32 nextSegment = i + 1 < line.GetSegments().size() ? line.GetSegments()[i + 1].index : line.GetGlyphs().size();
-            for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
-            {
-                GlyphMeta meta = line.GetGlyphs()[index];
-                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style, 0, 0);
-                font.RenderGlyph(
-                    renderer,
-                    glyph,
-                    position,
-                    pointSize,
-                    line.GetSegments()[i].color,
-                    kerning,
-                    direction
-                );
-                position += Vector2(direction == Typographic::TextDirection::LEFT_TO_RIGHT ? meta.GetAdvance(pointSize) : -meta.GetAdvance(pointSize), 0);
-                maxVec = maxVec.Max((glyph & GLYPH_UNICODE_MASK) != 0 ? meta.GetDimensions(pointSize) : font.GetInvalidGlyphDimensions(pointSize));
-            }
-            if (line.GetSegments()[i].style & TTF_STYLE_UNDERLINE)
-            {
-                Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
-                Line underline(startPos + underlinePos, position + underlinePos);
-                maxVec = maxVec.Max(underline.a);
-                underline.Draw(renderer, line.GetSegments()[i].color);
-            }
-            if (line.GetSegments()[i].style & TTF_STYLE_STRIKETHROUGH)
-            {
-                Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
-                Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);
-                maxVec = maxVec.Max(strikethrough.a);
-                strikethrough.Draw(renderer, line.GetSegments()[i].color);
-            }
-            maxVec = maxVec.Max(position - startPos);
+            text = str;
+            updateAll = true;
         }
-        return Rect(startPos.x, startPos.y, maxVec.x, maxVec.y);
+    }
+
+    string TextLayout::GetText()
+    {
+        return text;
+    }
+
+    void TextLayout::Update(Renderer& renderer, Font& font)
+    {
+        if (updateAll)
+        {
+            ComputeLayout(renderer, font);
+        }
+        else if (updateLines)
+        {
+            ComputeLinePositions(font);
+        }
+    }
+
+    Vector2 TextLayout::GetSize()
+    {
+        return size;
+    }
+
+    Typographic::TextAlignment TextLayout::GetAlignment()
+    {
+        return alignment;
+    }
+
+    Typographic::TextDirection TextLayout::GetDirection()
+    {
+        return direction;
+    }
+
+    bool TextLayout::IsKerning()
+    {
+        return kerning;
+    }
+
+    bool TextLayout::IsLineWrapping()
+    {
+        return lineWrap;
+    }
+
+    bool TextLayout::IsWordBreaking()
+    {
+        return wordBreak;
+    }
+
+    bool TextLayout::IsIgnoringWhitespace()
+    {
+        return ignoreWhitespace;
+    }
+
+    float TextLayout::GetPointSize()
+    {
+        return pointSize;
+    }
+
+    void TextLayout::SetAlignment(Typographic::TextAlignment alignMode)
+    {
+        if (alignment != alignMode)
+        {
+            alignment = alignMode;
+            updateLines = true;
+        }
+    }
+
+    void TextLayout::SetDirection(Typographic::TextDirection textDirection)
+    {
+        if (direction != textDirection)
+        {
+            direction = textDirection;
+            updateAll = true;
+        }
+    }
+
+    void TextLayout::SetKerning(bool kern)
+    {
+        if (kerning != kern)
+        {
+            kerning = kern;
+            // TODO: update all if kerning affects layout in future
+        }
+    }
+
+    void TextLayout::SetLineWrapping(bool wrap)
+    {
+        if (lineWrap != wrap)
+        {
+            lineWrap = wrap;
+            updateAll = true;
+        }
+    }
+
+    void TextLayout::SetWordBreaking(bool midwordBreak)
+    {
+        if (wordBreak != midwordBreak)
+        {
+            wordBreak = midwordBreak;
+            updateAll = true;
+        }
+    }
+
+    void TextLayout::SetIgnoringWhitespace(bool ignoreSpaces)
+    {
+        if (ignoreWhitespace != ignoreSpaces)
+        {
+            ignoreWhitespace = ignoreSpaces;
+            updateAll = true;
+        }
+    }
+
+    void TextLayout::SetPointSize(float ptSize)
+    {
+        if (pointSize != ptSize)
+        {
+            pointSize = ptSize;
+            updateAll = true;
+        }
     }
 
     bool TextLayout::ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style)
