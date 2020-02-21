@@ -68,10 +68,19 @@ namespace Ossium
             loadedPointSize = font.GetLoadedPointSize();
             if (TTF_GlyphIsProvided(f, codepoint))
             {
-                int minx, miny, maxx, maxy, advance;
-                TTF_GlyphMetrics(f, cp, &minx, &maxx, &miny, &maxy, &advance);
+                int dud, advance, w, h;
+                TTF_GlyphMetrics(f, cp, &dud, &dud, &dud, &dud, &advance);
                 advanceMetric = advance;
-                dimensions = Vector2(maxx, maxy);
+                // TODO: upgrade SDL_TTF and use UCS-4 instead of UCS-2.
+                const Uint16 unicode[2] = {(Uint16)codepoint, 0};
+                if (TTF_SizeUNICODE(f, unicode, &w, &h) >= 0)
+                {
+                    dimensions = Vector2(w, h);
+                }
+                else
+                {
+                    Logger::EngineLog().Warning("Failed to get glyph dimensions for codepoint {0}! TTF_Error: {1}", codepoint, TTF_GetError());
+                }
             }
             else
             {
