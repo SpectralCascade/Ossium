@@ -232,7 +232,6 @@ namespace Ossium
             bool kerning = true,
             Typographic::TextDirection direction = Typographic::TextDirection::LEFT_TO_RIGHT,
             SDL_BlendMode blending = SDL_BLENDMODE_BLEND,
-            float mipBias = 0.5f,
             double angle = 0.0,
             SDL_Point* origin = NULL,
             SDL_RendererFlip flip = SDL_FLIP_NONE
@@ -318,6 +317,8 @@ namespace Ossium
             /// The glyph image is also cached so it doesn't need to be re-rendered
             /// if it gets removed from the atlas texture.
             Image cached;
+
+            GlyphID id;
 
         };
 

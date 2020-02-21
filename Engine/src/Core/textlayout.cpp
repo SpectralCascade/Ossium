@@ -181,7 +181,7 @@ namespace Ossium
         // Update just in case anything has changed
         Update(renderer, font);
 
-        for (auto line : lines)
+        for (TextLine& line : lines)
         {
             RenderLine(renderer, position, line, font);
         }
@@ -204,7 +204,7 @@ namespace Ossium
             for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
             {
                 GlyphMeta meta = line.GetGlyphs()[index];
-                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style, 0, 0);
+                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style | mainStyle, 0, 0);
                 font.RenderGlyph(
                     renderer,
                     glyph,
@@ -216,13 +216,13 @@ namespace Ossium
                 );
                 position.x += direction == Typographic::TextDirection::LEFT_TO_RIGHT ? meta.GetAdvance(pointSize) : -meta.GetAdvance(pointSize);
             }
-            if (line.GetSegments()[i].style & TTF_STYLE_UNDERLINE)
+            if ((line.GetSegments()[i].style | mainStyle) & TTF_STYLE_UNDERLINE)
             {
                 Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
                 Line underline(startPos + underlinePos, position + underlinePos);
                 underline.Draw(renderer, line.GetSegments()[i].color);
             }
-            if (line.GetSegments()[i].style & TTF_STYLE_STRIKETHROUGH)
+            if ((line.GetSegments()[i].style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
             {
                 Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
                 Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);

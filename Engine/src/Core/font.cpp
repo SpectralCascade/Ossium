@@ -387,7 +387,7 @@ namespace Ossium
                 {
                     TTF_SetFontOutline(font, outline);
                 }
-                if (style != (TTF_GetFontStyle(font) & (TTF_STYLE_BOLD | TTF_STYLE_ITALIC)))
+                if (style != TTF_GetFontStyle(font))
                 {
                     TTF_SetFontStyle(font, style);
                 }
@@ -460,6 +460,18 @@ namespace Ossium
                         {
                             SDL_Rect dest = mipOffsets[level + 1];
                             TTF_Font* mipFont = mipmapFonts[level];
+                            if (hinting != TTF_GetFontHinting(mipFont))
+                            {
+                                TTF_SetFontHinting(mipFont, hinting);
+                            }
+                            if (outline != TTF_GetFontOutline(mipFont))
+                            {
+                                TTF_SetFontOutline(mipFont, outline);
+                            }
+                            if (style != TTF_GetFontStyle(mipFont))
+                            {
+                                TTF_SetFontStyle(mipFont, style);
+                            }
                             if (mipFont == NULL)
                             {
                                 // TODO?: resort to manual scaling down? At this point we shouldn't be using mipmaps if they can't be generated.
@@ -485,6 +497,7 @@ namespace Ossium
                         // Glyph manages surface memory now
                         glyph->cached.SetSurface(created);
                         glyph->inverseScale = inverseScale;
+                        glyph->id = id;
                     }
                     else
                     {
@@ -687,7 +700,7 @@ namespace Ossium
         atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
     }
 
-    bool Font::RenderGlyph(Renderer& renderer, GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, float mipBias, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    bool Font::RenderGlyph(Renderer& renderer, GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         Glyph* glyph = GetGlyph(renderer, id);
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
@@ -719,7 +732,7 @@ namespace Ossium
 
         float level = GetMipMapLevel(pointSize, loadedPointSize);
 
-        clip = GetMipMapClip(clip, /*mipBias >= 1.0f ? (int)level - 1 : */(int)level);
+        clip = GetMipMapClip(clip, (int)level);
         Render(renderer, dest, &clip, color, blending, angle, origin, flip);
         return true;
     }
