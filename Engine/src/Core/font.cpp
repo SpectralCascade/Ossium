@@ -71,7 +71,6 @@ namespace Ossium
                 int minx, miny, maxx, maxy, advance;
                 TTF_GlyphMetrics(f, cp, &minx, &maxx, &miny, &maxy, &advance);
                 advanceMetric = advance;
-                // TODO?: ignore min dimensions, just use max dimensions as we only care about that for layout?
                 dimensions = Vector2(maxx, maxy);
             }
             else
