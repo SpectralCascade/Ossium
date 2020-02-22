@@ -85,11 +85,6 @@ namespace Ossium
         return ((width - (float)glyphs.back().GetAdvance()) + ((float)glyphs.back().GetDimensions().x)) * glyphScale;
     }
 
-    TextLineSegment TextLine::GetCurrentSegment()
-    {
-        return segments.back();
-    }
-
     const vector<GlyphMeta>& TextLine::GetGlyphs()
     {
         return glyphs;
@@ -204,7 +199,7 @@ namespace Ossium
             for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
             {
                 GlyphMeta meta = line.GetGlyphs()[index];
-                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style | mainStyle, 0, 0);
+                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style, 0, 0);
                 font.RenderGlyph(
                     renderer,
                     glyph,
@@ -295,8 +290,7 @@ namespace Ossium
                         // Now parse the tag itself.
                         if (!tagText.empty())
                         {
-                            Uint32 oldUnderlineTags = underlineTags;
-                            Uint32 oldStrikeTags = strikeTags;
+                            Uint8 oldStyle = style;
                             if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, style))
                             {
                                 Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
@@ -306,7 +300,7 @@ namespace Ossium
                                 mainColor = colours.top();
                                 addLineSegment = true;
                             }
-                            else if (underlineTags != oldUnderlineTags || strikeTags != oldStrikeTags)
+                            else if (style != oldStyle)
                             {
                                 addLineSegment = true;
                             }
@@ -324,7 +318,7 @@ namespace Ossium
             if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
                 // Pack the glyph.
-                GlyphMeta glyph = font.GetGlyphMeta(Utilities::GetCodepointUTF8(utfChar));
+                GlyphMeta glyph = GlyphMeta(Utilities::GetCodepointUTF8(utfChar), font, style);
 
                 bool lineChange = false;
 
@@ -579,10 +573,18 @@ namespace Ossium
             if (tagText[1] == 'b')
             {
                 boldTags = max((Uint32)0, boldTags - 1);
+                if (boldTags == 0)
+                {
+                    style = style & ~TTF_STYLE_BOLD;
+                }
             }
             else if (tagText[1] == 'i')
             {
                 italicTags = max((Uint32)0, italicTags - 1);
+                if (italicTags == 0)
+                {
+                    style = style & ~TTF_STYLE_ITALIC;
+                }
             }
             else if (tagText[1] == 'u')
             {
@@ -614,10 +616,12 @@ namespace Ossium
             if (tagText[0] == 'b')
             {
                 boldTags++;
+                style = style | TTF_STYLE_BOLD;
             }
             else if (tagText[0] == 'i')
             {
                 italicTags++;
+                style = style | TTF_STYLE_ITALIC;
             }
             else if (tagText[0] == 'u')
             {

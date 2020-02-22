@@ -122,7 +122,7 @@ namespace Ossium
         /// Default constructor initialises codepoint to zero.
         GlyphMeta();
         /// Constructor loads metrics from a given font
-        GlyphMeta(Uint32 codepoint, Font& font);
+        GlyphMeta(Uint32 codepoint, Font& font, Uint8 style = TTF_STYLE_NORMAL, Uint8 hinting = TTF_HINTING_NORMAL, Uint8 outline = 0);
 
         /// Computes the difference to the next glyph for a given point size.
         float GetAdvance(float pointSize);
@@ -194,9 +194,6 @@ namespace Ossium
 
         /// Ditto, but bundled some parameters.
         SDL_Surface* GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f = NULL);
-
-        /// Returns meta data about a particular glyph.
-        GlyphMeta GetGlyphMeta(Uint32 codepoint);
 
         /// TODO: add support for alternative packing mode that doesn't use render targets (maybe cache the texture surface and modify that instead).
         /// Targets the texture atlas for rendering. Returns the original render target.

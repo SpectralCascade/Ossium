@@ -59,7 +59,7 @@ namespace Ossium
         cp = 0;
     }
 
-    GlyphMeta::GlyphMeta(Uint32 codepoint, Font& font)
+    GlyphMeta::GlyphMeta(Uint32 codepoint, Font& font, Uint8 style, Uint8 hinting, Uint8 outline)
     {
         cp = codepoint;
         TTF_Font* f = font.GetFont();
@@ -68,6 +68,21 @@ namespace Ossium
             loadedPointSize = font.GetLoadedPointSize();
             if (TTF_GlyphIsProvided(f, codepoint))
             {
+                // Glyph metrics and dimensions will differ depending on style, hinting etc. so set those first
+                style &= (TTF_STYLE_BOLD | TTF_STYLE_ITALIC);
+                if (TTF_GetFontStyle(f) != (int)style)
+                {
+                    TTF_SetFontStyle(f, style);
+                }
+                if (TTF_GetFontHinting(f) != (int)hinting)
+                {
+                    TTF_SetFontStyle(f, hinting);
+                }
+                if (TTF_GetFontOutline(f) != (int)outline)
+                {
+                    TTF_SetFontOutline(f, outline);
+                }
+                // Get glyph metrics
                 int dud, advance, w, h;
                 TTF_GlyphMetrics(f, cp, &dud, &dud, &dud, &dud, &advance);
                 advanceMetric = advance;
@@ -536,11 +551,6 @@ namespace Ossium
         glyphCache.Access(id);
 
         return glyph;
-    }
-
-    GlyphMeta Font::GetGlyphMeta(Uint32 codepoint)
-    {
-        return GlyphMeta(codepoint, *this);
     }
 
     void Font::BatchPackBegin(Renderer& renderer)

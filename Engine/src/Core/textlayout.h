@@ -92,7 +92,7 @@ namespace Ossium
     public:
         TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle, Vector2 invalidGlyphDimensions);
 
-        /// Adds a glyph to the current line segment.
+        /// Adds a glyph to the line.
         void AddGlyph(GlyphMeta glyph);
 
         /// Removes a glyph from the end of the line.
@@ -109,9 +109,6 @@ namespace Ossium
 
         /// Returns the width of the line accounting for the bounding box of the final glyph instead of it's advance.
         float GetRenderedWidth();
-
-        /// Returns the last segment begun.
-        TextLineSegment GetCurrentSegment();
 
         /// Returns all glyphs on the line.
         const vector<GlyphMeta>& GetGlyphs();
