@@ -431,15 +431,16 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
+            Font& font = *resources->Get<Font>(style.fontPath, style.ptsize, *renderer);
             Vector2 layoutPos = GetLayoutPosition();
             TextLayout tlayout;
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
-            tlayout.SetText(text);
+            tlayout.SetText(*renderer, font, text, true);
             tlayout.SetPointSize(style.ptsize);
             tlayout.SetBounds(limits);
             tlayout.mainColor = style.fg;
             tlayout.mainStyle = style.style;
-            tlayout.Render(*renderer, *resources->Get<Font>(style.fontPath, style.ptsize, *renderer), layoutPos);
+            tlayout.Render(*renderer, font, layoutPos);
 
             // Move along
             Move(tlayout.GetSize());

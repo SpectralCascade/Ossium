@@ -51,7 +51,7 @@ namespace Ossium
         M(int, mainStyle) = TTF_STYLE_NORMAL;
 
     protected:
-        /// Size of the text.
+        /// Default size of the text.
         M(float, pointSize);
 
         /// Text alignment when rendered
@@ -86,60 +86,43 @@ namespace Ossium
         SDL_Color color;
     };
 
-    /// Helper class for laying out a single line of text.
-    class TextLine
+    /// Helper struct for laying out a single line of text.
+    struct TextLine
     {
-    public:
-        TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle, Vector2 invalidGlyphDimensions);
-
-        /// Adds a glyph to the line.
-        void AddGlyph(GlyphMeta glyph);
-
-        /// Removes a glyph from the end of the line.
-        GlyphMeta PopGlyph();
-
-        /// Removes all whitespace glyphs from the end of the line.
-        void PopWhitespace();
-
-        /// Begins a new segment. Use this whenever you need to insert glyphs that have a different style or colour to the current segment.
-        void BeginSegment(GlyphMeta glyph, Uint8 style, SDL_Color color);
-
-        /// Returns the advance-based width of the line, scaled according to the point size of the glyphs. Does not account for kerning.
-        float GetWidth();
-
-        /// Returns the width of the line accounting for the bounding box of the final glyph instead of it's advance.
-        float GetRenderedWidth();
-
-        /// Returns all glyphs on the line.
-        const vector<GlyphMeta>& GetGlyphs();
-
-        /// Returns all segments.
-        const vector<TextLineSegment>& GetSegments();
-
-        /// Clears all glyphs and line segments (except for the original segment).
-        void Clear(bool resetWidth = true);
-
-        /// Returns a new line with the glyphs and segments copied over from the specified index onwards. Removes any leftover white space from the end of this line.
-        TextLine GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions, bool removeWhitespace = true);
-
-        /// The start position of this line.
+        /// The relative position of this line compared to other lines in a text layout.
         Vector2 position;
 
-    private:
-        /// Sub-sections of the line that have different styles.
-        vector<TextLineSegment> segments;
+        /// The dimensions of the line.
+        Vector2 size;
 
-        /// The raw width of this line (the sum of all glyph advance widths).
-        float width = 0;
+        /// The index of the glyph at the start of this line.
+        Uint32 glyphIndex;
 
-        /// All glyphs on this line in sequential order.
-        vector<GlyphMeta> glyphs;
+    };
 
-        /// Used while computing width.
-        float glyphScale;
+    /// Grouping of glyphs that have the same point size, color, style, hinting and outline.
+    struct GlyphGroup
+    {
+        /// The start index of the group in the codepoint array.
+        Uint32 index;
 
-        /// Used for null glyph dimensions.
-        Vector2 invalidDimensions;
+        /// The relative size of the glyphs.
+        float pointSize;
+
+        /// The color of the glyphs.
+        SDL_Color color;
+
+        /// The glyph style (e.g. bold).
+        Uint8 style;
+
+        /// The type of hinting (e.g. light).
+        Uint8 hinting;
+
+        /// The outline thickness of the glyphs, in pixels.
+        Uint8 outline;
+
+        /// The color of the outline.
+        SDL_Color outlineColor;
 
     };
 
@@ -156,7 +139,7 @@ namespace Ossium
         CONSTRUCT_SCHEMA(SchemaRoot, TextLayoutSchema);
 
         /// Renders the text in the current layout.
-        void Render(Renderer& renderer, Font& font, Vector2 position);
+        void Render(Renderer& renderer, Font& font, Vector2 startPos);
 
         /// Sets the bounding box. Note that this method triggers computation of layout on the next Update() or Render() method call.
         void SetBounds(Vector2 bounds);
@@ -164,22 +147,16 @@ namespace Ossium
         /// Returns the bounding box.
         Vector2 GetBounds();
 
-        /// Sets the text string to be used. If the string is different to the cached string, also triggers layout computation on next Update() or Render().
+        /// Sets the text string to be used. Parses all tags and gets the corresponding glyph data for each character.
         /**
             Given a text string with <i>these tags</i> will produce italic text, while <b>these tags</b> will produce bold text.
             You can also specify coloured text with <color=#FF0000FF>these tags</color> where #FF0000FF can be replaced with a hexadecimal colour code
-            of your choosing, in the format #RRGGBBAA (red, red, green, green, blue, blue, alpha, alpha), or alternatively #RRGGBB.
+            of your choosing, in the format #RRGGBBAA (R = red, G = green, B = blue, A = alpha), or alternatively #RRGGBB.
             If you want to ignore tags in some parts of your text, you can use backslash \ before angle brackets < or >. Use double-backslash to show a single, literal backslash.
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
             Also takes natural line break characters (ASCII only) that are used for line wrapping without breaking words.
         */
-        void SetText(string str);
-
-        /// Returns the text string currently used to compute layout.
-        string GetText();
-
-        /// If the layout has been modified, this method will recompute the layout.
-        void Update(Renderer& renderer, Font& font);
+        void SetText(Renderer& renderer, Font& font, string str, bool applyMarkup);
 
         /// Returns the dimensions of the text layout.
         Vector2 GetSize();
@@ -218,28 +195,31 @@ namespace Ossium
         /// Attempts to parse a tag. Returns false on invalid tag.
         bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style);
 
-        /// Computes the text layout, parses tags and batch packs as many glyphs from the text string as possible.
-        void ComputeLayout(Renderer& renderer, Font& font, bool applyMarkup = true, string lineBreakCharacters = " /!?|");
+        /// Computes the text layout and batch packs as many glyphs from the text string as possible.
+        void ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters = " /!?|");
+
+        /// Computes the text layout using the pre-existing glyphs array. Useful when the bounds change.
+        void ComputeLayout(string lineBreakCharacters = " /!?|");
+
+        /// Computes the position of the next glyph given a specific glyph, applying line wrapping etc.
+        void ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group);
 
         /// Computes the positions of each line.
-        void ComputeLinePositions(Font& font);
-
-        /// Renders a single line of glyphs.
-        void RenderLine(Renderer& renderer, Vector2 position, TextLine& line, Font& font);
-
-        /// All lines of glyphs.
-        vector<TextLine> lines;
+        void ComputeLinePositions();
 
         /// The bounding box dimensions of this text layout.
         Vector2 bbox;
 
-        /// The text to layout and render.
-        string text;
+        /// Specifies the starting index for each line in the glyphs array, as well as the size of each line.
+        vector<TextLine> lines;
 
-        /// Flag that indicates whether the positioning of lines should be updated.
-        bool updateLines = true;
+        /// Groupings of glyphs that have the same style, size, color etc. in sequential order.
+        vector<GlyphGroup> groups;
 
-        /// Flag that indicates whether the layout should be recomputed.
+        /// Array of glyphs, corresponding to the text string.
+        vector<GlyphMeta> glyphs;
+
+        /// Should the layout be recomputed on the next Update() call?
         bool updateAll = true;
 
         /// The dimensions of the computed text layout.

@@ -747,12 +747,15 @@ namespace Ossium
             BatchPackGlyph(renderer, id, glyph);
             BatchPackEnd(renderer);
         }
+
+        // Get correct mipmap level
         SDL_Rect clip = glyph->clip;
-
         float level = GetMipMapLevel(pointSize, loadedPointSize);
-
         clip = GetMipMapClip(clip, (int)level);
+
+        // Render the glyph
         Render(renderer, dest, &clip, color, blending, angle, origin, flip);
+
         return true;
     }
 

@@ -25,210 +25,109 @@ namespace Ossium
 {
 
     //
-    // TextLine
-    //
-
-    TextLine::TextLine(float originalPointSize, float pointSize, SDL_Color startColor, Uint8 startStyle, Vector2 invalidGlyphDimensions)
-    {
-        segments.push_back((TextLineSegment){0, startStyle, startColor});
-        glyphScale = pointSize / originalPointSize;
-        invalidDimensions = invalidGlyphDimensions;
-    }
-
-    void TextLine::AddGlyph(GlyphMeta glyph)
-    {
-        glyphs.push_back(glyph);
-        width += glyph.GetCodepoint() != 0 ? (float)glyph.GetAdvance() : invalidDimensions.x;
-    }
-
-    GlyphMeta TextLine::PopGlyph()
-    {
-        GlyphMeta glyph;
-        if (!glyphs.empty())
-        {
-            glyph = glyphs.back();
-            glyphs.pop_back();
-            width -= glyph.GetCodepoint() != 0 ? (float)glyph.GetAdvance() : invalidDimensions.x;
-        }
-        return glyph;
-    }
-
-    void TextLine::PopWhitespace()
-    {
-        while (!glyphs.empty() && glyphs.back().GetCodepoint() == 32)
-        {
-            PopGlyph();
-        }
-    }
-
-    void TextLine::BeginSegment(GlyphMeta glyph, Uint8 style, SDL_Color color)
-    {
-        AddGlyph(glyph);
-        segments.push_back((TextLineSegment){segments.size(), style, color});
-    }
-
-    float TextLine::GetWidth()
-    {
-        return width * glyphScale;
-    }
-
-    float TextLine::GetRenderedWidth()
-    {
-        if (glyphs.empty())
-        {
-            return 0;
-        }
-        else if (glyphs.back().GetCodepoint() == 0)
-        {
-            return GetWidth();
-        }
-        return ((width - (float)glyphs.back().GetAdvance()) + ((float)glyphs.back().GetDimensions().x)) * glyphScale;
-    }
-
-    const vector<GlyphMeta>& TextLine::GetGlyphs()
-    {
-        return glyphs;
-    }
-
-    const vector<TextLineSegment>& TextLine::GetSegments()
-    {
-        return segments;
-    }
-
-    void TextLine::Clear(bool resetWidth)
-    {
-        glyphs.clear();
-        TextLineSegment original = segments[0];
-        segments.clear();
-        segments.push_back(original);
-        if (resetWidth)
-        {
-            width = 0;
-        }
-    }
-
-    TextLine TextLine::GetNewline(Uint32 lineBreakIndex, Uint32 lineSegmentBreakIndex, float originalPointSize, float pointSize, Vector2 invalidGlyphDimensions, bool removeWhitespace)
-    {
-        if (lineBreakIndex >= glyphs.size() || lineSegmentBreakIndex >= segments.size())
-        {
-            Logger::EngineLog().Warning("Failed to get new TextLine for line break index {0} [segment break index {1}]!", lineBreakIndex, lineSegmentBreakIndex);
-            return TextLine(originalPointSize, pointSize, segments[0].color, segments[0].style, invalidGlyphDimensions);
-        }
-        TextLineSegment& segment = segments[lineSegmentBreakIndex];
-
-        if (segments[lineSegmentBreakIndex].index == lineBreakIndex + 1)
-        {
-            Logger::EngineLog().Debug("Removing line segment index {0}", lineSegmentBreakIndex);
-            segments.erase(segments.begin() + lineSegmentBreakIndex);
-        }
-
-        Uint32 totalSegments = segments.size();
-
-        TextLine nextLine = TextLine(originalPointSize, pointSize, segment.color, segment.style, invalidGlyphDimensions);
-
-        string debugOut;
-
-        // Move everything after the line break index into the new line
-        for (Uint32 segmentIndex = lineSegmentBreakIndex; segmentIndex < totalSegments; segmentIndex++)
-        {
-            // Get start index, according to segment or original line break character
-            Uint32 glyphIndex = max(segment.index, lineBreakIndex + 1);
-
-            // Now add the glyphs to the new line until we reach the next segment
-            for (Uint32 countUp = glyphIndex, nextSegment = (lineSegmentBreakIndex < segments.size() - 1 ? segments[lineSegmentBreakIndex + 1].index : glyphs.size());
-                 countUp < nextSegment; countUp++)
-            {
-                nextLine.AddGlyph(glyphs[glyphIndex]);
-                // Remove the glyph pointer we just copied
-                glyphs.erase(glyphs.begin() + glyphIndex);
-                debugOut += (char)nextLine.glyphs.back().GetCodepoint();
-            }
-
-            if (lineSegmentBreakIndex < segments.size() - 1)
-            {
-                // Remove the segment from this line
-                segments.erase(segments.begin() + lineSegmentBreakIndex + 1);
-                // Copy the segment to the new line along with the first glyph
-                nextLine.BeginSegment(glyphs[glyphIndex], segment.style, segment.color);
-                debugOut += (char)nextLine.glyphs.back().GetCodepoint();
-                // Remove the first glyph pointer we just copied
-                glyphs.erase(glyphs.begin() + glyphIndex);
-                // Get the current segment
-                segment = segments[lineSegmentBreakIndex];
-            }
-        }
-        width -= nextLine.width;
-
-        if (removeWhitespace)
-        {
-            PopWhitespace();
-        }
-
-        return nextLine;
-    }
-
-    //
     // TextLayout
     //
 
-    void TextLayout::Render(Renderer& renderer, Font& font, Vector2 position)
+    void TextLayout::Render(Renderer& renderer, Font& font, Vector2 startPos)
     {
-        // Update just in case anything has changed
-        Update(renderer, font);
-
-        for (TextLine& line : lines)
+        GlyphGroup& currentGroup = groups.front();
+        Vector2 linePos;
+        // Iterate over each line
+        for (unsigned int i = 0, group = 0, glyphIndex = 0, counti = lines.size(); i < counti; i++)
         {
-            RenderLine(renderer, position, line, font);
+            TextLine& line = lines[i];
+            Vector2 position = startPos + line.position;
+
+            //Logger::EngineLog().Info("Start pos = {0}, line pos = {1}, true linepos = {2}", startPos, line.position, position);
+            linePos = position;
+
+            unsigned int nextIndex = i + 1 < lines.size() ? lines[i + 1].glyphIndex : glyphs.size();
+            while (glyphIndex < nextIndex)
+            {
+                if (currentGroup.outline != 0)
+                {
+                    // Render outline first
+                    GlyphID glyph = CreateGlyphID(glyphs[glyphIndex].GetCodepoint(), currentGroup.style, currentGroup.hinting, currentGroup.outline);
+                    font.RenderGlyph(
+                        renderer,
+                        glyph,
+                        position,
+                        currentGroup.pointSize,
+                        currentGroup.outlineColor,
+                        kerning,
+                        direction
+                    );
+                }
+                // Render the glyph with the current group styling.
+                GlyphID glyph = CreateGlyphID(glyphs[glyphIndex].GetCodepoint(), currentGroup.style, currentGroup.hinting, 0);
+                font.RenderGlyph(
+                    renderer,
+                    glyph,
+                    position,
+                    currentGroup.pointSize,
+                    currentGroup.color,
+                    kerning,
+                    direction
+                );
+                position.x += direction == Typographic::TextDirection::LEFT_TO_RIGHT ? glyphs[glyphIndex].GetAdvance(currentGroup.pointSize) : -glyphs[glyphIndex].GetAdvance(currentGroup.pointSize);
+                glyphIndex++;
+                if (glyphIndex >= currentGroup.index)
+                {
+                    if ((currentGroup.style | mainStyle) & TTF_STYLE_UNDERLINE)
+                    {
+                        Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(currentGroup.pointSize));
+                        Line underline(linePos + underlinePos, position + underlinePos);
+                        underline.Draw(renderer, currentGroup.color);
+                    }
+                    if ((currentGroup.style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
+                    {
+                        Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(currentGroup.pointSize));
+                        Line strikethrough(linePos + strikethroughPos, position + strikethroughPos);
+                        strikethrough.Draw(renderer, currentGroup.color);
+                    }
+                    group++;
+                    currentGroup = groups[group];
+                }
+            }
         }
     }
 
-    void TextLayout::RenderLine(Renderer& renderer, Vector2 position, TextLine& line, Font& font)
+    void TextLayout::ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group)
     {
-        if (line.GetGlyphs().empty())
+        GlyphMeta& meta = glyphs[glyphIndex];
+        float advance = meta.GetAdvance(group.pointSize);
+        if (lineWrap)
+        {
+            Vector2 dimensions = meta.GetDimensions(group.pointSize);
+            if (line.size.x + dimensions.x > bbox.x && line.size.x > 0)
+            {
+                lines.push_back(line);
+                line.size.x = 0;
+                line.glyphIndex = glyphIndex;
+            }
+        }
+        line.size.x += advance;
+    }
+
+    void TextLayout::ComputeLayout(string lineBreakCharacters)
+    {
+        /*for (unsigned int i = 0, counti = groups.size(); i < counti; i++)
+        {
+            for (unsigned int j = groups[i].index, countj = i + 1 < counti ? groups[i + 1] : glyphs.size(); j < countj; j++)
+            {
+
+            }
+        }*/
+    }
+
+    void TextLayout::ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters)
+    {
+        if (!updateAll)
         {
             // Early out
             return;
         }
 
-        position += line.position;
-        Vector2 startPos = position;
-
-        for (Uint32 i = 0, counti = line.GetSegments().size(); i < counti; i++)
-        {
-            Uint32 nextSegment = i + 1 < line.GetSegments().size() ? line.GetSegments()[i + 1].index : line.GetGlyphs().size();
-            for (Uint32 index = line.GetSegments()[i].index; index < nextSegment; index++)
-            {
-                GlyphMeta meta = line.GetGlyphs()[index];
-                GlyphID glyph = CreateGlyphID(meta.GetCodepoint(), line.GetSegments()[i].style, 0, 0);
-                font.RenderGlyph(
-                    renderer,
-                    glyph,
-                    position,
-                    pointSize,
-                    line.GetSegments()[i].color,
-                    kerning,
-                    direction
-                );
-                position.x += direction == Typographic::TextDirection::LEFT_TO_RIGHT ? meta.GetAdvance(pointSize) : -meta.GetAdvance(pointSize);
-            }
-            if ((line.GetSegments()[i].style | mainStyle) & TTF_STYLE_UNDERLINE)
-            {
-                Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(pointSize));
-                Line underline(startPos + underlinePos, position + underlinePos);
-                underline.Draw(renderer, line.GetSegments()[i].color);
-            }
-            if ((line.GetSegments()[i].style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
-            {
-                Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(pointSize));
-                Line strikethrough(startPos + strikethroughPos, position + strikethroughPos);
-                strikethrough.Draw(renderer, line.GetSegments()[i].color);
-            }
-        }
-
-    }
-
-    void TextLayout::ComputeLayout(Renderer& renderer, Font& font, bool applyMarkup, string lineBreakCharacters)
-    {
         bool isTag = false;
         bool isEscaped = false;
         string tagText;
@@ -238,21 +137,35 @@ namespace Ossium
         Uint32 strikeTags = mainStyle & TTF_STYLE_STRIKETHROUGH ? 1 : 0;
         stack<SDL_Color> colours;
         colours.push(mainColor);
-        Uint8 style = (Uint8)(mainStyle & (TTF_STYLE_UNDERLINE | TTF_STYLE_STRIKETHROUGH));
+        Uint8 style = mainStyle;
+
+        size = Vector2::Zero;
 
         lines.clear();
-        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
+        glyphs.clear();
+        groups.clear();
 
         if (text.empty())
         {
             // Early out
             return;
         }
+        // TODO: outline, hinting
+        groups.push_back((GlyphGroup){0, pointSize, mainColor, (Uint8)mainStyle, 0, 0, Colors::BLACK});
 
         // Keeps track of the last ideal place in the line to make a line break
         Uint32 lineBreakIndex = 0;
-        // Counts line segment indices
-        Uint32 lineSegmentCounter = 0;
+        // Keeps track of the current line size.
+        Vector2 lineDimensions = Vector2(0, font.GetLineDifference(pointSize));
+
+        // The current text line being computed
+        TextLine line = (TextLine){Vector2::Zero, lineDimensions, 0};
+
+        // The advance width of the current word.
+        float wordWidth = 0;
+        // Counts consecutive space characters
+        Uint32 whitespaceCount = 0;
+        float whitespaceWidth = 0;
 
         font.BatchPackBegin(renderer);
         for (unsigned int i = 0, counti = text.length(); i < counti;)
@@ -262,7 +175,6 @@ namespace Ossium
             string utfChar = text.substr(i, bytes);
             i += bytes;
 
-            bool addLineSegment = false;
             bool wasTag = isTag;
             if (applyMarkup)
             {
@@ -295,14 +207,12 @@ namespace Ossium
                             {
                                 Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
                             }
-                            if (mainColor != colours.top())
+                            if (mainColor != colours.top() || style != oldStyle)
                             {
                                 mainColor = colours.top();
-                                addLineSegment = true;
-                            }
-                            else if (style != oldStyle)
-                            {
-                                addLineSegment = true;
+                                groups.back().index = glyphs.size();
+                                // TODO: outline, hinting
+                                groups.push_back((GlyphGroup){glyphs.size(), pointSize, mainColor, style, 0, 0, Colors::BLACK});
                             }
                             tagText.clear();
                         }
@@ -317,61 +227,43 @@ namespace Ossium
             // Exclude tags and non-printable ASCII characters
             if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
-                // Pack the glyph.
-                GlyphMeta glyph = GlyphMeta(Utilities::GetCodepointUTF8(utfChar), font, style);
+                glyphs.push_back(GlyphMeta(Utilities::GetCodepointUTF8(utfChar), font, style));
 
-                bool lineChange = false;
-
-                // If there is more than one glyph on the line and the line exceeds the bounding box, wrap to a new line.
-                if (lineWrap && ((lines.back().GetGlyphs().size() > 0) && (!(ignoreWhitespace && utfChar[0] == ' ')) &&
-                    (lines.back().GetWidth() + (glyph.GetCodepoint() != 0 ?
-                        glyph.GetDimensions(pointSize).x : font.GetInvalidGlyphDimensions(pointSize).x) >= bbox.x
-                    ))
-                )
-                {
-                    lineChange = true;
-                    // Should we break the line at the current glyph, or the last ideal break glyph?
-                    if (wordBreak)
-                    {
-                        // Break mid-word (current glyph).
-                        lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
-                    }
-                    else if (lineBreakIndex > 0)
-                    {
-                        // Natural line break at end of a word or statement or whatever.
-                        lines.push_back(lines.back().GetNewline(lineBreakIndex, lineSegmentCounter, font.GetLoadedPointSize(), pointSize, font.GetInvalidGlyphDimensions(pointSize)));
-                    }
-                    lineBreakIndex = 0;
-                    lineSegmentCounter = 0;
-                }
-
-                // Add glyph to the current line
-                if (addLineSegment && !lineChange)
-                {
-                    lines.back().BeginSegment(glyph, style, mainColor);
-                    lineSegmentCounter++;
-                }
-                else
-                {
-                    lines.back().AddGlyph(glyph);
-                }
+                // Compute the position of the glyph for the current line. If the current line is full, moves onto a newline.
+                ComputeGlyphPosition(glyphs.size() - 1, line, groups.back());
 
                 // Only pack while this batch has space in the font atlas.
                 if (font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs())
                 {
                     // Batch pack glyphs now to save processing time during rendering.
-                    font.BatchPackGlyph(renderer, CreateGlyphID(glyph.GetCodepoint(), style, 0, 0));
+                    // TODO: outline, hinting
+                    font.BatchPackGlyph(renderer, CreateGlyphID(glyphs.back().GetCodepoint(), style, 0, 0));
                 }
 
-                if (lineWrap)
+                if (lineWrap && !wordBreak)
                 {
-                    if (bytes <= 1 && !lines.back().GetGlyphs().empty())
+                    if (utfChar[0] == ' ')
+                    {
+                        // Count whitespace
+                        whitespaceCount++;
+                        whitespaceWidth += glyphs.back().GetAdvance(pointSize);
+                    }
+                    else
+                    {
+                        wordWidth += glyphs.back().GetAdvance(pointSize) + whitespaceWidth;
+                        whitespaceWidth = 0;
+                        whitespaceCount = 0;
+                    }
+                    if (bytes <= 1)
                     {
                         for (auto c : lineBreakCharacters)
                         {
                             if (utfChar[0] == c)
                             {
-                                lineBreakIndex = lines.back().GetGlyphs().size() - 1;
+                                // Set natural line break index
+                                lineBreakIndex = glyphs.size();
+                                lineDimensions.x += wordWidth;
+                                wordWidth = 0;
                                 break;
                             }
                         }
@@ -382,43 +274,48 @@ namespace Ossium
             else if (utfChar[0] == '\n')
             {
                 // Add newline
-                lines.push_back(TextLine(font.GetLoadedPointSize(), pointSize, mainColor, style, font.GetInvalidGlyphDimensions(pointSize)));
-                lineBreakIndex = 0;
-                lineSegmentCounter = 0;
+                lineBreakIndex = glyphs.size();
+                lines.push_back(line);
+                line.size.x = 0;
             }
 
         }
+
+        // Push back final line and update the groups
+        lines.push_back(line);
+        groups.back().index = glyphs.size();
+
+        // Finish render batching.
         font.BatchPackEnd(renderer);
 
         // Update line positioning
-        ComputeLinePositions(font);
+        ComputeLinePositions();
 
         updateAll = false;
 
     }
 
-    void TextLayout::ComputeLinePositions(Font& font)
+    void TextLayout::ComputeLinePositions()
     {
         float lineY = 0;
         for (TextLine& line : lines)
         {
+            line.position = Vector2::Zero;
             switch (alignment)
             {
             case Typographic::TextAlignment::RIGHT_ALIGNED:
-                line.position.x = bbox.x - ceil(line.GetRenderedWidth());
+                line.position.x = bbox.x - ceil(line.size.x);
                 break;
             case Typographic::TextAlignment::CENTERED:
-                line.position.x = (bbox.x / 2) - ceil(line.GetRenderedWidth() / 2.0f);
+                line.position.x = (bbox.x / 2) - ceil(line.size.x / 2.0f);
                 break;
             default:
                 line.position.x = 0;
                 break;
             }
             line.position.y = lineY;
-            lineY += font.GetLineDifference(pointSize);
-            size = size.Max(Vector2(line.GetRenderedWidth(), lineY));
+            lineY += line.size.y;
         }
-        updateLines = false;
     }
 
     void TextLayout::SetBounds(Vector2 bounds)
@@ -435,30 +332,10 @@ namespace Ossium
         return bbox;
     }
 
-    void TextLayout::SetText(string str)
+    void TextLayout::SetText(Renderer& renderer, Font& font, string text, bool applyMarkup)
     {
-        if (str.empty() || str.size() != (text.empty() ? 0 : text.size()) || text != str)
-        {
-            text = str;
-            updateAll = true;
-        }
-    }
-
-    string TextLayout::GetText()
-    {
-        return text;
-    }
-
-    void TextLayout::Update(Renderer& renderer, Font& font)
-    {
-        if (updateAll)
-        {
-            ComputeLayout(renderer, font);
-        }
-        else if (updateLines)
-        {
-            ComputeLinePositions(font);
-        }
+        updateAll = true;
+        ComputeLayout(renderer, font, text, applyMarkup);
     }
 
     Vector2 TextLayout::GetSize()
@@ -506,7 +383,7 @@ namespace Ossium
         if (alignment != alignMode)
         {
             alignment = alignMode;
-            updateLines = true;
+            ComputeLinePositions();
         }
     }
 
