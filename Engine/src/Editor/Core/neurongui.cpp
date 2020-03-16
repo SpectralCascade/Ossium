@@ -435,11 +435,12 @@ namespace Ossium::Editor
             Vector2 layoutPos = GetLayoutPosition();
             TextLayout tlayout;
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
-            tlayout.SetText(*renderer, font, text, true);
             tlayout.SetPointSize(style.ptsize);
             tlayout.SetBounds(limits);
             tlayout.mainColor = style.fg;
             tlayout.mainStyle = style.style;
+            tlayout.SetText(*renderer, font, text, true);
+            tlayout.Update(font);
             tlayout.Render(*renderer, font, layoutPos);
 
             // Move along

@@ -340,10 +340,13 @@ namespace Ossium
             // Early out
             return;
         }
+        size = Vector2::Zero;
         Vector2 position = Vector2::Zero;
         for (TextLine& line : lines)
         {
             ComputeLinePosition(line, position);
+            size.y += line.size.y;
+            size.x = max(size.x, line.size.x);
         }
         updateFlags = 0;
     }
