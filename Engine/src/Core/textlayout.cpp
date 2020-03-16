@@ -297,6 +297,7 @@ namespace Ossium
                 // Add newline
                 lineBreakIndex = glyphs.size();
                 lines.push_back(line);
+                line.glyphIndex = glyphs.size();
                 line.size.x = 0;
             }
 
