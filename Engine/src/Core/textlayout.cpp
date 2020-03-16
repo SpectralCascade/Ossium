@@ -92,21 +92,32 @@ namespace Ossium
         }
     }
 
-    void TextLayout::ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group)
+    void TextLayout::ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group, float& lastWordWidth, int lastLineBreakIndex)
     {
         GlyphMeta& meta = glyphs[glyphIndex];
         float advance = meta.GetAdvance(group.pointSize);
         if (lineWrap)
         {
             Vector2 dimensions = meta.GetDimensions(group.pointSize);
-            if (line.size.x + dimensions.x > bbox.x && line.size.x > 0)
+            if (line.size.x + dimensions.x > bbox.x && (wordBreak || line.size.x > lastWordWidth))
             {
-                lines.push_back(line);
-                line.size.x = 0;
-                line.glyphIndex = glyphIndex;
+                if (lastLineBreakIndex < 0)
+                {
+                    lines.push_back(line);
+                    line.size.x = 0;
+                    line.glyphIndex = glyphIndex;
+                }
+                else
+                {
+                    line.size.x -= lastWordWidth;
+                    lines.push_back(line);
+                    line.size.x = lastWordWidth;
+                    line.glyphIndex = lastLineBreakIndex;
+                }
             }
         }
         line.size.x += advance;
+        lastWordWidth += advance;
     }
 
     void TextLayout::ComputeLayout(TextLine& startLine, string lineBreakCharacters)
@@ -120,12 +131,14 @@ namespace Ossium
         // Clear all lines
         lines.clear();
         Vector2 startPosition = Vector2::Zero;
+        float lastWordWidth = 0;
+        float lastBreakWidth = 0;
         for (unsigned int i = 0, counti = groups.size(); i < counti; i++)
         {
             for (unsigned int j = groups[i].index, countj = (i + 1 < counti ? groups[i + 1].index : glyphs.size()); j < countj; j++)
             {
                 // First compute the positioning for each glyph on the line
-                ComputeGlyphPosition(j, startLine, groups[i]);
+                ComputeGlyphPosition(j, startLine, groups[i], lastWordWidth, lastBreakWidth);
             }
             // Now position the line itself
             ComputeLinePosition(startLine, startPosition);
@@ -177,11 +190,8 @@ namespace Ossium
         // The current text line being computed
         TextLine line = (TextLine){Vector2::Zero, lineDimensions, 0};
 
-        // The advance width of the current word.
-        float wordWidth = 0;
-        // Counts consecutive space characters
-        Uint32 whitespaceCount = 0;
-        float whitespaceWidth = 0;
+        // These are used to produce natural line breaks
+        float lastWordSize = 0;
 
         font.BatchPackBegin(renderer);
         for (unsigned int i = 0, counti = text.length(); i < counti;)
@@ -247,11 +257,10 @@ namespace Ossium
             // Exclude tags and non-printable ASCII characters
             if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
-
                 glyphs.push_back(GlyphMeta(Utilities::GetCodepointUTF8(utfChar), font, currentGroup.style));
 
                 // Compute the position of the glyph for the current line. If the current line is full, moves onto a newline.
-                ComputeGlyphPosition(glyphs.size() - 1, line, currentGroup);
+                ComputeGlyphPosition(glyphs.size() - 1, line, currentGroup, lastWordSize, wordBreak ? -1 : lineBreakIndex);
 
                 // Only pack while this batch has space in the font atlas.
                 if (font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs())
@@ -261,32 +270,16 @@ namespace Ossium
                     font.BatchPackGlyph(renderer, CreateGlyphID(glyphs.back().GetCodepoint(), currentGroup.style, 0, 0));
                 }
 
-                if (lineWrap && !wordBreak)
+                if (lineWrap && !wordBreak && bytes <= 1)
                 {
-                    if (utfChar[0] == ' ')
+                    for (auto c : lineBreakCharacters)
                     {
-                        // Count whitespace
-                        whitespaceCount++;
-                        whitespaceWidth += glyphs.back().GetAdvance(pointSize);
-                    }
-                    else
-                    {
-                        wordWidth += glyphs.back().GetAdvance(pointSize) + whitespaceWidth;
-                        whitespaceWidth = 0;
-                        whitespaceCount = 0;
-                    }
-                    if (bytes <= 1)
-                    {
-                        for (auto c : lineBreakCharacters)
+                        if (utfChar[0] == c)
                         {
-                            if (utfChar[0] == c)
-                            {
-                                // Set natural line break index
-                                lineBreakIndex = glyphs.size();
-                                lineDimensions.x += wordWidth;
-                                wordWidth = 0;
-                                break;
-                            }
+                            // Set natural line break index
+                            lineBreakIndex = glyphs.size();
+                            lastWordSize = 0;
+                            break;
                         }
                     }
                 }

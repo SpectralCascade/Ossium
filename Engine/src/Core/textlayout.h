@@ -205,7 +205,7 @@ namespace Ossium
         void ComputeLayout(TextLine& startLine, string lineBreakCharacters = " /!?|");
 
         /// Computes the position of the next glyph given a specific glyph, applying line wrapping etc.
-        void ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group);
+        void ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group, float& lastWordWidth, int lastLineBreakIndex = -1);
 
         /// Sets the position of a given text line and returns total.
         void ComputeLinePosition(TextLine& line, Vector2& position);
