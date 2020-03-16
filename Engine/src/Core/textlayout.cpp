@@ -109,20 +109,37 @@ namespace Ossium
         line.size.x += advance;
     }
 
-    void TextLayout::ComputeLayout(string lineBreakCharacters)
+    void TextLayout::ComputeLayout(TextLine& startLine, string lineBreakCharacters)
     {
-        /*for (unsigned int i = 0, counti = groups.size(); i < counti; i++)
+        if (!(updateFlags & UPDATE_LAYOUT))
         {
-            for (unsigned int j = groups[i].index, countj = i + 1 < counti ? groups[i + 1] : glyphs.size(); j < countj; j++)
-            {
+            // Early out
+            return;
+        }
 
+        // Clear all lines
+        lines.clear();
+        Vector2 startPosition = Vector2::Zero;
+        for (unsigned int i = 0, counti = groups.size(); i < counti; i++)
+        {
+            for (unsigned int j = groups[i].index, countj = (i + 1 < counti ? groups[i + 1].index : glyphs.size()); j < countj; j++)
+            {
+                // First compute the positioning for each glyph on the line
+                ComputeGlyphPosition(j, startLine, groups[i]);
             }
-        }*/
+            // Now position the line itself
+            ComputeLinePosition(startLine, startPosition);
+        }
+        // Append the final line
+        lines.push_back(startLine);
+        ComputeLinePosition(startLine, startPosition);
+
+        updateFlags = 0;
     }
 
     void TextLayout::ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters)
     {
-        if (!updateAll)
+        if (!(updateFlags & UPDATE_ALL))
         {
             // Early out
             return;
@@ -137,7 +154,6 @@ namespace Ossium
         Uint32 strikeTags = mainStyle & TTF_STYLE_STRIKETHROUGH ? 1 : 0;
         stack<SDL_Color> colours;
         colours.push(mainColor);
-        Uint8 style = mainStyle;
 
         size = Vector2::Zero;
 
@@ -150,8 +166,8 @@ namespace Ossium
             // Early out
             return;
         }
-        // TODO: outline, hinting
-        groups.push_back((GlyphGroup){0, pointSize, mainColor, (Uint8)mainStyle, 0, 0, Colors::BLACK});
+
+        GlyphGroup currentGroup = (GlyphGroup){0, pointSize, mainColor, (Uint8)mainStyle, 0, 0, Colors::BLACK};
 
         // Keeps track of the last ideal place in the line to make a line break
         Uint32 lineBreakIndex = 0;
@@ -194,6 +210,11 @@ namespace Ossium
                     }
                     else if (c == '<')
                     {
+                        if (currentGroup.index < glyphs.size())
+                        {
+                            currentGroup.index = glyphs.size();
+                            groups.push_back(currentGroup);
+                        }
                         isTag = true;
                     }
                     else if (c == '>' && isTag)
@@ -202,17 +223,16 @@ namespace Ossium
                         // Now parse the tag itself.
                         if (!tagText.empty())
                         {
-                            Uint8 oldStyle = style;
-                            if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, style))
+                            Uint8 oldStyle = currentGroup.style;
+                            if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, currentGroup.style))
                             {
                                 Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
                             }
-                            if (mainColor != colours.top() || style != oldStyle)
+                            if (currentGroup.color != colours.top() || currentGroup.style != oldStyle)
                             {
-                                mainColor = colours.top();
-                                groups.back().index = glyphs.size();
-                                // TODO: outline, hinting
-                                groups.push_back((GlyphGroup){glyphs.size(), pointSize, mainColor, style, 0, 0, Colors::BLACK});
+                                currentGroup.color = colours.top();
+                                currentGroup.index = glyphs.size();
+                                // TODO: outline, hinting, point size etc.
                             }
                             tagText.clear();
                         }
@@ -227,17 +247,18 @@ namespace Ossium
             // Exclude tags and non-printable ASCII characters
             if (!isTag && !wasTag && !(bytes <= 1 && (utfChar[0] < 32 || utfChar[0] == 127)))
             {
-                glyphs.push_back(GlyphMeta(Utilities::GetCodepointUTF8(utfChar), font, style));
+
+                glyphs.push_back(GlyphMeta(Utilities::GetCodepointUTF8(utfChar), font, currentGroup.style));
 
                 // Compute the position of the glyph for the current line. If the current line is full, moves onto a newline.
-                ComputeGlyphPosition(glyphs.size() - 1, line, groups.back());
+                ComputeGlyphPosition(glyphs.size() - 1, line, currentGroup);
 
                 // Only pack while this batch has space in the font atlas.
                 if (font.GetBatchPackTotal() < font.GetAtlasMaxGlyphs())
                 {
                     // Batch pack glyphs now to save processing time during rendering.
                     // TODO: outline, hinting
-                    font.BatchPackGlyph(renderer, CreateGlyphID(glyphs.back().GetCodepoint(), style, 0, 0));
+                    font.BatchPackGlyph(renderer, CreateGlyphID(glyphs.back().GetCodepoint(), currentGroup.style, 0, 0));
                 }
 
                 if (lineWrap && !wordBreak)
@@ -283,7 +304,11 @@ namespace Ossium
 
         // Push back final line and update the groups
         lines.push_back(line);
-        groups.back().index = glyphs.size();
+        if (currentGroup.index < glyphs.size())
+        {
+            currentGroup.index = glyphs.size();
+            groups.push_back(currentGroup);
+        }
 
         // Finish render batching.
         font.BatchPackEnd(renderer);
@@ -291,31 +316,42 @@ namespace Ossium
         // Update line positioning
         ComputeLinePositions();
 
-        updateAll = false;
+        updateFlags = 0;
 
+    }
+
+    void TextLayout::ComputeLinePosition(TextLine& line, Vector2& position)
+    {
+        line.position = Vector2::Zero;
+        switch (alignment)
+        {
+        case Typographic::TextAlignment::RIGHT_ALIGNED:
+            line.position.x = bbox.x - ceil(line.size.x);
+            break;
+        case Typographic::TextAlignment::CENTERED:
+            line.position.x = (bbox.x / 2) - ceil(line.size.x / 2.0f);
+            break;
+        default:
+            line.position.x = 0;
+            break;
+        }
+        line.position.y = position.y;
+        position.y += line.size.y;
     }
 
     void TextLayout::ComputeLinePositions()
     {
-        float lineY = 0;
+        if (!(updateFlags & UPDATE_LINES))
+        {
+            // Early out
+            return;
+        }
+        Vector2 position = Vector2::Zero;
         for (TextLine& line : lines)
         {
-            line.position = Vector2::Zero;
-            switch (alignment)
-            {
-            case Typographic::TextAlignment::RIGHT_ALIGNED:
-                line.position.x = bbox.x - ceil(line.size.x);
-                break;
-            case Typographic::TextAlignment::CENTERED:
-                line.position.x = (bbox.x / 2) - ceil(line.size.x / 2.0f);
-                break;
-            default:
-                line.position.x = 0;
-                break;
-            }
-            line.position.y = lineY;
-            lineY += line.size.y;
+            ComputeLinePosition(line, position);
         }
+        updateFlags = 0;
     }
 
     void TextLayout::SetBounds(Vector2 bounds)
@@ -323,7 +359,7 @@ namespace Ossium
         if (bbox != bounds)
         {
             bbox = bounds;
-            updateAll = true;
+            updateFlags |= UPDATE_LAYOUT;
         }
     }
 
@@ -334,8 +370,21 @@ namespace Ossium
 
     void TextLayout::SetText(Renderer& renderer, Font& font, string text, bool applyMarkup)
     {
-        updateAll = true;
+        updateFlags = UPDATE_ALL;
         ComputeLayout(renderer, font, text, applyMarkup);
+    }
+
+    void TextLayout::Update(Font& font)
+    {
+        if (updateFlags & UPDATE_LAYOUT)
+        {
+            TextLine startLine = (TextLine){Vector2::Zero, Vector2(0, font.GetLineDifference(pointSize)), 0};
+            ComputeLayout(startLine);
+        }
+        else if (updateFlags & UPDATE_LINES)
+        {
+            ComputeLinePositions();
+        }
     }
 
     Vector2 TextLayout::GetSize()
@@ -383,7 +432,7 @@ namespace Ossium
         if (alignment != alignMode)
         {
             alignment = alignMode;
-            ComputeLinePositions();
+            updateFlags |= UPDATE_LINES;
         }
     }
 
@@ -392,7 +441,7 @@ namespace Ossium
         if (direction != textDirection)
         {
             direction = textDirection;
-            updateAll = true;
+            updateFlags |= UPDATE_LAYOUT;
         }
     }
 
@@ -401,7 +450,7 @@ namespace Ossium
         if (kerning != kern)
         {
             kerning = kern;
-            // TODO: update all if kerning affects layout in future
+            // TODO: kern table support
         }
     }
 
@@ -410,7 +459,7 @@ namespace Ossium
         if (lineWrap != wrap)
         {
             lineWrap = wrap;
-            updateAll = true;
+            updateFlags |= UPDATE_LAYOUT;
         }
     }
 
@@ -419,7 +468,7 @@ namespace Ossium
         if (wordBreak != midwordBreak)
         {
             wordBreak = midwordBreak;
-            updateAll = true;
+            updateFlags |= UPDATE_LAYOUT;
         }
     }
 
@@ -428,7 +477,7 @@ namespace Ossium
         if (ignoreWhitespace != ignoreSpaces)
         {
             ignoreWhitespace = ignoreSpaces;
-            updateAll = true;
+            updateFlags |= UPDATE_LAYOUT;
         }
     }
 
@@ -437,7 +486,8 @@ namespace Ossium
         if (pointSize != ptSize)
         {
             pointSize = ptSize;
-            updateAll = true;
+            // TODO: only update layout, but make sure first group pointSize is set.
+            updateFlags = UPDATE_ALL;
         }
     }
 

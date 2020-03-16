@@ -158,6 +158,9 @@ namespace Ossium
         */
         void SetText(Renderer& renderer, Font& font, string str, bool applyMarkup);
 
+        /// Recomputes layout if any changes have been made.
+        void Update(Font& font);
+
         /// Returns the dimensions of the text layout.
         Vector2 GetSize();
 
@@ -199,10 +202,13 @@ namespace Ossium
         void ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters = " /!?|");
 
         /// Computes the text layout using the pre-existing glyphs array. Useful when the bounds change.
-        void ComputeLayout(string lineBreakCharacters = " /!?|");
+        void ComputeLayout(TextLine& startLine, string lineBreakCharacters = " /!?|");
 
         /// Computes the position of the next glyph given a specific glyph, applying line wrapping etc.
         void ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group);
+
+        /// Sets the position of a given text line and returns total.
+        void ComputeLinePosition(TextLine& line, Vector2& position);
 
         /// Computes the positions of each line.
         void ComputeLinePositions();
@@ -219,8 +225,13 @@ namespace Ossium
         /// Array of glyphs, corresponding to the text string.
         vector<GlyphMeta> glyphs;
 
-        /// Should the layout be recomputed on the next Update() call?
-        bool updateAll = true;
+        /// Determines which parts of the text layout should be updated.
+        Uint8 updateFlags = 0;
+
+        // Flags specifying which parts of the layout need updating.
+        const Uint8 UPDATE_LINES    =   0x01;
+        const Uint8 UPDATE_LAYOUT   =   0x02;
+        const Uint8 UPDATE_ALL      =   UPDATE_LINES | UPDATE_LAYOUT;
 
         /// The dimensions of the computed text layout.
         Vector2 size = Vector2::Zero;
