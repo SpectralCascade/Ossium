@@ -199,10 +199,11 @@ namespace Ossium
         bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style);
 
         /// Computes the text layout and batch packs as many glyphs from the text string as possible.
-        void ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters = " /!?|");
+        // Other common line break characters may include '/', '!', '?' and '|'. By default only white space is broken.
+        void ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters = " ");
 
         /// Computes the text layout using the pre-existing glyphs array. Useful when the bounds change.
-        void ComputeLayout(TextLine& startLine, string lineBreakCharacters = " /!?|");
+        void ComputeLayout(TextLine& startLine, string lineBreakCharacters = " ");
 
         /// Computes the position of the next glyph given a specific glyph, applying line wrapping etc.
         void ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group, float& lastWordWidth, int lastLineBreakIndex = -1);

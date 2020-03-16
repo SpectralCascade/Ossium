@@ -471,15 +471,7 @@ namespace Ossium::Editor
             //if ( input->GetHandler<MouseHandler>()->GetMousePosition())
             // TODO: set I-beam mouse cursor when hovering
 
-            // Create the texture from scratch
-            Image texture;
-            texture.SetSurface(resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer)->GenerateFromText(*renderer, text.empty() ? " " : text, style.normalTextStyle, (Uint32)renderer->GetWidth()));
-            if (texture.GetSurface() != NULL)
-            {
-                texture.PushGPU(*renderer);
-            }
-
-            if (Button(&texture, style, false))
+            if (Button(text, style, false))
             {
                 activeTextFieldId = textFieldCounter;
                 textFieldCursorPos = text.length() - 1;
@@ -505,18 +497,20 @@ namespace Ossium::Editor
             // TODO: support other text styles for hover and click?
             TextStyle textStyle = style.normalTextStyle;
 
-            // Generate the texture
-            Image texture;
-            if (!text.empty())
-            {
-                texture.SetSurface(resources->Get<Font>(textStyle.fontPath, textStyle.ptsize, *renderer)->GenerateFromText(*renderer, text, textStyle, (Uint32)renderer->GetWidth()));
-                if (texture.GetSurface() != NULL)
-                {
-                    texture.PushGPU(*renderer);
-                }
-            }
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
+            Vector2 layoutPos = GetLayoutPosition();
+            TextLayout tlayout;
+            Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
+            tlayout.SetPointSize(style.normalTextStyle.ptsize);
+            tlayout.SetBounds(limits);
+            tlayout.mainColor = style.normalTextStyle.fg;
+            tlayout.mainStyle = style.normalTextStyle.style;
+            tlayout.SetText(*renderer, font, text, true);
+            tlayout.Update(font);
 
-            return Button(&texture, style, invertOutline, xpadding, ypadding);
+            bool result = Button(tlayout.GetSize().x, tlayout.GetSize().y, style, invertOutline, xpadding, ypadding);
+            tlayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
+            return result;
         }
         return false;
     }
@@ -528,6 +522,11 @@ namespace Ossium::Editor
 
     bool NeuronGUI::Button(Image* image, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
     {
+        return Button(image->GetWidth(), image->GetHeight(), style, invertOutline, xpadding, ypadding, image);
+    }
+
+    bool NeuronGUI::Button(int w, int h, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Image* image)
+    {
         if (IsVisible())
         {
             MouseHandler* mouse = input->GetHandler<MouseHandler>();
@@ -536,8 +535,8 @@ namespace Ossium::Editor
             SDL_Rect dest;
             dest.x = GetLayoutPosition().x + (xpadding / 2);
             dest.y = GetLayoutPosition().y + (ypadding / 2);
-            dest.w = image->GetWidth();
-            dest.h = image->GetHeight();
+            dest.w = w;
+            dest.h = h;
 
             Rect buttonDest = Rect(dest.x - (xpadding / 2), dest.y - (ypadding / 2), dest.w + xpadding, dest.h + ypadding);
 
@@ -555,8 +554,11 @@ namespace Ossium::Editor
             // TODO: generate nicer buttons and pass styling arguments
             buttonDest.DrawFilled(*renderer, buttonColour);
 
-            // Render the image
-            image->Render(renderer->GetRendererSDL(), dest);
+            if (image != nullptr)
+            {
+                // Render the image
+                image->Render(renderer->GetRendererSDL(), dest);
+            }
 
             // Button outline
             Line line(Vector2(buttonDest.x, buttonDest.y), Vector2(buttonDest.x + buttonDest.w, buttonDest.y));
