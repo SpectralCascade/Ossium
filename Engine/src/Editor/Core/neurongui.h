@@ -136,6 +136,13 @@ namespace Ossium::Editor
 
         /// The position of the text cursor in a text field.
         int textFieldCursorPos = 0;
+        int lastTextFieldCursorPos = 0;
+
+        /// The cursor rect rendered when a text field is in use.
+        Rect textFieldCursor;
+
+        /// The last glyph data located in a text field
+        GlyphLocation lastGlyphLocation = {GlyphMeta(), TextLine(), Vector2::Zero, 0, false};
 
         /// The current scrolled position of the GUI view.
         Vector2 scrollPos = Vector2(0, 0);
@@ -166,7 +173,7 @@ namespace Ossium::Editor
         void Begin();
         /// Sets up the layout such that additional GUI elements are aligned in a particular direction.
         void BeginLayout(int direction);
-        /// Pops back to the previous layout.s=
+        /// Pops back to the previous layout.
         void EndLayout();
 
     protected:
@@ -216,6 +223,7 @@ namespace Ossium::Editor
         /// Displays a button that takes input. When a user activates the button, this returns true.
         bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
+        bool Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(int w, int h, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr);

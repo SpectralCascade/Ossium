@@ -126,6 +126,16 @@ namespace Ossium
 
     };
 
+    /// Stores information about a particular glyph, such as it's position, line, meta, glyph group, etc.
+    struct GlyphLocation
+    {
+        GlyphMeta glyph;
+        TextLine line;
+        Vector2 position;
+        int index;
+        bool valid;
+    };
+
     /// Basic text layout renderer.
     /**
         Does not properly support some languages due to the complexity of layout variation between languages
@@ -158,7 +168,7 @@ namespace Ossium
         */
         void SetText(Renderer& renderer, Font& font, string str, bool applyMarkup);
 
-        /// Recomputes layout if any changes have been made.
+        /// Recomputes layout if any changes have been made. This must be called before rendering or glyph location.
         void Update(Font& font);
 
         /// Returns the dimensions of the text layout.
@@ -184,6 +194,21 @@ namespace Ossium
 
         /// Returns the point size.
         float GetPointSize();
+
+        /// Attempts to find the glyph nearest the given position in this text layout (relative to the start of the first line).
+        /**
+            If a glyph could not be located (e.g. empty glyphs array or no layout has been calculated yet) then the returned GlyphLocation has it's valid flag set to false.
+            Make sure you check the valid flag before use, otherwise you'll get junk data.
+            Also be warned that this can be a slow method as it has to step through lines to find the closest glyph;
+            worst case is approximately O(n + m) where n = number of lines, m = number of glyphs on the closest line.
+        */
+        GlyphLocation LocateGlyph(Vector2 position);
+
+        /// Overload that returns a glyph location according to it's index rather than it's physical position.
+        GlyphLocation LocateGlyph(int index);
+
+        /// Returns the total number of glyphs in this text layout.
+        unsigned int GetTotalGlyphs();
 
         // Associated setters, should be self explanatory.
         void SetAlignment(Typographic::TextAlignment alignMode);

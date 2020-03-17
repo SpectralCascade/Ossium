@@ -244,6 +244,7 @@ namespace Ossium::Editor
                             while (!stop)
                             {
                                 string popped = keyboard->PopTextInput();
+                                textFieldCursorPos--;
                                 if ((popped.empty() || !(popped[0] == ' ' && keyboard->GetTextInput().back() == ' ')) &&
                                     (popped[0] < '0' || (popped[0] > '9' && popped[0] < 'A') ||
                                     (popped[0] > 'Z' && popped[0] < 'a') || popped[0] > 'z'))
@@ -255,11 +256,12 @@ namespace Ossium::Editor
                         else
                         {
                             keyboard->PopTextInput();
+                            textFieldCursorPos--;
                         }
                         Refresh();
                         break;
                     case SDLK_LEFT:
-                        textFieldCursorPos = textFieldCursorPos > 0 ? textFieldCursorPos - 1 : 0;
+                        textFieldCursorPos = textFieldCursorPos > 0 ? textFieldCursorPos - 1 : -1;
                         Refresh();
                         break;
                     case SDLK_RIGHT:
@@ -457,27 +459,73 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
+            unsigned int originalTextSize = text.size();
             KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
             //MouseHandler* mouse = input->GetHandler<MouseHandler>();
             if (activeTextFieldId == textFieldCounter)
             {
-                string textInput = keyboard->GetTextInput();
                 // Accept text input
                 text = keyboard->GetTextInput();
-                //textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, 0, text.length());
                 //text.insert(textFieldCursorPos, "|");
             }
 
             //if ( input->GetHandler<MouseHandler>()->GetMousePosition())
-            // TODO: set I-beam mouse cursor when hovering
 
-            if (Button(text, style, false))
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
+            TextLayout tlayout;
+            Vector2 layoutPos = GetLayoutPosition();
+            Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - 4, renderer->GetHeight() - 4);
+            tlayout.SetPointSize(style.normalTextStyle.ptsize);
+            tlayout.SetBounds(limits);
+            tlayout.mainColor = style.normalTextStyle.fg;
+            tlayout.mainStyle = style.normalTextStyle.style;
+            tlayout.SetText(*renderer, font, text, true);
+            // Compute layout
+            tlayout.Update(font);
+
+            if (activeTextFieldId == textFieldCounter)
+            {
+                textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, -1, tlayout.GetTotalGlyphs() - 1);
+                if (textFieldCursorPos != lastTextFieldCursorPos || originalTextSize != text.size())
+                {
+                    lastGlyphLocation = tlayout.LocateGlyph(textFieldCursorPos < 0 ? 0 : textFieldCursorPos);
+                    if (lastGlyphLocation.valid)
+                    {
+                        textFieldCursor = Rect(
+                            lastGlyphLocation.position.x + layoutPos.x + 2 + (textFieldCursorPos < 0 ? 0 : lastGlyphLocation.glyph.GetAdvance()),
+                            lastGlyphLocation.position.y + layoutPos.y + 2,
+                            1,
+                            lastGlyphLocation.line.size.y
+                        );
+                    }
+                }
+            }
+
+            if (Button(text, tlayout, style, false))
             {
                 activeTextFieldId = textFieldCounter;
-                textFieldCursorPos = text.length() - 1;
+                textFieldCursorPos = 0;
                 Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
                 keyboard->StartTextInput();
                 keyboard->SetTextInput(text);
+                MouseHandler* mouse = input->GetHandler<MouseHandler>();
+                Vector2 mousePos = mouse->GetMousePosition();
+                // Locate the closest glyph to the mouse
+                // TODO: fix location seeking
+                lastGlyphLocation = tlayout.LocateGlyph(mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
+                if (lastGlyphLocation.valid)
+                {
+                    textFieldCursor = Rect(lastGlyphLocation.position.x + layoutPos.x + 2, lastGlyphLocation.position.y + layoutPos.y + 2, 1, lastGlyphLocation.line.size.y);
+                    textFieldCursorPos = lastGlyphLocation.index;
+                }
+            }
+
+            if (activeTextFieldId == textFieldCounter)
+            {
+                // Draw the cursor
+                textFieldCursor.DrawFilled(*renderer, cursorColor);
+                // Update the text field cursor index
+                lastTextFieldCursorPos = textFieldCursorPos;
             }
 
         }
@@ -494,22 +542,31 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            // TODO: support other text styles for hover and click?
-            TextStyle textStyle = style.normalTextStyle;
-
             Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
-            Vector2 layoutPos = GetLayoutPosition();
             TextLayout tlayout;
+            Vector2 layoutPos = GetLayoutPosition();
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
+            // TODO: support other text styles for hover and click?
             tlayout.SetPointSize(style.normalTextStyle.ptsize);
             tlayout.SetBounds(limits);
             tlayout.mainColor = style.normalTextStyle.fg;
             tlayout.mainStyle = style.normalTextStyle.style;
             tlayout.SetText(*renderer, font, text, true);
             tlayout.Update(font);
+            return Button(text, tlayout, style, invertOutline, xpadding, ypadding);
+        }
+        return false;
+    }
 
-            bool result = Button(tlayout.GetSize().x, tlayout.GetSize().y, style, invertOutline, xpadding, ypadding);
-            tlayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
+    bool NeuronGUI::Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    {
+        if (IsVisible())
+        {
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
+            Vector2 layoutPos = GetLayoutPosition();
+
+            bool result = Button(textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding);
+            textLayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
             return result;
         }
         return false;

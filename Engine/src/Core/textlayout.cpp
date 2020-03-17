@@ -424,6 +424,133 @@ namespace Ossium
         return pointSize;
     }
 
+    GlyphLocation TextLayout::LocateGlyph(Vector2 position)
+    {
+        GlyphLocation location;
+        location.valid = true;
+
+        // First, deal with y coordinate by finding the corresponding line
+        int lineIndex = -1;
+        for (unsigned int i = 0, counti = lines.size(); i < counti; i++)
+        {
+            if (position.y >= lines[i].position.y && position.y < lines[i].position.y + lines[i].size.y)
+            {
+                // Success, position intersects with a line
+                location.line = lines[i];
+                lineIndex = i;
+                break;
+            }
+        }
+
+        if (lineIndex < 0)
+        {
+            // Try and get first or last line depending on position, or fail if no lines exist.
+            if (lines.empty())
+            {
+                location.valid = false;
+                return location;
+            }
+            if (position.y < lines.front().position.y)
+            {
+                // Must be first line
+                location.line = lines.front();
+                lineIndex = 0;
+            }
+            else
+            {
+                // Must be last line
+                location.line = lines.back();
+                lineIndex = lines.size() - 1;
+            }
+        }
+
+        // Next, find the closest glyph on the line.
+        if (position.x < location.line.position.x)
+        {
+            // Get the leftmost glyph data
+            location.position = location.line.position;
+            location.index = location.line.glyphIndex;
+            location.glyph = glyphs[location.index];
+        }
+        else if (position.x > location.line.position.x + location.line.size.y)
+        {
+            // Get the rightmost glyph data
+            location.index = (unsigned int)lineIndex < lines.size() - 1 ? lines[lineIndex + 1].glyphIndex - 1 : glyphs.size() - 1;
+            location.glyph = glyphs[location.index];
+            // TODO: Account for variable glyph group point sizes.
+            location.position.x = location.line.position.x + location.line.size.x - location.glyph.GetDimensions(pointSize).x;
+            location.position.y = location.line.position.y;
+        }
+        else
+        {
+            // Find the closest glyph
+            float width = 0;
+            for (unsigned int i = location.line.glyphIndex, counti = (unsigned int)lineIndex < lines.size() - 1 ? lines[lineIndex + 1].glyphIndex : glyphs.size(); i < counti; i++)
+            {
+                float advance = glyphs[i].GetAdvance(pointSize);
+                if (position.x < width + advance)
+                {
+                    // This glyph is closest
+                    location.index = i;
+                    location.glyph = glyphs[i];
+                    location.position.y = location.line.position.y;
+                    location.position.x = width;
+                    break;
+                }
+                width += advance;
+            }
+        }
+
+        return location;
+    }
+
+    GlyphLocation TextLayout::LocateGlyph(int index)
+    {
+        GlyphLocation location;
+        location.valid = index >= 0 && (unsigned int)index < glyphs.size();
+        if (!location.valid)
+        {
+            // Early out
+            return location;
+        }
+
+        location.index = index;
+        location.glyph = glyphs[index];
+
+        // Now try and find the line this glyph belongs to
+        int lineIndex = -1;
+        for (unsigned int i = 0, counti = lines.size(); i < counti; i++)
+        {
+            if (lines[i].glyphIndex <= (unsigned int)index && (unsigned int)index < (i < lines.size() - 1 ? lines[i + 1].glyphIndex : glyphs.size()))
+            {
+                lineIndex = i;
+                break;
+            }
+        }
+
+        if (lineIndex < 0)
+        {
+            location.valid = false;
+        }
+        else
+        {
+            location.line = lines[lineIndex];
+            location.position.y = location.line.position.y;
+            // Now get the glyph x position by adding up the advances of preceding glyphs
+            for (unsigned int i = location.line.glyphIndex; i < (unsigned int)index; i++)
+            {
+                location.position.x += glyphs[i].GetAdvance(pointSize);
+            }
+        }
+
+        return location;
+    }
+
+    unsigned int TextLayout::GetTotalGlyphs()
+    {
+        return glyphs.size();
+    }
+
     void TextLayout::SetAlignment(Typographic::TextAlignment alignMode)
     {
         if (alignment != alignMode)
