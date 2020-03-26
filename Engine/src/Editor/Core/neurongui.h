@@ -164,6 +164,7 @@ namespace Ossium::Editor
         /// Requires a renderer instance to enqueue graphics, an input context for input and access to resources.
         /// TODO: make an empty default constructor that is safe to use
         NeuronGUI(Renderer* render, InputContext* inputContext, ResourceController* resourceController);
+        virtual ~NeuronGUI() = default;
 
         /// Reloads the GUI.
         void Refresh();

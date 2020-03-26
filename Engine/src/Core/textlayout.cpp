@@ -31,6 +31,8 @@ namespace Ossium
     void TextLayout::Render(Renderer& renderer, Font& font, Vector2 startPos)
     {
         GlyphGroup& currentGroup = groups.front();
+        GlyphGroup& previousGroup = currentGroup;
+        Vector2 currentGroupPosition;
         Vector2 linePos;
         // Iterate over each line
         for (unsigned int i = 0, group = 0, glyphIndex = 0, counti = lines.size(); i < counti; i++)
@@ -40,6 +42,8 @@ namespace Ossium
 
             //Logger::EngineLog().Info("Start pos = {0}, line pos = {1}, true linepos = {2}", startPos, line.position, position);
             linePos = position;
+            currentGroupPosition = position;
+            Vector2 oldGroupPosition = position;
 
             unsigned int nextIndex = i + 1 < lines.size() ? lines[i + 1].glyphIndex : glyphs.size();
             while (glyphIndex < nextIndex)
@@ -76,19 +80,42 @@ namespace Ossium
                     if ((currentGroup.style | mainStyle) & TTF_STYLE_UNDERLINE)
                     {
                         Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(currentGroup.pointSize));
-                        Line underline(linePos + underlinePos, position + underlinePos);
+                        Line underline(currentGroupPosition + underlinePos, position + underlinePos);
                         underline.Draw(renderer, currentGroup.color);
                     }
                     if ((currentGroup.style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
                     {
                         Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(currentGroup.pointSize));
-                        Line strikethrough(linePos + strikethroughPos, position + strikethroughPos);
+                        Line strikethrough(currentGroupPosition + strikethroughPos, position + strikethroughPos);
                         strikethrough.Draw(renderer, currentGroup.color);
                     }
                     group++;
-                    currentGroup = groups[group];
+                    if (&previousGroup != &groups[group])
+                    {
+                        previousGroup = currentGroup;
+                        currentGroup = groups[group];
+                        oldGroupPosition = currentGroupPosition;
+                        currentGroupPosition = position;
+                    }
                 }
             }
+
+            if (oldGroupPosition != currentGroupPosition)
+            {
+                if ((currentGroup.style | mainStyle) & TTF_STYLE_UNDERLINE)
+                {
+                    Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(currentGroup.pointSize));
+                    Line underline(currentGroupPosition + underlinePos, position + underlinePos);
+                    underline.Draw(renderer, currentGroup.color);
+                }
+                if ((currentGroup.style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
+                {
+                    Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(currentGroup.pointSize));
+                    Line strikethrough(currentGroupPosition + strikethroughPos, position + strikethroughPos);
+                    strikethrough.Draw(renderer, currentGroup.color);
+                }
+            }
+
         }
     }
 

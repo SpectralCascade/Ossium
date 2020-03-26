@@ -30,7 +30,8 @@ namespace Ossium
     {
 
         /// Checks if the byte is part of a UTF-8 encoded character or if it is ASCII.
-        /** If the value is the first byte of a UTF-8 character, returns the number of bytes in the character.
+        /**
+         *  If the value is the first byte of a UTF-8 character, returns the number of bytes in the character.
          *  If the value is any other part of a UTF-8 character, returns 1.
          *  If the byte is ASCII, returns 0.
          */
@@ -45,6 +46,9 @@ namespace Ossium
          *  Returns 0 if conversion fails or you pass in a null terminator character.
          */
         Uint16 ConvertUTF8ToUCS2(string utf8Char);
+
+        /// Returns the number of Unicode code points in a UTF-8 string.
+        Uint32 GetLengthUTF8(string utf8String);
 
     }
 

@@ -176,6 +176,8 @@
 		<Unit filename="src/Core/stringconvert.cpp" />
 		<Unit filename="src/Core/stringconvert.h" />
 		<Unit filename="src/Core/stringintern.h" />
+		<Unit filename="src/Core/textinput.cpp" />
+		<Unit filename="src/Core/textinput.h" />
 		<Unit filename="src/Core/textlayout.cpp" />
 		<Unit filename="src/Core/textlayout.h" />
 		<Unit filename="src/Core/texturepack.cpp" />

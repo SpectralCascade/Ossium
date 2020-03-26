@@ -15,6 +15,7 @@
  *
 **/
 #include "neurongui.h"
+#include "../../Core/textinput.h"
 
 using namespace Ossium;
 
@@ -197,6 +198,8 @@ namespace Ossium::Editor
         styleButtonText = styleLabel;
 
         // Refresh whenever the mouse interacts.
+        // TODO: this is bad practice; bindless actions must be cleaned up when this object gets destroyed!
+        // Consider what might happen if this object gets destroyed but the mouse handler is still in use...
         input->GetHandler<MouseHandler>()->AddBindlessAction(
             [&] (const MouseInput& m) {
                 if (activeTextFieldId != 0 && m.type != MOUSE_MOTION && m.type != MOUSE_WHEEL)
@@ -204,20 +207,23 @@ namespace Ossium::Editor
                     // Stop text field input
                     activeTextFieldId = 0;
                     Logger::EngineLog().Info("Unset active text field");
-                    input->GetHandler<KeyboardHandler>()->StopTextInput();
+                    input->GetHandler<TextInputHandler>()->StopListening();
                 }
+                // TODO: this is bad practice; bindless actions must be cleaned up when this object gets destroyed!
                 this->Refresh();
                 return ActionOutcome::Ignore;
             }
         );
         KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
+        TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
+        // TODO: this is bad practice; bindless actions must be cleaned up when this object gets destroyed!
         keyboard->AddBindlessAction(
             [&] (const KeyboardInput& key) {
                 return this->HandleTextField(key);
             }
         );
         // Don't need to store the handle because the callback is destroyed when this is destroyed
-        keyboard->OnTextInput += [&] (KeyboardHandler& k) { textFieldCursorPos++; this->Refresh(); };
+        textinput->AddBindlessAction([&] (const InputChar& c) { textFieldCursorPos++; this->Refresh(); return ActionOutcome::ClaimContext; });
 
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
@@ -231,7 +237,7 @@ namespace Ossium::Editor
     {
         if (activeTextFieldId != 0)
         {
-            KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
+            TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
             if (key.state)
             {
                 switch (key.key)
@@ -243,9 +249,9 @@ namespace Ossium::Editor
                             bool stop = false;
                             while (!stop)
                             {
-                                string popped = keyboard->PopTextInput();
+                                string popped = textinput->PopChar().utf8;
                                 textFieldCursorPos--;
-                                if ((popped.empty() || !(popped[0] == ' ' && keyboard->GetTextInput().back() == ' ')) &&
+                                if ((popped.empty() || !(popped[0] == ' ' && textinput->GetText().back() == ' ')) &&
                                     (popped[0] < '0' || (popped[0] > '9' && popped[0] < 'A') ||
                                     (popped[0] > 'Z' && popped[0] < 'a') || popped[0] > 'z'))
                                 {
@@ -255,7 +261,7 @@ namespace Ossium::Editor
                         }
                         else
                         {
-                            keyboard->PopTextInput();
+                            textinput->PopChar();
                             textFieldCursorPos--;
                         }
                         Refresh();
@@ -268,9 +274,9 @@ namespace Ossium::Editor
                         textFieldCursorPos++;
                         Refresh();
                         break;
-                    case SDLK_RETURN:
-                        keyboard->SetTextInput(keyboard->GetTextInput() + '\n');
-                        break;
+                    /*case SDLK_RETURN:
+                        textinput->SetText(textinput->GetText() + '\n');
+                        break;*/
                     default:
                         break;
                 }
@@ -460,12 +466,12 @@ namespace Ossium::Editor
         if (IsVisible())
         {
             unsigned int originalTextSize = text.size();
-            KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
+            TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
             //MouseHandler* mouse = input->GetHandler<MouseHandler>();
             if (activeTextFieldId == textFieldCounter)
             {
                 // Accept text input
-                text = keyboard->GetTextInput();
+                text = textinput->GetText();
                 //text.insert(textFieldCursorPos, "|");
             }
 
@@ -479,7 +485,7 @@ namespace Ossium::Editor
             tlayout.SetBounds(limits);
             tlayout.mainColor = style.normalTextStyle.fg;
             tlayout.mainStyle = style.normalTextStyle.style;
-            tlayout.SetText(*renderer, font, text, true);
+            tlayout.SetText(*renderer, font, text, false);
             // Compute layout
             tlayout.Update(font);
 
@@ -506,8 +512,7 @@ namespace Ossium::Editor
                 activeTextFieldId = textFieldCounter;
                 textFieldCursorPos = 0;
                 Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
-                keyboard->StartTextInput();
-                keyboard->SetTextInput(text);
+                textinput->StartListening();
                 MouseHandler* mouse = input->GetHandler<MouseHandler>();
                 Vector2 mousePos = mouse->GetMousePosition();
                 // Locate the closest glyph to the mouse

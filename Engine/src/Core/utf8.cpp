@@ -76,6 +76,18 @@ namespace Ossium
             return codepoint;
         }
 
+        Uint32 GetLengthUTF8(string utf8String)
+        {
+            Uint32 count = 0;
+            for (unsigned int i = 0, counti = utf8String.length(); i < counti;)
+            {
+                Uint8 byte = CheckUTF8(utf8String[i]);
+                i += byte < 1 ? 1 : byte;
+                count++;
+            }
+            return count;
+        }
+
     }
 
 }
