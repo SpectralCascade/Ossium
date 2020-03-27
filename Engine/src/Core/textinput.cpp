@@ -14,8 +14,6 @@ namespace Ossium
             ActionOutcome result = ActionOutcome::Ignore;
             if (listenForTextInput && raw.type == SDL_TEXTINPUT)
             {
-                // Collect input text
-                text += raw.text.text;
                 // If the user presses multiple keys, there may be more than one UTF-8 character (international keyboards may do this).
                 for (unsigned int i = 0; i < SDL_TEXTINPUTEVENT_TEXT_SIZE;)
                 {
@@ -31,15 +29,14 @@ namespace Ossium
                         data.utf8 += raw.text.text[i];
                     }
 
-                    // Convert to codepoint.
-                    unicode.push_back(Utilities::GetCodepointUTF8(data.utf8));
-                    data.codepoint = unicode.back();
+                    // Compute the Unicode codepoint
+                    data.codepoint = Utilities::GetCodepointUTF8(data.utf8);
+
+                    // Insert the UTF-8 character into the input text string.
+                    Insert(data.utf8);
 
                     // It may be useful to use bindless actions, e.g. to check for characters that are not allowed in this text field.
                     result = max(CallAction(data, data.codepoint), result);
-
-                    // Increment to next UTF-8 character.
-                    i += bytes;
                 }
             }
             return result;
@@ -97,6 +94,38 @@ namespace Ossium
             return unicode;
         }
 
+        void TextInputHandler::Insert(string str)
+        {
+            if (cursorIndex == unicode.size())
+            {
+                Uint32 start_text = unicode.empty() ? 0 : unicodeToText[cursorIndex - 1];
+                text += str;
+                for (unsigned int i = 0, counti = str.length(); i < counti; cursorIndex++)
+                {
+                    Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[i]));
+                    unicode.push_back(Utilities::GetCodepointUTF8(str.substr(i, bytes)));
+                    i += bytes;
+                    unicodeToText.push_back(i + start_text);
+                }
+            }
+            else
+            {
+                Uint32 start_text = unicodeToText[cursorIndex];
+                text.insert(start_text, str);
+                for (unsigned int i = 0, counti = str.length(); i < counti; cursorIndex++)
+                {
+                    Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[i]));
+                    unicode.insert(unicode.begin() + cursorIndex, Utilities::GetCodepointUTF8(str.substr(i, bytes)));
+                    unicodeToText.insert(unicodeToText.begin() + cursorIndex, i + start_text);
+                    i += bytes;
+                }
+            }
+        }
+
+        void TextInputHandler::Erase(Uint32 len)
+        {
+        }
+
         InputChar TextInputHandler::PopChar()
         {
             InputChar popped;
@@ -106,6 +135,7 @@ namespace Ossium
             }
             popped.codepoint = unicode.back();
             unicode.pop_back();
+            cursorIndex--;
             for (unsigned int i = 0; i < 4; i++)
             {
                 popped.utf8[i] = text.back();
@@ -116,6 +146,16 @@ namespace Ossium
                 }
             }
             return popped;
+        }
+
+        void TextInputHandler::SetCursorIndex(Uint32 unicode_index)
+        {
+            cursorIndex = Utilities::Clamp((int)unicode_index, 0, (int)unicode.size());
+        }
+
+        Uint32 TextInputHandler::GetCursorIndex()
+        {
+            return cursorIndex;
         }
 
     }

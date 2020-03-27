@@ -33,7 +33,7 @@ namespace Ossium
     inline namespace Utilities
     {
 
-        /// Clamps a number to maxima/minima.
+        /// Clamps a number to maxima/minima. Both min and max are INCLUSIVE.
         OSSIUM_EDL float Clamp(float n, float min = 0, float max = 1);
         OSSIUM_EDL int Clamp(int n, int min, int max);
 

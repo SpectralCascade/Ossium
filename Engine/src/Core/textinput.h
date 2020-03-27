@@ -36,11 +36,11 @@ namespace Ossium
             /// Returns text collected during input handling.
             string GetText();
 
-            /// Inserts some text into the input buffer.
-            /// TODO: unicode insertion and regular string insertion
-            void Insert(Uint32 unicode_index, string str);
-            /// Ditto, but also triggers input handling for every UTF-8 character in the string.
-            void InsertFakeInput(Uint32 index, string str);
+            /// Inserts some text into the input buffer at the current cursor index.
+            void Insert(string str);
+
+            /// Removes part of the text from the current cursor index.
+            void Erase(Uint32 len = 1);
 
             /// Returns the Unicode codepoints of the input text string.
             vector<Uint32> GetUnicode();
@@ -51,12 +51,24 @@ namespace Ossium
             /// Returns true when listening to text input events.
             bool IsListening();
 
+            /// Sets the input cursor codepoint index. Note that this is clamped between 0 and the size of GetUnicode() (inclusive-inclusive).
+            void SetCursorIndex(Uint32 unicode_index);
+
+            /// Returns the input cursor codepoint index.
+            Uint32 GetCursorIndex();
+
         protected:
             /// The raw text input buffer.
             string text;
 
             /// The Unicode string of codepoints.
             vector<Uint32> unicode;
+
+            /// Mapping between unicode indices and the raw text string indices.
+            vector<Uint32> unicodeToText;
+
+            /// The current cursor index.
+            Uint32 cursorIndex = 0;
 
         private:
             /// Whether this text input instance is listening for text input events or not.
