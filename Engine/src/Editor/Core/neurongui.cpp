@@ -16,6 +16,7 @@
 **/
 #include "neurongui.h"
 #include "../../Core/textinput.h"
+#include "../../Core/mousecursor.h"
 
 using namespace Ossium;
 
@@ -312,10 +313,20 @@ namespace Ossium::Editor
         // Render GUI
         renderer->SetDrawColor(backgroundColor);
         SDL_RenderPresent(renderer->GetRendererSDL());
+        // Set mouse cursor
+        if (textFieldHovered)
+        {
+            MouseCursor::Set(SDL_SYSTEM_CURSOR_IBEAM);
+        }
+        else
+        {
+            MouseCursor::Set(SDL_SYSTEM_CURSOR_ARROW);
+        }
     }
 
     void NeuronGUI::Begin()
     {
+        textFieldHovered = false;
         while (layoutStack.size() > 1)
         {
             layoutStack.pop();
@@ -554,6 +565,16 @@ namespace Ossium::Editor
                 }
             }
 
+            // Check if mouse is hovering over the button, if so change the cursor to an I beam.
+            MouseHandler* mouse = input->GetHandler<MouseHandler>();
+            Vector2 mpos = mouse->GetMousePosition();
+            Vector2 layoutSize = tlayout.GetSize();
+            Rect buttonRect = GetButtonRect(layoutSize.x, layoutSize.y);
+            if (buttonRect.Contains(mpos))
+            {
+                textFieldHovered = true;
+            }
+
             // Check if user clicks on the text field in this frame
             if (Button(text, tlayout, style, false))
             {
@@ -642,13 +663,8 @@ namespace Ossium::Editor
             MouseHandler* mouse = input->GetHandler<MouseHandler>();
 
             // Set the destination rect
-            SDL_Rect dest;
-            dest.x = GetLayoutPosition().x + (xpadding / 2);
-            dest.y = GetLayoutPosition().y + (ypadding / 2);
-            dest.w = w;
-            dest.h = h;
-
-            Rect buttonDest = Rect(dest.x - (xpadding / 2), dest.y - (ypadding / 2), dest.w + xpadding, dest.h + ypadding);
+            SDL_Rect dest = GetButtonDest(w, h, xpadding, ypadding);
+            Rect buttonDest = GetButtonRect(dest, xpadding, ypadding);
 
             Vector2 mpos = mouse->GetMousePosition();
             bool hovered = buttonDest.Contains(mpos);
@@ -687,6 +703,26 @@ namespace Ossium::Editor
             return hovered && DidClick(mpos);
         }
         return false;
+    }
+
+    SDL_Rect NeuronGUI::GetButtonDest(int w, int h, float xpadding, float ypadding)
+    {
+        SDL_Rect dest;
+        dest.x = GetLayoutPosition().x + (xpadding / 2);
+        dest.y = GetLayoutPosition().y + (ypadding / 2);
+        dest.w = w;
+        dest.h = h;
+        return dest;
+    }
+
+    Rect NeuronGUI::GetButtonRect(int w, int h, float xpadding, float ypadding)
+    {
+        return GetButtonRect(GetButtonDest(w, h, xpadding, ypadding), xpadding, ypadding);
+    }
+
+    Rect NeuronGUI::GetButtonRect(SDL_Rect dest, float xpadding, float ypadding)
+    {
+        return Rect(dest.x - (xpadding / 2), dest.y - (ypadding / 2), dest.w + xpadding, dest.h + ypadding);
     }
 
     bool NeuronGUI::Toggle(bool toggleValue, SDL_Color checkColor)

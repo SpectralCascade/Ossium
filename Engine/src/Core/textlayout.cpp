@@ -515,7 +515,7 @@ namespace Ossium
             for (unsigned int i = location.line.glyphIndex, counti = (unsigned int)lineIndex < lines.size() - 1 ? lines[lineIndex + 1].glyphIndex : glyphs.size(); i < counti; i++)
             {
                 float advance = glyphs[i].GetAdvance(pointSize);
-                if (position.x < width + advance)
+                if (position.x < width + (advance / 2))
                 {
                     // This glyph is closest
                     location.index = i;

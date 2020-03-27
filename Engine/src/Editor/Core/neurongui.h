@@ -186,6 +186,9 @@ namespace Ossium::Editor
         /// When true, refresh on the next Update() call.
         bool update = true;
 
+        /// True if the mouse is hovering over a text field.
+        bool textFieldHovered = false;
+
     protected:
         /// Returns true if the mouse position has not changed between pressing the left button and releasing it.
         bool DidClick(Vector2 pos);
@@ -237,6 +240,12 @@ namespace Ossium::Editor
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(int w, int h, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr);
+
+        /// Helper method for computing the inner destination rect of a button.
+        SDL_Rect GetButtonDest(int w, int h, float xpadding, float ypadding);
+        /// Helper method for computing the true rect of a button.
+        Rect GetButtonRect(int w, int h, float xpadding = 4, float ypadding = 4);
+        Rect GetButtonRect(SDL_Rect dest, float xpadding = 4, float ypadding = 4);
 
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
         bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
