@@ -499,7 +499,7 @@ namespace Ossium
             location.index = location.line.glyphIndex;
             location.glyph = glyphs[location.index];
         }
-        else if (position.x > location.line.position.x + location.line.size.y)
+        else if (position.x > location.line.position.x + location.line.size.x)
         {
             // Get the rightmost glyph data
             location.index = (unsigned int)lineIndex < lines.size() - 1 ? lines[lineIndex + 1].glyphIndex - 1 : glyphs.size() - 1;
@@ -522,6 +522,7 @@ namespace Ossium
                     location.glyph = glyphs[i];
                     location.position.y = location.line.position.y;
                     location.position.x = width;
+                    //Logger::EngineLog().Info("Found glyph at location {0}", location.position);
                     break;
                 }
                 width += advance;
