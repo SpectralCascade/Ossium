@@ -17,6 +17,7 @@ namespace Ossium
 
         };
 
+        /// Handles text input events.
         class OSSIUM_EDL TextInputHandler : public InputHandler<TextInputHandler, InputChar, Uint32>
         {
         public:
@@ -34,6 +35,12 @@ namespace Ossium
 
             /// Returns text collected during input handling.
             string GetText();
+
+            /// Inserts some text into the input buffer.
+            /// TODO: unicode insertion and regular string insertion
+            void Insert(Uint32 unicode_index, string str);
+            /// Ditto, but also triggers input handling for every UTF-8 character in the string.
+            void InsertFakeInput(Uint32 index, string str);
 
             /// Returns the Unicode codepoints of the input text string.
             vector<Uint32> GetUnicode();

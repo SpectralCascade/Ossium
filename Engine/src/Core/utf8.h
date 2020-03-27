@@ -50,6 +50,24 @@ namespace Ossium
         /// Returns the number of Unicode code points in a UTF-8 string.
         Uint32 GetLengthUTF8(string utf8String);
 
+        /*
+        /// TODO
+        /// Provides UTF-8 string manipulation methods.
+        class String : public string
+        {
+        public:
+            size_t length_utf8();
+
+            String substr_utf8(size_t index, size_t len);
+
+            void erase_utf8(size_t index, size_t len);
+
+            void insert_utf8(size_t index, Uint32 codepoint);
+            void insert_utf8(size_t index, string utf8char);
+
+        };
+        */
+
     }
 
 }

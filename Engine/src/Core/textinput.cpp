@@ -35,16 +35,13 @@ namespace Ossium
                     unicode.push_back(Utilities::GetCodepointUTF8(data.utf8));
                     data.codepoint = unicode.back();
 
+                    // It may be useful to use bindless actions, e.g. to check for characters that are not allowed in this text field.
                     result = max(CallAction(data, data.codepoint), result);
 
                     // Increment to next UTF-8 character.
                     i += bytes;
                 }
             }
-            // TODO: complex editing events such as CTRL-C copy and CTRL-V paste. Ideally make these inputs bindable too.
-            /*else if ()
-            {
-            }*/
             return result;
         }
 

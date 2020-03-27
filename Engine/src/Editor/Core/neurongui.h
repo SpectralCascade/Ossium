@@ -138,6 +138,9 @@ namespace Ossium::Editor
         int textFieldCursorPos = 0;
         int lastTextFieldCursorPos = 0;
 
+        /// The change multiplier for cursor vertical position, corresponding to Y axis (where the top < 0, bottom > 0).
+        int verticalCursorPosChange = 0;
+
         /// The cursor rect rendered when a text field is in use.
         Rect textFieldCursor;
 
@@ -166,6 +169,9 @@ namespace Ossium::Editor
         NeuronGUI(Renderer* render, InputContext* inputContext, ResourceController* resourceController);
         virtual ~NeuronGUI() = default;
 
+        /// Refreshes the GUI if necessary.
+        void Update();
+
         /// Reloads the GUI.
         void Refresh();
 
@@ -176,6 +182,9 @@ namespace Ossium::Editor
         void BeginLayout(int direction);
         /// Pops back to the previous layout.
         void EndLayout();
+
+        /// When true, refresh on the next Update() call.
+        bool update = true;
 
     protected:
         /// Returns true if the mouse position has not changed between pressing the left button and releasing it.

@@ -206,11 +206,10 @@ namespace Ossium::Editor
                 {
                     // Stop text field input
                     activeTextFieldId = 0;
-                    Logger::EngineLog().Info("Unset active text field");
+                    //Logger::EngineLog().Info("Unset active text field");
                     input->GetHandler<TextInputHandler>()->StopListening();
                 }
-                // TODO: this is bad practice; bindless actions must be cleaned up when this object gets destroyed!
-                this->Refresh();
+                this->update = true;
                 return ActionOutcome::Ignore;
             }
         );
@@ -223,7 +222,7 @@ namespace Ossium::Editor
             }
         );
         // Don't need to store the handle because the callback is destroyed when this is destroyed
-        textinput->AddBindlessAction([&] (const InputChar& c) { textFieldCursorPos++; this->Refresh(); return ActionOutcome::ClaimContext; });
+        textinput->AddBindlessAction([&] (const InputChar& c) { textFieldCursorPos++; this->update = true; return ActionOutcome::ClaimContext; });
 
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
@@ -233,6 +232,7 @@ namespace Ossium::Editor
         layoutDifference.push(0);
     }
 
+    // TODO: refactor keyboard inputs to make them rebindable.
     ActionOutcome NeuronGUI::HandleTextField(const KeyboardInput& key)
     {
         if (activeTextFieldId != 0)
@@ -264,15 +264,23 @@ namespace Ossium::Editor
                             textinput->PopChar();
                             textFieldCursorPos--;
                         }
-                        Refresh();
+                        update = true;
                         break;
                     case SDLK_LEFT:
                         textFieldCursorPos = textFieldCursorPos > 0 ? textFieldCursorPos - 1 : -1;
-                        Refresh();
+                        update = true;
                         break;
                     case SDLK_RIGHT:
                         textFieldCursorPos++;
-                        Refresh();
+                        update = true;
+                        break;
+                    case SDLK_UP:
+                        verticalCursorPosChange--;
+                        update = true;
+                        break;
+                    case SDLK_DOWN:
+                        verticalCursorPosChange++;
+                        update = true;
                         break;
                     /*case SDLK_RETURN:
                         textinput->SetText(textinput->GetText() + '\n');
@@ -283,6 +291,14 @@ namespace Ossium::Editor
             }
         }
         return ActionOutcome::Ignore;
+    }
+
+    void NeuronGUI::Update()
+    {
+        if (update)
+        {
+            Refresh();
+        }
     }
 
     void NeuronGUI::Refresh()
@@ -489,10 +505,36 @@ namespace Ossium::Editor
             // Compute layout
             tlayout.Update(font);
 
+            // Now compute the cursor position
             if (activeTextFieldId == textFieldCounter)
             {
                 textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, -1, tlayout.GetTotalGlyphs() - 1);
-                if (textFieldCursorPos != lastTextFieldCursorPos || originalTextSize != text.size())
+                if (verticalCursorPosChange != 0)
+                {
+                    // Recompute the position of the cursor rect and the corresponding text index.
+                    lastGlyphLocation = lastGlyphLocation.valid ? lastGlyphLocation : tlayout.LocateGlyph(max(textFieldCursorPos, 0));
+                    if (lastGlyphLocation.valid)
+                    {
+                        lastGlyphLocation = tlayout.LocateGlyph(lastGlyphLocation.position + Vector2(0, verticalCursorPosChange * font.GetLineDifference(tlayout.GetPointSize())));
+                    }
+                    if (lastGlyphLocation.valid)
+                    {
+                        textFieldCursorPos = lastGlyphLocation.index;
+                        textFieldCursor = Rect(
+                            lastGlyphLocation.position.x + layoutPos.x + 2 + (textFieldCursorPos < 0 ? 0 : lastGlyphLocation.glyph.GetAdvance()),
+                            lastGlyphLocation.position.y + layoutPos.y + 2,
+                            1,
+                            lastGlyphLocation.line.size.y
+                        );
+                    }
+                    else
+                    {
+                        textFieldCursor.x = layoutPos.x + 2;
+                        textFieldCursor.y = layoutPos.y + 2;
+                    }
+                    verticalCursorPosChange = 0;
+                }
+                else if (textFieldCursorPos != lastTextFieldCursorPos || originalTextSize != text.size())
                 {
                     lastGlyphLocation = tlayout.LocateGlyph(textFieldCursorPos < 0 ? 0 : textFieldCursorPos);
                     if (lastGlyphLocation.valid)
@@ -504,14 +546,20 @@ namespace Ossium::Editor
                             lastGlyphLocation.line.size.y
                         );
                     }
+                    else
+                    {
+                        textFieldCursor.x = layoutPos.x + 2;
+                        textFieldCursor.y = layoutPos.y + 2;
+                    }
                 }
             }
 
+            // Check if user clicks on the text field in this frame
             if (Button(text, tlayout, style, false))
             {
                 activeTextFieldId = textFieldCounter;
                 textFieldCursorPos = 0;
-                Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
+                //Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
                 textinput->StartListening();
                 MouseHandler* mouse = input->GetHandler<MouseHandler>();
                 Vector2 mousePos = mouse->GetMousePosition();
