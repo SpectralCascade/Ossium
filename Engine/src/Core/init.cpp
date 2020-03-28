@@ -34,6 +34,8 @@ namespace Ossium
     int InitialiseOssium()
     {
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+        // Use OpenGL to avoid Direct3D issues (such as texture destruction on window resize).
+        SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
         string numCPUs = "";
         Logger::EngineLog().Info("{0} | {1} core CPU | {2} MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
