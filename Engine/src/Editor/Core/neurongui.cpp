@@ -210,7 +210,10 @@ namespace Ossium::Editor
                     //Logger::EngineLog().Info("Unset active text field");
                     input->GetHandler<TextInputHandler>()->StopListening();
                 }
-                this->update = true;
+                if (renderer->GetWindow()->IsFocus())
+                {
+                    this->update = true;
+                }
                 return ActionOutcome::Ignore;
             }
         );
@@ -297,6 +300,7 @@ namespace Ossium::Editor
         if (update)
         {
             Refresh();
+            update = false;
         }
     }
 
