@@ -264,10 +264,34 @@ namespace Ossium::Editor
         );
 
         /// Displays a drop-down list of items when clicked. Returns the selected item.
+        /// TODO: show as overlay, take input control from the window while open.
         /*template<typename T>
         vector<typename T>::iterator Dropdown(vector<typename T>::iterator selected, const vector<typename T>& values)
         {
-            // TODO
+            Font& font = *resources->Get<Font>(style.fontPath, style.ptsize, *renderer);
+            vector<TextLayout> textLayouts;
+
+            // First, find the widest element in the list
+            float biggestWidth = 0;
+            for (auto itr : values)
+            {
+                TextLayout tlayout;
+                Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
+                tlayout.SetPointSize(style.ptsize);
+                tlayout.SetBounds(limits);
+                tlayout.mainColor = style.fg;
+                tlayout.mainStyle = style.style;
+                tlayout.SetText(*renderer, font, text, true);
+                tlayout.Update(font);
+                tlayout.Render(*renderer, font, layoutPos);
+
+                textLayouts.push_back();
+                biggestWidth = GetButtonRect(,, );
+            }
+            // Now create buttons for each element but at an even width.
+            for (auto itr : values)
+            {
+            }
             return selected;
         }*/
 
