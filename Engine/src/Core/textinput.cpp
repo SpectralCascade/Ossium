@@ -78,10 +78,23 @@ namespace Ossium
             return listenForTextInput;
         }
 
+        void TextInputHandler::SetText(string str)
+        {
+            text.clear();
+            unicode.clear();
+            unicodeToText.clear();
+            Uint32 oldIndex = cursorIndex;
+            cursorIndex = 0;
+            Insert(str);
+            cursorIndex = min(unicode.size(), oldIndex);
+        }
+
         void TextInputHandler::Clear()
         {
             text.clear();
             unicode.clear();
+            unicodeToText.clear();
+            cursorIndex = 0;
         }
 
         string TextInputHandler::GetText()

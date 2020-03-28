@@ -575,6 +575,7 @@ namespace Ossium::Editor
                 activeTextFieldId = textFieldCounter;
                 //Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
                 textinput->StartListening();
+                textinput->SetText(text);
                 MouseHandler* mouse = input->GetHandler<MouseHandler>();
                 Vector2 mousePos = mouse->GetMousePosition();
                 // Locate the closest glyph to the mouse

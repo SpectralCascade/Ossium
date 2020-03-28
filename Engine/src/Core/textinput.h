@@ -33,6 +33,12 @@ namespace Ossium
             /// Clears the text input buffer.
             void Clear();
 
+            /// Sets the current text input buffer string and clamps the cursor.
+            /// This is useful if you have multiple text input fields but only one TextInput instance to go round.
+            /// TODO: this is horrifically inefficient as it means the computed data is thrown away. Instead, make InputTextHandler a specialised type (not bound to input system),
+            /// then there can be multiple instances.
+            void SetText(string str);
+
             /// Returns text collected during input handling.
             string GetText();
 
