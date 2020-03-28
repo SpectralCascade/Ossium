@@ -490,7 +490,6 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            unsigned int originalTextSize = text.size();
             TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
             //MouseHandler* mouse = input->GetHandler<MouseHandler>();
             if (activeTextFieldId == textFieldCounter)
@@ -526,7 +525,7 @@ namespace Ossium::Editor
                     {
                         textinput->SetCursorIndex(lastGlyphLocation.index);
                         textFieldCursor = Rect(
-                            lastGlyphLocation.position.x + layoutPos.x + 2 + lastGlyphLocation.glyph.GetAdvance(),
+                            lastGlyphLocation.position.x + layoutPos.x + 2,
                             lastGlyphLocation.position.y + layoutPos.y + 2,
                             1,
                             lastGlyphLocation.line.size.y
@@ -539,13 +538,13 @@ namespace Ossium::Editor
                     }
                     verticalCursorPosChange = 0;
                 }
-                else if (lastTextFieldCursorPos != textinput->GetCursorIndex() || originalTextSize != text.size())
+                else if (lastTextFieldCursorPos != textinput->GetCursorIndex())
                 {
-                    lastGlyphLocation = tlayout.LocateGlyph(textinput->GetCursorIndex());
+                    lastGlyphLocation = textinput->GetCursorIndex() < tlayout.GetTotalGlyphs() ? tlayout.LocateGlyph(textinput->GetCursorIndex()) : tlayout.LocateGlyph(textinput->GetCursorIndex() - 1);
                     if (lastGlyphLocation.valid)
                     {
                         textFieldCursor = Rect(
-                            lastGlyphLocation.position.x + layoutPos.x + 2 + lastGlyphLocation.glyph.GetAdvance(),
+                            lastGlyphLocation.position.x + layoutPos.x + 2 + (textinput->GetCursorIndex() < tlayout.GetTotalGlyphs() ? 0 : lastGlyphLocation.glyph.GetAdvance(tlayout.GetPointSize())),
                             lastGlyphLocation.position.y + layoutPos.y + 2,
                             1,
                             lastGlyphLocation.line.size.y
@@ -556,6 +555,7 @@ namespace Ossium::Editor
                         textFieldCursor.x = layoutPos.x + 2;
                         textFieldCursor.y = layoutPos.y + 2;
                     }
+                    lastTextFieldCursorPos = textinput->GetCursorIndex();
                 }
             }
 
@@ -592,8 +592,6 @@ namespace Ossium::Editor
             {
                 // Draw the cursor
                 textFieldCursor.DrawFilled(*renderer, cursorColor);
-                // Update the text field cursor index
-                lastTextFieldCursorPos = textinput->GetCursorIndex();
             }
 
         }

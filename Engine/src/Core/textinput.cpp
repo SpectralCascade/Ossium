@@ -105,7 +105,7 @@ namespace Ossium
                     Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[i]));
                     unicode.push_back(Utilities::GetCodepointUTF8(str.substr(i, bytes)));
                     unicodeToText.push_back(i + start_text);
-                    Logger::EngineLog().Info("Inserted {0} byte(s) for character {1} [Unicode: {2}] at string index {3} (unicode index {4})", (int)bytes, str.substr(i, bytes), unicode.back(), unicodeToText.back(), unicode.size() - 1);
+                    //Logger::EngineLog().Info("Inserted {0} byte(s) for character {1} [Unicode: {2}] at string index {3} (unicode index {4})", (int)bytes, str.substr(i, bytes), unicode.back(), unicodeToText.back(), unicode.size() - 1);
                     i += bytes;
                 }
             }
@@ -119,7 +119,7 @@ namespace Ossium
                     Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[index]));
                     unicode.insert(unicode.begin() + cursorIndex, Utilities::GetCodepointUTF8(str.substr(index, bytes)));
                     unicodeToText.insert(unicodeToText.begin() + cursorIndex, index + start_text);
-                    Logger::EngineLog().Info("Inserted {0} byte(s) for character {1} [Unicode: {2}] at string index {3} (unicode index {4})", (int)bytes, str.substr(index, bytes), unicode[cursorIndex], unicodeToText[cursorIndex], cursorIndex);
+                    //Logger::EngineLog().Info("Inserted {0} byte(s) for character {1} [Unicode: {2}] at string index {3} (unicode index {4})", (int)bytes, str.substr(index, bytes), unicode[cursorIndex], unicodeToText[cursorIndex], cursorIndex);
                     index += bytes;
                 }
                 for (Uint32 i = cursorIndex; i < unicodeToText.size(); i++)
@@ -138,7 +138,7 @@ namespace Ossium
                     unicodeToText[cursorIndex + len - 1] + (Uint32)max(1, (int)Utilities::CheckUTF8(unicodeToText[cursorIndex + len - 1])) :
                     unicodeToText[cursorIndex + len]) - unicodeToText[cursorIndex];
 
-                Logger::EngineLog().Info("Erasing string of length {0} at index {1}", strLen, cursorIndex);
+                //Logger::EngineLog().Info("Erasing string of length {0} at index {1}", strLen, cursorIndex);
 
                 text.erase(unicodeToText[cursorIndex], strLen);
 
