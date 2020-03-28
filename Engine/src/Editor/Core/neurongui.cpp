@@ -223,7 +223,7 @@ namespace Ossium::Editor
             }
         );
         // Don't need to store the handle because the callback is destroyed when this is destroyed
-        textinput->AddBindlessAction([&] (const InputChar& c) { textFieldCursorPos++; this->update = true; return ActionOutcome::ClaimContext; });
+        textinput->AddBindlessAction([&] (const InputChar& c) { this->update = true; return ActionOutcome::Ignore; });
 
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
@@ -251,7 +251,6 @@ namespace Ossium::Editor
                             while (!stop)
                             {
                                 string popped = textinput->PopChar().utf8;
-                                textFieldCursorPos--;
                                 if ((popped.empty() || !(popped[0] == ' ' && textinput->GetText().back() == ' ')) &&
                                     (popped[0] < '0' || (popped[0] > '9' && popped[0] < 'A') ||
                                     (popped[0] > 'Z' && popped[0] < 'a') || popped[0] > 'z'))
@@ -263,16 +262,15 @@ namespace Ossium::Editor
                         else
                         {
                             textinput->PopChar();
-                            textFieldCursorPos--;
                         }
                         update = true;
                         break;
                     case SDLK_LEFT:
-                        textFieldCursorPos = textFieldCursorPos > 0 ? textFieldCursorPos - 1 : -1;
+                        textinput->SetCursorIndex(max(0, (int)textinput->GetCursorIndex() - 1));
                         update = true;
                         break;
                     case SDLK_RIGHT:
-                        textFieldCursorPos++;
+                        textinput->SetCursorIndex(textinput->GetCursorIndex() + 1);
                         update = true;
                         break;
                     case SDLK_UP:
@@ -499,10 +497,7 @@ namespace Ossium::Editor
             {
                 // Accept text input
                 text = textinput->GetText();
-                //text.insert(textFieldCursorPos, "|");
             }
-
-            //if ( input->GetHandler<MouseHandler>()->GetMousePosition())
 
             Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
             TextLayout tlayout;
@@ -519,20 +514,19 @@ namespace Ossium::Editor
             // Now compute the cursor position
             if (activeTextFieldId == textFieldCounter)
             {
-                textFieldCursorPos = Utilities::Clamp(textFieldCursorPos, -1, tlayout.GetTotalGlyphs() - 1);
                 if (verticalCursorPosChange != 0)
                 {
                     // Recompute the position of the cursor rect and the corresponding text index.
-                    lastGlyphLocation = lastGlyphLocation.valid ? lastGlyphLocation : tlayout.LocateGlyph(max(textFieldCursorPos, 0));
+                    lastGlyphLocation = lastGlyphLocation.valid ? lastGlyphLocation : tlayout.LocateGlyph(textinput->GetCursorIndex());
                     if (lastGlyphLocation.valid)
                     {
                         lastGlyphLocation = tlayout.LocateGlyph(lastGlyphLocation.position + Vector2(0, verticalCursorPosChange * font.GetLineDifference(tlayout.GetPointSize())));
                     }
                     if (lastGlyphLocation.valid)
                     {
-                        textFieldCursorPos = lastGlyphLocation.index;
+                        textinput->SetCursorIndex(lastGlyphLocation.index);
                         textFieldCursor = Rect(
-                            lastGlyphLocation.position.x + layoutPos.x + 2 + (textFieldCursorPos < 0 ? 0 : lastGlyphLocation.glyph.GetAdvance()),
+                            lastGlyphLocation.position.x + layoutPos.x + 2 + lastGlyphLocation.glyph.GetAdvance(),
                             lastGlyphLocation.position.y + layoutPos.y + 2,
                             1,
                             lastGlyphLocation.line.size.y
@@ -545,13 +539,13 @@ namespace Ossium::Editor
                     }
                     verticalCursorPosChange = 0;
                 }
-                else if (textFieldCursorPos != lastTextFieldCursorPos || originalTextSize != text.size())
+                else if (lastTextFieldCursorPos != textinput->GetCursorIndex() || originalTextSize != text.size())
                 {
-                    lastGlyphLocation = tlayout.LocateGlyph(textFieldCursorPos < 0 ? 0 : textFieldCursorPos);
+                    lastGlyphLocation = tlayout.LocateGlyph(textinput->GetCursorIndex());
                     if (lastGlyphLocation.valid)
                     {
                         textFieldCursor = Rect(
-                            lastGlyphLocation.position.x + layoutPos.x + 2 + (textFieldCursorPos < 0 ? 0 : lastGlyphLocation.glyph.GetAdvance()),
+                            lastGlyphLocation.position.x + layoutPos.x + 2 + lastGlyphLocation.glyph.GetAdvance(),
                             lastGlyphLocation.position.y + layoutPos.y + 2,
                             1,
                             lastGlyphLocation.line.size.y
@@ -579,27 +573,27 @@ namespace Ossium::Editor
             if (Button(text, tlayout, style, false))
             {
                 activeTextFieldId = textFieldCounter;
-                textFieldCursorPos = 0;
                 //Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
                 textinput->StartListening();
                 MouseHandler* mouse = input->GetHandler<MouseHandler>();
                 Vector2 mousePos = mouse->GetMousePosition();
                 // Locate the closest glyph to the mouse
-                // TODO: fix location seeking
                 lastGlyphLocation = tlayout.LocateGlyph(mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
                 if (lastGlyphLocation.valid)
                 {
                     textFieldCursor = Rect(lastGlyphLocation.position.x + layoutPos.x + 2, lastGlyphLocation.position.y + layoutPos.y + 2, 1, lastGlyphLocation.line.size.y);
-                    textFieldCursorPos = lastGlyphLocation.index;
+                    textinput->SetCursorIndex(lastGlyphLocation.index);
                 }
             }
+
+            TextLabel(Utilities::Format("Cursor Index = {0}", textinput->GetCursorIndex()));
 
             if (activeTextFieldId == textFieldCounter)
             {
                 // Draw the cursor
                 textFieldCursor.DrawFilled(*renderer, cursorColor);
                 // Update the text field cursor index
-                lastTextFieldCursorPos = textFieldCursorPos;
+                lastTextFieldCursorPos = textinput->GetCursorIndex();
             }
 
         }

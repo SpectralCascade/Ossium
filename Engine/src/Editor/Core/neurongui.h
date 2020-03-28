@@ -134,9 +134,8 @@ namespace Ossium::Editor
         /// This is reset when the viewport loses focus or the user clicks away.
         Uint32 activeTextFieldId = 0;
 
-        /// The position of the text cursor in a text field.
-        int textFieldCursorPos = 0;
-        int lastTextFieldCursorPos = 0;
+        /// The last position of the text cursor in a text field.
+        Uint32 lastTextFieldCursorPos = 0;
 
         /// The change multiplier for cursor vertical position, corresponding to Y axis (where the top < 0, bottom > 0).
         int verticalCursorPosChange = 0;

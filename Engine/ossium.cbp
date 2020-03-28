@@ -158,6 +158,8 @@
 		<Unit filename="src/Core/metarect.h" />
 		<Unit filename="src/Core/mouse.cpp" />
 		<Unit filename="src/Core/mouse.h" />
+		<Unit filename="src/Core/mousecursor.cpp" />
+		<Unit filename="src/Core/mousecursor.h" />
 		<Unit filename="src/Core/physics.cpp" />
 		<Unit filename="src/Core/physics.h" />
 		<Unit filename="src/Core/pixeleffects.cpp" />

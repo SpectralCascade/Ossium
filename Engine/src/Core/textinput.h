@@ -58,6 +58,9 @@ namespace Ossium
             Uint32 GetCursorIndex();
 
         protected:
+            /// Returns the corresponding text index for a given Unicode index.
+            Uint32 GetTextIndex(Uint32 unicode_index);
+
             /// The raw text input buffer.
             string text;
 

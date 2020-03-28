@@ -98,59 +98,77 @@ namespace Ossium
         {
             if (cursorIndex == unicode.size())
             {
-                Uint32 start_text = unicode.empty() ? 0 : unicodeToText[cursorIndex - 1];
+                Uint32 start_text = unicodeToText.empty() || cursorIndex == 0 ? 0 : (unicodeToText[cursorIndex - 1] + (Uint32)max(1, (int)Utilities::CheckUTF8(text[unicodeToText[cursorIndex - 1]])));
                 text += str;
-                for (unsigned int i = 0, counti = str.length(); i < counti; cursorIndex++)
+                for (Uint32 i = 0, counti = str.length(); i < counti; cursorIndex++)
                 {
                     Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[i]));
                     unicode.push_back(Utilities::GetCodepointUTF8(str.substr(i, bytes)));
-                    i += bytes;
                     unicodeToText.push_back(i + start_text);
+                    Logger::EngineLog().Info("Inserted {0} byte(s) for character {1} [Unicode: {2}] at string index {3} (unicode index {4})", (int)bytes, str.substr(i, bytes), unicode.back(), unicodeToText.back(), unicode.size() - 1);
+                    i += bytes;
                 }
             }
             else
             {
-                Uint32 start_text = unicodeToText[cursorIndex];
+                Uint32 start_text = unicodeToText.empty() ? 0 : unicodeToText[cursorIndex];
                 text.insert(start_text, str);
-                for (unsigned int i = 0, counti = str.length(); i < counti; cursorIndex++)
+                Uint32 index = 0;
+                for (Uint32 counti = str.length(); index < counti; cursorIndex++)
                 {
-                    Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[i]));
-                    unicode.insert(unicode.begin() + cursorIndex, Utilities::GetCodepointUTF8(str.substr(i, bytes)));
-                    unicodeToText.insert(unicodeToText.begin() + cursorIndex, i + start_text);
-                    i += bytes;
+                    Uint8 bytes = max(1, (int)Utilities::CheckUTF8(str[index]));
+                    unicode.insert(unicode.begin() + cursorIndex, Utilities::GetCodepointUTF8(str.substr(index, bytes)));
+                    unicodeToText.insert(unicodeToText.begin() + cursorIndex, index + start_text);
+                    Logger::EngineLog().Info("Inserted {0} byte(s) for character {1} [Unicode: {2}] at string index {3} (unicode index {4})", (int)bytes, str.substr(index, bytes), unicode[cursorIndex], unicodeToText[cursorIndex], cursorIndex);
+                    index += bytes;
+                }
+                for (Uint32 i = cursorIndex; i < unicodeToText.size(); i++)
+                {
+                    // Update the mapping
+                    unicodeToText[i] += index;
                 }
             }
         }
 
         void TextInputHandler::Erase(Uint32 len)
         {
+            if (cursorIndex < unicode.size() && len > 0)
+            {
+                Uint32 strLen = (cursorIndex + len >= unicode.size() ?
+                    unicodeToText[cursorIndex + len - 1] + (Uint32)max(1, (int)Utilities::CheckUTF8(unicodeToText[cursorIndex + len - 1])) :
+                    unicodeToText[cursorIndex + len]) - unicodeToText[cursorIndex];
+
+                Logger::EngineLog().Info("Erasing string of length {0} at index {1}", strLen, cursorIndex);
+
+                text.erase(unicodeToText[cursorIndex], strLen);
+
+                unicode.erase(unicode.begin() + cursorIndex, unicode.begin() + cursorIndex + len);
+                unicodeToText.erase(unicodeToText.begin() + cursorIndex, unicodeToText.begin() + cursorIndex + len);
+                for (Uint32 i = cursorIndex; i < unicodeToText.size(); i++)
+                {
+                    // Update the mapping
+                    unicodeToText[i] -= strLen;
+                }
+            }
         }
 
         InputChar TextInputHandler::PopChar()
         {
             InputChar popped;
-            if (text.empty())
+            if (unicode.empty() || cursorIndex <= 0)
             {
                 return popped;
             }
-            popped.codepoint = unicode.back();
-            unicode.pop_back();
             cursorIndex--;
-            for (unsigned int i = 0; i < 4; i++)
-            {
-                popped.utf8[i] = text.back();
-                text.pop_back();
-                if (Utilities::CheckUTF8(popped.utf8[i]) != 1)
-                {
-                    break;
-                }
-            }
+            popped.codepoint = unicode[cursorIndex];
+            popped.utf8 = text.substr(unicodeToText[cursorIndex], max(1, (int)Utilities::CheckUTF8(text[unicodeToText[cursorIndex]])));
+            Erase(1);
             return popped;
         }
 
         void TextInputHandler::SetCursorIndex(Uint32 unicode_index)
         {
-            cursorIndex = Utilities::Clamp((int)unicode_index, 0, (int)unicode.size());
+            cursorIndex = min(unicode_index, unicode.size());
         }
 
         Uint32 TextInputHandler::GetCursorIndex()
