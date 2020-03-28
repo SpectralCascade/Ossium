@@ -587,7 +587,7 @@ namespace Ossium::Editor
                 }
             }
 
-            TextLabel(Utilities::Format("Cursor Index = {0}", textinput->GetCursorIndex()));
+            //TextLabel(Utilities::Format("Cursor Index = {0}", textinput->GetCursorIndex()));
 
             if (activeTextFieldId == textFieldCounter)
             {
