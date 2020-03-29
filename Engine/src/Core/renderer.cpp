@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <queue>
 #include <algorithm>
@@ -39,7 +39,7 @@ namespace Ossium
             aspect_height = 0;
             fixed_aspect = false;
 
-            renderer = SDL_CreateRenderer(window->GetWindow(), driver, flags);
+            renderer = SDL_CreateRenderer(window->GetWindowSDL(), driver, flags);
             if (renderer == NULL)
             {
                 Logger::EngineLog().Error("[Renderer] Could not create renderer! SDL_Error: {0}", SDL_GetError());
@@ -53,7 +53,7 @@ namespace Ossium
                 }
                 Logger::EngineLog().Info("Available render drivers are: {0}", drivers_available);
                 Logger::EngineLog().Info("Falling back to software renderer by default.");
-                renderer = SDL_CreateRenderer(window->GetWindow(), driver, SDL_RENDERER_SOFTWARE);
+                renderer = SDL_CreateRenderer(window->GetWindowSDL(), driver, SDL_RENDERER_SOFTWARE);
                 if (renderer == NULL)
                 {
                     Logger::EngineLog().Error("[Renderer] Fallback software renderer could not be created! SDL_Error: {0}", SDL_GetError());
@@ -66,9 +66,9 @@ namespace Ossium
             registeredGraphics = new set<Graphic*>[numLayers];
             queuedGraphics = new queue<Graphic*>[numLayers];
 
+            window->AddAction("SizeChanged", [&] (const WindowInput& win) { this->UpdateViewport(win.window); return ActionOutcome::ClaimContext; }, SDL_WINDOWEVENT_SIZE_CHANGED);
             callbackIds[0] = window->OnFullscreen += [&] (Window& win) { this->UpdateViewport(win); };
-            callbackIds[1] = window->OnSizeChanged += [&] (Window& win) { this->UpdateViewport(win); };
-            callbackIds[2] = window->OnWindowed += [&] (Window& win) { this->UpdateViewport(win); };
+            callbackIds[1] = window->OnWindowed += [&] (Window& win) { this->UpdateViewport(win); };
             /// No need to store id as the OnDestroyed callback is automatically freed after being called.
             window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
 
@@ -86,8 +86,7 @@ namespace Ossium
             if (renderWindow != nullptr)
             {
                 renderWindow->OnFullscreen -= callbackIds[0];
-                renderWindow->OnSizeChanged -= callbackIds[1];
-                renderWindow->OnWindowed -= callbackIds[2];
+                renderWindow->OnWindowed -= callbackIds[1];
                 renderWindow = nullptr;
             }
 

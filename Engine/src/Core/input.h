@@ -69,14 +69,30 @@ namespace Ossium
             return T::__input_type_entry_.GetType();
         }
 
+        // Forward declaration
+        class OSSIUM_EDL InputContext;
+
         /// Interface for accessing InputHandler
         class OSSIUM_EDL BaseInputHandler
         {
         public:
-            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
+            friend class InputContext;
+
+            /// Returns the input context that owns this handler instance.
+            InputContext* GetContext();
+
+        protected:
+            BaseInputHandler() = default;
+
             virtual ~BaseInputHandler()
             {
             }
+
+            /// Handles input
+            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
+
+            /// Pointer to the input context responsible for this handler instance.
+            InputContext* context;
 
         };
 
@@ -95,10 +111,6 @@ namespace Ossium
             {
                 Clear();
             }
-
-            /// Takes raw input data and strips away the irrelevant stuff, then checks if it matches anything in the actions table
-            /// Returns true if the raw event data should be discarded after handling
-            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
 
             /// Adds a state tracker to the input handler
             void AddState(string name)
@@ -258,6 +270,10 @@ namespace Ossium
             }
 
         protected:
+            /// Takes raw input data and strips away the irrelevant stuff, then checks if it matches anything in the actions table
+            /// Returns true if the raw event data should be discarded after handling
+            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
+
             /// Updates the state of the associated input ident, if it finds it.
             void UpdateState(const InputIdent& ident, bool state)
             {
@@ -341,6 +357,7 @@ namespace Ossium
                 if (itr == inputs.end())
                 {
                     BaseInputHandler* handler = reinterpret_cast<BaseInputHandler*>(new T());
+                    handler->context = this;
                     inputs[GetInputHandlerType<T>()] = handler;
                     return reinterpret_cast<T*>(handler);
                 }
