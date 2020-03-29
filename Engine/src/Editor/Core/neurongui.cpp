@@ -182,9 +182,8 @@ namespace Ossium::Editor
     // NeuronGUI
     //
 
-    NeuronGUI::NeuronGUI(Renderer* render, InputContext* inputContext, ResourceController* resourceController)
+    void NeuronGUI::Init(InputContext* inputContext, ResourceController* resourceController)
     {
-        renderer = render;
         input = inputContext;
         resources = resourceController;
 
@@ -231,6 +230,12 @@ namespace Ossium::Editor
         layoutDirection.push(NEURON_LAYOUT_VERTICAL);
         // No difference at root as the layout can't be ended manually
         layoutDifference.push(0);
+
+        OnInit();
+    }
+
+    void NeuronGUI::OnInit()
+    {
     }
 
     // TODO: refactor keyboard inputs to make them rebindable.
@@ -294,7 +299,7 @@ namespace Ossium::Editor
 
     void NeuronGUI::Update()
     {
-        if (update)
+        if (update || alwaysUpdate)
         {
             Refresh();
             update = false;

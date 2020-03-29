@@ -114,7 +114,6 @@ namespace Ossium::Editor
     }
 
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
-    // TODO: don't inherit TextFormat!!!!!!!!!!!!!!!!!!!!! instead maybe setup layout options member in personal schema
     class NeuronGUI : public NeuronSkinSchema
     {
     private:
@@ -152,6 +151,9 @@ namespace Ossium::Editor
         Vector2 lastMousePos = Vector2(0, 0);
         bool mousePressed = false;
 
+        /// When true, refresh on the next Update() call.
+        bool update = true;
+
         /// Handles keyboard inputs such as backspace while a text field is in use.
         ActionOutcome HandleTextField(const KeyboardInput& key);
 
@@ -160,35 +162,40 @@ namespace Ossium::Editor
         InputContext* input = nullptr;
         ResourceController* resources = nullptr;
 
+        /// When true, refreshes every time Update() is called.
+        bool alwaysUpdate = false;
+
+        /// True if the mouse is hovering over a text field.
+        bool textFieldHovered = false;
+
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, NeuronSkinSchema);
 
-        /// Requires a renderer instance to enqueue graphics, an input context for input and access to resources.
-        /// TODO: make an empty default constructor that is safe to use
-        NeuronGUI(Renderer* render, InputContext* inputContext, ResourceController* resourceController);
+        NeuronGUI() = default;
         virtual ~NeuronGUI() = default;
+
+        /// Initialises everything. Must be called immediately after construction!
+        void Init(InputContext* inputContext, ResourceController* resourceController);
+
+        /// Called once initialisation is complete.
+        virtual void OnInit();
 
         /// Refreshes the GUI if necessary.
         void Update();
 
         /// Reloads the GUI.
-        void Refresh();
+        virtual void Refresh();
 
     private:
-        /// Resets the layout. Called automatically by Refresh().
-        void Begin();
         /// Sets up the layout such that additional GUI elements are aligned in a particular direction.
         void BeginLayout(int direction);
         /// Pops back to the previous layout.
         void EndLayout();
 
-        /// When true, refresh on the next Update() call.
-        bool update = true;
-
-        /// True if the mouse is hovering over a text field.
-        bool textFieldHovered = false;
-
     protected:
+        /// Resets the layout. Called automatically by Refresh().
+        void Begin();
+
         /// Returns true if the mouse position has not changed between pressing the left button and releasing it.
         bool DidClick(Vector2 pos);
 

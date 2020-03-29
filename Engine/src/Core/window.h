@@ -58,12 +58,14 @@ namespace Ossium
         int GetHeight();
         int GetDisplayWidth();
         int GetDisplayHeight();
+        string GetTitle();
         void SetWidth(int newWidth);
         void SetHeight(int newHeight);
         void SetFullscreen();
         void SetWindowed();
         void SetBordered();
         void SetBorderless();
+        void SetTitle(string title);
 
         /// Return active flags
         bool IsMinimised();

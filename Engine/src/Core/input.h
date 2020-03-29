@@ -380,6 +380,25 @@ namespace Ossium
                 return reinterpret_cast<T*>((*itr).second);
             }
 
+            /// Returns true if the specified handler has been added.
+            template<class T>
+            bool HasHandler()
+            {
+                auto itr = inputs.find(GetInputHandlerType<T>());
+                return itr != inputs.end();
+            }
+
+            template<class T>
+            void RemoveHandler()
+            {
+                auto itr = inputs.find(GetInputHandlerType<T>());
+                if (itr != inputs.end())
+                {
+                    delete reinterpret_cast<T*>((*itr).second);
+                    inputs.erase(itr);
+                }
+            }
+
             /// Pass an input event to all the handlers
             ActionOutcome HandleInput(const SDL_Event& raw)
             {

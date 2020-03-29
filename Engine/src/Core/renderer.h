@@ -58,7 +58,7 @@ namespace Ossium
         {
         public:
             Renderer(Window* window, int numLayers = 1, Uint32 flags = SDL_RENDERER_ACCELERATED, int driver = -1);
-            ~Renderer();
+            virtual ~Renderer();
 
             /// Registers a graphic for rendering. Note that you cannot change the layer or forceCull parameter once registered;
             /// to do so you must unregister the graphic and re-register it with the modified arguments. Returns the layer used.

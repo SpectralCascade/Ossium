@@ -163,6 +163,11 @@ namespace Ossium
         return display_height;
     }
 
+    string Window::GetTitle()
+    {
+        return SDL_GetWindowTitle(window);
+    }
+
     void Window::SetWidth(int newWidth)
     {
         width = newWidth;
@@ -199,6 +204,11 @@ namespace Ossium
     {
         SDL_SetWindowBordered(window, SDL_FALSE);
         border = false;
+    }
+
+    void Window::SetTitle(string title)
+    {
+        SDL_SetWindowTitle(window, title.c_str());
     }
 
     bool Window::IsMinimised()
