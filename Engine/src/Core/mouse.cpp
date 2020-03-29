@@ -97,6 +97,8 @@ namespace Ossium
             return ActionOutcome::Ignore;
         }
 
+        /// Returns the mouse position relative to the current window the mouse is over.
+        /// Returns position (-1, -1) when the context is inactive.
         Vector2 MouseHandler::GetMousePosition()
         {
             if (context->IsActive())
