@@ -263,7 +263,7 @@ namespace Ossium
                             Uint8 oldStyle = currentGroup.style;
                             if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, currentGroup.style))
                             {
-                                Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
+                                //Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
                             }
                             if (currentGroup.color != colours.top() || currentGroup.style != oldStyle)
                             {
