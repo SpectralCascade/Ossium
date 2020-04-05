@@ -246,6 +246,14 @@ namespace Ossium
             return viewportRect;
         }
 
+        void Renderer::SetViewportRect(SDL_Rect rect)
+        {
+            aspect_width = (int)rect.w;
+            aspect_height = (int)rect.h;
+            viewportRect = rect;
+            SDL_RenderSetViewport(renderer, &viewportRect);
+        }
+
         void Renderer::WindowToViewportPoint(int& x, int& y)
         {
             y -= viewportRect.y;

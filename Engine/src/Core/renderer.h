@@ -107,8 +107,12 @@ namespace Ossium
             int GetAspectWidth();
             /// Returns the aspect height
             int GetAspectHeight();
+
             /// Returns the viewport area used for rendering
             SDL_Rect GetViewportRect();
+
+            /// Sets the viewport area used for rendering
+            void SetViewportRect(SDL_Rect rect);
 
             /// Converts a position relative to the associated window into a position relative to the view port.
             void WindowToViewportPoint(int& x, int& y);

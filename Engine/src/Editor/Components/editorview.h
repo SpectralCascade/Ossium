@@ -21,6 +21,7 @@
 #include "../../Ossium.h"
 
 #include "../Core/neurongui.h"
+#include "../../Core/tree.h"
 
 using namespace Ossium;
 
@@ -34,10 +35,20 @@ namespace Ossium::Editor
 
         M(string, title) = "Untitled";
 
-        M(int, width) = 640;
-        M(int, height) = 480;
+        M(Rect, viewport);
 
     };
+
+    enum DockingMode
+    {
+        TOP = 0,
+        BOTTOM,
+        LEFT,
+        RIGHT
+    };
+
+    /// Forward declaration
+    class NativeEditorWindow;
 
     /// A dockable window with support for custom Immediate-Mode GUI.
     /**
@@ -49,53 +60,28 @@ namespace Ossium::Editor
     class EditorWindow : public NeuronGUI
     {
     private:
-        /// The native OS window.
-        Window* native = nullptr;
-
-        /// The editor window this window is docked to. If null, this is a standalone window.
-        EditorWindow* parent = nullptr;
-
-        /// The editor windows that are children of this window.
-        vector<EditorWindow*> children;
-
-        /// The index of this window in the parent window's children.
-        Uint32 childID = 0;
-
-        using NeuronGUI::Init;
-
-        /// Recreates the renderer and initialises the window.
-        void Recreate();
-
-        /// Recursively gets the native window that this editor window is using.
-        Window* GetNativeWindow();
+        friend class NativeEditorWindow;
 
         /// Settings defining the window title, dimensions etc.
         EditorWindowSettings settings;
 
-    protected:
-        /// Override that does window GUI (tabs, edges of the window, etc.).
-        void Refresh();
+        /// The corresponding node of this window.
+        Node<EditorWindow*>* node;
+
+        InputController* inputController;
+
+        Window* native = nullptr;
 
     public:
-        /// This replaces the Init() method in NeuronGUI so the input context can be automagically created to ensure it's unique to this instance.
-        void Init(InputController* controller, ResourceController* resourceController);
-
-        /// The docking modes available.
-        enum DockingMode {
-            TABBED = 0,
-            TOP,
-            BOTTOM,
-            LEFT,
-            RIGHT
-        };
-
         virtual ~EditorWindow();
 
-        /// Dock to another editor window.
-        void DockTo(EditorWindow* dock);
+        void Init(InputController* inputControl, ResourceController* resourceController);
 
-        /// Undock from the parent window.
-        void Undock();
+        /// Sets the viewport rect of this editor window.
+        void SetViewportRect(Rect rect);
+
+        /// Returns the viewport rect of this editor window.
+        Rect GetViewportRect();
 
         /// Sets the window title.
         void SetTitle(string title);
@@ -103,11 +89,49 @@ namespace Ossium::Editor
         /// Returns the window title.
         string GetTitle();
 
-        /// Returns the parent editor window which this window is docked to, or null if not docked.
-        EditorWindow* GetParent();
-
-        /// Called when this editor window is destroyed so any docked windows can also be destroyed.
+        /// Called when this editor window is destroyed.
         Callback<EditorWindow> OnDestroy;
+
+    };
+
+    /// This holds the actual native editor window and the layout tree for docked editor windows.
+    class NativeEditorWindow
+    {
+    private:
+        /// The renderer to use for this window.
+        Renderer* renderer = nullptr;
+
+        /// The input context for the native window.
+        InputContext* windowContext = nullptr;
+
+        /// The input controller pointer.
+        InputController* input;
+
+        /// Minimum dimensions of the window.
+        const Vector2 MIN_DIMENSIONS = {64, 64};
+
+        /// Layout tree, consisting of alternating row-column-row (or column-row-column, depending on root layout).
+        Tree<EditorWindow*> layout;
+
+        /// The native OS window.
+        Window* native = nullptr;
+
+        bool layoutRow = 0;
+        bool layoutColumn = 1;
+
+    public:
+        /// Creates the window and initialises the tree.
+        NativeEditorWindow(EditorWindow* root, InputController* controller, ResourceController* resources);
+        virtual ~NativeEditorWindow();
+
+        /// Update editor windows.
+        void Update();
+
+        /// Docks a source editor window to a destination editor window.
+        void Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
+
+        /// Removes an editor window from this native editor window.
+        void Remove(EditorWindow* source);
 
     };
 

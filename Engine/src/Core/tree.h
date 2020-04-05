@@ -1,24 +1,25 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef TREE_H
 #define TREE_H
 
 #include <string>
 #include <vector>
+#include <queue>
 #include <unordered_map>
 #include <functional>
 
@@ -33,20 +34,22 @@ namespace Ossium
     template<class T>
     class Tree;
 
-    /// A simple container of data and it's child data
+    /// A simple container of data and it's child data.
     template<class T>
     struct Node
     {
         friend class Tree<T>;
 
-        /// The actual data stored in the node
+        /// The actual data stored in this node.
         T data;
-        /// Pointer to parent node; null if this is a root node
+        /// Pointer to parent node; null if this is a root node.
         Node<T>* parent;
         /// Children nodes; empty if this is a leaf node
         vector<Node<T>*> children;
         /// Unique identifier
         int id;
+        /// How deep this node is.
+        Uint32 depth;
 
         void SetParent(Node<T>* node)
         {
@@ -65,6 +68,11 @@ namespace Ossium
             if (parent != nullptr)
             {
                 parent->children.push_back(this);
+                depth = parent->depth + 1;
+            }
+            else
+            {
+                depth = 0;
             }
         }
 
@@ -106,10 +114,12 @@ namespace Ossium
             if (node->parent != nullptr)
             {
                 node->parent->children.push_back(node);
+                node->depth = node->parent->depth + 1;
             }
             else
             {
                 roots.push_back(node);
+                node->depth = 0;
             }
             /// No need to add to flatTree array if it's to be recalulated; otherwise add to array
             if (!updateFlattened)
@@ -118,6 +128,55 @@ namespace Ossium
             }
             total++;
             nextId++;
+        }
+
+        /// Creates a node and inserts on the left or right side of a given sibling node.
+        Node<T>* Insert(T data, Node<T>* sibling, bool insertRight)
+        {
+            Node<T>* node = new Node<T>();
+            node->data = data;
+            node->parent = sibling->parent;
+            node->id = nextId;
+            if (node->parent != nullptr)
+            {
+                for (auto childItr = node->parent->children.begin(); childItr != node->parent->children.end(); childItr++)
+                {
+                    if (*childItr == sibling)
+                    {
+                        if (insertRight)
+                        {
+                            childItr++;
+                        }
+                        node->parent->children.insert(childItr, node);
+                        break;
+                    }
+                }
+                node->depth = sibling->depth;
+            }
+            else
+            {
+                for (auto childItr = roots.begin(); childItr != roots.end(); childItr++)
+                {
+                    if (*childItr == sibling)
+                    {
+                        if (insertRight)
+                        {
+                            childItr++;
+                        }
+                        roots.insert(childItr, node);
+                        break;
+                    }
+                }
+                node->depth = 0;
+            }
+            /// No need to add to flatTree array if it's to be recalulated; otherwise add to array
+            if (!updateFlattened)
+            {
+                flatTree.push_back(node);
+            }
+            total++;
+            nextId++;
+            return node;
         }
 
         /// Removes a specified data node and all nodes below it
@@ -208,6 +267,25 @@ namespace Ossium
             for (auto child : roots)
             {
                 RecursiveWalk(walkDown, walkUp, child);
+            }
+        }
+
+        /// Breadth-first tree traversal
+        void WalkBreadth(NodeOp walkFunc)
+        {
+            queue<Node<T>*> nodes;
+            for (auto node : roots)
+            {
+                nodes.push(node);
+            }
+            while (!nodes.empty())
+            {
+                walkFunc(nodes.front());
+                for (auto child : nodes.front().children)
+                {
+                    nodes.push(child);
+                }
+                nodes.pop();
             }
         }
 
@@ -312,6 +390,32 @@ namespace Ossium
                 RecursiveGetAll(*i, all);
             }
             return all;
+        }
+
+        /// Returns all nodes in the tree grouped by depth.
+        vector<vector<Node<T>*>> GetAllDepths()
+        {
+            queue<Node<T>*> nodes;
+
+            vector<vector<Node<T>*>> groups;
+            for (auto node : roots)
+            {
+                nodes.push(node);
+                groups.back().push_back(node);
+            }
+            while (!nodes.empty())
+            {
+                if (!nodes.front().children.empty() && nodes.front().children.front().depth >= groups.size())
+                {
+                    groups.push_back(vector<Node<T>*>());
+                }
+                for (auto child : nodes.front().children)
+                {
+                    nodes.push(child);
+                    groups.back().push_back(child);
+                }
+                nodes.pop();
+            }
         }
 
         /// Returns a reference to the cached, 'flattened' version of the tree.
