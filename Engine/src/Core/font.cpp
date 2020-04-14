@@ -189,13 +189,14 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
+    bool Font::LoadAndInit(string guid_path, int maxPointSize, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
     {
-        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, glyphCacheLimit, mipDepth, targetTextureSize, pixelFormat);
+        return Load(guid_path, maxPointSize) && Init(guid_path, glyphCacheLimit, mipDepth, targetTextureSize, pixelFormat);
     }
 
-    bool Font::Init(string guid_path, Renderer& renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
+    bool Font::Init(string guid_path, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
     {
+        updateAtlasTexture = true;
         mipOffsets.clear();
 
         fontHeight = TTF_FontHeight(font);
@@ -262,24 +263,8 @@ namespace Ossium
 
         if (targetTextureSize == 0)
         {
-            // Use max texture size
-            SDL_RendererInfo renderInfo;
-            if (SDL_GetRendererInfo(renderer.GetRendererSDL(), &renderInfo) < 0)
-            {
-                Logger::EngineLog().Error("Failed to get renderer info to generate font atlas! Using texture size of 1024. SDL_Error: {0}", SDL_GetError());
-                targetTextureSize = 1024;
-            }
-            else
-            {
-                // Absolute minimum = 1024, absolute max = 8192. Actual size selected can be anywhere in between depending on cell size.
-                targetTextureSize = max(1024, min(8192, min(renderInfo.max_texture_width, renderInfo.max_texture_height)));
-                // Compute number of possible glyphs given this configuration
-                actualTextureSize = {((int)targetTextureSize / cellSize.x) * cellSize.x, ((int)targetTextureSize / cellSize.y) * cellSize.y};
-                float approxGlyphs = (actualTextureSize.x / cellSize.x) * (actualTextureSize.y / cellSize.y);
-                float scaleFactor = approxGlyphs > (float)ABSOLUTE_MAXIMUM_ATLAS_GLYPHS ? (float)ABSOLUTE_MAXIMUM_ATLAS_GLYPHS / approxGlyphs : 1.0f;
-                // Scale down if exceeding the maximum allowed number of glyphs
-                targetTextureSize = (Uint32)max(1024.0f, min(8192.0f, scaleFactor * (float)targetTextureSize));
-            }
+            // 1024 by default, just in case users have an ancient GPU.
+            targetTextureSize = 1024;
         }
 
         // Compute actual texture size using font height and target texture size
@@ -299,17 +284,10 @@ namespace Ossium
 
         // Create the atlas surface and push onto the GPU.
         atlas.CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat);
-        if (atlas.GetSurface() != NULL)
-        {
-            bool success = atlas.PushGPU(renderer, SDL_TEXTUREACCESS_TARGET) != NULL;
-            // Free RAM
-            atlas.FreeSurface();
-            return success;
-        }
-        return false;
+        return atlas.GetSurface() != NULL;
     }
 
-    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, SDL_Color color, int hinting, int kerning, int style, int renderMode, SDL_Color bgColor, int outline, Uint32 wrapLength, TTF_Font* f)
+    SDL_Surface* Font::GenerateFromText(string text, SDL_Color color, int hinting, int kerning, int style, int renderMode, SDL_Color bgColor, int outline, Uint32 wrapLength, TTF_Font* f)
     {
         if (f == NULL)
         {
@@ -369,12 +347,12 @@ namespace Ossium
         return tempSurface;
     }
 
-    SDL_Surface* Font::GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f)
+    SDL_Surface* Font::GenerateFromText(string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f)
     {
-        return GenerateFromText(renderer, text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength, f);
+        return GenerateFromText(text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength, f);
     }
 
-    Font::Glyph* Font::GetGlyph(Renderer& renderer, GlyphID id)
+    Font::Glyph* Font::GetGlyph(GlyphID id)
     {
         int outline = (id & GLYPH_OUTLINE_MASK) >> GLYPH_OUTLINE_SHIFT;
         int hinting = (id & GLYPH_HINTING_MASK) >> GLYPH_HINTING_SHIFT;
@@ -553,44 +531,15 @@ namespace Ossium
         return glyph;
     }
 
-    void Font::BatchPackBegin(Renderer& renderer)
-    {
-        batched = 0;
-
-        if (IsBatchPacking())
-        {
-            // Batching is still in progress, so no need to configure the renderer
-            return;
-        }
-
-        // Configure renderer
-        SDL_Renderer* render = renderer.GetRendererSDL();
-
-        SDL_Texture* target = atlas.GetTexture();
-        if (target == NULL)
-        {
-            Logger::EngineLog().Warning("Font atlas is uninitialised, cannot pack glyphs!");
-            return;
-        }
-
-        // Set render target to atlas
-        originalTarget = SDL_GetRenderTarget(render);
-        SDL_SetRenderTarget(render, target);
-
-        // Configure blending so old pixels are overwritten when glyphs are packed.
-        SDL_GetRenderDrawBlendMode(render, &originalBlending);
-        SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_NONE);
-        if (originalBlending == SDL_BLENDMODE_INVALID)
-        {
-            // Just in case something went wrong getting the blend mode
-            originalBlending = SDL_BLENDMODE_NONE;
-        }
-
-    }
-
     // Private method
-    Uint32 Font::BatchPackGlyph(Renderer& renderer, GlyphID id, Glyph* glyph)
+    Uint32 Font::BatchPackGlyph(GlyphID id, Glyph* glyph)
     {
+        if (!updateAtlasTexture)
+        {
+            // Start a new batch
+            batched = 0;
+        }
+
         if (glyph == nullptr)
         {
             // Early out
@@ -645,8 +594,6 @@ namespace Ossium
 
         if (dest.w != 0 && dest.h != 0)
         {
-            SDL_Renderer* render = renderer.GetRendererSDL();
-
             // Render the glyph to the atlas.
             if (glyph->cached.GetWidth() > dest.w || glyph->cached.GetHeight() > dest.h)
             {
@@ -658,50 +605,25 @@ namespace Ossium
 
             //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
 
-            // Overwrite whatever was in the atlas cell before
-            SDL_SetRenderDrawColor(render, 0xFF, 0xFF, 0xFF, 0);
-            SDL_RenderFillRect(render, &dest);
-
             // Render the actual glyph
-            glyph->cached.PushGPU(renderer, SDL_TEXTUREACCESS_STREAMING);
-            SDL_Rect clip = {0, 0, glyph->cached.GetWidth(), glyph->cached.GetHeight()};
-            SDL_RenderCopy(render, glyph->cached.GetTexture(), &clip, &dest);
+            SDL_Rect src = {0, 0, glyph->cached.GetWidthSurface(), glyph->cached.GetHeightSurface()};
+            SDL_BlitScaled(glyph->cached.GetSurface(), &src, atlas.GetSurface(), &dest);
 
             // Update atlas meta in the glyph
             glyph->atlasIndex = index;
             glyph->clip = dest;
 
             batched++;
+            updateAtlasTexture = true;
         }
 
         return batched;
     }
 
     // Public overload
-    Uint32 Font::BatchPackGlyph(Renderer& renderer, GlyphID id)
+    Uint32 Font::BatchPackGlyph(GlyphID id)
     {
-        return BatchPackGlyph(renderer, id, GetGlyph(renderer, id));
-    }
-
-    void Font::BatchPackEnd(Renderer& renderer)
-    {
-        if (IsBatchPacking())
-        {
-            SDL_Renderer* render = renderer.GetRendererSDL();
-
-            if (batched != 0)
-            {
-                batched = 0;
-            }
-
-            // Reconfigure renderer back to how it was originally
-            SDL_SetRenderTarget(render, originalTarget);
-            SDL_SetRenderDrawBlendMode(render, originalBlending);
-
-            // When originalBlending == SDL_BLENDMODE_INVALID, batching is not in progress.
-            originalBlending = SDL_BLENDMODE_INVALID;
-            originalTarget = NULL;
-        }
+        return BatchPackGlyph(id, GetGlyph(id));
     }
 
     Uint32 Font::GetBatchPackTotal()
@@ -709,19 +631,19 @@ namespace Ossium
         return batched;
     }
 
-    bool Font::IsBatchPacking()
-    {
-        return originalBlending != SDL_BLENDMODE_INVALID;
-    }
-
     void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        if (updateAtlasTexture)
+        {
+            atlas.PushGPU(renderer, SDL_TEXTUREACCESS_STATIC);
+            updateAtlasTexture = false;
+        }
         atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
     }
 
     bool Font::RenderGlyph(Renderer& renderer, GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        Glyph* glyph = GetGlyph(renderer, id);
+        Glyph* glyph = GetGlyph(id);
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         float scale = (pointSize / loadedPointSize);
         if (glyph == nullptr)
@@ -743,9 +665,7 @@ namespace Ossium
         // If glyph is not already in the atlas, pack it now. Note this is less efficient than batch packing multiple glyphs at once.
         if (glyph->atlasIndex == 0)
         {
-            BatchPackBegin(renderer);
-            BatchPackGlyph(renderer, id, glyph);
-            BatchPackEnd(renderer);
+            BatchPackGlyph(id, glyph);
         }
 
         // Get correct mipmap level

@@ -470,7 +470,7 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            Font& font = *resources->Get<Font>(style.fontPath, style.ptsize, *renderer);
+            Font& font = *resources->Get<Font>(style.fontPath, style.ptsize);
             Vector2 layoutPos = GetLayoutPosition();
             TextLayout tlayout;
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
@@ -504,7 +504,7 @@ namespace Ossium::Editor
                 text = textinput->GetText();
             }
 
-            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             TextLayout tlayout;
             Vector2 layoutPos = GetLayoutPosition();
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - 4, renderer->GetHeight() - 4);
@@ -615,7 +615,7 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             TextLayout tlayout;
             Vector2 layoutPos = GetLayoutPosition();
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
@@ -635,7 +635,7 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer);
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             Vector2 layoutPos = GetLayoutPosition();
 
             bool result = Button(textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding);
@@ -836,8 +836,8 @@ namespace Ossium::Editor
             // Draw float value
             Image valueText;
             valueText.SetSurface(
-                resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize, *renderer)->GenerateFromText(
-                    *renderer, Utilities::ToString(sliderValue), style.normalTextStyle, (Uint32)renderer->GetWidth()
+                resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize)->GenerateFromText(
+                    Utilities::ToString(sliderValue), style.normalTextStyle, (Uint32)renderer->GetWidth()
                 )
             );
             valueText.PushGPU(*renderer);

@@ -220,7 +220,6 @@ namespace Ossium
         // These are used to produce natural line breaks
         float lastWordSize = 0;
 
-        font.BatchPackBegin(renderer);
         for (unsigned int i = 0, counti = text.length(); i < counti;)
         {
             // Extract UTF-8 character
@@ -294,7 +293,7 @@ namespace Ossium
                 {
                     // Batch pack glyphs now to save processing time during rendering.
                     // TODO: outline, hinting
-                    font.BatchPackGlyph(renderer, CreateGlyphID(glyphs.back().GetCodepoint(), currentGroup.style, 0, 0));
+                    font.BatchPackGlyph(CreateGlyphID(glyphs.back().GetCodepoint(), currentGroup.style, 0, 0));
                 }
 
                 if (lineWrap && !wordBreak && bytes <= 1)
@@ -330,9 +329,6 @@ namespace Ossium
             currentGroup.index = glyphs.size();
             groups.push_back(currentGroup);
         }
-
-        // Finish render batching.
-        font.BatchPackEnd(renderer);
 
         // Update line positioning
         ComputeLinePositions();

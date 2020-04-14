@@ -168,10 +168,10 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, int maxPointSize, Renderer& renderer, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        bool LoadAndInit(string guid_path, int maxPointSize, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(string guid_path, Renderer& renderer, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        bool Init(string guid_path, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -179,7 +179,6 @@ namespace Ossium
          *  It does, however, support more out-of-the-box options in regards to text styling, kerning, hinting and so on as well as basic text wrapping.
          */
         SDL_Surface* GenerateFromText(
-            Renderer& renderer,
             string text,
             SDL_Color color = Colors::RED,
             int hinting = 0,
@@ -193,27 +192,17 @@ namespace Ossium
         );
 
         /// Ditto, but bundled some parameters.
-        SDL_Surface* GenerateFromText(Renderer& renderer, string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f = NULL);
+        SDL_Surface* GenerateFromText(string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f = NULL);
 
-        /// TODO: add support for alternative packing mode that doesn't use render targets (maybe cache the texture surface and modify that instead).
-        /// Targets the texture atlas for rendering. Returns the original render target.
-        void BatchPackBegin(Renderer& renderer);
-
-        /// Pre-renders a glyph to the font atlas but doesn't call RenderPresent().
+        /// Copies a glyph to the font atlas.
         /** You should call this between BatchPackBegin() and BatchPackEnd(). Returns the number of glyphs that have been packed since BatchPackBegin() was last called.
          *  When the return value == GetAtlasMaxGlyphs(), you should call BatchPackEnd(), otherwise you'll render over other glyphs in the batch.
          *  Note: if this method returns 0, it doesn't necessarily mean there was an error packing the glyph - in circumstances where the glyph is already packed,
          *  the return value does not change. You can check if there was an error packing the glyph by checking glyph->GetAtlasIndex() > 0. */
-        Uint32 BatchPackGlyph(Renderer& renderer, GlyphID id);
-
-        /// Renders any outstanding pack batch and resets the renderer to it's configuration before batching.
-        void BatchPackEnd(Renderer& renderer);
+        Uint32 BatchPackGlyph(GlyphID id);
 
         /// Returns the total number of glyphs currently batched.
         Uint32 GetBatchPackTotal();
-
-        /// Returns true when glyph batch packing is in progress.
-        bool IsBatchPacking();
 
         /// Renders the font atlas texture at a given point size.
         void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -322,10 +311,10 @@ namespace Ossium
         /// Returns the glyph for the given UTF-8 character.
         /** If the glyph is not in the glyphs map already, it first renders the glyph to a surface
          *  then adds it to the map and updates the cache. Note this does NOT pack the glyph into the atlas. */
-        Glyph* GetGlyph(Renderer& renderer, GlyphID id);
+        Glyph* GetGlyph(GlyphID id);
 
         /// Internal method for batching a glyph.
-        Uint32 BatchPackGlyph(Renderer& renderer, GlyphID id, Glyph* glyph);
+        Uint32 BatchPackGlyph(GlyphID id, Glyph* glyph);
 
         /// Copying is not permitted.
         Font(const Font& thisCopy);
@@ -360,6 +349,9 @@ namespace Ossium
 
         /// The horizontal advance padding for invalid glyphs.
         float invalidPadding;
+
+        /// Should the atlas texture be updated?
+        bool updateAtlasTexture = true;
 
         /// The size of an atlas cell, including mipmaps.
         SDL_Point cellSize = {0, 0};
@@ -402,12 +394,6 @@ namespace Ossium
 
         /// The number of glyphs that have been batched so far. This is reset to zero when BatchPackBegin() or BatchPackEnd() are called.
         Uint32 batched = 0;
-
-        /// The renderer target texture when batch packing begins
-        SDL_Texture* originalTarget = NULL;
-
-        /// The renderer blending mode when batch packing begins. When invalid, batching is not in progress.
-        SDL_BlendMode originalBlending = SDL_BLENDMODE_INVALID;
 
     };
 
