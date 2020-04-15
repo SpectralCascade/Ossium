@@ -92,6 +92,10 @@ namespace Ossium
                 height = raw.window.data2;
                 break;
             }
+            case SDL_WINDOWEVENT_RESIZED:
+            {
+                break;
+            }
             case SDL_WINDOWEVENT_MINIMIZED:
             {
                 minimized = true;

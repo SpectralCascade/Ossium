@@ -36,8 +36,8 @@ namespace Ossium
             if (raw.type == SDL_MOUSEMOTION)
             {
                 data.type = MOUSE_MOTION;
-                data.x = raw.motion.x;
-                data.y = raw.motion.y;
+                data.x = raw.motion.x - viewportRect.x;
+                data.y = raw.motion.y - viewportRect.y;
                 data.xrel = raw.motion.xrel;
                 data.yrel = raw.motion.yrel;
                 data.state = raw.motion.state;
@@ -80,8 +80,8 @@ namespace Ossium
                 }
                 data.button = raw.button.button;
                 data.clicks = raw.button.clicks;
-                data.x = raw.button.x;
-                data.y = raw.button.y;
+                data.x = raw.button.x - viewportRect.x;
+                data.y = raw.button.y - viewportRect.y;
                 data.state = raw.button.state == SDL_PRESSED ? MOUSE_PRESSED : MOUSE_RELEASED;
             }
             else
@@ -97,7 +97,7 @@ namespace Ossium
             return ActionOutcome::Ignore;
         }
 
-        /// Returns the mouse position relative to the current window the mouse is over.
+        /// Returns the mouse position relative to the set viewport (within the native window the mouse is over).
         /// Returns position (-1, -1) when the context is inactive.
         Vector2 MouseHandler::GetMousePosition()
         {
@@ -105,7 +105,7 @@ namespace Ossium
             {
                 int x = 0, y = 0;
                 SDL_GetMouseState(&x, &y);
-                return Vector2((float)x, (float)y);
+                return Vector2((float)(x - viewportRect.x), (float)(y - viewportRect.y));
             }
             // Return invalid position when the context is inactive
             return Vector2(-1, -1);
@@ -124,6 +124,16 @@ namespace Ossium
         bool MouseHandler::MiddlePressed()
         {
             return middleButtonPressed;
+        }
+
+        void MouseHandler::SetViewport(SDL_Rect viewport)
+        {
+            viewportRect = viewport;
+        }
+
+        SDL_Rect MouseHandler::GetViewport()
+        {
+            return viewportRect;
         }
 
     }

@@ -35,8 +35,6 @@ namespace Ossium::Editor
 
         M(string, title) = "Untitled";
 
-        M(Rect, viewport);
-
     };
 
     enum DockingMode
@@ -55,7 +53,7 @@ namespace Ossium::Editor
      * This is used to create custom editor windows (via inheritance).
      * You can create custom UI within the window by overriding the virtual OnGUI method and calling
      * Immediate-Mode GUI methods.
-     * EditorWindow instances can be docked within the main editor window, or undocked as a native OS window.
+     * EditorWindow instances can be docked within the main native window. Currently they cannot be undocked as a native OS window however.
      */
     class EditorWindow : public NeuronGUI
     {
@@ -70,18 +68,19 @@ namespace Ossium::Editor
 
         InputController* inputController;
 
-        Window* native = nullptr;
+        NativeEditorWindow* native = nullptr;
+
+    protected:
+        EditorWindow() = default;
 
     public:
         virtual ~EditorWindow();
 
-        void Init(InputController* inputControl, ResourceController* resourceController);
+        /// Initialises input
+        void Init(InputController* inputControl, ResourceController* resourceController, NativeEditorWindow* nativeWindow);
 
-        /// Sets the viewport rect of this editor window.
-        void SetViewportRect(Rect rect);
-
-        /// Returns the viewport rect of this editor window.
-        Rect GetViewportRect();
+        /// Returns the native editor window that owns this editor window.
+        NativeEditorWindow* GetNativeWindow();
 
         /// Sets the window title.
         void SetTitle(string title);
@@ -89,8 +88,8 @@ namespace Ossium::Editor
         /// Returns the window title.
         string GetTitle();
 
-        /// Called when this editor window is destroyed.
-        Callback<EditorWindow> OnDestroy;
+        /// Closes this editor window.
+        void Close();
 
     };
 
@@ -119,16 +118,40 @@ namespace Ossium::Editor
         bool layoutRow = 0;
         bool layoutColumn = 1;
 
+        /// Docks an existing source editor window to a destination editor window.
+        void Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
+
+        /// Everything in the window is rendered to this texture instead of using the renderer directly to avoid double buffering issues.
+        SDL_Texture* renderBuffer = NULL;
+
     public:
         /// Creates the window and initialises the tree.
-        NativeEditorWindow(EditorWindow* root, InputController* controller, ResourceController* resources);
+        NativeEditorWindow(InputController* controller, int w = 480, int h = 640);
         virtual ~NativeEditorWindow();
 
         /// Update editor windows.
         void Update();
 
-        /// Docks a source editor window to a destination editor window.
-        void Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
+        /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
+        template<typename T>
+        typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
+        Add(InputController* inputControl, ResourceController* resourceController, EditorWindow* dest = nullptr, DockingMode mode = DockingMode::TOP)
+        {
+            T* toAdd = new T();
+            toAdd->Init(inputControl, resourceController, this);
+            if (dest != nullptr)
+            {
+                Insert(toAdd, dest, mode);
+            }
+            else
+            {
+                toAdd->node = layout.Insert(toAdd);
+                toAdd->renderer = renderer;
+                toAdd->Init(inputControl, resourceController, this);
+                toAdd->viewport = {0, 0, native->GetWidth(), native->GetHeight()};
+            }
+            return toAdd;
+        }
 
         /// Removes an editor window from this native editor window.
         void Remove(EditorWindow* source);

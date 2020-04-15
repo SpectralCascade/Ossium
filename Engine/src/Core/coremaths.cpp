@@ -389,6 +389,14 @@ namespace Ossium
         h = height;
     }
 
+    Rect::Rect(SDL_Rect rect)
+    {
+        x = (float)rect.x;
+        y = (float)rect.y;
+        w = (float)rect.w;
+        h = (float)rect.h;
+    }
+
     void Rect::DrawFilled(Renderer& renderer)
     {
         SDL_Rect rect = SDL();

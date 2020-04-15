@@ -228,6 +228,7 @@ namespace Ossium
     {
         Rect();
         Rect(float xpos, float ypos, float width, float height);
+        Rect(SDL_Rect rect);
 
         float x;
         float y;

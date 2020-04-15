@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef MOUSE_H
 #define MOUSE_H
@@ -70,14 +70,22 @@ namespace Ossium
 
             /// Returns the current mouse position using SDL_GetMouseState().
             Vector2 GetMousePosition();
+
             bool LeftPressed();
             bool RightPressed();
             bool MiddlePressed();
+
+            /// Sets the relative viewport so that the reported mouse position is offset appropriately, rather than reporting mouse position relative to the native window.
+            void SetViewport(SDL_Rect viewport);
+            /// Returns the relative viewport
+            SDL_Rect GetViewport();
 
         private:
             bool leftButtonPressed = false;
             bool rightButtonPressed = false;
             bool middleButtonPressed = false;
+
+            SDL_Rect viewportRect;
 
         };
 

@@ -22,32 +22,23 @@ namespace Ossium::Editor
 
     EditorWindow::~EditorWindow()
     {
-        OnDestroy(*this);
-        inputController->RemoveContext(Utilities::Format("EditorWindow {0}", input));
+        inputController->RemoveContext(Utilities::Format("EditorWindow {0}", this));
         delete input;
         input = nullptr;
     }
 
-    void EditorWindow::Init(InputController* inputControl, ResourceController* resourceController)
+    void EditorWindow::Init(InputController* inputControl, ResourceController* resourceController, NativeEditorWindow* nativeWindow)
     {
         input = new InputContext();
         inputController = inputControl;
-        inputController->AddContext(Utilities::Format("EditorWindow {0}", input), input);
+        inputController->AddContext(Utilities::Format("EditorWindow {0}", this), input);
         NeuronGUI::Init(input, resourceController);
+        native = nativeWindow;
     }
 
-    void EditorWindow::SetViewportRect(Rect rect)
+    NativeEditorWindow* EditorWindow::GetNativeWindow()
     {
-        settings.viewport = rect;
-        if (renderer != nullptr)
-        {
-            renderer->SetViewportRect(rect.SDL());
-        }
-    }
-
-    Rect EditorWindow::GetViewportRect()
-    {
-        return settings.viewport;
+        return native;
     }
 
     string EditorWindow::GetTitle()
@@ -60,37 +51,70 @@ namespace Ossium::Editor
         settings.title = title;
     }
 
-    NativeEditorWindow::NativeEditorWindow(EditorWindow* root, InputController* controller, ResourceController* resources)
+    void EditorWindow::Close()
+    {
+        native->Remove(this);
+    }
+
+    NativeEditorWindow::NativeEditorWindow(InputController* controller, int w, int h)
     {
         // Setup input and native window
         input = controller;
         windowContext = new InputContext();
         input->AddContext(Utilities::Format("NativeEditorWindow {0}", this), windowContext);
         native = windowContext->GetHandler<Window>();
-        native->Init(root->settings.title.c_str(), root->settings.viewport.w, root->settings.viewport.h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        native->Init("Ossium (Editor)", w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
         // TODO: make this a method of the Window class
         SDL_SetWindowMinimumSize(native->GetWindowSDL(), (int)MIN_DIMENSIONS.x, (int)MIN_DIMENSIONS.y);
 
-        // Now initialise the layout with a single root editor window
-        root->node = layout.Insert(root);
-        native->SetTitle(root->GetTitle());
-        root->native = native;
-        root->renderer = new Renderer(native);
-        root->Init(input, resources);
+        renderer = new Renderer(native);
+        renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, native->GetWidth(), native->GetHeight());
 
-        // Cleanup if the initial editor window gets destroyed
-        root->OnDestroy += [&] (const EditorWindow& caller) { delete root->renderer; root->renderer = nullptr; layout.Remove(root->node); };
+        // Handle window resize
+        native->AddAction(
+            "ResizeTexture",
+            [&] (const WindowInput& window) {
+                if (renderBuffer != NULL)
+                {
+                    SDL_DestroyTexture(renderBuffer);
+                    renderBuffer = NULL;
+                }
+                renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, window.raw.data1, window.raw.data2);
+                // Redraw all editor windows on next update because the texture was destroyed
+                for (auto node : layout.GetFlatTree())
+                {
+                    if (node->data != nullptr)
+                    {
+                        node->data->TriggerUpdate();
+                    }
+                }
+                return ActionOutcome::Ignore;
+            },
+            SDL_WINDOWEVENT_SIZE_CHANGED
+        );
+
     }
 
     NativeEditorWindow::~NativeEditorWindow()
     {
+        if (renderBuffer != NULL)
+        {
+            SDL_DestroyTexture(renderBuffer);
+            renderBuffer = NULL;
+        }
         layout.Clear();
         input->RemoveContext(Utilities::Format("NativeEditorWindow {0}", this));
         delete windowContext;
+        delete renderer;
     }
 
     void NativeEditorWindow::Update()
     {
+        // Setup rendering to texture
+        SDL_Renderer* render = renderer->GetRendererSDL();
+        SDL_SetRenderTarget(render, renderBuffer);
+
         for (auto node : layout.GetFlatTree())
         {
             if (node->data != nullptr)
@@ -106,6 +130,13 @@ namespace Ossium::Editor
                 node->data->Update();
             }
         }
+        renderer->SetViewportRect({0, 0, native->GetWidth(), native->GetHeight()});
+
+        // Change target back to the window and render the texture
+        SDL_SetRenderTarget(render, NULL);
+        SDL_RenderClear(render);
+        SDL_RenderCopy(render, renderBuffer, NULL, NULL);
+        SDL_RenderPresent(renderer->GetRendererSDL());
     }
 
     void NativeEditorWindow::Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode)
@@ -116,8 +147,8 @@ namespace Ossium::Editor
             return;
         }
 
-        Rect viewport = source->GetViewportRect();
-        Rect destViewport = dest->GetViewportRect();
+        SDL_Rect viewport = source->viewport;
+        SDL_Rect destViewport = dest->viewport;
         if (mode & (TOP | BOTTOM))
         {
             if (dest->node->depth == 0)
@@ -169,15 +200,17 @@ namespace Ossium::Editor
             viewport.x = destViewport.x + (mode == DockingMode::BOTTOM ? destViewport.w : -destViewport.w);
             viewport.y = destViewport.y;
         }
-        source->SetViewportRect(viewport);
-        dest->SetViewportRect(destViewport);
-
-        source->renderer = new Renderer(native);
-        source->OnDestroy += [&] (const EditorWindow& caller) { delete source->renderer; source->renderer = nullptr; layout.Remove(source->node); };
+        source->renderer = renderer;
+        source->viewport = viewport;
+        dest->viewport = destViewport;
+        source->native = this;
     }
 
     void NativeEditorWindow::Remove(EditorWindow* source)
     {
+        // TODO: !!!! DON'T REMOVE CHILD NODES !!!! also resize sibling and child editor windows
+        layout.Remove(source->node);
+        delete source;
     }
 
 }

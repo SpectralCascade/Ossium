@@ -306,17 +306,27 @@ namespace Ossium::Editor
         }
     }
 
+    void NeuronGUI::TriggerUpdate()
+    {
+        update = true;
+    }
+
     void NeuronGUI::Refresh()
     {
-        // Clear the entire viewport
-        SDL_RenderClear(renderer->GetRendererSDL());
+        // Set the current viewport
+        renderer->SetViewportRect(viewport);
+        if (input->HasHandler<MouseHandler>())
+        {
+            input->GetHandler<MouseHandler>()->SetViewport(viewport);
+        }
+        // Clear just the viewport with the background color
+        renderer->SetDrawColor(backgroundColor);
+        SDL_Rect bgRect = {0, 0, viewport.w, viewport.h};
+        SDL_RenderFillRect(renderer->GetRendererSDL(), &bgRect);
         // Reset state
         Begin();
         // Immediate-mode GUI i/o
         OnGUI();
-        // Render GUI
-        renderer->SetDrawColor(backgroundColor);
-        SDL_RenderPresent(renderer->GetRendererSDL());
         // Set mouse cursor
         if (textFieldHovered)
         {

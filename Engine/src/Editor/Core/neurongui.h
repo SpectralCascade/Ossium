@@ -32,9 +32,9 @@ namespace Ossium::Editor
         NEURON_LAYOUT_VERTICAL = 1
     };
 
-    struct NeuronSkinSchema : public Schema<NeuronSkinSchema, 20>
+    struct NeuronViewportSchema : public Schema<NeuronViewportSchema, 20>
     {
-        DECLARE_BASE_SCHEMA(NeuronSkinSchema, 20);
+        DECLARE_BASE_SCHEMA(NeuronViewportSchema, 20);
 
         // Default text styles, used when no text style is specified.
         M(TextStyle, styleLabel);
@@ -42,6 +42,8 @@ namespace Ossium::Editor
         M(TextStyle, styleDropdownText);
         M(TextStyle, styleButtonText);
         M(SDL_Color, backgroundColor) = Color(200, 200, 200);
+        M(SDL_Rect, viewport) = {0, 0, 300, 480};
+
     };
 
     struct NeuronClickableStyle : public Schema<NeuronClickableStyle, 10>
@@ -114,7 +116,7 @@ namespace Ossium::Editor
     }
 
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
-    class NeuronGUI : public NeuronSkinSchema
+    class NeuronGUI : public NeuronViewportSchema
     {
     private:
         /// Used to determine how GUI elements are positioned.
@@ -169,7 +171,7 @@ namespace Ossium::Editor
         bool textFieldHovered = false;
 
     public:
-        CONSTRUCT_SCHEMA(SchemaRoot, NeuronSkinSchema);
+        CONSTRUCT_SCHEMA(SchemaRoot, NeuronViewportSchema);
 
         NeuronGUI() = default;
         virtual ~NeuronGUI() = default;
@@ -182,6 +184,12 @@ namespace Ossium::Editor
 
         /// Refreshes the GUI if necessary.
         void Update();
+
+        /// Sets the update flag to true, so the next Update() causes a refresh to occur.
+        void TriggerUpdate();
+
+        ActionOutcome OnMouseEvent(const MouseInput& m);
+        ActionOutcome OnKeyboardEvent(const KeyboardInput& key);
 
         /// Reloads the GUI.
         virtual void Refresh();

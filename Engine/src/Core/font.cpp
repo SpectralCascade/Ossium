@@ -371,10 +371,6 @@ namespace Ossium
         }
         else
         {
-            if (!(atlas.GetTextureAccessMode() & (SDL_TEXTUREACCESS_TARGET | SDL_TEXTUREACCESS_STREAMING)))
-            {
-                Logger::EngineLog().Error("Cannot generate font glyph as the font has not been initialised!");
-            }
             // Check if the glyph exists in the font.
             // TODO: upgrade encoding from UCS-2 to UCS-4 on next SDL_TTF update.
             // Currently the glyphs are limited due to lack of proper character encoding support in SDL_TTF.
@@ -723,7 +719,7 @@ namespace Ossium
     SDL_Rect Font::GetAtlasCell(Uint32 index)
     {
         SDL_Rect rect = {0, 0, 0, 0};
-        if (index < 1 || index > GetAtlasMaxGlyphs() || atlas.GetTexture() == NULL)
+        if (index < 1 || index > GetAtlasMaxGlyphs() || atlas.GetSurface() == NULL)
         {
             Logger::EngineLog().Warning("Failed to get atlas cell for index {0} (note: index must be between 1 and {1} inclusive and atlas must be initialised)", index, GetAtlasMaxGlyphs());
             return rect;
