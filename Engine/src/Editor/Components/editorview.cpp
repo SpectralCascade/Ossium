@@ -139,12 +139,12 @@ namespace Ossium::Editor
         SDL_RenderPresent(renderer->GetRendererSDL());
     }
 
-    void NativeEditorWindow::Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode)
+    bool NativeEditorWindow::Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode)
     {
         if (dest->node == nullptr)
         {
             Logger::EngineLog().Error("Cannot dock editor window to window that has a NULL layout node!");
-            return;
+            return false;
         }
 
         SDL_Rect viewport = source->viewport;
@@ -167,6 +167,11 @@ namespace Ossium::Editor
             source->node = layout.Insert(source, dest->node, mode == DockingMode::BOTTOM);
             // Now set the dimensions of the viewports.
             viewport.w = destViewport.w;
+            if (viewport.h == 0)
+            {
+                // TODO: calculate height as: 2 + (total dest siblings) / window height
+                viewport.h = destViewport.h / 2;
+            }
             destViewport.h = destViewport.h - viewport.h;
             if (destViewport.h < MIN_DIMENSIONS.y)
             {
@@ -192,18 +197,31 @@ namespace Ossium::Editor
             source->node = layout.Insert(source, dest->node, mode == DockingMode::RIGHT);
 
             viewport.h = destViewport.h;
+            if (viewport.w == 0)
+            {
+                // TODO: see height TODO, do equivalent for width here.
+                viewport.w = destViewport.w / 2;
+            }
             destViewport.w = destViewport.w - viewport.w;
             if (destViewport.h < MIN_DIMENSIONS.y)
             {
                 // TODO: handle cases where the inserted window is too big
             }
-            viewport.x = destViewport.x + (mode == DockingMode::BOTTOM ? destViewport.w : -destViewport.w);
+            viewport.x = destViewport.x + (mode == DockingMode::RIGHT ? destViewport.w : -destViewport.w);
             viewport.y = destViewport.y;
         }
+        Logger::EngineLog().Info("Source window viewport = {0}, dest window viewport = {1}", viewport, destViewport);
         source->renderer = renderer;
         source->viewport = viewport;
         dest->viewport = destViewport;
         source->native = this;
+
+        return true;
+    }
+
+    void NativeEditorWindow::UpdateViewports()
+    {
+        // TODO
     }
 
     void NativeEditorWindow::Remove(EditorWindow* source)

@@ -42,7 +42,7 @@ namespace Ossium::Editor
         M(TextStyle, styleDropdownText);
         M(TextStyle, styleButtonText);
         M(SDL_Color, backgroundColor) = Color(200, 200, 200);
-        M(SDL_Rect, viewport) = {0, 0, 300, 480};
+        M(SDL_Rect, viewport) = {0, 0, 0, 0};
 
     };
 

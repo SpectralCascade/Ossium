@@ -39,10 +39,10 @@ namespace Ossium::Editor
 
     enum DockingMode
     {
-        TOP = 0,
-        BOTTOM,
-        LEFT,
-        RIGHT
+        TOP = 1,
+        BOTTOM = 2,
+        LEFT = 4,
+        RIGHT = 8
     };
 
     /// Forward declaration
@@ -119,7 +119,10 @@ namespace Ossium::Editor
         bool layoutColumn = 1;
 
         /// Docks an existing source editor window to a destination editor window.
-        void Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
+        bool Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
+
+        /// Updates all the docked editor window viewport dimensions.
+        void UpdateViewports();
 
         /// Everything in the window is rendered to this texture instead of using the renderer directly to avoid double buffering issues.
         SDL_Texture* renderBuffer = NULL;
@@ -135,19 +138,59 @@ namespace Ossium::Editor
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
         template<typename T>
         typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
-        Add(InputController* inputControl, ResourceController* resourceController, EditorWindow* dest = nullptr, DockingMode mode = DockingMode::TOP)
+        Add(EditorWindow* dest, DockingMode mode = DockingMode::TOP)
+        {
+            T* toAdd = new T();
+            toAdd->Init(dest->inputController, dest->resources, this);
+            if (!Insert(toAdd, dest, mode))
+            {
+                delete toAdd;
+                toAdd = nullptr;
+            }
+            return toAdd;
+        }
+
+        /// Overload that just creates an editor window at the root of the window layout.
+        template<typename T>
+        typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
+        Add(InputController* inputControl, ResourceController* resourceController, DockingMode mode = DockingMode::TOP)
         {
             T* toAdd = new T();
             toAdd->Init(inputControl, resourceController, this);
+            EditorWindow* dest = nullptr;
+
+            for (auto node : layout.GetRoots())
+            {
+                if (node->data != nullptr)
+                {
+                    dest = node->data;
+                    break;
+                }
+                else
+                {
+                    for (auto child : node->children)
+                    {
+                        if (child->data != nullptr)
+                        {
+                            dest = child->data;
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (dest != nullptr)
             {
-                Insert(toAdd, dest, mode);
+                if (!Insert(toAdd, dest, mode))
+                {
+                    delete toAdd;
+                    return nullptr;
+                }
             }
             else
             {
                 toAdd->node = layout.Insert(toAdd);
                 toAdd->renderer = renderer;
-                toAdd->Init(inputControl, resourceController, this);
                 toAdd->viewport = {0, 0, native->GetWidth(), native->GetHeight()};
             }
             return toAdd;
