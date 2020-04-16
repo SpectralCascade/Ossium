@@ -51,9 +51,9 @@ namespace Ossium::Editor
         settings.title = title;
     }
 
-    void EditorWindow::Close()
+    void EditorWindow::Destroy()
     {
-        native->Remove(this);
+        native->RemovePostUpdate(this);
     }
 
     NativeEditorWindow::NativeEditorWindow(InputController* controller, int w, int h)
@@ -137,6 +137,12 @@ namespace Ossium::Editor
         SDL_RenderClear(render);
         SDL_RenderCopy(render, renderBuffer, NULL, NULL);
         SDL_RenderPresent(renderer->GetRendererSDL());
+
+        for (auto window : toRemove)
+        {
+            Remove(window);
+        }
+        toRemove.clear();
     }
 
     bool NativeEditorWindow::Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode)
@@ -224,11 +230,19 @@ namespace Ossium::Editor
         // TODO
     }
 
-    void NativeEditorWindow::Remove(EditorWindow* source)
+    bool NativeEditorWindow::Remove(EditorWindow* source)
     {
-        // TODO: !!!! DON'T REMOVE CHILD NODES !!!! also resize sibling and child editor windows
-        layout.Remove(source->node);
+        if (!layout.Remove(source->node))
+        {
+            return false;
+        }
         delete source;
+        return true;
+    }
+
+    void NativeEditorWindow::RemovePostUpdate(EditorWindow* window)
+    {
+        toRemove.insert(window);
     }
 
 }

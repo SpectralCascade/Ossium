@@ -89,7 +89,7 @@ namespace Ossium::Editor
         string GetTitle();
 
         /// Closes this editor window.
-        void Close();
+        void Destroy();
 
     };
 
@@ -118,14 +118,20 @@ namespace Ossium::Editor
         bool layoutRow = 0;
         bool layoutColumn = 1;
 
+        /// Everything in the window is rendered to this texture instead of using the renderer directly to avoid double buffering issues.
+        SDL_Texture* renderBuffer = NULL;
+
+        /// Set of editor windows that are to be removed at the end of the next Update() call.
+        set<EditorWindow*> toRemove;
+
         /// Docks an existing source editor window to a destination editor window.
         bool Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
 
         /// Updates all the docked editor window viewport dimensions.
         void UpdateViewports();
 
-        /// Everything in the window is rendered to this texture instead of using the renderer directly to avoid double buffering issues.
-        SDL_Texture* renderBuffer = NULL;
+        /// Removes an editor window from this native editor window.
+        bool Remove(EditorWindow* source);
 
     public:
         /// Creates the window and initialises the tree.
@@ -196,8 +202,8 @@ namespace Ossium::Editor
             return toAdd;
         }
 
-        /// Removes an editor window from this native editor window.
-        void Remove(EditorWindow* source);
+        /// Marks the window to be removed at the end of the next Update call (or the current running Update() call).
+        void RemovePostUpdate(EditorWindow* window);
 
     };
 

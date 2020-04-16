@@ -182,7 +182,6 @@ namespace Ossium
         /// Removes a specified data node and all nodes below it
         bool Remove(Node<T>* node)
         {
-            /// Never remove the root node
             if (node == nullptr)
             {
                 Logger::EngineLog().Warning("(!) Attempted to remove node that is already null.");
@@ -203,7 +202,7 @@ namespace Ossium
                 /// Remove the source node from the tree and then we can safely delete it
                 for (auto i = node->parent->children.begin(); i != node->parent->children.end(); i++)
                 {
-                    if (node->id == (*i)->id)
+                    if (node == *i)
                     {
                         node->parent->children.erase(i);
                         delete node;
@@ -219,7 +218,7 @@ namespace Ossium
                 /// Remove the source node from the roots
                 for (auto i = roots.begin(); i != roots.end(); i++)
                 {
-                    if (node->id == (*i)->id)
+                    if (node == *i)
                     {
                         roots.erase(i);
                         delete node;
