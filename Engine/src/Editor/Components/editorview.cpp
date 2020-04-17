@@ -73,7 +73,7 @@ namespace Ossium::Editor
 
         // Handle window resize
         native->AddAction(
-            "ResizeTexture",
+            "WindowSizeChanged",
             [&] (const WindowInput& window) {
                 if (renderBuffer != NULL)
                 {
@@ -81,14 +81,8 @@ namespace Ossium::Editor
                     renderBuffer = NULL;
                 }
                 renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, window.raw.data1, window.raw.data2);
-                // Redraw all editor windows on next update because the texture was destroyed
-                for (auto node : layout.GetFlatTree())
-                {
-                    if (node->data != nullptr)
-                    {
-                        node->data->TriggerUpdate();
-                    }
-                }
+                updateViewports = true;
+
                 return ActionOutcome::Ignore;
             },
             SDL_WINDOWEVENT_SIZE_CHANGED
@@ -111,6 +105,11 @@ namespace Ossium::Editor
 
     void NativeEditorWindow::Update()
     {
+        if (updateViewports)
+        {
+            UpdateViewports();
+        }
+
         // Setup rendering to texture
         SDL_Renderer* render = renderer->GetRendererSDL();
         SDL_SetRenderTarget(render, renderBuffer);
@@ -225,9 +224,26 @@ namespace Ossium::Editor
         return true;
     }
 
-    void NativeEditorWindow::UpdateViewports()
+    void NativeEditorWindow::ResizeGroup(vector<Node<EditorWindow*>*>& group, Rect parentRect)
     {
         // TODO
+        /*Vector2 position = Vector2(parentRect.x, parentRect.y);
+
+        for (auto node : group)
+        {
+
+            if (node->data != nullptr)
+            {
+            }
+            else
+            {
+            }
+        }*/
+    }
+
+    void NativeEditorWindow::UpdateViewports()
+    {
+        updateViewports = false;
     }
 
     bool NativeEditorWindow::Remove(EditorWindow* source)

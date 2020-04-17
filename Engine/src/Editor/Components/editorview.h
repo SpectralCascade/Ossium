@@ -124,11 +124,17 @@ namespace Ossium::Editor
         /// Set of editor windows that are to be removed at the end of the next Update() call.
         set<EditorWindow*> toRemove;
 
+        /// Should the viewports be updated on the next Update() call?
+        bool updateViewports = false;
+
         /// Docks an existing source editor window to a destination editor window.
         bool Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
 
         /// Updates all the docked editor window viewport dimensions.
         void UpdateViewports();
+
+        /// Recursively resizes all editor windows within a node group.
+        void ResizeGroup(vector<Node<EditorWindow*>*>& group, Rect parentRect);
 
         /// Removes an editor window from this native editor window.
         bool Remove(EditorWindow* source);
