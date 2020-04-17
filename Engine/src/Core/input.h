@@ -34,472 +34,467 @@ using namespace std;
 namespace Ossium
 {
 
-    inline namespace Input
+    /// This enumeration is used to determine how the input system should behave when calling actions during input handling.
+    /// Return one of these values from an action to indicate whether the system should continue handling a particular input.
+    /// Note that these outcomes also affect states as states will not be updated after claiming!
+    enum ActionOutcome
     {
+        /// Other actions within a context will continue to be evaluated regardless.
+        /// If in doubt, return this from your actions.
+        Ignore = 0,
+        /// Other actions within the local context will NO LONGER be evaluated,
+        /// but actions and states associated with the input will still be evaluated in other contexts.
+        ClaimContext = 1,
+        /// Other actions associated with the input will NOT be evaluated again this frame, regardless of context.
+        /// It's recommended that you avoid returning this in your actions as it prevents associated states updating in other contexts,
+        /// though in some cases it might be useful (e.g. when the player sets custom input bindings).
+        ClaimGlobal = 2,
+        /// NO other actions will be evaluated this frame, EVEN if they are not associated with the input!
+        /// Don't return this in your actions unless you want to stop handling all inputs for the current Update().
+        ClaimFinal = 3
+    };
 
-        /// This enumeration is used to determine how the input system should behave when calling actions during input handling.
-        /// Return one of these values from an action to indicate whether the system should continue handling a particular input.
-        /// Note that these outcomes also affect states as states will not be updated after claiming!
-        enum ActionOutcome
+    /// Returns the name of an action outcome value
+    OSSIUM_EDL string GetActionOutcomeName(ActionOutcome outcome);
+
+    typedef Uint32 InputHandlerType;
+
+    /// Constant return type id for a specified input handler type
+    template<class T>
+    OSSIUM_EDL InputHandlerType GetInputHandlerType()
+    {
+        return T::__input_type_entry_.GetType();
+    }
+
+    // Forward declaration
+    class OSSIUM_EDL InputContext;
+
+    /// Interface for accessing InputHandler
+    class OSSIUM_EDL BaseInputHandler
+    {
+    public:
+        friend class InputContext;
+
+        /// Returns the input context that owns this handler instance.
+        InputContext* GetContext();
+
+    protected:
+        BaseInputHandler() = default;
+
+        virtual ~BaseInputHandler()
         {
-            /// Other actions within a context will continue to be evaluated regardless.
-            /// If in doubt, return this from your actions.
-            Ignore = 0,
-            /// Other actions within the local context will NO LONGER be evaluated,
-            /// but actions and states associated with the input will still be evaluated in other contexts.
-            ClaimContext = 1,
-            /// Other actions associated with the input will NOT be evaluated again this frame, regardless of context.
-            /// It's recommended that you avoid returning this in your actions as it prevents associated states updating in other contexts,
-            /// though in some cases it might be useful (e.g. when the player sets custom input bindings).
-            ClaimGlobal = 2,
-            /// NO other actions will be evaluated this frame, EVEN if they are not associated with the input!
-            /// Don't return this in your actions unless you want to stop handling all inputs for the current Update().
-            ClaimFinal = 3
-        };
-
-        /// Returns the name of an action outcome value
-        OSSIUM_EDL string GetActionOutcomeName(ActionOutcome outcome);
-
-        typedef Uint32 InputHandlerType;
-
-        /// Constant return type id for a specified input handler type
-        template<class T>
-        OSSIUM_EDL InputHandlerType GetInputHandlerType()
-        {
-            return T::__input_type_entry_.GetType();
         }
 
-        // Forward declaration
-        class OSSIUM_EDL InputContext;
+        /// Handles input
+        virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
 
-        /// Interface for accessing InputHandler
-        class OSSIUM_EDL BaseInputHandler
+        /// Pointer to the input context responsible for this handler instance.
+        InputContext* context;
+
+    };
+
+    /// An abstract interface for handling a specific type of input; template takes a specialised structure that contains only relevant information
+    /// stripped from an SDL_Event, and an ident type used to map an input directly to an action (e.g. SDL_Keycode)
+    template<class Derived, class InputData, class InputIdent>
+    class OSSIUM_EDL InputHandler : public BaseInputHandler
+    {
+    public:
+        /// Function pointer for actions based on this input data
+        typedef function<ActionOutcome(const InputData&)> InputAction;
+
+        OSSIUM_EDL static TypeSystem::TypeRegistry<BaseInputHandler> __input_type_entry_;
+
+        virtual ~InputHandler()
         {
-        public:
-            friend class InputContext;
+            Clear();
+        }
 
-            /// Returns the input context that owns this handler instance.
-            InputContext* GetContext();
-
-        protected:
-            BaseInputHandler() = default;
-
-            virtual ~BaseInputHandler()
-            {
-            }
-
-            /// Handles input
-            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
-
-            /// Pointer to the input context responsible for this handler instance.
-            InputContext* context;
-
-        };
-
-        /// An abstract interface for handling a specific type of input; template takes a specialised structure that contains only relevant information
-        /// stripped from an SDL_Event, and an ident type used to map an input directly to an action (e.g. SDL_Keycode)
-        template<class Derived, class InputData, class InputIdent>
-        class OSSIUM_EDL InputHandler : public BaseInputHandler
+        /// Adds a state tracker to the input handler
+        void AddState(string name)
         {
-        public:
-            /// Function pointer for actions based on this input data
-            typedef function<ActionOutcome(const InputData&)> InputAction;
+            InputIdent junk = InputIdent();
+            _input_state_bindings[name] = junk;
+        }
 
-            OSSIUM_EDL static TypeSystem::TypeRegistry<BaseInputHandler> __input_type_entry_;
-
-            virtual ~InputHandler()
-            {
-                Clear();
-            }
-
-            /// Adds a state tracker to the input handler
-            void AddState(string name)
-            {
-                InputIdent junk = InputIdent();
-                _input_state_bindings[name] = junk;
-            }
-
-            /// Simplifies adding states.
-            void AddState(string name, InputIdent binding)
-            {
-                AddState(name);
-                BindState(name, binding);
-            }
-
-            bool GetState(string name)
-            {
-                auto itr = _input_state_bindings.find(name);
-                if (itr != _input_state_bindings.end())
-                {
-                    return _state_map[itr->second];
-                }
-                return false;
-            }
-
-            /// Removes the specified state. Returns false if the state does not exist.
-            void RemoveState(string name)
-            {
-                auto binding = _input_state_bindings.find(name);
-                if (binding != _input_state_bindings.end())
-                {
-                    auto directbind = _state_map.find(binding->second);
-                    if (directbind != _state_map.end())
-                    {
-                        _state_map.erase(directbind);
-                    }
-                    _input_state_bindings.erase(binding);
-                }
-            }
-
-            /// Binds a state to a specific input
-            void BindState(string name, InputIdent stateIdent)
-            {
-                RemoveState(name);
-                _input_state_bindings[name] = stateIdent;
-                _state_map[stateIdent] = false;
-            }
-
-            /// Returns the input ident bound to the specified input
-            const InputIdent* GetStateBind(string name)
-            {
-                auto itr = _input_state_bindings.find(name);
-                if (itr != _input_state_bindings.end())
-                {
-                    return &((*itr).second);
-                }
-                Logger::EngineLog().Warning("Could not find binding value for state '{0}'.", name);
-                return nullptr;
-            }
-
-            /// This method adds a callback for a specific game action
-            void AddAction(string name, InputAction action)
-            {
-                _action_bindings[name] = action;
-            }
-
-            /// Simplifies adding actions.
-            void AddAction(string name, InputAction action, InputIdent binding)
-            {
-                AddAction(name, action);
-                BindAction(name, binding);
-            }
-
-            /// Removes the specified action. Returns false if the action does not exist.
-            void RemoveAction(string name)
-            {
-                auto actionbind = _action_bindings.find(name);
-                if (actionbind != _action_bindings.end())
-                {
-                    _action_bindings.erase(actionbind);
-                }
-                auto inputbind = _input_action_bindings.find(name);
-                if (inputbind != _input_action_bindings.end())
-                {
-                    auto directbind = _input_map.find(inputbind->second);
-                    if (directbind != _input_map.end())
-                    {
-                        _input_map.erase(directbind);
-                    }
-                    _input_action_bindings.erase(inputbind);
-                }
-            }
-
-            /// Adds an action that is not bound to an identifier
-            void AddBindlessAction(InputAction action)
-            {
-                /// No duplicates checks, but why would you add multiple identical actions?!
-                _any_actions.push_back(action);
-            }
-
-            /// TODO: this doesn't work as you cannot compare function objects. Consider using IDs and/or providing a ClearBindlessActions() method to remove all of them.
-            void RemoveBindlessAction(InputAction action)
-            {
-                for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
-                {
-                    if (*i == action)
-                    {
-                        _any_actions.erase(i);
-                        return;
-                    }
-                }
-            }
-
-            /// Binds an action to a specified input condition
-            void BindAction(string action, InputIdent condition)
-            {
-                auto itr = _action_bindings.find(action);
-                if (itr == _action_bindings.end())
-                {
-                    Logger::EngineLog().Warning("Input handler attempted to bind action '{0}' but this action has not been added to the handler!", action);
-                }
-                else
-                {
-                    /// Clean up the input map
-                    auto old_bind = _input_action_bindings.find(action);
-                    if (old_bind != _input_action_bindings.end())
-                    {
-                        auto old_input = _input_map.find((*old_bind).second);
-                        if (old_input != _input_map.end())
-                        {
-                            _input_map.erase(old_input);
-                        }
-                    }
-                    _input_action_bindings[action] = condition;
-                    _input_map[condition] = (*itr).second;
-                }
-            }
-
-            const InputIdent* GetActionBind(string action)
-            {
-                auto itr = _action_bindings.find(action);
-                if (itr != _action_bindings.end())
-                {
-                    return &((*itr).second);
-                }
-                Logger::EngineLog().Warning("Could not find binding value for action '{0}'.", action);
-                return nullptr;
-            }
-
-            /// Removes all actions, bindings and input data from this handler
-            void Clear()
-            {
-                _input_action_bindings.clear();
-                _action_bindings.clear();
-                _input_map.clear();
-                _input_state_bindings.clear();
-            }
-
-        protected:
-            /// Takes raw input data and strips away the irrelevant stuff, then checks if it matches anything in the actions table
-            /// Returns true if the raw event data should be discarded after handling
-            virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
-
-            /// Updates the state of the associated input ident, if it finds it.
-            void UpdateState(const InputIdent& ident, bool state)
-            {
-                /// Set relevant state
-                auto itr = _state_map.find(ident);
-                if (itr != _state_map.end())
-                {
-                    itr->second = state;
-                }
-            }
-
-            /// Call the action associated with an input; returns true if successful
-            ActionOutcome CallAction(const InputData& data, const InputIdent& ident)
-            {
-                /// Call all actions that accept any old data, regardless of identifier first
-                for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
-                {
-                    ActionOutcome outcome = (*i)(data);
-                    if (outcome != ActionOutcome::Ignore)
-                    {
-                        //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
-                        return outcome;
-                    }
-                }
-                auto actionItr = _input_map.find(ident);
-                if (actionItr != _input_map.end())
-                {
-                    /// Call the action and pass in the input data
-                    ActionOutcome outcome = (*actionItr).second(data);
-                    if (outcome != ActionOutcome::Ignore)
-                    {
-                        //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
-                        return outcome;
-                    }
-                }
-                return ActionOutcome::Ignore;
-            }
-
-            /// Bindless actions - these actions or not bound to any particular identifier.
-            /// When there are no corresponding actions for an input which is of the relevant type,
-            /// these actions will be called. Useful for things like custom control bindings in a game,
-            /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code.
-            vector<InputAction> _any_actions;
-
-            /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_action_bindings is changed.
-            unordered_map<InputIdent, InputAction> _input_map;
-
-            /// Direct map of inputs to states for fast lookup at runtime; changes when _input_state_bindings is changed.
-            unordered_map<InputIdent, bool> _state_map;
-
-        private:
-            /// Input data bindings for states
-            unordered_map<string, InputIdent> _input_state_bindings;
-
-            /// Input data bindings for actions
-            unordered_map<string, InputIdent> _input_action_bindings;
-
-            /// Constant bindings of names to actions; this shouldn't be changed once all actions are added
-            unordered_map<string, InputAction> _action_bindings;
-
-        };
-
-        template<class Derived, class InputData, class InputIdent>
-        TypeSystem::TypeRegistry<BaseInputHandler> InputHandler<Derived, InputData, InputIdent>::__input_type_entry_ = TypeSystem::TypeRegistry<BaseInputHandler>();
-
-        /// A game might have multiple input contexts; for example, button X closes a dialog box when talking to NPCs,
-        /// but the X button opens the player's inventory in normal gameplay.
-        class OSSIUM_EDL InputContext
+        /// Simplifies adding states.
+        void AddState(string name, InputIdent binding)
         {
-        public:
-            ~InputContext()
-            {
-                Clear();
-            }
+            AddState(name);
+            BindState(name, binding);
+        }
 
-            /// Instantiates a new input handler and adds it to the list.
-            template<class T>
-            T* AddHandler()
+        bool GetState(string name)
+        {
+            auto itr = _input_state_bindings.find(name);
+            if (itr != _input_state_bindings.end())
             {
-                auto itr = inputs.find(GetInputHandlerType<T>());
-                if (itr == inputs.end())
+                return _state_map[itr->second];
+            }
+            return false;
+        }
+
+        /// Removes the specified state. Returns false if the state does not exist.
+        void RemoveState(string name)
+        {
+            auto binding = _input_state_bindings.find(name);
+            if (binding != _input_state_bindings.end())
+            {
+                auto directbind = _state_map.find(binding->second);
+                if (directbind != _state_map.end())
                 {
-                    BaseInputHandler* handler = reinterpret_cast<BaseInputHandler*>(new T());
-                    handler->context = this;
-                    inputs[GetInputHandlerType<T>()] = handler;
-                    return reinterpret_cast<T*>(handler);
+                    _state_map.erase(directbind);
                 }
-                else
+                _input_state_bindings.erase(binding);
+            }
+        }
+
+        /// Binds a state to a specific input
+        void BindState(string name, InputIdent stateIdent)
+        {
+            RemoveState(name);
+            _input_state_bindings[name] = stateIdent;
+            _state_map[stateIdent] = false;
+        }
+
+        /// Returns the input ident bound to the specified input
+        const InputIdent* GetStateBind(string name)
+        {
+            auto itr = _input_state_bindings.find(name);
+            if (itr != _input_state_bindings.end())
+            {
+                return &((*itr).second);
+            }
+            Logger::EngineLog().Warning("Could not find binding value for state '{0}'.", name);
+            return nullptr;
+        }
+
+        /// This method adds a callback for a specific game action
+        void AddAction(string name, InputAction action)
+        {
+            _action_bindings[name] = action;
+        }
+
+        /// Simplifies adding actions.
+        void AddAction(string name, InputAction action, InputIdent binding)
+        {
+            AddAction(name, action);
+            BindAction(name, binding);
+        }
+
+        /// Removes the specified action. Returns false if the action does not exist.
+        void RemoveAction(string name)
+        {
+            auto actionbind = _action_bindings.find(name);
+            if (actionbind != _action_bindings.end())
+            {
+                _action_bindings.erase(actionbind);
+            }
+            auto inputbind = _input_action_bindings.find(name);
+            if (inputbind != _input_action_bindings.end())
+            {
+                auto directbind = _input_map.find(inputbind->second);
+                if (directbind != _input_map.end())
                 {
-                    Logger::EngineLog().Warning("Attempted to add an input handler to a context, but the context already has an input handler of type [{0}].", GetInputHandlerType<T>());
+                    _input_map.erase(directbind);
                 }
-                return GetHandler<T>();
+                _input_action_bindings.erase(inputbind);
             }
+        }
 
-            /// Always returns the specified handler. Automatically adds the handler instance if it doesn't exist.
-            template<class T>
-            T* GetHandler()
+        /// Adds an action that is not bound to an identifier
+        void AddBindlessAction(InputAction action)
+        {
+            /// No duplicates checks, but why would you add multiple identical actions?!
+            _any_actions.push_back(action);
+        }
+
+        /// TODO: this doesn't work as you cannot compare function objects. Consider using IDs and/or providing a ClearBindlessActions() method to remove all of them.
+        void RemoveBindlessAction(InputAction action)
+        {
+            for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
             {
-                auto itr = inputs.find(GetInputHandlerType<T>());
-                if (itr == inputs.end())
+                if (*i == action)
                 {
-                    return AddHandler<T>();
-                }
-                return reinterpret_cast<T*>((*itr).second);
-            }
-
-            /// Returns true if the specified handler has been added.
-            template<class T>
-            bool HasHandler()
-            {
-                auto itr = inputs.find(GetInputHandlerType<T>());
-                return itr != inputs.end();
-            }
-
-            template<class T>
-            void RemoveHandler()
-            {
-                auto itr = inputs.find(GetInputHandlerType<T>());
-                if (itr != inputs.end())
-                {
-                    delete reinterpret_cast<T*>((*itr).second);
-                    inputs.erase(itr);
+                    _any_actions.erase(i);
+                    return;
                 }
             }
+        }
 
-            /// Pass an input event to all the handlers
-            ActionOutcome HandleInput(const SDL_Event& raw)
+        /// Binds an action to a specified input condition
+        void BindAction(string action, InputIdent condition)
+        {
+            auto itr = _action_bindings.find(action);
+            if (itr == _action_bindings.end())
             {
-                if (active)
+                Logger::EngineLog().Warning("Input handler attempted to bind action '{0}' but this action has not been added to the handler!", action);
+            }
+            else
+            {
+                /// Clean up the input map
+                auto old_bind = _input_action_bindings.find(action);
+                if (old_bind != _input_action_bindings.end())
                 {
-                    for (auto i = inputs.begin(); i != inputs.end(); i++)
+                    auto old_input = _input_map.find((*old_bind).second);
+                    if (old_input != _input_map.end())
                     {
-                        /// Once handled, we can early-out and not bother passing the event to other handlers
-                        ActionOutcome outcome = (*i).second->HandleInput(raw);
-                        if (outcome != ActionOutcome::Ignore)
-                        {
-                            return outcome;
-                        }
+                        _input_map.erase(old_input);
                     }
                 }
-                return ActionOutcome::Ignore;
+                _input_action_bindings[action] = condition;
+                _input_map[condition] = (*itr).second;
             }
+        }
 
-            /// Is this context currently active?
-            bool IsActive()
+        const InputIdent* GetActionBind(string action)
+        {
+            auto itr = _action_bindings.find(action);
+            if (itr != _action_bindings.end())
             {
-                return active;
+                return &((*itr).second);
             }
+            Logger::EngineLog().Warning("Could not find binding value for action '{0}'.", action);
+            return nullptr;
+        }
 
-            /// Enable or disable this input context
-            void SetActive(bool _active)
+        /// Removes all actions, bindings and input data from this handler
+        void Clear()
+        {
+            _input_action_bindings.clear();
+            _action_bindings.clear();
+            _input_map.clear();
+            _input_state_bindings.clear();
+        }
+
+    protected:
+        /// Takes raw input data and strips away the irrelevant stuff, then checks if it matches anything in the actions table
+        /// Returns true if the raw event data should be discarded after handling
+        virtual ActionOutcome HandleInput(const SDL_Event& raw) = 0;
+
+        /// Updates the state of the associated input ident, if it finds it.
+        void UpdateState(const InputIdent& ident, bool state)
+        {
+            /// Set relevant state
+            auto itr = _state_map.find(ident);
+            if (itr != _state_map.end())
             {
-                active = _active;
+                itr->second = state;
             }
+        }
 
-            /// Destroys all input handlers associated with this input context
-            void Clear()
+        /// Call the action associated with an input; returns true if successful
+        ActionOutcome CallAction(const InputData& data, const InputIdent& ident)
+        {
+            /// Call all actions that accept any old data, regardless of identifier first
+            for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
+            {
+                ActionOutcome outcome = (*i)(data);
+                if (outcome != ActionOutcome::Ignore)
+                {
+                    //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
+                    return outcome;
+                }
+            }
+            auto actionItr = _input_map.find(ident);
+            if (actionItr != _input_map.end())
+            {
+                /// Call the action and pass in the input data
+                ActionOutcome outcome = (*actionItr).second(data);
+                if (outcome != ActionOutcome::Ignore)
+                {
+                    //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
+                    return outcome;
+                }
+            }
+            return ActionOutcome::Ignore;
+        }
+
+        /// Bindless actions - these actions or not bound to any particular identifier.
+        /// When there are no corresponding actions for an input which is of the relevant type,
+        /// these actions will be called. Useful for things like custom control bindings in a game,
+        /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code.
+        vector<InputAction> _any_actions;
+
+        /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_action_bindings is changed.
+        unordered_map<InputIdent, InputAction> _input_map;
+
+        /// Direct map of inputs to states for fast lookup at runtime; changes when _input_state_bindings is changed.
+        unordered_map<InputIdent, bool> _state_map;
+
+    private:
+        /// Input data bindings for states
+        unordered_map<string, InputIdent> _input_state_bindings;
+
+        /// Input data bindings for actions
+        unordered_map<string, InputIdent> _input_action_bindings;
+
+        /// Constant bindings of names to actions; this shouldn't be changed once all actions are added
+        unordered_map<string, InputAction> _action_bindings;
+
+    };
+
+    template<class Derived, class InputData, class InputIdent>
+    TypeSystem::TypeRegistry<BaseInputHandler> InputHandler<Derived, InputData, InputIdent>::__input_type_entry_ = TypeSystem::TypeRegistry<BaseInputHandler>();
+
+    /// A game might have multiple input contexts; for example, button X closes a dialog box when talking to NPCs,
+    /// but the X button opens the player's inventory in normal gameplay.
+    class OSSIUM_EDL InputContext
+    {
+    public:
+        ~InputContext()
+        {
+            Clear();
+        }
+
+        /// Instantiates a new input handler and adds it to the list.
+        template<class T>
+        T* AddHandler()
+        {
+            auto itr = inputs.find(GetInputHandlerType<T>());
+            if (itr == inputs.end())
+            {
+                BaseInputHandler* handler = reinterpret_cast<BaseInputHandler*>(new T());
+                handler->context = this;
+                inputs[GetInputHandlerType<T>()] = handler;
+                return reinterpret_cast<T*>(handler);
+            }
+            else
+            {
+                Logger::EngineLog().Warning("Attempted to add an input handler to a context, but the context already has an input handler of type [{0}].", GetInputHandlerType<T>());
+            }
+            return GetHandler<T>();
+        }
+
+        /// Always returns the specified handler. Automatically adds the handler instance if it doesn't exist.
+        template<class T>
+        T* GetHandler()
+        {
+            auto itr = inputs.find(GetInputHandlerType<T>());
+            if (itr == inputs.end())
+            {
+                return AddHandler<T>();
+            }
+            return reinterpret_cast<T*>((*itr).second);
+        }
+
+        /// Returns true if the specified handler has been added.
+        template<class T>
+        bool HasHandler()
+        {
+            auto itr = inputs.find(GetInputHandlerType<T>());
+            return itr != inputs.end();
+        }
+
+        template<class T>
+        void RemoveHandler()
+        {
+            auto itr = inputs.find(GetInputHandlerType<T>());
+            if (itr != inputs.end())
+            {
+                delete reinterpret_cast<T*>((*itr).second);
+                inputs.erase(itr);
+            }
+        }
+
+        /// Pass an input event to all the handlers
+        ActionOutcome HandleInput(const SDL_Event& raw)
+        {
+            if (active)
             {
                 for (auto i = inputs.begin(); i != inputs.end(); i++)
                 {
-                    if ((*i).second != nullptr)
+                    /// Once handled, we can early-out and not bother passing the event to other handlers
+                    ActionOutcome outcome = (*i).second->HandleInput(raw);
+                    if (outcome != ActionOutcome::Ignore)
                     {
-                        delete (*i).second;
-                        (*i).second = nullptr;
+                        return outcome;
                     }
                 }
-                inputs.clear();
             }
+            return ActionOutcome::Ignore;
+        }
 
-        private:
-            /// List of input handlers e.g. keyboard handler, mouse handler, joystick handler etc.
-            unordered_map<InputHandlerType, BaseInputHandler*> inputs;
-
-            /// When true, the input system will pass input data to this context
-            bool active = true;
-
-        };
-
-        class OSSIUM_EDL InputController : public Service<InputController>
+        /// Is this context currently active?
+        bool IsActive()
         {
-        public:
-            InputController();
-            ~InputController();
+            return active;
+        }
 
-            /// Adds an input context; ideally do this just once when starting Ossium
-            void AddContext(string name, InputContext* context);
+        /// Enable or disable this input context
+        void SetActive(bool _active)
+        {
+            active = _active;
+        }
 
-            /// Removes a specified input context
-            void RemoveContext(string name);
-
-            /// Returns the specified context instance, or nullptr if the context doesn't exist.
-            InputContext* GetContext(string name);
-
-            /// Attempts to retrieve a specified event handler type from the given context.
-            /// Creates an active context and valid handler if they don't already exist.
-            template<class HandlerType>
-            HandlerType* Get(string name)
+        /// Destroys all input handlers associated with this input context
+        void Clear()
+        {
+            for (auto i = inputs.begin(); i != inputs.end(); i++)
             {
-                InputContext* context = GetContext(name);
-                if (context == nullptr)
+                if ((*i).second != nullptr)
                 {
-                    context = new InputContext();
+                    delete (*i).second;
+                    (*i).second = nullptr;
                 }
-                HandlerType* handler = context->GetHandler<HandlerType>();
-                if (handler == nullptr)
-                {
-                    handler = context->AddHandler<HandlerType>();
-                }
-                return handler;
             }
+            inputs.clear();
+        }
 
-            /// Passes a single event to all contexts. Returns true upon a ClaimFinal outcome, otherwise returns false when finished.
-            bool HandleEvent(const SDL_Event& raw);
+    private:
+        /// List of input handlers e.g. keyboard handler, mouse handler, joystick handler etc.
+        unordered_map<InputHandlerType, BaseInputHandler*> inputs;
 
-            /// Removes all input contexts
-            void Clear();
+        /// When true, the input system will pass input data to this context
+        bool active = true;
 
-        private:
-            /// All contexts by name
-            unordered_map<string, InputContext*> contexts;
+    };
 
-            NOCOPY(InputController);
+    class OSSIUM_EDL InputController : public Service<InputController>
+    {
+    public:
+        InputController();
+        ~InputController();
 
-        };
+        /// Adds an input context; ideally do this just once when starting Ossium
+        void AddContext(string name, InputContext* context);
 
-    }
+        /// Removes a specified input context
+        void RemoveContext(string name);
+
+        /// Returns the specified context instance, or nullptr if the context doesn't exist.
+        InputContext* GetContext(string name);
+
+        /// Attempts to retrieve a specified event handler type from the given context.
+        /// Creates an active context and valid handler if they don't already exist.
+        template<class HandlerType>
+        HandlerType* Get(string name)
+        {
+            InputContext* context = GetContext(name);
+            if (context == nullptr)
+            {
+                context = new InputContext();
+            }
+            HandlerType* handler = context->GetHandler<HandlerType>();
+            if (handler == nullptr)
+            {
+                handler = context->AddHandler<HandlerType>();
+            }
+            return handler;
+        }
+
+        /// Passes a single event to all contexts. Returns true upon a ClaimFinal outcome, otherwise returns false when finished.
+        bool HandleEvent(const SDL_Event& raw);
+
+        /// Removes all input contexts
+        void Clear();
+
+    private:
+        /// All contexts by name
+        unordered_map<string, InputContext*> contexts;
+
+        NOCOPY(InputController);
+
+    };
 
 }
 

@@ -3,11 +3,7 @@
 
 #include "../Ossium.h"
 
-using namespace Ossium;
-using namespace Ossium::Input;
-using namespace Ossium::Graphics;
-
-inline namespace UI
+namespace Ossium
 {
 
     class Button : public InteractableGUI

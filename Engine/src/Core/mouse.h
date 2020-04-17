@@ -23,73 +23,68 @@
 namespace Ossium
 {
 
-    inline namespace Input
+    enum MouseEvent
     {
+        MOUSE_UNKNOWN = 0,
+        MOUSE_MOTION,
+        MOUSE_BUTTON_LEFT,
+        MOUSE_BUTTON_RIGHT,
+        MOUSE_BUTTON_MIDDLE,
+        MOUSE_BUTTON_OTHER,
+        MOUSE_WHEEL
+    };
 
-        enum MouseEvent
-        {
-            MOUSE_UNKNOWN = 0,
-            MOUSE_MOTION,
-            MOUSE_BUTTON_LEFT,
-            MOUSE_BUTTON_RIGHT,
-            MOUSE_BUTTON_MIDDLE,
-            MOUSE_BUTTON_OTHER,
-            MOUSE_WHEEL
-        };
+    const Uint8 MOUSE_PRESSED = SDL_PRESSED;
+    const Uint8 MOUSE_RELEASED = SDL_RELEASED;
 
-        const Uint8 MOUSE_PRESSED = SDL_PRESSED;
-        const Uint8 MOUSE_RELEASED = SDL_RELEASED;
+    /// Unlike a keyboard, a mouse has more than one type of input (scroll wheel etc.)
+    struct OSSIUM_EDL MouseInput
+    {
+        /// Type of mouse event
+        MouseEvent type;
+        /// Which mouse button is associated with this event
+        Uint8 button;
+        /// X position of mouse relative to window, OR amount scrolled in x direction
+        Sint32 x;
+        /// Y position of mouse relative to window, OR amount scrolled in y direction
+        Sint32 y;
+        /// X position of mouse relative to previous x position (if mouse motion event)
+        Sint32 xrel;
+        /// Y position of mouse relative to previous y position (if mouse motion event)
+        Sint32 yrel;
+        /// Whether the associated button is pressed, OR button bit mask as returned by SDL_GetMouseState()
+        Uint8 state;
+        /// Number of clicks, 1 = single click, 2 = double click, etc.
+        Uint8 clicks;
+        /// Direction of the scroll wheel (SDL_MOUSEWHEEL_NORMAL or SDL_MOUSEWHEEL_FLIPPED)
+        Uint32 direction;
+    };
 
-        /// Unlike a keyboard, a mouse has more than one type of input (scroll wheel etc.)
-        struct OSSIUM_EDL MouseInput
-        {
-            /// Type of mouse event
-            MouseEvent type;
-            /// Which mouse button is associated with this event
-            Uint8 button;
-            /// X position of mouse relative to window, OR amount scrolled in x direction
-            Sint32 x;
-            /// Y position of mouse relative to window, OR amount scrolled in y direction
-            Sint32 y;
-            /// X position of mouse relative to previous x position (if mouse motion event)
-            Sint32 xrel;
-            /// Y position of mouse relative to previous y position (if mouse motion event)
-            Sint32 yrel;
-            /// Whether the associated button is pressed, OR button bit mask as returned by SDL_GetMouseState()
-            Uint8 state;
-            /// Number of clicks, 1 = single click, 2 = double click, etc.
-            Uint8 clicks;
-            /// Direction of the scroll wheel (SDL_MOUSEWHEEL_NORMAL or SDL_MOUSEWHEEL_FLIPPED)
-            Uint32 direction;
-        };
+    class OSSIUM_EDL MouseHandler : public InputHandler<MouseHandler, MouseInput, MouseEvent>
+    {
+    public:
+        ActionOutcome HandleInput(const SDL_Event& raw);
 
-        class OSSIUM_EDL MouseHandler : public InputHandler<MouseHandler, MouseInput, MouseEvent>
-        {
-        public:
-            ActionOutcome HandleInput(const SDL_Event& raw);
+        /// Returns the current mouse position using SDL_GetMouseState().
+        Vector2 GetMousePosition();
 
-            /// Returns the current mouse position using SDL_GetMouseState().
-            Vector2 GetMousePosition();
+        bool LeftPressed();
+        bool RightPressed();
+        bool MiddlePressed();
 
-            bool LeftPressed();
-            bool RightPressed();
-            bool MiddlePressed();
+        /// Sets the relative viewport so that the reported mouse position is offset appropriately, rather than reporting mouse position relative to the native window.
+        void SetViewport(SDL_Rect viewport);
+        /// Returns the relative viewport
+        SDL_Rect GetViewport();
 
-            /// Sets the relative viewport so that the reported mouse position is offset appropriately, rather than reporting mouse position relative to the native window.
-            void SetViewport(SDL_Rect viewport);
-            /// Returns the relative viewport
-            SDL_Rect GetViewport();
+    private:
+        bool leftButtonPressed = false;
+        bool rightButtonPressed = false;
+        bool middleButtonPressed = false;
 
-        private:
-            bool leftButtonPressed = false;
-            bool rightButtonPressed = false;
-            bool middleButtonPressed = false;
+        SDL_Rect viewportRect;
 
-            SDL_Rect viewportRect;
-
-        };
-
-    }
+    };
 
 }
 

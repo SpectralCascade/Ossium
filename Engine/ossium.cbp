@@ -103,6 +103,8 @@
 		<Unit filename="src/Components/UI/panel.h" />
 		<Unit filename="src/Components/audioextensions.cpp" />
 		<Unit filename="src/Components/audioextensions.h" />
+		<Unit filename="src/Components/button.cpp" />
+		<Unit filename="src/Components/button.h" />
 		<Unit filename="src/Components/debugdraw.cpp" />
 		<Unit filename="src/Components/debugdraw.h" />
 		<Unit filename="src/Components/inputgui.cpp" />

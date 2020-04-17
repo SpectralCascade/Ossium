@@ -1,9 +1,6 @@
 #include "button.h"
 
-using namespace Ossium;
-using namespace Ossium::Input;
-
-inline namespace UI
+namespace Ossium
 {
 
     REGISTER_COMPONENT(Button);

@@ -19,123 +19,118 @@
 namespace Ossium
 {
 
-    inline namespace Input
+    ActionOutcome MouseHandler::HandleInput(const SDL_Event& raw)
     {
-
-        ActionOutcome MouseHandler::HandleInput(const SDL_Event& raw)
+        MouseInput data;
+        data.button = 0;
+        data.direction = SDL_MOUSEWHEEL_NORMAL;
+        data.state = MOUSE_RELEASED;
+        data.clicks = 0;
+        data.xrel = 0;
+        data.yrel = 0;
+        data.x = 0;
+        data.y = 0;
+        if (raw.type == SDL_MOUSEMOTION)
         {
-            MouseInput data;
-            data.button = 0;
-            data.direction = SDL_MOUSEWHEEL_NORMAL;
-            data.state = MOUSE_RELEASED;
-            data.clicks = 0;
-            data.xrel = 0;
-            data.yrel = 0;
-            data.x = 0;
-            data.y = 0;
-            if (raw.type == SDL_MOUSEMOTION)
+            data.type = MOUSE_MOTION;
+            data.x = raw.motion.x - viewportRect.x;
+            data.y = raw.motion.y - viewportRect.y;
+            data.xrel = raw.motion.xrel;
+            data.yrel = raw.motion.yrel;
+            data.state = raw.motion.state;
+        }
+        else if (raw.type == SDL_MOUSEWHEEL)
+        {
+            data.type = MOUSE_WHEEL;
+            data.direction = raw.wheel.direction;
+            data.x = raw.wheel.x;
+            data.y = raw.wheel.y;
+            data.state = raw.button.state == SDL_PRESSED ? MOUSE_PRESSED : MOUSE_RELEASED;
+        }
+        else if (raw.type == SDL_MOUSEBUTTONDOWN || raw.type == SDL_MOUSEBUTTONUP)
+        {
+            switch (raw.button.button)
             {
-                data.type = MOUSE_MOTION;
-                data.x = raw.motion.x - viewportRect.x;
-                data.y = raw.motion.y - viewportRect.y;
-                data.xrel = raw.motion.xrel;
-                data.yrel = raw.motion.yrel;
-                data.state = raw.motion.state;
-            }
-            else if (raw.type == SDL_MOUSEWHEEL)
-            {
-                data.type = MOUSE_WHEEL;
-                data.direction = raw.wheel.direction;
-                data.x = raw.wheel.x;
-                data.y = raw.wheel.y;
-                data.state = raw.button.state == SDL_PRESSED ? MOUSE_PRESSED : MOUSE_RELEASED;
-            }
-            else if (raw.type == SDL_MOUSEBUTTONDOWN || raw.type == SDL_MOUSEBUTTONUP)
-            {
-                switch (raw.button.button)
+                case SDL_BUTTON_LEFT:
                 {
-                    case SDL_BUTTON_LEFT:
-                    {
-                        data.type = MOUSE_BUTTON_LEFT;
-                        leftButtonPressed = raw.type == SDL_MOUSEBUTTONDOWN ? true : false;
-                        break;
-                    }
-                    case SDL_BUTTON_RIGHT:
-                    {
-                        data.type = MOUSE_BUTTON_RIGHT;
-                        rightButtonPressed = raw.type == SDL_MOUSEBUTTONDOWN ? true : false;
-                        break;
-                    }
-                    case SDL_BUTTON_MIDDLE:
-                    {
-                        data.type = MOUSE_BUTTON_MIDDLE;
-                        middleButtonPressed = raw.type == SDL_MOUSEBUTTONDOWN ? true : false;
-                        break;
-                    }
-                    default:
-                    {
-                        data.type = MOUSE_BUTTON_OTHER;
-                        break;
-                    }
+                    data.type = MOUSE_BUTTON_LEFT;
+                    leftButtonPressed = raw.type == SDL_MOUSEBUTTONDOWN ? true : false;
+                    break;
                 }
-                data.button = raw.button.button;
-                data.clicks = raw.button.clicks;
-                data.x = raw.button.x - viewportRect.x;
-                data.y = raw.button.y - viewportRect.y;
-                data.state = raw.button.state == SDL_PRESSED ? MOUSE_PRESSED : MOUSE_RELEASED;
+                case SDL_BUTTON_RIGHT:
+                {
+                    data.type = MOUSE_BUTTON_RIGHT;
+                    rightButtonPressed = raw.type == SDL_MOUSEBUTTONDOWN ? true : false;
+                    break;
+                }
+                case SDL_BUTTON_MIDDLE:
+                {
+                    data.type = MOUSE_BUTTON_MIDDLE;
+                    middleButtonPressed = raw.type == SDL_MOUSEBUTTONDOWN ? true : false;
+                    break;
+                }
+                default:
+                {
+                    data.type = MOUSE_BUTTON_OTHER;
+                    break;
+                }
             }
-            else
-            {
-                data.type = MOUSE_UNKNOWN;
-            }
-
-            if (data.type != MOUSE_UNKNOWN)
-            {
-                UpdateState(data.type, data.state);
-                return CallAction(data, data.type);
-            }
-            return ActionOutcome::Ignore;
+            data.button = raw.button.button;
+            data.clicks = raw.button.clicks;
+            data.x = raw.button.x - viewportRect.x;
+            data.y = raw.button.y - viewportRect.y;
+            data.state = raw.button.state == SDL_PRESSED ? MOUSE_PRESSED : MOUSE_RELEASED;
         }
-
-        /// Returns the mouse position relative to the set viewport (within the native window the mouse is over).
-        /// Returns position (-1, -1) when the context is inactive.
-        Vector2 MouseHandler::GetMousePosition()
+        else
         {
-            if (context->IsActive())
-            {
-                int x = 0, y = 0;
-                SDL_GetMouseState(&x, &y);
-                return Vector2((float)(x - viewportRect.x), (float)(y - viewportRect.y));
-            }
-            // Return invalid position when the context is inactive
-            return Vector2(-1, -1);
+            data.type = MOUSE_UNKNOWN;
         }
 
-        bool MouseHandler::LeftPressed()
+        if (data.type != MOUSE_UNKNOWN)
         {
-            return leftButtonPressed;
+            UpdateState(data.type, data.state);
+            return CallAction(data, data.type);
         }
+        return ActionOutcome::Ignore;
+    }
 
-        bool MouseHandler::RightPressed()
+    /// Returns the mouse position relative to the set viewport (within the native window the mouse is over).
+    /// Returns position (-1, -1) when the context is inactive.
+    Vector2 MouseHandler::GetMousePosition()
+    {
+        if (context->IsActive())
         {
-            return rightButtonPressed;
+            int x = 0, y = 0;
+            SDL_GetMouseState(&x, &y);
+            return Vector2((float)(x - viewportRect.x), (float)(y - viewportRect.y));
         }
+        // Return invalid position when the context is inactive
+        return Vector2(-1, -1);
+    }
 
-        bool MouseHandler::MiddlePressed()
-        {
-            return middleButtonPressed;
-        }
+    bool MouseHandler::LeftPressed()
+    {
+        return leftButtonPressed;
+    }
 
-        void MouseHandler::SetViewport(SDL_Rect viewport)
-        {
-            viewportRect = viewport;
-        }
+    bool MouseHandler::RightPressed()
+    {
+        return rightButtonPressed;
+    }
 
-        SDL_Rect MouseHandler::GetViewport()
-        {
-            return viewportRect;
-        }
+    bool MouseHandler::MiddlePressed()
+    {
+        return middleButtonPressed;
+    }
 
+    void MouseHandler::SetViewport(SDL_Rect viewport)
+    {
+        viewportRect = viewport;
+    }
+
+    SDL_Rect MouseHandler::GetViewport()
+    {
+        return viewportRect;
     }
 
 }
