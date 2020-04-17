@@ -126,6 +126,10 @@ namespace Ossium
                 mouseFocus = false;
                 break;
             }
+            case SDL_WINDOWEVENT_CLOSE:
+            {
+                break;
+            }
             default:
             {
                 validEvent = false;
