@@ -1,0 +1,3 @@
+OSSIUM
+- Fix entity destruction; all children must be destroyed, currently only their nodes are destroyed!
+- Have to set text/update textlayout every time we render?

@@ -45,7 +45,11 @@ namespace Ossium
 
     bool EngineSystem::Update()
     {
-        bool quit = false;
+        bool quit = doExit;
+        if (doExit)
+        {
+            return false;
+        }
 
         Renderer* renderer = services->GetService<Renderer>();
 
@@ -115,6 +119,11 @@ namespace Ossium
     ServicesProvider* EngineSystem::GetServices()
     {
         return services;
+    }
+
+    void EngineSystem::Exit()
+    {
+        doExit = true;
     }
 
 }
