@@ -50,6 +50,9 @@ namespace Ossium
 
         ~EngineSystem();
 
+        /// Destroys all entities in the scene.
+        void ClearScene();
+
         /// Configures the engine with a JSON file.
         void Init(string configFilePath);
         /// Configures the engine with a JSON object.

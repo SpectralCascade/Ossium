@@ -105,7 +105,16 @@ namespace Ossium
             itr->second.clear();
         }
         components.clear();
+
         /// Clean up all children
+        for (auto node : self->children)
+        {
+            if (node->data != nullptr)
+            {
+                delete node->data;
+            }
+        }
+
         controller->entityTree.Remove(self);
         /// Remove this instance from inactive set and the entities map
         auto itr = controller->inactiveEntities.find(this);

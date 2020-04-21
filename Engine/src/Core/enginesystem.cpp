@@ -25,6 +25,12 @@ namespace Ossium
         delete ecs;
     }
 
+    void EngineSystem::ClearScene()
+    {
+        delete ecs;
+        ecs = new Scene(services);
+    }
+
     void EngineSystem::Init(JSON& configData)
     {
         /// Set flags here to configure how the engine operates.
