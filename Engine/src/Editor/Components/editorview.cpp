@@ -55,7 +55,7 @@ namespace Ossium::Editor
         native->RemovePostUpdate(this);
     }
 
-    NativeEditorWindow::NativeEditorWindow(InputController* controller, ResourceController* resourceController, int w, int h)
+    NativeEditorWindow::NativeEditorWindow(InputController* controller, ResourceController* resourceController, string title, int w, int h)
     {
         // Setup input and native window
         input = controller;
@@ -63,7 +63,7 @@ namespace Ossium::Editor
         windowContext = new InputContext();
         input->AddContext(Utilities::Format("NativeEditorWindow {0}", this), windowContext);
         native = windowContext->GetHandler<Window>();
-        native->Init("Ossium (Editor)", w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        native->Init(title.c_str(), w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (w < 0 || h < 0 ? SDL_WINDOW_MAXIMIZED : 0));
 
         // TODO: make this a method of the Window class
         SDL_SetWindowMinimumSize(native->GetWindowSDL(), (int)MIN_DIMENSIONS.x, (int)MIN_DIMENSIONS.y);

@@ -163,7 +163,7 @@ namespace Ossium::Editor
 
     public:
         /// Creates the window and initialises the tree.
-        NativeEditorWindow(InputController* controller, ResourceController* resourceController, int w = 480, int h = 640);
+        NativeEditorWindow(InputController* controller, ResourceController* resourceController, string title = "Untitled", int w = -1, int h = -1);
         virtual ~NativeEditorWindow();
 
         /// Update editor windows.
