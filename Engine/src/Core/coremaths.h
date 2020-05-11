@@ -266,8 +266,11 @@ namespace Ossium
         bool operator==(const Rect& rect);
         bool operator!=(const Rect& rect);
 
-        /// Returns the  SDL_Rect equivalent of this rect for convenience
+        /// Returns the SDL_Rect equivalent of this rect for convenience
         SDL_Rect SDL();
+
+        /// Returns the string representation of this object.
+        string ToString();
 
     };
 

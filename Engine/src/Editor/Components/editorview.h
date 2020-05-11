@@ -39,14 +39,19 @@ namespace Ossium::Editor
 
     enum DockingMode
     {
-        TOP = 1,
-        BOTTOM = 2,
-        LEFT = 4,
-        RIGHT = 8
+        TOP             =   1,
+        BOTTOM          =   2,
+        LEFT            =   4,
+        RIGHT           =   8,
+        TOP_ADJACENT    =   16,
+        BOTTOM_ADJACENT =   32,
+        LEFT_ADJACENT   =   64,
+        RIGHT_ADJACENT  =   128
     };
 
-    /// Forward declaration
+    // Forward declarations
     class NativeEditorWindow;
+    class EditorRect;
 
     /// A dockable window with support for custom Immediate-Mode GUI.
     /**
@@ -63,12 +68,11 @@ namespace Ossium::Editor
         /// Settings defining the window title, dimensions etc.
         EditorWindowSettings settings;
 
-        /// The corresponding node of this window.
-        Node<EditorWindow*>* node;
-
-        InputController* inputController;
-
+        /// Pointer to the native window that owns this window.
         NativeEditorWindow* native = nullptr;
+
+        /// The corresponding node for this window.
+        Node<EditorRect>* node;
 
     protected:
         EditorWindow() = default;
@@ -77,7 +81,7 @@ namespace Ossium::Editor
         virtual ~EditorWindow();
 
         /// Initialises input
-        void Init(InputController* inputControl, ResourceController* resourceController, NativeEditorWindow* nativeWindow);
+        void Init(NativeEditorWindow* nativeWindow);
 
         /// Returns the native editor window that owns this editor window.
         NativeEditorWindow* GetNativeWindow();
@@ -93,6 +97,21 @@ namespace Ossium::Editor
 
     };
 
+    /// Represents a rectangular area within an editor window. May contain a specific window.
+    class EditorRect : public Rect
+    {
+    public:
+        EditorRect() = default;
+        EditorRect(SDL_Rect rect) : Rect(rect) { }
+        EditorRect(EditorWindow* win, SDL_Rect rect) : Rect(rect) { window = win; }
+
+        // Updates the window viewport
+        void UpdateViewport();
+
+        EditorWindow* window = nullptr;
+
+    };
+
     /// This holds the actual native editor window and the layout tree for docked editor windows.
     class NativeEditorWindow
     {
@@ -103,14 +122,17 @@ namespace Ossium::Editor
         /// The input context for the native window.
         InputContext* windowContext = nullptr;
 
-        /// The input controller pointer.
+        /// The input controller instance.
         InputController* input;
+
+        /// The resource controller instance.
+        ResourceController* resources;
 
         /// Minimum dimensions of the window.
         const Vector2 MIN_DIMENSIONS = {64, 64};
 
         /// Layout tree, consisting of alternating row-column-row (or column-row-column, depending on root layout).
-        Tree<EditorWindow*> layout;
+        Tree<EditorRect> layout;
 
         /// The native OS window.
         Window* native = nullptr;
@@ -133,15 +155,15 @@ namespace Ossium::Editor
         /// Updates all the docked editor window viewport dimensions.
         void UpdateViewports();
 
-        /// Recursively resizes all editor windows within a node group.
-        void ResizeGroup(vector<Node<EditorWindow*>*>& group, Rect parentRect);
+        /// Recursively resizes all editor windows beneath an editor rect, or the rect itself if the node has no children.
+        void ResizeArea(Node<EditorRect>* area);
 
         /// Removes an editor window from this native editor window.
         bool Remove(EditorWindow* source);
 
     public:
         /// Creates the window and initialises the tree.
-        NativeEditorWindow(InputController* controller, int w = 480, int h = 640);
+        NativeEditorWindow(InputController* controller, ResourceController* resourceController, int w = 480, int h = 640);
         virtual ~NativeEditorWindow();
 
         /// Update editor windows.
@@ -150,10 +172,10 @@ namespace Ossium::Editor
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
         template<typename T>
         typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
-        Add(EditorWindow* dest, DockingMode mode = DockingMode::TOP)
+        Add(EditorWindow* dest, DockingMode mode)
         {
             T* toAdd = new T();
-            toAdd->Init(dest->inputController, dest->resources, this);
+            toAdd->Init(this);
             if (!Insert(toAdd, dest, mode))
             {
                 delete toAdd;
@@ -165,26 +187,26 @@ namespace Ossium::Editor
         /// Overload that just creates an editor window at the root of the window layout.
         template<typename T>
         typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
-        Add(InputController* inputControl, ResourceController* resourceController, DockingMode mode = DockingMode::TOP)
+        Add(DockingMode mode)
         {
             T* toAdd = new T();
-            toAdd->Init(inputControl, resourceController, this);
+            toAdd->Init(this);
             EditorWindow* dest = nullptr;
 
             for (auto node : layout.GetRoots())
             {
-                if (node->data != nullptr)
+                if (node->data.window != nullptr)
                 {
-                    dest = node->data;
+                    dest = node->data.window;
                     break;
                 }
                 else
                 {
                     for (auto child : node->children)
                     {
-                        if (child->data != nullptr)
+                        if (child->data.window != nullptr)
                         {
-                            dest = child->data;
+                            dest = child->data.window;
                             break;
                         }
                     }
@@ -201,15 +223,21 @@ namespace Ossium::Editor
             }
             else
             {
-                toAdd->node = layout.Insert(toAdd);
                 toAdd->renderer = renderer;
                 toAdd->viewport = {0, 0, native->GetWidth(), native->GetHeight()};
+                toAdd->node = layout.Insert(EditorRect(toAdd, toAdd->viewport));
             }
             return toAdd;
         }
 
         /// Marks the window to be removed at the end of the next Update call (or the current running Update() call).
         void RemovePostUpdate(EditorWindow* window);
+
+        /// Returns the input controller instance this window is using.
+        InputController* GetInputController();
+
+        /// Returns the resource controller instance this window is using.
+        ResourceController* GetResources();
 
     };
 
