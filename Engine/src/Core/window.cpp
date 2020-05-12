@@ -89,6 +89,13 @@ namespace Ossium
                 OnSizeChanged(*this);
                 break;
             }
+            case SDL_WINDOWEVENT_RESIZED:
+            {
+                width = event.window.data1;
+                height = event.window.data2;
+                OnResize(*this);
+                break;
+            }
             case SDL_WINDOWEVENT_MINIMIZED:
             {
                 minimized = true;

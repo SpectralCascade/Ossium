@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     ResourceController resources;
 
     // The main native window manager that deals with editor window docking
-    NativeEditorWindow window(&input, &resources);
+    NativeEditorWindow window(&input, &resources, "Ossium");
     window.Add<DemoDockingWindow>(DockingMode::TOP);
 
     //window.Insert(&dockView, &view, DockingMode::LEFT);
