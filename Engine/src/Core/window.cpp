@@ -20,13 +20,8 @@
 namespace Ossium
 {
 
-    void Window::Init(const char* title, int w, int h, bool fullscrn, Uint32 flags)
+    Window::Window(const char* title, int w, int h, bool fullscrn, Uint32 flags)
     {
-        if (window != NULL)
-        {
-            SDL_DestroyWindow(window);
-            window = NULL;
-        }
         window = NULL;
         minimized = false;
         fullscreen = fullscrn;
@@ -69,79 +64,74 @@ namespace Ossium
     Window::~Window()
     {
         OnDestroyed(*this);
-        if (window != NULL)
-        {
-            SDL_DestroyWindow(window);
-            window = NULL;
-        }
+        SDL_DestroyWindow(window);
+        window = NULL;
     }
 
-    ActionOutcome Window::HandleInput(const SDL_Event& raw)
+    void Window::HandleEvent(SDL_Event &event)
     {
-        if (raw.type != SDL_WINDOWEVENT || raw.window.windowID != SDL_GetWindowID(window))
+        if (event.type != SDL_WINDOWEVENT || event.window.windowID != SDL_GetWindowID(window))
         {
             /// If not a window event or the id doesn't match this window, early out.
-            return ActionOutcome::Ignore;
+            return;
         }
-        bool validEvent = true;
-        switch (raw.window.event)
+        switch (event.window.event)
         {
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
+            case SDL_WINDOWEVENT_CLOSE:
             {
-                width = raw.window.data1;
-                height = raw.window.data2;
+                OnCloseButton(*this);
                 break;
             }
-            case SDL_WINDOWEVENT_RESIZED:
+            case SDL_WINDOWEVENT_SIZE_CHANGED:
             {
+                width = event.window.data1;
+                height = event.window.data2;
+                OnSizeChanged(*this);
                 break;
             }
             case SDL_WINDOWEVENT_MINIMIZED:
             {
                 minimized = true;
+                OnMinimise(*this);
                 break;
             }
             case SDL_WINDOWEVENT_MAXIMIZED:
             {
                 minimized = false;
+                OnMaximise(*this);
                 break;
             }
             case SDL_WINDOWEVENT_FOCUS_GAINED:
             {
                 focus = true;
+                OnFocusGained(*this);
+                Logger::EngineLog().Info("window {0} focus gained", this);
                 break;
             }
             case SDL_WINDOWEVENT_FOCUS_LOST:
             {
                 focus = false;
+                OnFocusLost(*this);
+                Logger::EngineLog().Info("window {0} focus lost", this);
                 break;
             }
             case SDL_WINDOWEVENT_ENTER:
             {
                 mouseFocus = true;
+                OnMouseEnter(*this);
                 break;
             }
             case SDL_WINDOWEVENT_LEAVE:
             {
                 mouseFocus = false;
-                break;
-            }
-            case SDL_WINDOWEVENT_CLOSE:
-            {
+                OnMouseLeave(*this);
                 break;
             }
             default:
             {
-                validEvent = false;
                 break;
             }
         }
-        if (validEvent)
-        {
-            WindowInput data = {raw.window, *this};
-            return CallAction(data, (SDL_WindowEventID)raw.window.event);
-        }
-        return ActionOutcome::Ignore;
     }
 
     SDL_Window* Window::GetWindowSDL()
@@ -180,12 +170,14 @@ namespace Ossium
     {
         width = newWidth;
         SDL_SetWindowSize(window, width, height);
+        //OnSizeChanged(*this);
     }
 
     void Window::SetHeight(int newHeight)
     {
         height = newHeight;
         SDL_SetWindowSize(window, width, height);
+        //OnSizeChanged(*this);
     }
 
     void Window::SetFullscreen()
@@ -214,11 +206,6 @@ namespace Ossium
         border = false;
     }
 
-    void Window::SetTitle(string title)
-    {
-        SDL_SetWindowTitle(window, title.c_str());
-    }
-
     bool Window::IsMinimised()
     {
         return minimized;
@@ -238,5 +225,51 @@ namespace Ossium
     {
         return mouseFocus;
     }
+
+/*
+    ///
+    /// WindowManager
+    ///
+
+    WindowManager::~WindowManager()
+    {
+        /// Remove all callbacks
+        for (auto i : windows)
+        {
+            /// Prevent invalid callbacks.
+            i.first->OnDestroyed -= i.second;
+        }
+    }
+
+    /// Creates a new window
+    Window* WindowManager::CreateWindow(const char* title, int w, int h, bool fullscrn, Uint32 flags)
+    {
+        Window* window = new Window(title, w, h, fullscrn, flags);
+        windows[window] = window->OnDestroyed += [this] (Window& w) { OnWindowDestroyed(w); };
+        return window;
+    }
+
+    Window* WindowManager::HandleEvent(SDL_Event& event)
+    {
+        for (auto window : windows)
+        {
+            if (window.first->HandleEvent(event) < 0)
+            {
+                return window.first;
+            }
+        }
+        return nullptr;
+    }
+
+    void WindowManager::OnWindowDestroyed(Window& window)
+    {
+        /// Remove the window reference and callback handle.
+        auto itr = windows.find(&window);
+        if (itr != windows.end())
+        {
+            windows.erase(itr);
+        }
+    }
+*/
 
 }

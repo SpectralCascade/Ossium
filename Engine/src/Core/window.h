@@ -26,31 +26,22 @@ extern "C"
 
 #include "services.h"
 #include "callback.h"
-#include "input.h"
 
 using namespace std;
 
 namespace Ossium
 {
 
-    class OSSIUM_EDL Window;
-
-    struct OSSIUM_EDL WindowInput
-    {
-        SDL_WindowEvent raw;
-        Window& window;
-    };
-
     /// Wrapper class for SDL_Window
-    class OSSIUM_EDL Window : public InputHandler<Window, WindowInput, SDL_WindowEventID>
+    class OSSIUM_EDL Window
     {
     public:
         /// Appropriate constructor and destructor
-        void Init(const char* title = "Ossium Engine", int w = 640, int h = 480, bool fullscrn = false, Uint32 flags = SDL_WINDOW_SHOWN);
+        Window(const char* title = "Ossium Engine", int w = 640, int h = 480, bool fullscrn = false, Uint32 flags = SDL_WINDOW_SHOWN);
         ~Window();
 
         /// Handles window events
-        ActionOutcome HandleInput(const SDL_Event& raw);
+        void HandleEvent(SDL_Event &event);
 
         /// Get/Set specifiers
         SDL_Window* GetWindowSDL();
@@ -73,13 +64,25 @@ namespace Ossium
         bool IsFocus();
         bool IsMouseFocus();
 
-        /// Callbacks for window state changes that don't have events directly associated with them.
+        /// Callbacks for window state changes
+        Callback<Window> OnSizeChanged;
         Callback<Window> OnFullscreen;
         Callback<Window> OnWindowed;
+        Callback<Window> OnMinimise;
+        Callback<Window> OnMaximise;
+        Callback<Window> OnFocusGained;
+        Callback<Window> OnFocusLost;
+        Callback<Window> OnMouseEnter;
+        Callback<Window> OnMouseLeave;
+        Callback<Window> OnCloseButton;
         /// Called when the window is destroyed so any associated renderers can null their window pointers.
         Callback<Window> OnDestroyed;
 
     private:
+        /// Prohibited copying of windows
+        Window(const Window& src);
+        Window operator=(const Window& src);
+
         /// Individual window instance
         SDL_Window* window;
 
@@ -99,6 +102,29 @@ namespace Ossium
         bool border;
 
     };
+
+/*
+    class OSSIUM_EDL WindowManager : public Service<WindowManager>
+    {
+    public:
+        WindowManager() = default;
+        ~WindowManager();
+
+        /// Creates a new window and sets up a destruction callback.
+        Window* CreateWindow(const char* title = nullptr, int w = 640, int h = 480, bool fullscrn = false, Uint32 flags = SDL_WINDOW_SHOWN);
+
+        /// Handles window events. Returns nullptr unless a window receives SDL_WINDOWEVENT_CLOSE, in which case a pointer to that window is returned.
+        Window* HandleEvent(SDL_Event& e);
+
+    private:
+        /// Called when a window is destroyed.
+        void OnWindowDestroyed(Window& window);
+
+        /// Window callback handles.
+        map<Window*, int> windows;
+
+    };
+*/
 
 }
 

@@ -177,7 +177,7 @@ namespace Ossium
         SDL_Color bufferColour = Colors::BLACK;
 
         /// Cached array of callback ids to unregister this renderer when destroyed.
-        int callbackIds[2] = {0, 0};
+        int callbackIds[3] = {-1, -1, -1};
 
         /// Number of layers this renderer has
         int numLayersActive;

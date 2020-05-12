@@ -63,9 +63,9 @@ namespace Ossium
         registeredGraphics = new set<Graphic*>[numLayers];
         queuedGraphics = new queue<Graphic*>[numLayers];
 
-        window->AddAction("SizeChanged", [&] (const WindowInput& win) { this->UpdateViewport(win.window); return ActionOutcome::ClaimContext; }, SDL_WINDOWEVENT_SIZE_CHANGED);
         callbackIds[0] = window->OnFullscreen += [&] (Window& win) { this->UpdateViewport(win); };
         callbackIds[1] = window->OnWindowed += [&] (Window& win) { this->UpdateViewport(win); };
+        callbackIds[2] = window->OnSizeChanged += [&] (Window& win) { this->UpdateViewport(win); };
         /// No need to store id as the OnDestroyed callback is automatically freed after being called.
         window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
 
@@ -84,6 +84,7 @@ namespace Ossium
         {
             renderWindow->OnFullscreen -= callbackIds[0];
             renderWindow->OnWindowed -= callbackIds[1];
+            renderWindow->OnSizeChanged -= callbackIds[2];
             renderWindow = nullptr;
         }
 

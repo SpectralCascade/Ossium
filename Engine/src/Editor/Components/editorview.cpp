@@ -62,8 +62,7 @@ namespace Ossium::Editor
         resources = resourceController;
         windowContext = new InputContext();
         input->AddContext(Utilities::Format("NativeEditorWindow {0}", this), windowContext);
-        native = windowContext->GetHandler<Window>();
-        native->Init(title.c_str(), w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (w < 0 || h < 0 ? SDL_WINDOW_MAXIMIZED : 0));
+        native = new Window(title.c_str(), w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (w < 0 || h < 0 ? SDL_WINDOW_MAXIMIZED : 0));
 
         // TODO: make this a method of the Window class
         SDL_SetWindowMinimumSize(native->GetWindowSDL(), (int)MIN_DIMENSIONS.x, (int)MIN_DIMENSIONS.y);
@@ -72,21 +71,17 @@ namespace Ossium::Editor
         renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, native->GetWidth(), native->GetHeight());
 
         // Handle window resize
-        native->AddAction(
-            "WindowSizeChanged",
-            [&] (const WindowInput& window) {
-                if (renderBuffer != NULL)
-                {
-                    SDL_DestroyTexture(renderBuffer);
-                    renderBuffer = NULL;
-                }
-                renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, window.raw.data1, window.raw.data2);
-                updateViewports = true;
+        native->OnSizeChanged += [&] (Window& window) {
+            if (renderBuffer != NULL)
+            {
+                SDL_DestroyTexture(renderBuffer);
+                renderBuffer = NULL;
+            }
+            renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, window.GetWidth(), window.GetHeight());
+            updateViewports = true;
 
-                return ActionOutcome::Ignore;
-            },
-            SDL_WINDOWEVENT_SIZE_CHANGED
-        );
+            return ActionOutcome::Ignore;
+        };
 
     }
 
