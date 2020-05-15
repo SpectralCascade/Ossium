@@ -143,6 +143,7 @@
 				<Compiler>
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
+					<Add option="-DOSSIUM_DEBUG" />
 					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
 					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
