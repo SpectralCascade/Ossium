@@ -192,8 +192,11 @@ namespace Ossium
             /// Delete all nodes below the source node
             for (auto i = all.begin(); i != all.end(); i++)
             {
-                delete *i;
-                *i = nullptr;
+                if (*i != nullptr)
+                {
+                    delete *i;
+                    *i = nullptr;
+                }
                 updateFlattened = true;
                 total--;
             }
@@ -250,13 +253,12 @@ namespace Ossium
                 // Update flat tree if not already
                 GetFlatTree();
             }
+            // Delete everything
             for (auto node : flatTree)
             {
                 if (node != nullptr)
                 {
-                    // Delete everything
                     delete node;
-                    node = nullptr;
                 }
             }
             roots.clear();

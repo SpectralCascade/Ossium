@@ -22,12 +22,20 @@ namespace Ossium
 
     EngineSystem::~EngineSystem()
     {
-        delete ecs;
+        if (ecs != nullptr)
+        {
+            delete ecs;
+            ecs = nullptr;
+        }
     }
 
     void EngineSystem::ClearScene()
     {
-        delete ecs;
+        if (ecs != nullptr)
+        {
+            delete ecs;
+            ecs = nullptr;
+        }
         ecs = new Scene(services);
     }
 
