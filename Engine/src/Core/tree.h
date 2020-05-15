@@ -245,6 +245,20 @@ namespace Ossium
         /// Removes all nodes from the tree, except for the root
         void Clear()
         {
+            if (updateFlattened)
+            {
+                // Update flat tree if not already
+                GetFlatTree();
+            }
+            for (auto node : flatTree)
+            {
+                if (node != nullptr)
+                {
+                    // Delete everything
+                    delete node;
+                    node = nullptr;
+                }
+            }
             roots.clear();
             flatTree.clear();
         }
@@ -280,7 +294,7 @@ namespace Ossium
             while (!nodes.empty())
             {
                 walkFunc(nodes.front());
-                for (auto child : nodes.front().children)
+                for (auto child : nodes.front()->children)
                 {
                     nodes.push(child);
                 }
@@ -418,6 +432,7 @@ namespace Ossium
         }
 
         /// Returns a reference to the cached, 'flattened' version of the tree.
+        /// Depending on the current build mode, this will either be ordered by depth-first or breadth-first nodes (depth-first by default).
         vector<Node<T>*>& GetFlatTree()
         {
             if (updateFlattened)
@@ -425,13 +440,33 @@ namespace Ossium
                 flatTree.clear();
                 /// Preallocate memory for some performance gains. Use total + 1 as we include the root node.
                 flatTree.reserve(total);
-                for (auto i = roots.begin(); i != roots.end(); i++)
+
+                if (buildFlattenedDepthFirst)
                 {
-                    RecursiveFlatten(*i);
+                    Walk([&] (Node<T>* node) {
+                        flatTree.push_back(node);
+                    });
                 }
+                else
+                {
+                    WalkBreadth([&] (Node<T>* node) {
+                        flatTree.push_back(node);
+                    });
+                }
+
                 updateFlattened = false;
             }
             return flatTree;
+        }
+
+        /// Sets the traversal method to use when building the flat tree, which dictates the order that the elements appear in the GetFlatTree() array.
+        void SetFlatTreeBuildMode(bool depthFirst)
+        {
+            if (depthFirst != buildFlattenedDepthFirst)
+            {
+                updateFlattened = true;
+                buildFlattenedDepthFirst = depthFirst;
+            }
         }
 
         /// Returns the total number of nodes in the tree.
@@ -473,15 +508,8 @@ namespace Ossium
         /// Whether or not the tree should re-calculate the flatTree array next time GetFlattened() is called
         bool updateFlattened;
 
-        /// Recursively iterates through the tree and builds the flatTree tree array
-        void RecursiveFlatten(Node<T>* parent)
-        {
-            flatTree.push_back(parent);
-            for (auto i = parent->children.begin(); i != parent->children.end(); i++)
-            {
-                RecursiveFlatten(*i);
-            }
-        }
+        /// Should the flat tree be built using depth-first or breadth-first traversal?
+        bool buildFlattenedDepthFirst = true;
 
         /// Walks recursively through the tree and operates on all nodes, depth first.
         void RecursiveWalk(NodeOp& nodeOp, Node<T>* node)
