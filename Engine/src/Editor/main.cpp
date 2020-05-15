@@ -14,9 +14,6 @@ int main(int argc, char* argv[])
 
     // Setup input
     InputController input;
-    // Window contexts
-    InputContext mainContext;
-    input.AddContext("MainWindow", &mainContext);
 
     // Setup resources
     ResourceController resources;

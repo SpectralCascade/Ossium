@@ -70,6 +70,9 @@ namespace Ossium::Editor
         renderer = new Renderer(native);
         renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, native->GetWidth(), native->GetHeight());
 
+        // Use breadth-first traversal to get the flat tree
+        layout.SetFlatTreeBuildMode(false);
+
         // Handle window resize
         native->OnSizeChanged += [&] (Window& window) {
             if (renderBuffer != NULL)
@@ -94,23 +97,94 @@ namespace Ossium::Editor
         }
         layout.Clear();
         input->RemoveContext(Utilities::Format("NativeEditorWindow {0}", this));
-        delete windowContext;
         delete renderer;
+        delete native;
+        delete windowContext;
     }
 
     void NativeEditorWindow::Update()
     {
-        if (updateViewports)
-        {
-            UpdateViewports();
-        }
 
         // Setup rendering to texture
         SDL_Renderer* render = renderer->GetRendererSDL();
         SDL_SetRenderTarget(render, renderBuffer);
 
-        for (auto node : layout.GetFlatTree())
+        // These are used for computing viewport sizes
+        Node<EditorRect>* currentGroup = nullptr;
+        int combinedSize = 0;
+
+        // Breadth-first layout iteration
+        vector<Node<EditorRect>*>& flatTree = layout.GetFlatTree();
+        for (vector<Node<EditorRect>*>::iterator itr = flatTree.begin(); itr != flatTree.end(); itr++)
         {
+            Node<EditorRect>* node = *itr;
+
+            // First, update the viewports
+            if (updateViewports)
+            {
+                if (node->parent != nullptr)
+                {
+                    bool isRow = node->depth % 2 == (int)layoutRow;
+
+                    // Have we just iterated over a grouping of nodes (or the very last node)?
+                    if ((currentGroup != node->parent || itr == flatTree.begin() + (flatTree.size() - 1)) && currentGroup != nullptr)
+                    {
+                        bool currentRow = currentGroup->depth % 2 == layoutColumn;
+                        float scaleFactor = (float)(currentRow ? currentGroup->data.w : currentGroup->data.h) / (float)combinedSize;
+
+                        // Update the entire group of rectangles now we know their total combined width/height
+                        if (currentRow)
+                        {
+                            float nextPos = currentGroup->data.x;
+                            for (Node<EditorRect>* child : currentGroup->children)
+                            {
+                                float change = (float)child->data.w * scaleFactor;
+                                child->data.w = round(change);
+                                child->data.x = round(nextPos);
+                                child->data.y = currentGroup->data.y;
+                                child->data.h = currentGroup->data.h;
+                                nextPos += change;
+                            }
+                        }
+                        else
+                        {
+                            float nextPos = currentGroup->data.y;
+                            for (Node<EditorRect>* child : currentGroup->children)
+                            {
+                                float change = (float)child->data.h * scaleFactor;
+                                child->data.h = round(change);
+                                child->data.y = round(nextPos);
+                                child->data.x = currentGroup->data.x;
+                                child->data.w = currentGroup->data.w;
+                                nextPos += change;
+                            }
+                        }
+
+                        combinedSize = isRow ? node->data.w : node->data.h;
+                    }
+                    else
+                    {
+                        combinedSize += isRow ? node->data.w : node->data.h;
+                    }
+                }
+                else
+                {
+                    // Must be a root node (for this use case, there will only be one root node).
+                    // Always matches the native window rect.
+                    node->data.w = native->GetWidth();
+                    node->data.h = native->GetHeight();
+                    node->data.x = 0;
+                    node->data.y = 0;
+                }
+                currentGroup = node->parent;
+
+                if (node->data.window != nullptr)
+                {
+                    node->data.window->viewport = node->data.SDL();
+                }
+            }
+
+            // Now update the editor window, if this node is not a stem
             if (node->data.window != nullptr)
             {
                 if (native->IsMouseFocus())
@@ -124,6 +198,8 @@ namespace Ossium::Editor
                 node->data.window->Update();
             }
         }
+        updateViewports = false;
+
         renderer->SetViewportRect({0, 0, native->GetWidth(), native->GetHeight()});
 
         // Change target back to the window and render the texture
@@ -256,11 +332,6 @@ namespace Ossium::Editor
             }
         }
     }*/
-
-    void NativeEditorWindow::UpdateViewports()
-    {
-        updateViewports = false;
-    }
 
     bool NativeEditorWindow::Remove(EditorWindow* source)
     {

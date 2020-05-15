@@ -105,9 +105,6 @@ namespace Ossium::Editor
         EditorRect(SDL_Rect rect) : Rect(rect) { }
         EditorRect(EditorWindow* win, SDL_Rect rect) : Rect(rect) { window = win; }
 
-        // Updates the window viewport
-        void UpdateViewport();
-
         EditorWindow* window = nullptr;
 
     };
@@ -151,12 +148,6 @@ namespace Ossium::Editor
 
         /// Docks an existing source editor window to a destination editor window.
         bool Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
-
-        /// Updates all the docked editor window viewport dimensions.
-        void UpdateViewports();
-
-        /// Recursively resizes all editor windows beneath an editor rect, or the rect itself if the node has no children.
-        void ResizeArea(Node<EditorRect>* area);
 
         /// Removes an editor window from this native editor window.
         bool Remove(EditorWindow* source);
