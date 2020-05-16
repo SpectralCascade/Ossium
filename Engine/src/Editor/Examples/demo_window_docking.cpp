@@ -8,14 +8,14 @@ namespace Ossium::Editor
     {
 
         Space(20);
-        TextLabel("<b><color=#ff0000>WINDOW DEMO</color></b>");
+        TextLabel("<b>WINDOW DEMO</b>");
         Space(20);
 
         bool wasDocked = docked;
         docked = Button(docked ? "Undock Window" : "Dock Window") ? !docked : docked;
         if (docked != wasDocked)
         {
-            if (docked)
+            if (docked && sibling == nullptr)
             {
                 sibling = GetNativeWindow()->Add<SimpleDemoWindow>(this, DockingMode::RIGHT);
             }

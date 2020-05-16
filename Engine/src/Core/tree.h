@@ -248,13 +248,8 @@ namespace Ossium
         /// Removes all nodes from the tree, except for the root
         void Clear()
         {
-            if (updateFlattened)
-            {
-                // Update flat tree if not already
-                GetFlatTree();
-            }
             // Delete everything
-            for (auto node : flatTree)
+            for (auto node : GetFlatTree())
             {
                 if (node != nullptr)
                 {

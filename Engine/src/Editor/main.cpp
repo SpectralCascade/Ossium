@@ -19,8 +19,8 @@ int main(int argc, char* argv[])
     ResourceController resources;
 
     // The main native window manager that deals with editor window docking
-    NativeEditorWindow window(&input, &resources, "Ossium");
-    window.Add<DemoDockingWindow>(DockingMode::TOP);
+    NativeEditorWindow* window = new NativeEditorWindow(&input, &resources, "Ossium");
+    window->Add<DemoDockingWindow>(DockingMode::TOP);
 
     //window.Insert(&dockView, &view, DockingMode::LEFT);
 
@@ -32,16 +32,17 @@ int main(int argc, char* argv[])
     {
         while (SDL_PollEvent(&e) != 0)
         {
-            if (e.type == SDL_QUIT || (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_CLOSE))
+            if (e.type == SDL_QUIT)
             {
                 quit = true;
                 break;
             }
+            window->HandleEvent(e);
             input.HandleEvent(e);
         }
 
         // Update the GUI
-        window.Update();
+        window->Update();
     }
 
     resources.FreeAll();

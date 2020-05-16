@@ -63,9 +63,6 @@ namespace Ossium
         registeredGraphics = new set<Graphic*>[numLayers];
         queuedGraphics = new queue<Graphic*>[numLayers];
 
-        callbackIds[0] = window->OnFullscreen += [&] (Window& win) { this->UpdateViewport(win); };
-        callbackIds[1] = window->OnWindowed += [&] (Window& win) { this->UpdateViewport(win); };
-        callbackIds[2] = window->OnSizeChanged += [&] (Window& win) { this->UpdateViewport(win); };
         /// No need to store id as the OnDestroyed callback is automatically freed after being called.
         window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
 
@@ -82,9 +79,6 @@ namespace Ossium
     {
         if (renderWindow != nullptr)
         {
-            renderWindow->OnFullscreen -= callbackIds[0];
-            renderWindow->OnWindowed -= callbackIds[1];
-            renderWindow->OnSizeChanged -= callbackIds[2];
             renderWindow = nullptr;
         }
 
@@ -99,10 +93,6 @@ namespace Ossium
     void Renderer::OnWindowDestroyed(Window& windowCaller)
     {
         renderWindow = nullptr;
-        for (unsigned int i = 0; i < 3; i++)
-        {
-            callbackIds[i] = -1;
-        }
         /// No need to actually unregister the callbacks as the window will destroy it's callback objects.
     }
 
@@ -258,19 +248,25 @@ namespace Ossium
         x -= viewportRect.x;
     }
 
-    void Renderer::UpdateViewport(Window& windowCaller)
+    void Renderer::ResetViewport()
     {
+        if (renderWindow == nullptr)
+        {
+            Logger::EngineLog().Warning("Failed to reset renderer viewport! Associated window is NULL.");
+            // Early out
+            return;
+        }
         SDL_Rect viewRect;
         float percent_width = 1.0f;
         float percent_height = 1.0f;
-        int width = windowCaller.GetWidth();
-        int height = windowCaller.GetHeight();
-        int display_width = windowCaller.GetDisplayWidth();
-        int display_height = windowCaller.GetDisplayHeight();
+        int width = renderWindow->GetWidth();
+        int height = renderWindow->GetHeight();
+        int display_width = renderWindow->GetDisplayWidth();
+        int display_height = renderWindow->GetDisplayHeight();
 
         if (aspect_width > 0 && aspect_height > 0)
         {
-            if (windowCaller.IsFullscreen())
+            if (renderWindow->IsFullscreen())
             {
                 percent_width = (float)display_width / (float)aspect_width;
                 percent_height = (float)display_height / (float)aspect_height;
@@ -294,8 +290,8 @@ namespace Ossium
             {
                 smallest_percent = Clamp(smallest_percent, 0.0f, 1.0f);
             }
-            viewRect.h = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_height : (float)display_height));
-            viewRect.w = (int)(smallest_percent * (!windowCaller.IsFullscreen() ? (float)aspect_width : (float)display_width));
+            viewRect.h = (int)(smallest_percent * (!renderWindow->IsFullscreen() ? (float)aspect_height : (float)display_height));
+            viewRect.w = (int)(smallest_percent * (!renderWindow->IsFullscreen() ? (float)aspect_width : (float)display_width));
 
             /// Calculate viewport anchor position
             int deltaw = (width - viewRect.w);
@@ -322,8 +318,8 @@ namespace Ossium
             /// No aspect ratio is set
             viewRect.x = 0;
             viewRect.y = 0;
-            viewRect.w = windowCaller.GetWidth();
-            viewRect.h = windowCaller.GetHeight();
+            viewRect.w = renderWindow->GetWidth();
+            viewRect.h = renderWindow->GetHeight();
         }
 
         if (SDL_RenderSetViewport(renderer, &viewRect) < 0)
@@ -334,7 +330,7 @@ namespace Ossium
         viewportRect = viewRect;
     }
 
-    void Renderer::SetAspectRatio(int aspect_w, int aspect_h, bool fixed)
+    void Renderer::SetAspectRatio(int aspect_w, int aspect_h, bool fixed, bool resetViewport)
     {
         fixed_aspect = fixed;
         if (aspect_w < 1)
@@ -347,9 +343,9 @@ namespace Ossium
         }
         aspect_width = aspect_w;
         aspect_height = aspect_h;
-        if (renderWindow != nullptr)
+        if (resetViewport)
         {
-            UpdateViewport(*renderWindow);
+            ResetViewport();
         }
     }
 

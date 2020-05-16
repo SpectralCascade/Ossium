@@ -29,10 +29,16 @@ namespace Ossium::Editor
 
     void EditorWindow::Init(NativeEditorWindow* nativeWindow)
     {
-        input = new InputContext();
-        nativeWindow->GetInputController()->AddContext(Utilities::Format("EditorWindow {0}", this), input);
-        NeuronGUI::Init(input, nativeWindow->GetResources());
-        native = nativeWindow;
+        if (input == nullptr)
+        {
+            input = new InputContext();
+        }
+        if (nativeWindow != native)
+        {
+            nativeWindow->GetInputController()->AddContext(Utilities::Format("EditorWindow {0}", this), input);
+            NeuronGUI::Init(input, nativeWindow->GetResources());
+            native = nativeWindow;
+        }
     }
 
     NativeEditorWindow* EditorWindow::GetNativeWindow()
@@ -60,8 +66,7 @@ namespace Ossium::Editor
         // Setup input and native window
         input = controller;
         resources = resourceController;
-        windowContext = new InputContext();
-        input->AddContext(Utilities::Format("NativeEditorWindow {0}", this), windowContext);
+        input->AddContext(Utilities::Format("NativeEditorWindow {0}", this), &windowContext);
         native = new Window(title.c_str(), w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (w < 0 || h < 0 ? SDL_WINDOW_MAXIMIZED : 0));
 
         // TODO: make this a method of the Window class
@@ -74,7 +79,7 @@ namespace Ossium::Editor
         layout.SetFlatTreeBuildMode(false);
 
         // Handle window resize
-        native->OnSizeChanged += [&] (Window& window) {
+        /*native->OnSizeChanged += [&] (Window& window) {
             if (renderBuffer != NULL)
             {
                 SDL_DestroyTexture(renderBuffer);
@@ -84,7 +89,7 @@ namespace Ossium::Editor
             updateViewports = true;
 
             return ActionOutcome::Ignore;
-        };
+        };*/
 
     }
 
@@ -96,10 +101,25 @@ namespace Ossium::Editor
             renderBuffer = NULL;
         }
         layout.Clear();
-        input->RemoveContext(Utilities::Format("NativeEditorWindow {0}", this));
-        delete renderer;
-        delete native;
-        delete windowContext;
+        if (renderer != nullptr)
+        {
+            delete renderer;
+            renderer = nullptr;
+        }
+        if (native != nullptr)
+        {
+            /// NOTE TO FUTURE ME: this seems to set off the debugger?
+            delete native;
+            native = nullptr;
+        }
+    }
+
+    void NativeEditorWindow::HandleEvent(SDL_Event& e)
+    {
+        if (native != nullptr)
+        {
+            native->HandleEvent(e);
+        }
     }
 
     void NativeEditorWindow::Update()
@@ -118,7 +138,7 @@ namespace Ossium::Editor
         for (vector<Node<EditorRect>*>::iterator itr = flatTree.begin(); itr != flatTree.end(); itr++)
         {
             Node<EditorRect>* node = *itr;
-
+/*
             // First, update the viewports
             if (updateViewports)
             {
@@ -182,7 +202,7 @@ namespace Ossium::Editor
                 {
                     node->data.window->viewport = node->data.SDL();
                 }
-            }
+            }*/
 
             // Now update the editor window, if this node is not a stem
             if (node->data.window != nullptr)
@@ -226,7 +246,6 @@ namespace Ossium::Editor
         EditorRect sourceRect = EditorRect(source->viewport);
         sourceRect.window = source;
         EditorRect destRect = dest->node->data;
-        destRect.window = dest;
         switch (mode)
         {
             case TOP:
@@ -339,7 +358,14 @@ namespace Ossium::Editor
         {
             return false;
         }
-        delete source;
+        if (source != nullptr)
+        {
+            delete source;
+        }
+        else
+        {
+            Logger::EngineLog().Warning("Attempting to remove editor window that is already destroyed?");
+        }
         return true;
     }
 

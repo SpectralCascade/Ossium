@@ -115,13 +115,16 @@ namespace Ossium
         void WindowToViewportPoint(int& x, int& y);
 
         /// Attempts to set the viewport dimensions to the input target width and height in pixels
-        /// If the window is bigger in both width and height than the target dimension arguments, the viewport will remain
-        /// at the target dimensions and remaining space in the window will be filled with black bars on all sides.
-        /// The letterbox parameter specifies whether the viewport should use black bars along the bottom and top
-        /// if the window dimensions do not match the target aspect, or else the viewport will be cropped on the left and right side
-        /// when the window dimensions do not match the target aspect.
-        /// If fixed == true, the viewport matches the argument dimensions if window dimensions >= argument dimensions
-        void SetAspectRatio(int aspect_w, int aspect_h, bool fixed = false);
+        /**
+            If the window is bigger in both width and height than the target dimension arguments, the viewport will remain
+            at the target dimensions and remaining space in the window will be filled with black bars on all sides.
+            The letterbox parameter specifies whether the viewport should use black bars along the bottom and top
+            if the window dimensions do not match the target aspect, or else the viewport will be cropped on the left and right side
+            when the window dimensions do not match the target aspect.
+            If fixed == true, the viewport matches the argument dimensions if window dimensions >= argument dimensions
+            If resetViewport == false, the viewport is not automatically reset.
+        **/
+        void SetAspectRatio(int aspect_w, int aspect_h, bool fixed = false, bool resetViewport = true);
 
         /// Renders a specific layer of graphics; renders everything if layer < 0
         void RenderLayer(int layer = -1);
@@ -147,6 +150,9 @@ namespace Ossium
         /// Sets the render buffer colour.
         void SetBackgroundColor(SDL_Color color);
 
+        /// Updates the renderer viewport dimensions according to the current aspect of the associated window.
+        void ResetViewport();
+
     private:
         NOCOPY(Renderer);
 
@@ -156,20 +162,16 @@ namespace Ossium
         /// Pointer to the window associated with this renderer
         Window* renderWindow;
 
-        /// Updates the renderer viewport dimensions according to the current aspect. Called when the window changes
-        /// size switches between fullscreen and windowed modes.
-        void UpdateViewport(Window& windowCaller);
-
         /// Called when the associated window is destroyed.
         void OnWindowDestroyed(Window& windowCaller);
 
         /// Renderer viewport target width/height or aspect ratio
-        int aspect_width;
-        int aspect_height;
+        int aspect_width = 0;
+        int aspect_height = 0;
         /// Whether or not the renderer viewport uses a fixed aspect or dynamic aspect ratio
-        bool fixed_aspect;
+        bool fixed_aspect = false;
         /// Whether to use black bars or simply crop the left and right edges of the renderer to fit the target aspect
-        bool letterbox_bars;
+        bool letterbox_bars = true;
         /// The viewport rect, set when the viewport updates
         SDL_Rect viewportRect;
 
@@ -177,7 +179,7 @@ namespace Ossium
         SDL_Color bufferColour = Colors::BLACK;
 
         /// Cached array of callback ids to unregister this renderer when destroyed.
-        int callbackIds[3] = {-1, -1, -1};
+        //int callbackIds[3] = {-1, -1, -1};
 
         /// Number of layers this renderer has
         int numLayersActive;

@@ -117,7 +117,7 @@ namespace Ossium::Editor
         Renderer* renderer = nullptr;
 
         /// The input context for the native window.
-        InputContext* windowContext = nullptr;
+        InputContext windowContext;
 
         /// The input controller instance.
         InputController* input;
@@ -156,6 +156,9 @@ namespace Ossium::Editor
         /// Creates the window and initialises the tree.
         NativeEditorWindow(InputController* controller, ResourceController* resourceController, string title = "Untitled", int w = -1, int h = -1);
         virtual ~NativeEditorWindow();
+
+        /// Handles an incoming SDL_Event
+        void HandleEvent(SDL_Event& e);
 
         /// Update editor windows.
         void Update();
