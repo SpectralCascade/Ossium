@@ -133,9 +133,10 @@ namespace Ossium::Editor
         Node<EditorRect>* currentGroup = nullptr;
         int combinedSize = 0;
 
-        // Breadth-first layout iteration
+        // Breadth-first layout iteration; just in case the flat tree is updated during this process (e.g. another editor window is added), only iterate up to the current end point.
         vector<Node<EditorRect>*>& flatTree = layout.GetFlatTree();
-        for (vector<Node<EditorRect>*>::iterator itr = flatTree.begin(); itr != flatTree.end(); itr++)
+        auto endItr = flatTree.end();
+        for (vector<Node<EditorRect>*>::iterator itr = flatTree.begin(); itr != endItr; itr++)
         {
             Node<EditorRect>* node = *itr;
 /*
@@ -228,6 +229,7 @@ namespace Ossium::Editor
         SDL_RenderCopy(render, renderBuffer, NULL, NULL);
         SDL_RenderPresent(renderer->GetRendererSDL());
 
+        // Only remove windows when everything has finished updating.
         for (auto window : toRemove)
         {
             Remove(window);
@@ -364,7 +366,7 @@ namespace Ossium::Editor
         }
         else
         {
-            Logger::EngineLog().Warning("Attempting to remove editor window that is already destroyed?");
+            Logger::EngineLog().Warning("Attempted to remove editor window that is already destroyed!");
         }
         return true;
     }

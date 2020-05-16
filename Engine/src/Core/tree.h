@@ -169,7 +169,7 @@ namespace Ossium
                 }
                 node->depth = 0;
             }
-            /// No need to add to flatTree array if it's to be recalulated; otherwise add to array
+            // No need to add to flatTree array if it's to be recalulated; otherwise add to array
             if (!updateFlattened)
             {
                 flatTree.push_back(node);
