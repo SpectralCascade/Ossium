@@ -223,7 +223,7 @@ namespace Ossium
                     if (node == *i)
                     {
                         node->parent->children.erase(i);
-                        Logger::EngineLog().Debug("Deleting node {0}", node);
+                        //Logger::EngineLog().Debug("Deleting node {0}", node);
                         delete node;
                         node = nullptr;
                         updateFlattened = true;
@@ -304,7 +304,6 @@ namespace Ossium
             {
                 nodes.push(node);
             }
-            Logger::EngineLog().Info("Walking over roots {0}", roots);
             while (!nodes.empty())
             {
                 walkFunc(nodes.front());
@@ -469,7 +468,7 @@ namespace Ossium
                 }
 
                 updateFlattened = false;
-                Logger::EngineLog().Debug("Flattened tree = {0}", flatTree);
+                //Logger::EngineLog().Debug("Flattened tree = {0}", flatTree);
             }
             return flatTree;
         }

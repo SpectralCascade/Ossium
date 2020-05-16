@@ -112,14 +112,14 @@ namespace Ossium
             {
                 focus = true;
                 OnFocusGained(*this);
-                Logger::EngineLog().Info("window {0} focus gained", this);
+                //Logger::EngineLog().Info("window {0} focus gained", this);
                 break;
             }
             case SDL_WINDOWEVENT_FOCUS_LOST:
             {
                 focus = false;
                 OnFocusLost(*this);
-                Logger::EngineLog().Info("window {0} focus lost", this);
+                //Logger::EngineLog().Info("window {0} focus lost", this);
                 break;
             }
             case SDL_WINDOWEVENT_ENTER:

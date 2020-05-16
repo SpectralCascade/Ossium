@@ -29,10 +29,20 @@ namespace Ossium::Editor
         if (Button("Print layout info"))
         {
             Logger::EngineLog().Info("Layout data:");
+            Uint32 depth = 0;
+            string level = "";
             for (auto node : GetNativeWindow()->GetLayout()->GetFlatTree())
             {
-                Logger::EngineLog().Info("Node {0} (window = {1}, depth {2}), parent = {3},", node, node->data.window, node->depth, node->parent);
+                if (depth != node->depth)
+                {
+                    Logger::EngineLog().Info("Level {0}: " + level, depth);
+                    level.clear();
+                    depth++;
+                }
+                level += Utilities::Format("[{0} (parent = {1})]", node, node->parent);
+                //Logger::EngineLog().Info("Node {0} (window = {1}, depth {2}), parent = {3},", node, node->data.window, node->depth, node->parent);
             }
+            Logger::EngineLog().Info("Level {0}: " + level, depth);
         }
 
     }

@@ -86,6 +86,15 @@ namespace Ossium::Editor
                 renderBuffer = NULL;
             }
             renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, window.GetWidth(), window.GetHeight());
+
+            // Update the root node
+            auto roots = layout.GetRoots();
+            if (!roots.empty())
+            {
+                roots[0]->data.w = window.GetWidth();
+                roots[0]->data.h = window.GetHeight();
+            }
+
             updateViewports = true;
 
             return ActionOutcome::Ignore;
@@ -147,7 +156,7 @@ namespace Ossium::Editor
         // Optimiser: keep track of nodes that need updating and only update those sections of the layout tree?
         if (updateViewports)
         {
-            for (auto itr = flatTree.begin(); itr != endItr; itr++)
+            for (auto itr = flatTree.size() > 1 ? flatTree.begin() + 1 : flatTree.begin(); itr < endItr; itr++)
             {
                 Node<EditorRect>* node = *itr;
 
@@ -386,18 +395,15 @@ namespace Ossium::Editor
             // There are 2 main cases in this scenario; one is that the sibling node is a leaf, and one where it is not.
             // First, get the sibling node.
             Node<EditorRect>* sibling = source->node->parent->children[(unsigned int)(source->node->parent->children[0] == source->node)];
-            Logger::EngineLog().Debug("Removing sibling {0}", sibling);
+            //Logger::EngineLog().Debug("Removing sibling {0}", sibling);
 
             if (sibling->data.window != nullptr)
             {
                 // Simple case, sibling is a leaf so just move the sibling up a level
                 sibling->parent->data.window = sibling->data.window;
                 sibling->data.window->node = sibling->parent;
-                if (!layout.Remove(sibling))
-                {
-                    Logger::EngineLog().Error("Failed to remove sibling!");
-                }
-                Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
+                layout.Remove(sibling);
+                //Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
             }
             else
             {
@@ -411,7 +417,7 @@ namespace Ossium::Editor
                         child->SetParent(sibling->parent);
                     }
                     layout.Remove(sibling);
-                    Logger::EngineLog().Debug("Removed sibling, made it root.");
+                    //Logger::EngineLog().Debug("Removed sibling, made it root.");
                     // Flip the layout levels - rows become columns, columns become rows.
                     layoutRow = !layoutRow;
                     layoutColumn = !layoutColumn;
@@ -435,12 +441,12 @@ namespace Ossium::Editor
                     }
                     // Remove both the sibling node and it's parent in one call
                     layout.Remove(sibling->parent);
-                    Logger::EngineLog().Debug("Removed sibling, moved it's children up 2 levels.");
+                    //Logger::EngineLog().Debug("Removed sibling, moved it's children up 2 levels.");
                 }
             }
             updateViewports = true;
         }
-        Logger::EngineLog().Debug("Removing node {0}", source->node);
+        //Logger::EngineLog().Debug("Removing node {0}", source->node);
         if (!layout.Remove(source->node))
         {
             return false;
