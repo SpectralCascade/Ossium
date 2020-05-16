@@ -51,10 +51,12 @@ namespace Ossium
         /// How deep this node is.
         Uint32 depth;
 
-        void SetParent(Node<T>* node)
+        /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
+        void SetParent(Node<T>* node, int childIndex = -1)
         {
             if (parent != nullptr)
             {
+                // First, update the current parent of the node
                 for (auto itr = parent->children.begin(); itr != parent->children.end(); itr++)
                 {
                     if (*itr == this)
@@ -64,10 +66,18 @@ namespace Ossium
                     }
                 }
             }
+            // Now reassign the parent
             parent = node;
             if (parent != nullptr)
             {
-                parent->children.push_back(this);
+                if (childIndex >= 0)
+                {
+                    parent->children.insert(parent->children.begin() + childIndex, this);
+                }
+                else
+                {
+                    parent->children.push_back(this);
+                }
                 depth = parent->depth + 1;
             }
             else
@@ -75,6 +85,11 @@ namespace Ossium
                 depth = 0;
             }
         }
+
+    private:
+        // Only the Tree class can instantiate nodes
+        Node<T>() = default;
+        NOCOPY(Node<T>);
 
     };
 
@@ -208,6 +223,7 @@ namespace Ossium
                     if (node == *i)
                     {
                         node->parent->children.erase(i);
+                        Logger::EngineLog().Debug("Deleting node {0}", node);
                         delete node;
                         node = nullptr;
                         updateFlattened = true;
@@ -288,6 +304,7 @@ namespace Ossium
             {
                 nodes.push(node);
             }
+            Logger::EngineLog().Info("Walking over roots {0}", roots);
             while (!nodes.empty())
             {
                 walkFunc(nodes.front());
@@ -452,6 +469,7 @@ namespace Ossium
                 }
 
                 updateFlattened = false;
+                Logger::EngineLog().Debug("Flattened tree = {0}", flatTree);
             }
             return flatTree;
         }

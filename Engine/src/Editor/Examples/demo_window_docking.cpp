@@ -26,6 +26,15 @@ namespace Ossium::Editor
             }
         }
 
+        if (Button("Print layout info"))
+        {
+            Logger::EngineLog().Info("Layout data:");
+            for (auto node : GetNativeWindow()->GetLayout()->GetFlatTree())
+            {
+                Logger::EngineLog().Info("Node {0} (window = {1}, depth {2}), parent = {3},", node, node->data.window, node->depth, node->parent);
+            }
+        }
+
     }
 
 }

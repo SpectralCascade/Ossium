@@ -196,10 +196,13 @@ namespace Ossium::Editor
                 }
                 else
                 {
+                    // This is unlikely to happen, but just in case...
                     for (auto child : node->children)
                     {
                         if (child->data.window != nullptr)
                         {
+                            // Just pick the first window that appears
+                            // TODO: consider docking mode and pick appropriate window
                             dest = child->data.window;
                             break;
                         }
@@ -232,6 +235,9 @@ namespace Ossium::Editor
 
         /// Returns the resource controller instance this window is using.
         ResourceController* GetResources();
+
+        /// TODO: remove me
+        Tree<EditorRect>* GetLayout();
 
     };
 
