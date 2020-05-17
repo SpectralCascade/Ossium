@@ -156,21 +156,26 @@ namespace Ossium::Editor
         // Optimiser: keep track of nodes that need updating and only update those sections of the layout tree?
         if (updateViewports)
         {
-            for (auto itr = flatTree.size() > 1 ? flatTree.begin() + 1 : flatTree.begin(); itr < endItr; itr++)
+            for (auto itr = flatTree.begin(); itr < endItr; itr++)
             {
                 Node<EditorRect>* node = *itr;
 
                 if (node->parent != nullptr)
                 {
-                    bool isRow = node->depth % 2 == (int)layoutRow;
+                    bool isRow = node->depth % 2 == layoutRow;
 
                     // Have we just iterated over a grouping of nodes (or the very last node)?
-                    if ((currentGroup != node->parent || itr == flatTree.begin() + (length - 1)) && currentGroup != nullptr)
+                    bool lastNode = itr == flatTree.begin() + (length - 1);
+                    if ((currentGroup != node->parent || lastNode) && currentGroup != nullptr)
                     {
-                        Logger::EngineLog().Debug("Updating group [{0}] {1}", currentGroup, currentGroup->data);
+                        if (lastNode && currentGroup == node->parent)
+                        {
+                            combinedSize += isRow ? node->data.w : node->data.h;
+                        }
+                        Logger::EngineLog().Debug("\nUpdating group [{0}] {1}", currentGroup, currentGroup->data);
 
                         bool currentRow = currentGroup->depth % 2 == layoutColumn;
-                        float scaleFactor = (float)combinedSize / (float)(currentRow ? currentGroup->data.w : currentGroup->data.h);
+                        float scaleFactor = (currentRow ? currentGroup->data.w : currentGroup->data.h) / (float)combinedSize;
 
                         Logger::EngineLog().Debug("Current group is a {0}, combined size = {1}, scale factor = {2}", currentRow ? "row" : "column", combinedSize, scaleFactor);
 
@@ -180,13 +185,18 @@ namespace Ossium::Editor
                             float nextPos = currentGroup->data.x;
                             for (Node<EditorRect>* child : currentGroup->children)
                             {
+                                Rect oldRect = child->data;
                                 float change = (float)child->data.w * scaleFactor;
                                 child->data.w = round(change);
                                 child->data.x = round(nextPos);
                                 child->data.y = currentGroup->data.y;
                                 child->data.h = currentGroup->data.h;
+                                if (child->data.window != nullptr)
+                                {
+                                    child->data.window->viewport = child->data.SDL();
+                                }
                                 nextPos += change;
-                                Logger::EngineLog().Debug("Set child rect [{0}] = {1}", child, child->data);
+                                Logger::EngineLog().Debug("Set child rect [{0}] = {1} (was {2})", child, child->data, oldRect);
                             }
                         }
                         else
