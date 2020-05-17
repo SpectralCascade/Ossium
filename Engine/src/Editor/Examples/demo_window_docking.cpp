@@ -17,6 +17,7 @@ namespace Ossium::Editor
         {
             if (docked && sibling == nullptr)
             {
+                viewport.w = viewport.w / 2;
                 sibling = GetNativeWindow()->Add<SimpleDemoWindow>(this, DockingMode::RIGHT);
             }
             else

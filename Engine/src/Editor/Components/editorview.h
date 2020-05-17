@@ -134,7 +134,9 @@ namespace Ossium::Editor
         /// The native OS window.
         Window* native = nullptr;
 
+        /// If a node's depth % 2 == layoutRow, siblings are all columns on the left or right.
         bool layoutRow = 0;
+        /// If a node's depth % 2 == layoutColumn, siblings are all rows above or below.
         bool layoutColumn = 1;
 
         /// Everything in the window is rendered to this texture instead of using the renderer directly to avoid double buffering issues.
@@ -170,6 +172,8 @@ namespace Ossium::Editor
         {
             T* toAdd = new T();
             toAdd->Init(this);
+            toAdd->viewport = dest->viewport;
+            toAdd->viewport.w = dest->viewport.w / 2;
             if (!Insert(toAdd, dest, mode))
             {
                 delete toAdd;
