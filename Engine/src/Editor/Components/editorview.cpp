@@ -185,7 +185,6 @@ namespace Ossium::Editor
                             float nextPos = currentGroup->data.x;
                             for (Node<EditorRect>* child : currentGroup->children)
                             {
-                                Rect oldRect = child->data;
                                 float change = (float)child->data.w * scaleFactor;
                                 child->data.w = round(change);
                                 child->data.x = round(nextPos);
@@ -196,7 +195,6 @@ namespace Ossium::Editor
                                     child->data.window->viewport = child->data.SDL();
                                 }
                                 nextPos += change;
-                                Logger::EngineLog().Debug("Set child rect [{0}] = {1} (was {2})", child, child->data, oldRect);
                             }
                         }
                         else
@@ -209,6 +207,10 @@ namespace Ossium::Editor
                                 child->data.y = round(nextPos);
                                 child->data.x = currentGroup->data.x;
                                 child->data.w = currentGroup->data.w;
+                                if (child->data.window != nullptr)
+                                {
+                                    child->data.window->viewport = child->data.SDL();
+                                }
                                 nextPos += change;
                             }
                         }
@@ -295,10 +297,43 @@ namespace Ossium::Editor
         {
             case TOP:
             case BOTTOM:
-                ///
-                /// TODO
-                ///
-                return false;
+                if (dest->node->depth == 0)
+                {
+                    // Make the current destination root
+                    dest->node->data.window = nullptr;
+                    // Move the destination node down a level
+                    dest->node = layout.Insert(destRect, dest->node);
+                    destRect.window->node = dest->node;
+                    layoutRow = 0;
+                    layoutColumn = 1;
+                }
+
+                // TODO: proper dimension checks, return false if there's not enough space
+                destRect.h = max(MIN_DIMENSIONS.y, destRect.h - sourceRect.h);
+
+                // Warning: rect positioning and resizing assumes the source rect has already been resized to fit!
+                if (mode == DockingMode::BOTTOM)
+                {
+                    sourceRect.y = destRect.y + destRect.h;
+                }
+                else
+                {
+                    sourceRect.y = destRect.y;
+                    destRect.y += sourceRect.h;
+                }
+                sourceRect.w = destRect.w;
+                sourceRect.x = destRect.x;
+
+                if (dest->node->depth % 2 == layoutColumn)
+                {
+                    source->node = layout.Insert(sourceRect, dest->node, mode == DockingMode::BOTTOM);
+                }
+                else
+                {
+                    dest->node->data.window = nullptr;
+                    dest->node = layout.Insert(destRect, dest->node);
+                    source->node = layout.Insert(sourceRect, dest->node);
+                }
                 break;
             case LEFT:
             case RIGHT:
