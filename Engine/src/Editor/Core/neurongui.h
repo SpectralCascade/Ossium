@@ -172,8 +172,6 @@ namespace Ossium::Editor
         /// Whether the mouse was pressed in the last Refresh() call.
         bool mouseWasPressed = false;
 
-
-
         /// When true, refresh on the next Update() call.
         bool update = true;
 

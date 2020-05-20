@@ -810,16 +810,18 @@ namespace Ossium::Editor
             dest.h = buttonHeight;
 
             Rect oldButtonDest = Rect(dest);
-            bool wasHovered = oldButtonDest.Contains(lastMousePos);
+            if (mousePressed && !mouseWasPressed && oldButtonDest.Contains(mouseDownPos))
+            {
+                // Fake the 'mouse down position' because the button destination is not static, but the slot is (so it can be relied upon somewhat).
+                mouseDownPos.x = slotDest.x;
+                mouseDownPos.y = slotDest.y;
+            }
+
+            bool dragging = mousePressed && slotDest.Contains(mouseDownPos);
 
             // Check how much the slider has been moved in this frame and change the slider value accordingly
-            if (mouseWasPressed && (wasHovered || slotDest.Contains(lastMousePos)))
+            if (dragging)
             {
-                // Calculate using mouse movement change
-                /*Vector2 diff = mousePos - lastMousePos;
-                float change = Utilities::Clamp((int)diff.x, -length, length);
-                sliderValue = Utilities::Clamp(sliderValue + ((change / (float)length) * (maxValue - minValue)), minValue, maxValue);*/
-
                 // Move directly to mouse x
                 sliderValue = Utilities::Clamp(
                     ((((mousePos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
@@ -833,8 +835,8 @@ namespace Ossium::Editor
 
             Rect buttonDest = Rect(dest);
 
-            bool hovered = buttonDest.Contains(mousePos);
-            bool pressed = mousePressed && !mouseWasPressed;
+            bool hovered = buttonDest.Contains(mousePos) || dragging;
+            bool pressed = dragging;
 
             SDL_Color buttonColour = hovered ?
                 (pressed ?
