@@ -34,6 +34,8 @@ namespace Ossium::Editor
         DECLARE_BASE_SCHEMA(EditorWindowSettings, 20);
 
         M(string, title) = "Untitled";
+        M(SDL_Color, borderColor) = Colors::BLACK;
+        M(bool, bordered) = true;
 
     };
 
@@ -60,8 +62,11 @@ namespace Ossium::Editor
      * Immediate-Mode GUI methods.
      * EditorWindow instances can be docked within the main native window. Currently they cannot be undocked as a native OS window however.
      */
-    class EditorWindow : public NeuronGUI
+    class EditorWindow : public NeuronGUI, public EditorWindowSettings
     {
+    public:
+        CONSTRUCT_SCHEMA(NeuronGUI, EditorWindowSettings);
+
     private:
         friend class NativeEditorWindow;
 
@@ -91,6 +96,9 @@ namespace Ossium::Editor
 
         /// Returns the window title.
         string GetTitle();
+
+        /// Override of NeuronGUI
+        void Refresh();
 
         /// Closes this editor window.
         void Destroy();

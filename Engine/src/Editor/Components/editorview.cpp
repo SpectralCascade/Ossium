@@ -20,6 +20,10 @@
 namespace Ossium::Editor
 {
 
+    //
+    // EditorWindow
+    //
+
     EditorWindow::~EditorWindow()
     {
         native->GetInputController()->RemoveContext(Utilities::Format("EditorWindow {0}", this));
@@ -60,6 +64,56 @@ namespace Ossium::Editor
     {
         native->RemovePostUpdate(this);
     }
+
+    void EditorWindow::Refresh()
+    {
+        bool wasBordered = bordered;
+        if (wasBordered)
+        {
+            viewport.x += 1;
+            viewport.y += 1;
+            viewport.w -= 2;
+            viewport.h -= 2;
+        }
+        NeuronGUI::Refresh();
+        if (wasBordered)
+        {
+            viewport.x -= 1;
+            viewport.y -= 1;
+            viewport.w += 2;
+            viewport.h += 2;
+
+            renderer->SetViewportRect(viewport);
+
+            // Here the window tabs, border etc. are drawn after doing the custom GUI bits
+            Rect rect = Rect(viewport);
+            rect.Draw(*renderer, borderColor);
+
+            if (InvisibleButton(Rect(rect.x, rect.y, 3, rect.h))) // left
+            {
+            }
+            else if (InvisibleButton(Rect(rect.x, rect.y, rect.w, 3))) // top
+            {
+            }
+            else if (InvisibleButton(Rect(rect.x + rect.w - 3, rect.y, 3, rect.h))) // right
+            {
+            }
+            else if (InvisibleButton(Rect(rect.x, rect.y + rect.h - 3, rect.w, 3))) // bottom
+            {
+            }
+
+        }
+
+        if (bordered != wasBordered)
+        {
+            TriggerUpdate();
+        }
+
+    }
+
+    //
+    // NativeEditorWindow
+    //
 
     NativeEditorWindow::NativeEditorWindow(InputController* controller, ResourceController* resourceController, string title, int w, int h)
     {
@@ -238,8 +292,9 @@ namespace Ossium::Editor
                     node->data.window->viewport = node->data.SDL();
                 }
             }
-            updateViewports = false;
         }
+        bool didUpdateViewports = updateViewports;
+        updateViewports = false;
 
         // Second stage - logic and rendering.
         for (auto itr = flatTree.begin(); itr != endItr; itr++)
@@ -257,7 +312,7 @@ namespace Ossium::Editor
                 {
                     node->data.window->input->SetActive(false);
                 }
-                node->data.window->Update();
+                node->data.window->Update(didUpdateViewports);
 
             }
         }
@@ -389,7 +444,7 @@ namespace Ossium::Editor
         }
         dest->node->data = destRect;
         source->node->data = sourceRect;
-        Logger::EngineLog().Debug("Source window viewport = {0}, dest window viewport = {1}", sourceRect, destRect);
+        //Logger::EngineLog().Debug("Source window viewport = {0}, dest window viewport = {1}", sourceRect, destRect);
         source->renderer = renderer;
         source->viewport = sourceRect.SDL();
         dest->viewport = destRect.SDL();

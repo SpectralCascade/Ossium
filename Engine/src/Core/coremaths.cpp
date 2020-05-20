@@ -160,7 +160,13 @@ namespace Ossium
         }
     }
 
-    const Vector2 Vector2::Zero = {0, 0};
+    const Vector2 Vector2::Zero         =   {0, 0};
+    const Vector2 Vector2::OneOne       =   {1, 1};
+    const Vector2 Vector2::OneZero      =   {1, 0};
+    const Vector2 Vector2::ZeroOne      =   {0, 1};
+    const Vector2 Vector2::NegOneNegOne =   {-1, -1};
+    const Vector2 Vector2::NegOneZero   =   {-1, 0};
+    const Vector2 Vector2::ZeroNegOne   =   {0, -1};
 
     ///
     /// Rotation

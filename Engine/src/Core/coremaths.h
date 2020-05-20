@@ -105,6 +105,12 @@ namespace Ossium
         void FromString(string str);
 
         const static Vector2 Zero;
+        const static Vector2 OneOne;
+        const static Vector2 OneZero;
+        const static Vector2 ZeroOne;
+        const static Vector2 NegOneNegOne;
+        const static Vector2 NegOneZero;
+        const static Vector2 ZeroNegOne;
 
     };
 

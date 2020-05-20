@@ -182,8 +182,8 @@ namespace Ossium::Editor
         /// Called once initialisation is complete.
         virtual void OnInit();
 
-        /// Refreshes the GUI if necessary.
-        void Update();
+        /// Refreshes the GUI if necessary. Set forceUpdate to true if the GUI must be updated regardless of the current state.
+        void Update(bool forceUpdate = false);
 
         /// Sets the update flag to true, so the next Update() causes a refresh to occur.
         void TriggerUpdate();
@@ -254,6 +254,12 @@ namespace Ossium::Editor
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(int w, int h, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr);
+
+        /// Behaves somewhat like a regular button... except it's invisible and it's position is absolute.
+        bool InvisibleButton(Rect area);
+
+        /// An invisible input area that returns true while the mouse is dragging from it.
+        bool DraggableArea(Rect area);
 
         /// Helper method for computing the inner destination rect of a button.
         SDL_Rect GetButtonDest(int w, int h, float xpadding, float ypadding);

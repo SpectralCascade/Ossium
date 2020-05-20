@@ -297,9 +297,9 @@ namespace Ossium::Editor
         return ActionOutcome::Ignore;
     }
 
-    void NeuronGUI::Update()
+    void NeuronGUI::Update(bool forceUpdate)
     {
-        if (update || alwaysUpdate)
+        if (update || alwaysUpdate || forceUpdate)
         {
             Refresh();
             update = false;
@@ -711,6 +711,21 @@ namespace Ossium::Editor
 
             return hovered && DidClick(mpos);
         }
+        return false;
+    }
+
+    bool NeuronGUI::InvisibleButton(Rect area)
+    {
+        MouseHandler* mouse = input->GetHandler<MouseHandler>();
+        Vector2 mpos = mouse->GetMousePosition();
+
+        bool hovered = area.Contains(mpos);
+
+        return hovered && DidClick(mpos);
+    }
+
+    bool NeuronGUI::DraggableArea(Rect area)
+    {
         return false;
     }
 
