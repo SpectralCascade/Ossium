@@ -147,30 +147,34 @@ namespace Ossium::Editor
         /// The last glyph data located in a text field
         GlyphLocation lastGlyphLocation = {GlyphMeta(), TextLine(), Vector2::Zero, 0, false};
 
-        //
-        // Mouse input state information
-        //
-
         /// The current scrolled position of the GUI view.
         Vector2 scrollPos = Vector2::Zero;
 
-        /// The position of the mouse in the current Refresh() call.
-        Vector2 mousePos = Vector2::Zero;
+        /// Contains input state information
+        struct NeuronInputState
+        {
+            /// The position of the mouse in the current Refresh() call.
+            Vector2 mousePos = Vector2::Zero;
 
-        /// The position of the mouse in the previous Refresh() call.
-        Vector2 lastMousePos = Vector2::Zero;
+            /// The position of the mouse in the previous Refresh() call.
+            Vector2 lastMousePos = Vector2::Zero;
 
-        /// The position of the mouse when it last pressed down.
-        Vector2 mouseDownPos = Vector2::NegOneNegOne;
+            /// The position of the mouse when it last pressed down.
+            Vector2 mouseDownPos = Vector2::NegOneNegOne;
 
-        /// The position of the mouse when it last released.
-        Vector2 mouseUpPos = Vector2::NegOneNegOne;
+            /// The position of the mouse when it last released.
+            Vector2 mouseUpPos = Vector2::NegOneNegOne;
 
-        /// Whether the mouse is currently pressed.
-        bool mousePressed = false;
+            /// Whether the mouse is currently pressed.
+            bool mousePressed = false;
 
-        /// Whether the mouse was pressed in the last Refresh() call.
-        bool mouseWasPressed = false;
+            /// Whether the mouse was pressed in the last Refresh() call.
+            bool mouseWasPressed = false;
+
+            /// True if the mouse is hovering over a text field.
+            bool textFieldHovered = false;
+
+        } input_state;
 
         /// When true, refresh on the next Update() call.
         bool update = true;
@@ -186,8 +190,8 @@ namespace Ossium::Editor
         /// When true, refreshes every time Update() is called.
         bool alwaysUpdate = false;
 
-        /// True if the mouse is hovering over a text field.
-        bool textFieldHovered = false;
+        /// Read only reference to the input state information
+        const NeuronInputState& InputState = input_state;
 
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, NeuronViewportSchema);
@@ -274,8 +278,8 @@ namespace Ossium::Editor
         /// Behaves somewhat like a regular button... except it's invisible and it's position is absolute.
         bool InvisibleButton(Rect area);
 
-        /// An invisible input area that returns true while the mouse is dragging from it.
-        bool DraggableArea(Rect area);
+        /// An invisible input area that returns the change in mouse position from when the mouse begins dragging.
+        Vector2 DraggableArea(Rect area, bool absolute = false);
 
         /// Helper method for computing the inner destination rect of a button.
         SDL_Rect GetButtonDest(int w, int h, float xpadding, float ypadding);

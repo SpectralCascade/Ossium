@@ -85,21 +85,110 @@ namespace Ossium::Editor
 
             renderer->SetViewportRect(viewport);
 
+            bool hasMouse = false;
+
             // Here the window tabs, border etc. are drawn after doing the custom GUI bits
             Rect rect = Rect(viewport);
             rect.Draw(*renderer, borderColor);
 
-            if (InvisibleButton(Rect(rect.x, rect.y, 3, rect.h))) // left
+            // Update the mouse position in the viewport
+            if (input->HasHandler<MouseHandler>())
             {
+                Vector2 windowDimensions = native->GetDimensions();
+                input->GetHandler<MouseHandler>()->SetViewport(Rect(0, 0, windowDimensions.x, windowDimensions.y).SDL());
+                hasMouse = rect.Contains(input->GetHandler<MouseHandler>()->GetMousePosition());
             }
-            else if (InvisibleButton(Rect(rect.x, rect.y, rect.w, 3))) // top
+
+            if (hasMouse)
             {
-            }
-            else if (InvisibleButton(Rect(rect.x + rect.w - 3, rect.y, 3, rect.h))) // right
-            {
-            }
-            else if (InvisibleButton(Rect(rect.x, rect.y + rect.h - 3, rect.w, 3))) // bottom
-            {
+                int resizePadding = 6;
+
+                Rect left = Rect(rect.x, rect.y, resizePadding, rect.h);
+                Rect top = Rect(rect.x, rect.y, rect.w, resizePadding);
+                Rect right = Rect(rect.x + rect.w - resizePadding, rect.y, resizePadding, rect.h);
+                Rect bottom = Rect(rect.x, rect.y + rect.h - resizePadding, rect.w, resizePadding);
+
+                /*left.DrawFilled(*renderer, Colors::RED);
+                top.DrawFilled(*renderer, Colors::RED);
+                right.DrawFilled(*renderer, Colors::RED);
+                bottom.DrawFilled(*renderer, Colors::RED);*/
+
+                // Set the appropriate mouse cursor
+                SDL_SystemCursor mouseCursor = lastMouseCursor;
+                if (top.Contains(InputState.mousePos))
+                {
+                    if (right.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                    }
+                    else if (left.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                    }
+                    else
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                    }
+                }
+                else if (bottom.Contains(InputState.mousePos))
+                {
+                    if (right.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                    }
+                    else if (left.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                    }
+                    else
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                    }
+                }
+                else if (left.Contains(InputState.mousePos))
+                {
+                    if (top.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                    }
+                    else if (bottom.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                    }
+                    else
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                    }
+                }
+                else if (right.Contains(InputState.mousePos))
+                {
+                    if (top.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                    }
+                    else if (bottom.Contains(InputState.mousePos))
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                    }
+                    else
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                    }
+                }
+                else if (InputState.textFieldHovered)
+                {
+                    mouseCursor = SDL_SYSTEM_CURSOR_IBEAM;
+                }
+                else
+                {
+                    mouseCursor = SDL_SYSTEM_CURSOR_ARROW;
+                }
+
+                if (lastMouseCursor != mouseCursor)
+                {
+                    MouseCursor::Set(mouseCursor);
+                    lastMouseCursor = mouseCursor;
+                }
             }
 
         }
@@ -335,6 +424,11 @@ namespace Ossium::Editor
             }
             toRemove.clear();
         }
+    }
+
+    Vector2 NativeEditorWindow::GetDimensions()
+    {
+        return Vector2(native->GetWidth(), native->GetHeight());
     }
 
     bool NativeEditorWindow::Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode)

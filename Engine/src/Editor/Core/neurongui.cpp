@@ -322,19 +322,19 @@ namespace Ossium::Editor
             mouse->SetViewport(viewport);
 
             // Now grab mouse state information
-            lastMousePos = mousePos;
-            mousePos = mouse->GetMousePosition();
-            mouseWasPressed = mousePressed;
-            mousePressed = mouse->LeftPressed();
-            if (mousePressed != mouseWasPressed)
+            input_state.lastMousePos = input_state.mousePos;
+            input_state.mousePos = mouse->GetMousePosition();
+            input_state.mouseWasPressed = input_state.mousePressed;
+            input_state.mousePressed = mouse->LeftPressed();
+            if (input_state.mousePressed != input_state.mouseWasPressed)
             {
-                if (mousePressed)
+                if (input_state.mousePressed)
                 {
-                    mouseDownPos = mouse->GetMousePosition();
+                    input_state.mouseDownPos = mouse->GetMousePosition();
                 }
                 else
                 {
-                    mouseUpPos = mouse->GetMousePosition();
+                    input_state.mouseUpPos = mouse->GetMousePosition();
                 }
             }
         }
@@ -346,21 +346,12 @@ namespace Ossium::Editor
         Begin();
         // Immediate-mode GUI i/o
         OnGUI();
-        // Set mouse cursor
-        if (textFieldHovered)
-        {
-            MouseCursor::Set(SDL_SYSTEM_CURSOR_IBEAM);
-        }
-        else
-        {
-            MouseCursor::Set(SDL_SYSTEM_CURSOR_ARROW);
-        }
 
     }
 
     void NeuronGUI::Begin()
     {
-        textFieldHovered = false;
+        input_state.textFieldHovered = false;
         while (layoutStack.size() > 1)
         {
             layoutStack.pop();
@@ -589,9 +580,9 @@ namespace Ossium::Editor
             // Check if mouse is hovering over the button, if so change the cursor to an I beam.
             Vector2 layoutSize = tlayout.GetSize();
             Rect buttonRect = GetButtonRect(layoutSize.x, layoutSize.y);
-            if (buttonRect.Contains(mousePos))
+            if (buttonRect.Contains(InputState.mousePos))
             {
-                textFieldHovered = true;
+                input_state.textFieldHovered = true;
             }
 
             // Check if user clicks on the text field in this frame
@@ -602,7 +593,7 @@ namespace Ossium::Editor
                 textinput->StartListening();
                 textinput->SetText(text);
                 // Locate the closest glyph to the mouse
-                lastGlyphLocation = tlayout.LocateGlyph(mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
+                lastGlyphLocation = tlayout.LocateGlyph(InputState.mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
                 if (lastGlyphLocation.valid)
                 {
                     textFieldCursor = Rect(lastGlyphLocation.position.x + layoutPos.x + 2, lastGlyphLocation.position.y + layoutPos.y + 2, 1, lastGlyphLocation.line.size.y);
@@ -680,8 +671,8 @@ namespace Ossium::Editor
             SDL_Rect dest = GetButtonDest(w, h, xpadding, ypadding);
             Rect buttonDest = GetButtonRect(dest, xpadding, ypadding);
 
-            bool hovered = buttonDest.Contains(mousePos);
-            bool pressed = mousePressed && buttonDest.Contains(mouseDownPos);
+            bool hovered = buttonDest.Contains(InputState.mousePos);
+            bool pressed = InputState.mousePressed && buttonDest.Contains(InputState.mouseDownPos);
 
             SDL_Color buttonColour = hovered ?
                 (pressed ?
@@ -713,21 +704,21 @@ namespace Ossium::Editor
             // Move along
             Move(Vector2(buttonDest.w + 1, buttonDest.h + 1));
 
-            return hovered && !mousePressed && mouseWasPressed && buttonDest.Contains(mouseDownPos);
+            return hovered && !InputState.mousePressed && InputState.mouseWasPressed && buttonDest.Contains(InputState.mouseDownPos);
         }
         return false;
     }
 
     bool NeuronGUI::InvisibleButton(Rect area)
     {
-        bool hovered = area.Contains(mousePos);
+        bool hovered = area.Contains(InputState.mousePos);
 
-        return hovered && !mousePressed && mouseWasPressed && area.Contains(mouseDownPos);
+        return hovered && !InputState.mousePressed && InputState.mouseWasPressed && area.Contains(InputState.mouseDownPos);
     }
 
-    bool NeuronGUI::DraggableArea(Rect area)
+    Vector2 NeuronGUI::DraggableArea(Rect area, bool absolute)
     {
-        return false;
+        return Vector2::Zero;
     }
 
     SDL_Rect NeuronGUI::GetButtonDest(int w, int h, float xpadding, float ypadding)
@@ -810,21 +801,21 @@ namespace Ossium::Editor
             dest.h = buttonHeight;
 
             Rect oldButtonDest = Rect(dest);
-            if (mousePressed && !mouseWasPressed && oldButtonDest.Contains(mouseDownPos))
+            if (InputState.mousePressed && !InputState.mouseWasPressed && oldButtonDest.Contains(InputState.mouseDownPos))
             {
                 // Fake the 'mouse down position' because the button destination is not static, but the slot is (so it can be relied upon somewhat).
-                mouseDownPos.x = slotDest.x;
-                mouseDownPos.y = slotDest.y;
+                input_state.mouseDownPos.x = slotDest.x;
+                input_state.mouseDownPos.y = slotDest.y;
             }
 
-            bool dragging = mousePressed && slotDest.Contains(mouseDownPos);
+            bool dragging = InputState.mousePressed && slotDest.Contains(InputState.mouseDownPos);
 
             // Check how much the slider has been moved in this frame and change the slider value accordingly
             if (dragging)
             {
                 // Move directly to mouse x
                 sliderValue = Utilities::Clamp(
-                    ((((mousePos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
+                    ((((InputState.mousePos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
                     minValue,
                     maxValue
                 );
@@ -835,7 +826,7 @@ namespace Ossium::Editor
 
             Rect buttonDest = Rect(dest);
 
-            bool hovered = buttonDest.Contains(mousePos) || dragging;
+            bool hovered = buttonDest.Contains(InputState.mousePos) || dragging;
             bool pressed = dragging;
 
             SDL_Color buttonColour = hovered ?

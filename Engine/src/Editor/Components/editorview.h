@@ -79,6 +79,8 @@ namespace Ossium::Editor
         /// The corresponding node for this window.
         Node<EditorRect>* node;
 
+        SDL_SystemCursor lastMouseCursor = SDL_SYSTEM_CURSOR_ARROW;
+
     protected:
         EditorWindow() = default;
 
@@ -172,6 +174,9 @@ namespace Ossium::Editor
 
         /// Update editor windows.
         void Update();
+
+        /// Returns the total dimensions of this window
+        Vector2 GetDimensions();
 
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
         template<typename T>
