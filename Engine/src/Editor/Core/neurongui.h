@@ -147,11 +147,32 @@ namespace Ossium::Editor
         /// The last glyph data located in a text field
         GlyphLocation lastGlyphLocation = {GlyphMeta(), TextLine(), Vector2::Zero, 0, false};
 
-        /// The current scrolled position of the GUI view.
-        Vector2 scrollPos = Vector2(0, 0);
+        //
+        // Mouse input state information
+        //
 
-        Vector2 lastMousePos = Vector2(0, 0);
+        /// The current scrolled position of the GUI view.
+        Vector2 scrollPos = Vector2::Zero;
+
+        /// The position of the mouse in the current Refresh() call.
+        Vector2 mousePos = Vector2::Zero;
+
+        /// The position of the mouse in the previous Refresh() call.
+        Vector2 lastMousePos = Vector2::Zero;
+
+        /// The position of the mouse when it last pressed down.
+        Vector2 mouseDownPos = Vector2::NegOneNegOne;
+
+        /// The position of the mouse when it last released.
+        Vector2 mouseUpPos = Vector2::NegOneNegOne;
+
+        /// Whether the mouse is currently pressed.
         bool mousePressed = false;
+
+        /// Whether the mouse was pressed in the last Refresh() call.
+        bool mouseWasPressed = false;
+
+
 
         /// When true, refresh on the next Update() call.
         bool update = true;
@@ -203,9 +224,6 @@ namespace Ossium::Editor
     protected:
         /// Resets the layout. Called automatically by Refresh().
         void Begin();
-
-        /// Returns true if the mouse position has not changed between pressing the left button and releasing it.
-        bool DidClick(Vector2 pos);
 
         /// Abstract method that should contain all GUI logic.
         virtual void OnGUI() = 0;

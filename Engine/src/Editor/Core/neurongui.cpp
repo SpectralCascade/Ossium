@@ -317,7 +317,26 @@ namespace Ossium::Editor
         renderer->SetViewportRect(viewport);
         if (input->HasHandler<MouseHandler>())
         {
-            input->GetHandler<MouseHandler>()->SetViewport(viewport);
+            // Setup mouse input based on the current viewport
+            MouseHandler* mouse = input->GetHandler<MouseHandler>();
+            mouse->SetViewport(viewport);
+
+            // Now grab mouse state information
+            lastMousePos = mousePos;
+            mousePos = mouse->GetMousePosition();
+            mouseWasPressed = mousePressed;
+            mousePressed = mouse->LeftPressed();
+            if (mousePressed != mouseWasPressed)
+            {
+                if (mousePressed)
+                {
+                    mouseDownPos = mouse->GetMousePosition();
+                }
+                else
+                {
+                    mouseUpPos = mouse->GetMousePosition();
+                }
+            }
         }
         // Clear just the viewport with the background color
         renderer->SetDrawColor(backgroundColor);
@@ -336,6 +355,7 @@ namespace Ossium::Editor
         {
             MouseCursor::Set(SDL_SYSTEM_CURSOR_ARROW);
         }
+
     }
 
     void NeuronGUI::Begin()
@@ -358,15 +378,6 @@ namespace Ossium::Editor
         layoutStack.top() = Vector2(0, 0);
         // Reset the text field id generator
         textFieldCounter = 1;
-    }
-
-    bool NeuronGUI::DidClick(Vector2 pos)
-    {
-        bool didClick = mousePressed;
-        mousePressed = input->GetHandler<MouseHandler>()->LeftPressed();
-        Vector2 oldPos = lastMousePos;
-        lastMousePos = pos;
-        return didClick && !mousePressed && pos == oldPos;
     }
 
     void NeuronGUI::BeginLayout(int direction)
@@ -576,11 +587,9 @@ namespace Ossium::Editor
             }
 
             // Check if mouse is hovering over the button, if so change the cursor to an I beam.
-            MouseHandler* mouse = input->GetHandler<MouseHandler>();
-            Vector2 mpos = mouse->GetMousePosition();
             Vector2 layoutSize = tlayout.GetSize();
             Rect buttonRect = GetButtonRect(layoutSize.x, layoutSize.y);
-            if (buttonRect.Contains(mpos))
+            if (buttonRect.Contains(mousePos))
             {
                 textFieldHovered = true;
             }
@@ -592,8 +601,6 @@ namespace Ossium::Editor
                 //Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
                 textinput->StartListening();
                 textinput->SetText(text);
-                MouseHandler* mouse = input->GetHandler<MouseHandler>();
-                Vector2 mousePos = mouse->GetMousePosition();
                 // Locate the closest glyph to the mouse
                 lastGlyphLocation = tlayout.LocateGlyph(mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
                 if (lastGlyphLocation.valid)
@@ -669,15 +676,12 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            MouseHandler* mouse = input->GetHandler<MouseHandler>();
-
             // Set the destination rect
             SDL_Rect dest = GetButtonDest(w, h, xpadding, ypadding);
             Rect buttonDest = GetButtonRect(dest, xpadding, ypadding);
 
-            Vector2 mpos = mouse->GetMousePosition();
-            bool hovered = buttonDest.Contains(mpos);
-            bool pressed = mouse->LeftPressed();
+            bool hovered = buttonDest.Contains(mousePos);
+            bool pressed = mousePressed && buttonDest.Contains(mouseDownPos);
 
             SDL_Color buttonColour = hovered ?
                 (pressed ?
@@ -709,19 +713,16 @@ namespace Ossium::Editor
             // Move along
             Move(Vector2(buttonDest.w + 1, buttonDest.h + 1));
 
-            return hovered && DidClick(mpos);
+            return hovered && !mousePressed && mouseWasPressed && buttonDest.Contains(mouseDownPos);
         }
         return false;
     }
 
     bool NeuronGUI::InvisibleButton(Rect area)
     {
-        MouseHandler* mouse = input->GetHandler<MouseHandler>();
-        Vector2 mpos = mouse->GetMousePosition();
+        bool hovered = area.Contains(mousePos);
 
-        bool hovered = area.Contains(mpos);
-
-        return hovered && DidClick(mpos);
+        return hovered && !mousePressed && mouseWasPressed && area.Contains(mouseDownPos);
     }
 
     bool NeuronGUI::DraggableArea(Rect area)
@@ -779,9 +780,6 @@ namespace Ossium::Editor
     {
         if (IsVisible())
         {
-            MouseHandler* mouse = input->GetHandler<MouseHandler>();
-            Vector2 mpos = mouse->GetMousePosition();
-
             // Draw the slot first
             Rect slotDest = Rect(
                 GetLayoutPosition().x + (xpadding / 2) + (buttonWidth / 2),
@@ -811,20 +809,20 @@ namespace Ossium::Editor
             dest.w = buttonWidth;
             dest.h = buttonHeight;
 
-            Rect oldButtonDest = Rect(dest.x, dest.y, dest.w, dest.h);
+            Rect oldButtonDest = Rect(dest);
             bool wasHovered = oldButtonDest.Contains(lastMousePos);
 
             // Check how much the slider has been moved in this frame and change the slider value accordingly
-            if (mousePressed && (wasHovered || slotDest.Contains(lastMousePos)))
+            if (mouseWasPressed && (wasHovered || slotDest.Contains(lastMousePos)))
             {
                 // Calculate using mouse movement change
-                /*Vector2 diff = mpos - lastMousePos;
+                /*Vector2 diff = mousePos - lastMousePos;
                 float change = Utilities::Clamp((int)diff.x, -length, length);
                 sliderValue = Utilities::Clamp(sliderValue + ((change / (float)length) * (maxValue - minValue)), minValue, maxValue);*/
 
                 // Move directly to mouse x
                 sliderValue = Utilities::Clamp(
-                    ((((mpos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
+                    ((((mousePos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
                     minValue,
                     maxValue
                 );
@@ -833,10 +831,10 @@ namespace Ossium::Editor
                 dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
             }
 
-            Rect buttonDest = Rect(dest.x, dest.y, dest.w, dest.h);
+            Rect buttonDest = Rect(dest);
 
-            bool hovered = buttonDest.Contains(mpos);
-            bool pressed = mouse->LeftPressed();
+            bool hovered = buttonDest.Contains(mousePos);
+            bool pressed = mousePressed && !mouseWasPressed;
 
             SDL_Color buttonColour = hovered ?
                 (pressed ?
@@ -879,12 +877,6 @@ namespace Ossium::Editor
                 GetLayoutDirection() == NEURON_LAYOUT_HORIZONTAL ? slotDest.w + xpadding * 2 + valueText.GetWidth() + 4 : buttonDest.w + xpadding,
                 buttonDest.h + ypadding * 2
             ));
-
-            if (hovered || slotDest.Contains(mpos))
-            {
-                // Update the mouse pressed state
-                DidClick(mpos);
-            }
 
         }
         return sliderValue;
