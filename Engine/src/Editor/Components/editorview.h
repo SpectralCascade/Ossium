@@ -52,7 +52,7 @@ namespace Ossium::Editor
     };
 
     // Forward declarations
-    class NativeEditorWindow;
+    class EditorLayout;
     class EditorRect;
 
     /// A dockable window with support for custom Immediate-Mode GUI.
@@ -68,18 +68,16 @@ namespace Ossium::Editor
         CONSTRUCT_SCHEMA(NeuronGUI, EditorWindowSettings);
 
     private:
-        friend class NativeEditorWindow;
+        friend class EditorLayout;
 
         /// Settings defining the window title, dimensions etc.
         EditorWindowSettings settings;
 
         /// Pointer to the native window that owns this window.
-        NativeEditorWindow* native = nullptr;
+        EditorLayout* native = nullptr;
 
         /// The corresponding node for this window.
         Node<EditorRect>* node;
-
-        SDL_SystemCursor lastMouseCursor = SDL_SYSTEM_CURSOR_ARROW;
 
     protected:
         EditorWindow() = default;
@@ -88,10 +86,10 @@ namespace Ossium::Editor
         virtual ~EditorWindow();
 
         /// Initialises input
-        void Init(NativeEditorWindow* nativeWindow);
+        void Init(EditorLayout* nativeWindow);
 
         /// Returns the native editor window that owns this editor window.
-        NativeEditorWindow* GetNativeWindow();
+        EditorLayout* GetEditorLayout();
 
         /// Sets the window title.
         void SetTitle(string title);
@@ -120,7 +118,7 @@ namespace Ossium::Editor
     };
 
     /// This holds the actual native editor window and the layout tree for docked editor windows.
-    class NativeEditorWindow
+    class EditorLayout
     {
     private:
         /// The renderer to use for this window.
@@ -166,8 +164,8 @@ namespace Ossium::Editor
 
     public:
         /// Creates the window and initialises the tree.
-        NativeEditorWindow(InputController* controller, ResourceController* resourceController, string title = "Untitled", int w = -1, int h = -1);
-        virtual ~NativeEditorWindow();
+        EditorLayout(InputController* controller, ResourceController* resourceController, string title = "Untitled", int w = -1, int h = -1);
+        virtual ~EditorLayout();
 
         /// Handles an incoming SDL_Event
         void HandleEvent(SDL_Event& e);
@@ -175,8 +173,8 @@ namespace Ossium::Editor
         /// Update editor windows.
         void Update();
 
-        /// Returns the total dimensions of this window
-        Vector2 GetDimensions();
+        /// Return the native OS window instance
+        Window* GetNativeWindow();
 
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
         template<typename T>

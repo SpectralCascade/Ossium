@@ -190,6 +190,9 @@ namespace Ossium::Editor
         /// When true, refreshes every time Update() is called.
         bool alwaysUpdate = false;
 
+        /// The position of the native window.
+        Vector2 nativeOrigin = Vector2::Zero;
+
         /// Read only reference to the input state information
         const NeuronInputState& InputState = input_state;
 

@@ -65,11 +65,12 @@ namespace Ossium
     public:
         ActionOutcome HandleInput(const SDL_Event& raw);
 
-        /// Returns the current mouse position relative to the currently set viewport.
+        /// Returns the mouse position relative to the set viewport (within the native window the mouse is over).
+        /// Returns position (-10000, -10000) when the context is inactive, otherwise (0, 0) if the mouse is outside the window.
         Vector2 GetMousePosition();
 
-        /// Returns the absolute mouse position on screen.
-        static Vector2 GetAbsoluteMousePosition();
+        /// Returns the mouse position relative to a given origin point on the display. This returns a valid position even if the mouse is outside a window.
+        Vector2 GetGlobalMousePosition(Vector2 origin = Vector2::Zero);
 
         bool LeftPressed();
         bool RightPressed();

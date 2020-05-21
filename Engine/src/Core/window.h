@@ -32,6 +32,8 @@ using namespace std;
 namespace Ossium
 {
 
+    struct Vector2;
+
     /// Wrapper class for SDL_Window
     class OSSIUM_EDL Window
     {
@@ -49,12 +51,16 @@ namespace Ossium
         int GetWidth();
         /// Returns the height of this window.
         int GetHeight();
+        /// Return the dimensions as a vector.
+        Vector2 GetDimensions();
         /// Returns the total height of the display.
         int GetDisplayWidth();
         /// Returns the total width of the display.
         int GetDisplayHeight();
         /// Returns the title of this window.
         string GetTitle();
+        /// Returns the position of this window on the display.
+        Vector2 GetPosition();
 
         /// Sets the width of this window.
         void SetWidth(int newWidth);

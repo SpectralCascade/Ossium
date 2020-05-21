@@ -16,6 +16,7 @@
 **/
 #include "funcutils.h"
 #include "window.h"
+#include "coremaths.h"
 
 namespace Ossium
 {
@@ -148,14 +149,17 @@ namespace Ossium
 
     int Window::GetWidth()
     {
-        SDL_GetWindowSize(window, &width, &height);
         return width;
     }
 
     int Window::GetHeight()
     {
-        SDL_GetWindowSize(window, &width, &height);
         return height;
+    }
+
+    Vector2 Window::GetDimensions()
+    {
+        return Vector2(width, height);
     }
 
     int Window::GetDisplayWidth()
@@ -171,6 +175,13 @@ namespace Ossium
     string Window::GetTitle()
     {
         return SDL_GetWindowTitle(window);
+    }
+
+    Vector2 Window::GetPosition()
+    {
+        int x = 0, y = 0;
+        SDL_GetWindowPosition(window, &x, &y);
+        return Vector2((float)x, (float)y);
     }
 
     void Window::SetWidth(int newWidth)

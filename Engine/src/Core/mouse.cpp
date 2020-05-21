@@ -94,8 +94,6 @@ namespace Ossium
         return ActionOutcome::Ignore;
     }
 
-    /// Returns the mouse position relative to the set viewport (within the native window the mouse is over).
-    /// Returns position (-1, -1) when the context is inactive.
     Vector2 MouseHandler::GetMousePosition()
     {
         if (context->IsActive())
@@ -108,11 +106,11 @@ namespace Ossium
         return Vector2(-10000, -10000);
     }
 
-    Vector2 MouseHandler::GetAbsoluteMousePosition()
+    Vector2 MouseHandler::GetGlobalMousePosition(Vector2 origin)
     {
         int x = 0, y = 0;
         SDL_GetGlobalMouseState(&x, &y);
-        return Vector2((float)x, (float)y);
+        return Vector2((float)x, (float)y) - origin;
     }
 
     bool MouseHandler::LeftPressed()

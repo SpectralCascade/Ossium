@@ -321,20 +321,23 @@ namespace Ossium::Editor
             MouseHandler* mouse = input->GetHandler<MouseHandler>();
             mouse->SetViewport(viewport);
 
+            // The global origin of the mouse (relative to the viewport and the window position).
+            Vector2 origin = nativeOrigin + Vector2(viewport.x, viewport.y);
+
             // Now grab mouse state information
             input_state.lastMousePos = input_state.mousePos;
-            input_state.mousePos = mouse->GetMousePosition();
+            input_state.mousePos = mouse->GetGlobalMousePosition(origin);
             input_state.mouseWasPressed = input_state.mousePressed;
             input_state.mousePressed = mouse->LeftPressed();
             if (input_state.mousePressed != input_state.mouseWasPressed)
             {
                 if (input_state.mousePressed)
                 {
-                    input_state.mouseDownPos = mouse->GetMousePosition();
+                    input_state.mouseDownPos = mouse->GetGlobalMousePosition(origin);
                 }
                 else
                 {
-                    input_state.mouseUpPos = mouse->GetMousePosition();
+                    input_state.mouseUpPos = mouse->GetGlobalMousePosition(origin);
                 }
             }
         }

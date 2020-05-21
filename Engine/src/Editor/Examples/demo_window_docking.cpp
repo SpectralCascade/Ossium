@@ -18,7 +18,7 @@ namespace Ossium::Editor
             if (docked && sibling == nullptr)
             {
                 viewport.w = viewport.w / 2;
-                sibling = GetNativeWindow()->Add<SimpleDemoWindow>(this, DockingMode::RIGHT);
+                sibling = GetEditorLayout()->Add<SimpleDemoWindow>(this, DockingMode::RIGHT);
             }
             else
             {
@@ -32,7 +32,7 @@ namespace Ossium::Editor
             Logger::EngineLog().Info("Layout data:");
             Uint32 depth = 0;
             string level = "";
-            for (auto node : GetNativeWindow()->GetLayout()->GetFlatTree())
+            for (auto node : GetEditorLayout()->GetLayout()->GetFlatTree())
             {
                 if (depth != node->depth)
                 {
