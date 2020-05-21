@@ -65,8 +65,11 @@ namespace Ossium
     public:
         ActionOutcome HandleInput(const SDL_Event& raw);
 
-        /// Returns the current mouse position using SDL_GetMouseState().
+        /// Returns the current mouse position relative to the currently set viewport.
         Vector2 GetMousePosition();
+
+        /// Returns the absolute mouse position on screen.
+        static Vector2 GetAbsoluteMousePosition();
 
         bool LeftPressed();
         bool RightPressed();

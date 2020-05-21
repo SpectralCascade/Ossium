@@ -20,6 +20,7 @@ namespace Ossium
     void MouseCursor::Set(SDL_SystemCursor id)
     {
         SDL_Cursor* cursor = SDL_CreateSystemCursor(id);
+        Instance.currentSystemCursor = id;
         if (cursor == NULL)
         {
             Logger::EngineLog().Warning("Failed to create system cursor. SDL_Error: {0}", SDL_GetError());
@@ -47,6 +48,10 @@ namespace Ossium
     {
         Free();
         SDL_SetCursor(cursor);
+        if (cursor == NULL)
+        {
+            Instance.currentSystemCursor = SDL_SYSTEM_CURSOR_ARROW;
+        }
     }
 
     SDL_Cursor* MouseCursor::Get()
@@ -69,6 +74,11 @@ namespace Ossium
                 SDL_FreeCursor(current);
             }
         }
+    }
+
+    SDL_SystemCursor MouseCursor::GetCurrentSystemCursor()
+    {
+        return Instance.currentSystemCursor;
     }
 
 }

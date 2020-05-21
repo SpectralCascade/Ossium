@@ -28,12 +28,17 @@ namespace Ossium
         /// Remove the mouse cursor entirely.
         static void Clear();
 
+        /// Returns the current system cursor in use (defaults to SDL_SYSTEM_CURSOR_ARROW if not set).
+        static SDL_SystemCursor GetCurrentSystemCursor();
+
     private:
         /// Frees the current cursor.
         static void Free();
 
         /// The original mouse cursor.
         SDL_Cursor* originalCursor = NULL;
+
+        SDL_SystemCursor currentSystemCursor = SDL_SYSTEM_CURSOR_ARROW;
 
     };
 

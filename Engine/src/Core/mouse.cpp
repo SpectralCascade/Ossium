@@ -105,7 +105,14 @@ namespace Ossium
             return Vector2((float)(x - viewportRect.x), (float)(y - viewportRect.y));
         }
         // Return invalid position when the context is inactive
-        return Vector2(-1, -1);
+        return Vector2(-10000, -10000);
+    }
+
+    Vector2 MouseHandler::GetAbsoluteMousePosition()
+    {
+        int x = 0, y = 0;
+        SDL_GetGlobalMouseState(&x, &y);
+        return Vector2((float)x, (float)y);
     }
 
     bool MouseHandler::LeftPressed()
