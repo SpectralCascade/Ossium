@@ -258,7 +258,7 @@ namespace Ossium
     }
     bool Point::Intersects(Rect rect)
     {
-        return x >= rect.x && x <= rect.xmax() && y >= rect.y && y <= rect.ymax();
+        return x >= rect.x && x < rect.xmax() && y >= rect.y && y < rect.ymax();
     }
 
     ///
