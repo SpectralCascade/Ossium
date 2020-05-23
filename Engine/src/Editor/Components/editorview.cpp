@@ -91,7 +91,6 @@ namespace Ossium::Editor
         {
             Vector2 origin = Vector2(viewport.x, viewport.y);
 
-            Vector2 previousMousePos = InputState.lastMousePos + origin;
             Vector2 mousePos = InputState.mousePos + origin;
 
             viewport.x -= padding;
@@ -104,108 +103,115 @@ namespace Ossium::Editor
             Rect nativeRect = Rect(0, 0, windowDimensions.x, windowDimensions.y);
             renderer->SetViewportRect(nativeRect.SDL());
 
-            // Here the window tabs, border etc. are drawn after doing the custom GUI bits
             Rect rect = Rect(viewport);
 
-            bool hovered = rect.Contains(mousePos);
-            bool wasHovered = rect.Contains(previousMousePos);
+            // Hitboxes for borders
+            Rect left = Rect(rect.x, rect.y, padding, rect.h);
+            Rect top = Rect(rect.x, rect.y, rect.w, padding);
+            Rect right = Rect(rect.x + rect.w - padding, rect.y, padding, rect.h);
+            Rect bottom = Rect(rect.x, rect.y + rect.h - padding, rect.w, padding);
 
-            Vector2 currentMousePos = mousePos;
+            bool clicked = InputState.mousePressed && !InputState.mouseWasPressed;
 
-            if (wasHovered && !hovered)
+            // Set the appropriate mouse cursor
+            SDL_SystemCursor mouseCursor = MouseCursor::GetCurrentSystemCursor();
+            if (top.Contains(mousePos))
             {
-                mousePos = previousMousePos;
-            }
-
-            if (hovered || wasHovered)
-            {
-                Rect left = Rect(rect.x, rect.y, padding, rect.h);
-                Rect top = Rect(rect.x, rect.y, rect.w, padding);
-                Rect right = Rect(rect.x + rect.w - padding, rect.y, padding, rect.h);
-                Rect bottom = Rect(rect.x, rect.y + rect.h - padding, rect.w, padding);
-
-                /*left.DrawFilled(*renderer, Colors::RED);
-                top.DrawFilled(*renderer, Colors::RED);
-                right.DrawFilled(*renderer, Colors::RED);
-                bottom.DrawFilled(*renderer, Colors::RED);*/
-
-                // Set the appropriate mouse cursor
-                SDL_SystemCursor mouseCursor = MouseCursor::GetCurrentSystemCursor();
-                if (top.Contains(mousePos))
+                if (right.Contains(mousePos))
                 {
-                    if (right.Contains(mousePos))
+                    if (dragDir == Vector2::Zero)
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
-                        if (InputState.mousePressed)
-                        {
-                            rect.w = currentMousePos.x - rect.x;
-                            rect.y = currentMousePos.y;
-                        }
                     }
-                    else if (left.Contains(mousePos))
+                    if (clicked)
                     {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
-                        if (InputState.mousePressed)
-                        {
-                            rect.x = currentMousePos.x;
-                            rect.y = currentMousePos.y;
-                        }
-                    }
-                    else
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
-                        if (InputState.mousePressed)
-                        {
-                            rect.y = currentMousePos.y;
-                        }
-                    }
-                }
-                else if (bottom.Contains(mousePos))
-                {
-                    if (right.Contains(mousePos))
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
-                        if (InputState.mousePressed)
-                        {
-                            rect.w = currentMousePos.x - rect.x;
-                            rect.h = currentMousePos.y - rect.y;
-                        }
-                    }
-                    else if (left.Contains(mousePos))
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
-                        if (InputState.mousePressed)
-                        {
-                            rect.x = currentMousePos.x;
-                            rect.h = currentMousePos.y - rect.y;
-                        }
-                    }
-                    else
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
-                        if (InputState.mousePressed)
-                        {
-                            rect.h = currentMousePos.y - rect.y;
-                        }
+                        dragDir = Vector2(1, -1);
                     }
                 }
                 else if (left.Contains(mousePos))
                 {
-                    mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
-                    if (InputState.mousePressed)
+                    if (dragDir == Vector2::Zero)
                     {
-                        rect.x = currentMousePos.x;
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                    }
+                    if (clicked)
+                    {
+                        dragDir = Vector2(-1, -1);
                     }
                 }
-                else if (right.Contains(mousePos))
+                else
+                {
+                    if (dragDir == Vector2::Zero)
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                    }
+                    if (clicked)
+                    {
+                        dragDir = Vector2(0, -1);
+                    }
+                }
+            }
+            else if (bottom.Contains(mousePos))
+            {
+                if (right.Contains(mousePos))
+                {
+                    if (dragDir == Vector2::Zero)
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                    }
+                    if (clicked)
+                    {
+                        dragDir = Vector2(1, 1);
+                    }
+                }
+                else if (left.Contains(mousePos))
+                {
+                    if (dragDir == Vector2::Zero)
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                    }
+                    if (clicked)
+                    {
+                        dragDir = Vector2(-1, 1);
+                    }
+                }
+                else
+                {
+                    if (dragDir == Vector2::Zero)
+                    {
+                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                    }
+                    if (clicked)
+                    {
+                        dragDir = Vector2(0, 1);
+                    }
+                }
+            }
+            else if (left.Contains(mousePos))
+            {
+                if (dragDir == Vector2::Zero)
                 {
                     mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
-                    if (InputState.mousePressed)
-                    {
-                        rect.w = currentMousePos.x - rect.x;
-                    }
                 }
-                else if (InputState.textFieldHovered)
+                if (clicked)
+                {
+                    dragDir = Vector2(-1, 0);
+                }
+            }
+            else if (right.Contains(mousePos))
+            {
+                if (dragDir == Vector2::Zero)
+                {
+                    mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                }
+                if (clicked)
+                {
+                    dragDir = Vector2(1, 0);
+                }
+            }
+            else if (dragDir == Vector2::Zero && (rect.Contains(mousePos) || rect.Contains(InputState.lastMousePos + origin)))
+            {
+                if (InputState.textFieldHovered)
                 {
                     mouseCursor = SDL_SYSTEM_CURSOR_IBEAM;
                 }
@@ -213,18 +219,55 @@ namespace Ossium::Editor
                 {
                     mouseCursor = SDL_SYSTEM_CURSOR_ARROW;
                 }
+            }
 
-                if (MouseCursor::GetCurrentSystemCursor() != mouseCursor)
+            if (dragDir != Vector2::Zero)
+            {
+                if (clicked)
                 {
-                    MouseCursor::Set(mouseCursor);
+                    Logger::EngineLog().Info("Switch to cursor {0}", (int)MouseCursor::GetCurrentSystemCursor());
                 }
 
-                if ((InputState.mousePressed || InputState.mouseWasPressed) && mouseCursor != SDL_SYSTEM_CURSOR_ARROW && mouseCursor != SDL_SYSTEM_CURSOR_IBEAM)
+                // Now process user dragging
+                if (InputState.mousePressed)
                 {
-                    // Resize the viewport in the layout
-                    GetEditorLayout()->Resize(this, rect);
+                    switch ((int)dragDir.x)
+                    {
+                    case 1:
+                        rect.w = mousePos.x - rect.x;
+                        break;
+                    case -1:
+                        float xmax = rect.xmax();
+                        rect.x = mousePos.x;
+                        rect.w = xmax - rect.x;
+                        break;
+                    }
+
+                    switch ((int)dragDir.y)
+                    {
+                    case 1:
+                        rect.h = mousePos.y - rect.y;
+                        break;
+                    case -1:
+                        float ymax = rect.ymax();
+                        rect.y = mousePos.y;
+                        rect.h = ymax - rect.y;
+                        break;
+                    }
                 }
 
+                // Resize the viewport in the layout
+                GetEditorLayout()->Resize(this, rect);
+            }
+
+            if (MouseCursor::GetCurrentSystemCursor() != mouseCursor)
+            {
+                MouseCursor::Set(mouseCursor);
+            }
+
+            if (!InputState.mousePressed)
+            {
+                dragDir = Vector2::Zero;
             }
 
             // Draw the updated viewport

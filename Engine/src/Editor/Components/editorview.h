@@ -81,6 +81,9 @@ namespace Ossium::Editor
         /// The corresponding node for this window.
         Node<EditorRect>* node;
 
+        /// The direction in which the borders are currently being dragged. Set to zero when not dragging the borders.
+        Vector2 dragDir = Vector2::Zero;
+
     protected:
         EditorWindow() = default;
 
