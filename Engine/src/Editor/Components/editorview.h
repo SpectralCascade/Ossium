@@ -182,7 +182,7 @@ namespace Ossium::Editor
         /// Return the native OS window instance
         Window* GetNativeWindow();
 
-        /// Attempts to resize and editor window rect
+        /// Attempts to resize and editor window rect given an input rect.
         void Resize(EditorWindow* window, Rect rect);
 
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.

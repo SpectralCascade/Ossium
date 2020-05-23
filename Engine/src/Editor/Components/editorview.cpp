@@ -219,8 +219,11 @@ namespace Ossium::Editor
                     MouseCursor::Set(mouseCursor);
                 }
 
-                // Resize the viewport in the layout
-                GetEditorLayout()->Resize(this, rect);
+                if ((InputState.mousePressed || InputState.mouseWasPressed) && mouseCursor != SDL_SYSTEM_CURSOR_ARROW && mouseCursor != SDL_SYSTEM_CURSOR_IBEAM)
+                {
+                    // Resize the viewport in the layout
+                    GetEditorLayout()->Resize(this, rect);
+                }
 
             }
 
@@ -673,10 +676,105 @@ namespace Ossium::Editor
                     Utilities::Clamp(rect.h, MIN_DIMENSIONS.y, (float)native->GetHeight())
         );
 
-        // Now the fun begins
-        if ((Rect)window->node->data != rect)
-        {
+        Node<EditorRect>* node = window->node;
+        Node<EditorRect>* parent = node->parent;
 
+        // Locate siblings
+        Node<EditorRect>* previous = parent != nullptr && node->childIndex > 0 ? parent->children[node->childIndex - 1] : nullptr;
+        Node<EditorRect>* next = parent != nullptr && parent->children.size() > node->childIndex + 1 ? parent->children[node->childIndex + 1] : nullptr;
+
+        // Locate guncles
+        if (parent != nullptr && parent->parent != nullptr)
+        {
+            if (previous == nullptr)
+            {
+                previous = parent->childIndex > 0 ? parent->parent->children[parent->childIndex - 1] : nullptr;
+            }
+            if (next == nullptr)
+            {
+                next = parent->parent->children.size() > parent->childIndex + 1 ? parent->parent->children[parent->childIndex + 1] : nullptr;
+            }
+        }
+
+        //Logger::EngineLog().Info("Resizing node {0}, which has previous {1} and next {2}.", node, previous, next);
+
+        float min = 0, max = 0;
+
+        // Now the fun begins
+        if (rect.x != node->data.x)
+        {
+            max = node->data.xmax() - MIN_DIMENSIONS.x;
+            if (previous != nullptr)
+            {
+                min = previous->data.x + MIN_DIMENSIONS.x;
+            }
+            else
+            {
+                min = MIN_DIMENSIONS.x;
+            }
+            node->data.x = Utilities::Clamp(rect.x, min, max);
+            if (previous != nullptr)
+            {
+                previous->data.w = node->data.x - previous->data.x;
+            }
+            updateViewports = true;
+        }
+        if (rect.w != node->data.w)
+        {
+            min = node->data.x + MIN_DIMENSIONS.x;
+            if (next != nullptr)
+            {
+                max = next->data.xmax() - MIN_DIMENSIONS.x;
+            }
+            else
+            {
+                max = native->GetWidth() - node->data.x;
+            }
+            node->data.w = Utilities::Clamp(rect.w, min, max);
+            if (next != nullptr)
+            {
+                next->data.w = next->data.xmax() - node->data.xmax();
+                next->data.x = node->data.xmax();
+            }
+            updateViewports = true;
+        }
+
+        if (rect.y != node->data.y)
+        {
+            max = node->data.ymax() - MIN_DIMENSIONS.y;
+            if (previous != nullptr)
+            {
+                min = previous->data.y + MIN_DIMENSIONS.y;
+            }
+            else
+            {
+                min = MIN_DIMENSIONS.y;
+            }
+            node->data.y = Utilities::Clamp(rect.y, min, max);
+            if (previous != nullptr)
+            {
+                previous->data.h = node->data.y - previous->data.y;
+            }
+            updateViewports = true;
+        }
+        if (rect.h != node->data.h)
+        {
+            min = node->data.y + MIN_DIMENSIONS.x;
+            if (next != nullptr)
+            {
+                max = next->data.ymax() - MIN_DIMENSIONS.y;
+            }
+            else
+            {
+                max = native->GetHeight() - node->data.y;
+            }
+            node->data.h = Utilities::Clamp(rect.h, min, max);
+            if (next != nullptr)
+            {
+                next->data.h = next->data.ymax() - node->data.ymax();
+                next->data.y = node->data.ymax();
+            }
+            updateViewports = true;
         }
 
     }
