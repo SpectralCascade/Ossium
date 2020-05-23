@@ -36,6 +36,8 @@ namespace Ossium::Editor
         M(string, title) = "Untitled";
         M(SDL_Color, borderColor) = Colors::BLACK;
         M(bool, bordered) = true;
+        M(int, padding) = 6;
+        // TODO: min size and fixed size
 
     };
 
@@ -100,6 +102,9 @@ namespace Ossium::Editor
         /// Override of NeuronGUI
         void Refresh();
 
+        /// Returns the associated layout node for this editor window.
+        Node<EditorRect>* GetLayoutNode();
+
         /// Closes this editor window.
         void Destroy();
 
@@ -113,6 +118,7 @@ namespace Ossium::Editor
         EditorRect(SDL_Rect rect) : Rect(rect) { }
         EditorRect(EditorWindow* win, SDL_Rect rect) : Rect(rect) { window = win; }
 
+        /// The window associated with this rectangular area. This is always null for branches but never null for leaves.
         EditorWindow* window = nullptr;
 
     };
@@ -175,6 +181,9 @@ namespace Ossium::Editor
 
         /// Return the native OS window instance
         Window* GetNativeWindow();
+
+        /// Attempts to resize and editor window rect
+        void Resize(EditorWindow* window, Rect rect);
 
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
         template<typename T>

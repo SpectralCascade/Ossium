@@ -341,10 +341,6 @@ namespace Ossium::Editor
                 }
             }
         }
-        // Clear just the viewport with the background color
-        renderer->SetDrawColor(backgroundColor);
-        SDL_Rect bgRect = {0, 0, viewport.w, viewport.h};
-        SDL_RenderFillRect(renderer->GetRendererSDL(), &bgRect);
         // Reset state
         Begin();
         // Immediate-mode GUI i/o

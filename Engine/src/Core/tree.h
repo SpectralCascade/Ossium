@@ -42,17 +42,24 @@ namespace Ossium
 
         /// The actual data stored in this node.
         T data;
+
         /// Pointer to parent node; null if this is a root node.
         Node<T>* parent;
+
         /// Children nodes; empty if this is a leaf node
         vector<Node<T>*> children;
+
         /// Unique identifier
         int id;
+
         /// How deep this node is.
         Uint32 depth;
 
+        /// The index of this node in the parent node's array of children.
+        unsigned int childIndex;
+
         /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
-        void SetParent(Node<T>* node, int childIndex = -1)
+        void SetParent(Node<T>* node, int index = -1)
         {
             if (parent != nullptr)
             {
@@ -70,12 +77,14 @@ namespace Ossium
             parent = node;
             if (parent != nullptr)
             {
-                if (childIndex >= 0)
+                if (index >= 0)
                 {
-                    parent->children.insert(parent->children.begin() + childIndex, this);
+                    parent->children.insert(parent->children.begin() + index, this);
+                    childIndex = index;
                 }
                 else
                 {
+                    childIndex = parent->children.size();
                     parent->children.push_back(this);
                 }
                 depth = parent->depth + 1;
@@ -83,6 +92,7 @@ namespace Ossium
             else
             {
                 depth = 0;
+                // TODO: roots!
             }
         }
 
@@ -128,67 +138,45 @@ namespace Ossium
             node->id = nextId;
             if (node->parent != nullptr)
             {
+                node->childIndex = node->parent->children.size();
                 node->parent->children.push_back(node);
                 node->depth = node->parent->depth + 1;
             }
             else
             {
+                node->childIndex = roots.size();
                 roots.push_back(node);
                 node->depth = 0;
             }
-            /// No need to add to flatTree array if it's to be recalulated; otherwise add to array
-            if (!updateFlattened)
-            {
-                flatTree.push_back(node);
-            }
+
+            updateFlattened = true;
             total++;
             nextId++;
         }
 
-        /// Creates a node and inserts on the left or right side of a given sibling node.
-        Node<T>* Insert(T data, Node<T>* sibling, bool insertRight)
+        /// Creates a node and inserts at a particular index in the specified parent's children. If parent is null, the node is inserted in the roots array at the given index.
+        /// All sibling node child indexes are updated accordingly.
+        Node<T>* Insert(T data, Node<T>* parent, unsigned int childIndex)
         {
             Node<T>* node = new Node<T>();
             node->data = data;
-            node->parent = sibling->parent;
+            node->parent = parent;
             node->id = nextId;
-            if (node->parent != nullptr)
+            node->childIndex = childIndex;
+            node->depth = parent != nullptr ? parent->depth + 1 : 0;
+            vector<Node<T>*>& children = parent != nullptr ? parent->children : roots;
+
+            DEBUG_ASSERT(childIndex >= 0 && childIndex <= children.size(), "Tree insertion error - child index out of range!");
+
+            //Logger::EngineLog().Info("Placing at index {0}", childIndex);
+
+            children.insert(children.begin() + childIndex, node);
+            for (auto childItr = children.begin() + childIndex + 1; childItr < children.end(); childItr++)
             {
-                for (auto childItr = node->parent->children.begin(); childItr != node->parent->children.end(); childItr++)
-                {
-                    if (*childItr == sibling)
-                    {
-                        if (insertRight)
-                        {
-                            childItr++;
-                        }
-                        node->parent->children.insert(childItr, node);
-                        break;
-                    }
-                }
-                node->depth = sibling->depth;
+                (*childItr)->childIndex++;
             }
-            else
-            {
-                for (auto childItr = roots.begin(); childItr != roots.end(); childItr++)
-                {
-                    if (*childItr == sibling)
-                    {
-                        if (insertRight)
-                        {
-                            childItr++;
-                        }
-                        roots.insert(childItr, node);
-                        break;
-                    }
-                }
-                node->depth = 0;
-            }
-            // No need to add to flatTree array if it's to be recalulated; otherwise add to array
-            if (!updateFlattened)
-            {
-                flatTree.push_back(node);
-            }
+
+            updateFlattened = true;
             total++;
             nextId++;
             return node;
@@ -212,45 +200,22 @@ namespace Ossium
                     delete *i;
                     *i = nullptr;
                 }
-                updateFlattened = true;
                 total--;
             }
-            if (node->parent != nullptr)
+            vector<Node<T>*>& children = node->parent != nullptr ? node->parent->children : roots;
+            //Logger::EngineLog().Info("Removing child {0} from {1}", node->childIndex, children);
+            auto index = children.begin() + node->childIndex;
+            for (auto i = index + 1; i < children.end(); i++)
             {
-                /// Remove the source node from the tree and then we can safely delete it
-                for (auto i = node->parent->children.begin(); i != node->parent->children.end(); i++)
-                {
-                    if (node == *i)
-                    {
-                        node->parent->children.erase(i);
-                        //Logger::EngineLog().Debug("Deleting node {0}", node);
-                        delete node;
-                        node = nullptr;
-                        updateFlattened = true;
-                        total--;
-                        return true;
-                    }
-                }
+                (*i)->childIndex--;
+                //Logger::EngineLog().Info("Reduced child index from {0} to {1}", (*i)->childIndex + 1, (*i)->childIndex);
             }
-            else
-            {
-                /// Remove the source node from the roots
-                for (auto i = roots.begin(); i != roots.end(); i++)
-                {
-                    if (node == *i)
-                    {
-                        roots.erase(i);
-                        delete node;
-                        node = nullptr;
-                        updateFlattened = true;
-                        total--;
-                        return true;
-                    }
-                }
-            }
-            /// If we reach this point, there's a problem! Will not delete the node because e.g. the node is in another tree
-            Logger::EngineLog().Warning("(!) Could not locate node[{0}] in tree for removal.", node->id);
-            return false;
+            children.erase(index);
+            updateFlattened = true;
+            delete node;
+            node = nullptr;
+            total--;
+            return true;
         }
 
         /// Finds and removes first found data node that meets the predicate condition.
@@ -261,7 +226,7 @@ namespace Ossium
             return Remove(node);
         }
 
-        /// Removes all nodes from the tree, except for the root
+        /// Removes all nodes from the tree
         void Clear()
         {
             // Delete everything

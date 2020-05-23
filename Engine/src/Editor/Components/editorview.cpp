@@ -68,12 +68,20 @@ namespace Ossium::Editor
     void EditorWindow::Refresh()
     {
         bool wasBordered = bordered;
+
+        renderer->SetViewportRect(viewport);
+
+        // Clear just the viewport with the background color
+        renderer->SetDrawColor(backgroundColor);
+        SDL_Rect bgRect = {0, 0, viewport.w, viewport.h};
+        SDL_RenderFillRect(renderer->GetRendererSDL(), &bgRect);
+
         if (wasBordered)
         {
-            viewport.x += 1;
-            viewport.y += 1;
-            viewport.w -= 2;
-            viewport.h -= 2;
+            viewport.x += padding;
+            viewport.y += padding;
+            viewport.w -= padding * 2;
+            viewport.h -= padding * 2;
         }
         nativeOrigin = GetEditorLayout()->GetNativeWindow()->GetPosition();
 
@@ -81,14 +89,15 @@ namespace Ossium::Editor
 
         if (wasBordered)
         {
-            Vector2 previousMousePos = InputState.lastMousePos;
-            Vector2 mousePos = InputState.mousePos;
-            Vector2 mouseDownPos = InputState.mouseDownPos;
+            Vector2 origin = Vector2(viewport.x, viewport.y);
 
-            viewport.x -= 1;
-            viewport.y -= 1;
-            viewport.w += 2;
-            viewport.h += 2;
+            Vector2 previousMousePos = InputState.lastMousePos + origin;
+            Vector2 mousePos = InputState.mousePos + origin;
+
+            viewport.x -= padding;
+            viewport.y -= padding;
+            viewport.w += padding * 2;
+            viewport.h += padding * 2;
 
             // Reset renderer viewport to full window
             Vector2 windowDimensions = native->GetNativeWindow()->GetDimensions();
@@ -97,16 +106,23 @@ namespace Ossium::Editor
 
             // Here the window tabs, border etc. are drawn after doing the custom GUI bits
             Rect rect = Rect(viewport);
-            rect.Draw(*renderer, borderColor);
 
-            if (rect.Contains(mouseDownPos))
+            bool hovered = rect.Contains(mousePos);
+            bool wasHovered = rect.Contains(previousMousePos);
+
+            Vector2 currentMousePos = mousePos;
+
+            if (wasHovered && !hovered)
             {
-                int resizePadding = 5;
+                mousePos = previousMousePos;
+            }
 
-                Rect left = Rect(rect.x, rect.y, resizePadding, rect.h);
-                Rect top = Rect(rect.x, rect.y, rect.w, resizePadding);
-                Rect right = Rect(rect.x + rect.w - resizePadding, rect.y, resizePadding, rect.h);
-                Rect bottom = Rect(rect.x, rect.y + rect.h - resizePadding, rect.w, resizePadding);
+            if (hovered || wasHovered)
+            {
+                Rect left = Rect(rect.x, rect.y, padding, rect.h);
+                Rect top = Rect(rect.x, rect.y, rect.w, padding);
+                Rect right = Rect(rect.x + rect.w - padding, rect.y, padding, rect.h);
+                Rect bottom = Rect(rect.x, rect.y + rect.h - padding, rect.w, padding);
 
                 /*left.DrawFilled(*renderer, Colors::RED);
                 top.DrawFilled(*renderer, Colors::RED);
@@ -120,14 +136,28 @@ namespace Ossium::Editor
                     if (right.Contains(mousePos))
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                        if (InputState.mousePressed)
+                        {
+                            rect.w = currentMousePos.x - rect.x;
+                            rect.y = currentMousePos.y;
+                        }
                     }
                     else if (left.Contains(mousePos))
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                        if (InputState.mousePressed)
+                        {
+                            rect.x = currentMousePos.x;
+                            rect.y = currentMousePos.y;
+                        }
                     }
                     else
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                        if (InputState.mousePressed)
+                        {
+                            rect.y = currentMousePos.y;
+                        }
                     }
                 }
                 else if (bottom.Contains(mousePos))
@@ -135,44 +165,44 @@ namespace Ossium::Editor
                     if (right.Contains(mousePos))
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                        if (InputState.mousePressed)
+                        {
+                            rect.w = currentMousePos.x - rect.x;
+                            rect.h = currentMousePos.y - rect.y;
+                        }
                     }
                     else if (left.Contains(mousePos))
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                        if (InputState.mousePressed)
+                        {
+                            rect.x = currentMousePos.x;
+                            rect.h = currentMousePos.y - rect.y;
+                        }
                     }
                     else
                     {
                         mouseCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                        if (InputState.mousePressed)
+                        {
+                            rect.h = currentMousePos.y - rect.y;
+                        }
                     }
                 }
                 else if (left.Contains(mousePos))
                 {
-                    if (top.Contains(mousePos))
+                    mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                    if (InputState.mousePressed)
                     {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
-                    }
-                    else if (bottom.Contains(mousePos))
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
-                    }
-                    else
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                        rect.x = currentMousePos.x;
                     }
                 }
                 else if (right.Contains(mousePos))
                 {
-                    if (top.Contains(mousePos))
+                    mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                    if (InputState.mousePressed)
                     {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENESW;
-                    }
-                    else if (bottom.Contains(mousePos))
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
-                    }
-                    else
-                    {
-                        mouseCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                        rect.w = currentMousePos.x - rect.x;
                     }
                 }
                 else if (InputState.textFieldHovered)
@@ -188,8 +218,14 @@ namespace Ossium::Editor
                 {
                     MouseCursor::Set(mouseCursor);
                 }
+
+                // Resize the viewport in the layout
+                GetEditorLayout()->Resize(this, rect);
+
             }
 
+            // Draw the updated viewport
+            Rect(viewport).Draw(*renderer, borderColor);
         }
 
         if (bordered != wasBordered)
@@ -197,6 +233,11 @@ namespace Ossium::Editor
             TriggerUpdate();
         }
 
+    }
+
+    Node<EditorRect>* EditorWindow::GetLayoutNode()
+    {
+        return node;
     }
 
     //
@@ -474,7 +515,7 @@ namespace Ossium::Editor
 
                 if (dest->node->depth % 2 == layoutColumn)
                 {
-                    source->node = layout.Insert(sourceRect, dest->node, mode == DockingMode::BOTTOM);
+                    source->node = layout.Insert(sourceRect, dest->node->parent, mode == DockingMode::BOTTOM ? dest->node->childIndex + 1 : dest->node->childIndex);
                 }
                 else
                 {
@@ -515,7 +556,7 @@ namespace Ossium::Editor
 
                 if (dest->node->depth % 2 == layoutRow)
                 {
-                    source->node = layout.Insert(sourceRect, dest->node, mode == DockingMode::RIGHT);
+                    source->node = layout.Insert(sourceRect, dest->node->parent, mode == DockingMode::RIGHT ? dest->node->childIndex + 1 : dest->node->childIndex);
                 }
                 else
                 {
@@ -555,7 +596,7 @@ namespace Ossium::Editor
             // i.e. all nodes must have at least one sibling (except the root node), and every leaf must have a valid editor window instance.
             // There are 2 main cases in this scenario; one is that the sibling node is a leaf, and one where it is not.
             // First, get the sibling node.
-            Node<EditorRect>* sibling = source->node->parent->children[(unsigned int)(source->node->parent->children[0] == source->node)];
+            Node<EditorRect>* sibling = source->node->parent->children[(unsigned int)(!source->node->childIndex)];
             //Logger::EngineLog().Debug("Removing sibling {0}", sibling);
 
             if (sibling->data.window != nullptr)
@@ -621,6 +662,23 @@ namespace Ossium::Editor
             Logger::EngineLog().Warning("Attempted to remove editor window that is already destroyed!");
         }
         return true;
+    }
+
+    void EditorLayout::Resize(EditorWindow* window, Rect rect)
+    {
+        // First, normalise the rect
+        rect = Rect(Utilities::Clamp(rect.x, 0.0f, (float)native->GetWidth()),
+                    Utilities::Clamp(rect.y, 0.0f, (float)native->GetHeight()),
+                    Utilities::Clamp(rect.w, MIN_DIMENSIONS.x, (float)native->GetWidth()),
+                    Utilities::Clamp(rect.h, MIN_DIMENSIONS.y, (float)native->GetHeight())
+        );
+
+        // Now the fun begins
+        if ((Rect)window->node->data != rect)
+        {
+
+        }
+
     }
 
     void EditorLayout::RemovePostUpdate(EditorWindow* window)
