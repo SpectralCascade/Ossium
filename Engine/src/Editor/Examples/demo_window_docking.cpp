@@ -8,43 +8,73 @@ namespace Ossium::Editor
     {
 
         Space(20);
-        TextLabel("<b>WINDOW DEMO</b>");
-        Space(20);
 
-        bool wasDocked = docked;
-        docked = Button(docked ? "Undock Window" : "Dock Window") ? !docked : docked;
-        if (docked != wasDocked)
+        BeginHorizontal();
         {
-            if (docked && sibling == nullptr)
+            TextLabel("<b>Window docking demo</b>");
+
+            Space(20);
+
+            NeuronClickableStyle style = NeuronStyles::NEURON_BUTTON_STYLE;
+            style.hoverColor = Colors::RED;
+            style.normalColor = Color(230, 0, 0);
+            style.clickColor = Color(150, 0, 0);
+            style.normalTextStyle.fg = Colors::WHITE;
+            style.hoverTextStyle.fg = Colors::WHITE;
+            style.clickTextStyle.fg = Color(100, 100, 100);
+
+            if (Button("<b>X</b>", style, true, 12, 8))
             {
-                viewport.w = viewport.w / 2;
-                sibling = GetEditorLayout()->Add<SimpleDemoWindow>(this, DockingMode::RIGHT);
-            }
-            else
-            {
-                sibling->Destroy();
-                sibling = nullptr;
+                Destroy();
             }
         }
+        EndHorizontal();
 
-        if (Button("Print layout info"))
+        Space((viewport.h / 2) - 64);
+
+        BeginHorizontal();
         {
-            Logger::EngineLog().Info("Layout data:");
-            Uint32 depth = 0;
-            string level = "";
-            for (auto node : GetEditorLayout()->GetLayout()->GetFlatTree())
+            Space((viewport.w / 2) - 32);
+
+            if (Button("Dock Above"))
             {
-                if (depth != node->depth)
-                {
-                    Logger::EngineLog().Info("Level {0}: " + level, depth);
-                    level.clear();
-                    depth++;
-                }
-                level += Utilities::Format("[{0} (parent = {1})]", node, node->parent);
-                //Logger::EngineLog().Info("Node {0} (window = {1}, depth {2}), parent = {3},", node, node->data.window, node->depth, node->parent);
+                GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::TOP);
             }
-            Logger::EngineLog().Info("Level {0}: " + level, depth);
         }
+        EndHorizontal();
+
+        Space(5);
+
+        BeginHorizontal();
+        {
+            Space((viewport.w / 2) - 64);
+
+            if (Button("Dock Left"))
+            {
+                GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::LEFT);
+            }
+
+            Space(20);
+
+            if (Button("Dock Right"))
+            {
+                GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::RIGHT);
+            }
+        }
+        EndHorizontal();
+
+        Space(5);
+
+        BeginHorizontal();
+        {
+            Space((viewport.w / 2) - 32);
+
+            if (Button("Dock Below"))
+            {
+                GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM);
+            }
+        }
+        EndHorizontal();
 
     }
 
