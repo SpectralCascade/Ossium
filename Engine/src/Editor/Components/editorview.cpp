@@ -209,7 +209,7 @@ namespace Ossium::Editor
                     dragDir = Vector2(1, 0);
                 }
             }
-            else if (dragDir == Vector2::Zero && (rect.Contains(mousePos) || rect.Contains(InputState.lastMousePos + origin)))
+            else if (dragDir == Vector2::Zero && (rect.Contains(mousePos) || rect.Contains(InputState.lastMousePos + origin)) && !InputState.mousePressed)
             {
                 if (InputState.textFieldHovered)
                 {
@@ -223,11 +223,6 @@ namespace Ossium::Editor
 
             if (dragDir != Vector2::Zero)
             {
-                if (clicked)
-                {
-                    Logger::EngineLog().Info("Switch to cursor {0}", (int)MouseCursor::GetCurrentSystemCursor());
-                }
-
                 // Now process user dragging
                 if (InputState.mousePressed)
                 {
@@ -401,12 +396,12 @@ namespace Ossium::Editor
                         {
                             combinedSize += isRow ? node->data.w : node->data.h;
                         }
-                        Logger::EngineLog().Debug("\nUpdating group [{0}] {1}", currentGroup, currentGroup->data);
+                        //Logger::EngineLog().Debug("\nUpdating group [{0}] {1}", currentGroup, currentGroup->data);
 
                         bool currentRow = currentGroup->depth % 2 == layoutColumn;
                         float scaleFactor = (currentRow ? currentGroup->data.w : currentGroup->data.h) / (float)combinedSize;
 
-                        Logger::EngineLog().Debug("Current group is a {0}, combined size = {1}, scale factor = {2}", currentRow ? "row" : "column", combinedSize, scaleFactor);
+                        //Logger::EngineLog().Debug("Current group is a {0}, combined size = {1}, scale factor = {2}", currentRow ? "row" : "column", combinedSize, scaleFactor);
 
                         // Update the entire group of rectangles now we know their total combined width/height
                         if (currentRow)
@@ -755,11 +750,14 @@ namespace Ossium::Editor
             {
                 min = MIN_DIMENSIONS.x;
             }
+            float xmax = node->data.xmax();
             node->data.x = Utilities::Clamp(rect.x, min, max);
+            node->data.w = xmax - node->data.x;
             if (previous != nullptr)
             {
                 previous->data.w = node->data.x - previous->data.x;
             }
+            Logger::EngineLog().Info("Resize updated rect {0}", node->data);
             updateViewports = true;
         }
         if (rect.w != node->data.w)
@@ -811,7 +809,9 @@ namespace Ossium::Editor
             {
                 max = native->GetHeight() - node->data.y;
             }
-            node->data.h = Utilities::Clamp(rect.h, min, max);
+            float ymax = node->data.ymax();
+            node->data.y = Utilities::Clamp(rect.x, min, max);
+            node->data.h = ymax - node->data.y;
             if (next != nullptr)
             {
                 next->data.h = next->data.ymax() - node->data.ymax();
