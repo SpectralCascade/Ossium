@@ -734,8 +734,6 @@ namespace Ossium::Editor
             }
         }
 
-        //Logger::EngineLog().Info("Resizing node {0}, which has previous {1} and next {2}.", node, previous, next);
-
         float min = 0, max = 0;
 
         // Now the fun begins
@@ -791,7 +789,9 @@ namespace Ossium::Editor
             {
                 min = MIN_DIMENSIONS.y;
             }
+            float ymax = node->data.ymax();
             node->data.y = Utilities::Clamp(rect.y, min, max);
+            node->data.h = ymax - node->data.y;
             if (previous != nullptr)
             {
                 previous->data.h = node->data.y - previous->data.y;
@@ -809,9 +809,7 @@ namespace Ossium::Editor
             {
                 max = native->GetHeight() - node->data.y;
             }
-            float ymax = node->data.ymax();
-            node->data.y = Utilities::Clamp(rect.x, min, max);
-            node->data.h = ymax - node->data.y;
+            node->data.h = Utilities::Clamp(rect.h, min, max);
             if (next != nullptr)
             {
                 next->data.h = next->data.ymax() - node->data.ymax();
