@@ -734,42 +734,41 @@ namespace Ossium::Editor
             }
         }
 
-        float min = 0, max = 0;
+        float minpos = 0, maxpos = 0;
 
         // Now the fun begins
         if (rect.x != node->data.x)
         {
-            max = node->data.xmax() - MIN_DIMENSIONS.x;
+            maxpos = node->data.xmax() - MIN_DIMENSIONS.x;
             if (previous != nullptr)
             {
-                min = previous->data.x + MIN_DIMENSIONS.x;
+                minpos = previous->data.x + MIN_DIMENSIONS.x;
             }
             else
             {
-                min = MIN_DIMENSIONS.x;
+                minpos = MIN_DIMENSIONS.x;
             }
             float xmax = node->data.xmax();
-            node->data.x = Utilities::Clamp(rect.x, min, max);
+            node->data.x = Utilities::Clamp(rect.x, minpos, maxpos);
             node->data.w = xmax - node->data.x;
             if (previous != nullptr)
             {
                 previous->data.w = node->data.x - previous->data.x;
             }
-            Logger::EngineLog().Info("Resize updated rect {0}", node->data);
             updateViewports = true;
         }
-        if (rect.w != node->data.w)
+        else if (rect.w != node->data.w)
         {
-            min = node->data.x + MIN_DIMENSIONS.x;
+            minpos = MIN_DIMENSIONS.x;
             if (next != nullptr)
             {
-                max = next->data.xmax() - MIN_DIMENSIONS.x;
+                maxpos = (next->data.xmax() - node->data.x) - MIN_DIMENSIONS.x;
             }
             else
             {
-                max = native->GetWidth() - node->data.x;
+                maxpos = native->GetWidth() - node->data.x;
             }
-            node->data.w = Utilities::Clamp(rect.w, min, max);
+            node->data.w = Utilities::Clamp(rect.w, minpos, maxpos);
             if (next != nullptr)
             {
                 next->data.w = next->data.xmax() - node->data.xmax();
@@ -780,17 +779,17 @@ namespace Ossium::Editor
 
         if (rect.y != node->data.y)
         {
-            max = node->data.ymax() - MIN_DIMENSIONS.y;
+            maxpos = node->data.ymax() - MIN_DIMENSIONS.y;
             if (previous != nullptr)
             {
-                min = previous->data.y + MIN_DIMENSIONS.y;
+                minpos = previous->data.y + MIN_DIMENSIONS.y;
             }
             else
             {
-                min = MIN_DIMENSIONS.y;
+                minpos = MIN_DIMENSIONS.y;
             }
             float ymax = node->data.ymax();
-            node->data.y = Utilities::Clamp(rect.y, min, max);
+            node->data.y = Utilities::Clamp(rect.y, minpos, maxpos);
             node->data.h = ymax - node->data.y;
             if (previous != nullptr)
             {
@@ -798,18 +797,18 @@ namespace Ossium::Editor
             }
             updateViewports = true;
         }
-        if (rect.h != node->data.h)
+        else if (rect.h != node->data.h)
         {
-            min = node->data.y + MIN_DIMENSIONS.x;
+            minpos = MIN_DIMENSIONS.y;
             if (next != nullptr)
             {
-                max = next->data.ymax() - MIN_DIMENSIONS.y;
+                maxpos = (next->data.ymax() - node->data.y) - MIN_DIMENSIONS.y;
             }
             else
             {
-                max = native->GetHeight() - node->data.y;
+                maxpos = native->GetHeight() - node->data.y;
             }
-            node->data.h = Utilities::Clamp(rect.h, min, max);
+            node->data.h = Utilities::Clamp(rect.h, minpos, maxpos);
             if (next != nullptr)
             {
                 next->data.h = next->data.ymax() - node->data.ymax();
