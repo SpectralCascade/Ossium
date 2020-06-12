@@ -561,8 +561,9 @@ namespace Ossium::Editor
                 else
                 {
                     dest->node->data.window = nullptr;
-                    dest->node = layout.Insert(destRect, dest->node);
-                    source->node = layout.Insert(sourceRect, dest->node);
+                    auto parent = dest->node;
+                    dest->node = layout.Insert(destRect, parent);
+                    source->node = layout.Insert(sourceRect, parent);
                 }
                 break;
             case LEFT:
@@ -602,8 +603,9 @@ namespace Ossium::Editor
                 else
                 {
                     dest->node->data.window = nullptr;
-                    dest->node = layout.Insert(destRect, dest->node);
-                    source->node = layout.Insert(sourceRect, dest->node);
+                    auto parent = dest->node;
+                    dest->node = layout.Insert(destRect, parent);
+                    source->node = layout.Insert(sourceRect, parent);
                 }
 
                 break;

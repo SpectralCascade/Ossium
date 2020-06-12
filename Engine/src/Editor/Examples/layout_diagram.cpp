@@ -38,10 +38,15 @@ namespace Ossium::Editor
                     //Logger::EngineLog().Debug("Next parentX cleared, level {0}", n->depth - 1);
 
                     parentIndex = 0;
+                    Logger::EngineLog().Debug("new level, parentIndex = 0");
                 }
                 else
                 {
                     parentIndex += (int)(currentParent != n->parent);
+                    if (currentParent != n->parent)
+                    {
+                        Logger::EngineLog().Debug("parentIndex incremented");
+                    }
                 }
             }
 
@@ -54,7 +59,10 @@ namespace Ossium::Editor
                 line.Draw(*renderer, lineColor);
                 //Logger::EngineLog().Debug("Drawing line from {0} to {1} [child index = {2} - parent index = {3} of parent x {4}]", line.a, line.b, n->childIndex, parentIndex, parentX);
             }
-            nextParentX.push_back(x);
+            if (!n->children.empty())
+            {
+                nextParentX.push_back(x);
+            }
             x += nodeSize * 2;
 
             currentParent = n->parent;
