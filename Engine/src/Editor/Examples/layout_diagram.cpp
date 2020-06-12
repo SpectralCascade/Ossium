@@ -6,7 +6,7 @@ namespace Ossium::Editor
     void LayoutDiagram::OnGUI()
     {
         // Note: this assumes the current mode is breadth-first
-        vector<Node<EditorRect>*>& layout = target != nullptr ? target->GetEditorLayout()->GetLayout()->GetFlatTree() : GetEditorLayout()->GetLayout()->GetFlatTree();
+        vector<Node<EditorRect>*>& layout = target != nullptr ? target->GetLayout()->GetFlatTree() : GetEditorLayout()->GetLayout()->GetFlatTree();
 
         int yspacing = 40;
         int nodeSize = 16;

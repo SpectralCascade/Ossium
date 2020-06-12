@@ -563,7 +563,7 @@ namespace Ossium::Editor
                     dest->node->data.window = nullptr;
                     auto parent = dest->node;
                     dest->node = layout.Insert(destRect, parent);
-                    source->node = layout.Insert(sourceRect, parent);
+                    source->node = layout.Insert(sourceRect, parent, mode == DockingMode::BOTTOM);
                 }
                 break;
             case LEFT:
@@ -605,7 +605,7 @@ namespace Ossium::Editor
                     dest->node->data.window = nullptr;
                     auto parent = dest->node;
                     dest->node = layout.Insert(destRect, parent);
-                    source->node = layout.Insert(sourceRect, parent);
+                    source->node = layout.Insert(sourceRect, parent, mode == DockingMode::RIGHT);
                 }
 
                 break;

@@ -22,7 +22,8 @@ int main(int argc, char* argv[])
     // The main native window manager that deals with editor window docking
     EditorLayout* window = new EditorLayout(&input, &resources, "Ossium");
     EditorLayout* layoutView = new EditorLayout(&input, &resources, "Layout Tree");
-    layoutView->Add<LayoutDiagram>(DockingMode::LEFT)->target = window->Add<DemoDockingWindow>(DockingMode::LEFT);
+    window->Add<DemoDockingWindow>(DockingMode::LEFT);
+    layoutView->Add<LayoutDiagram>(DockingMode::LEFT)->target = window;
 
     //window.Insert(&dockView, &view, DockingMode::LEFT);
 

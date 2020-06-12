@@ -9,7 +9,7 @@ namespace Ossium::Editor
     class LayoutDiagram : public EditorWindow
     {
     public:
-        EditorWindow* target = nullptr;
+        EditorLayout* target = nullptr;
 
     protected:
         void OnGUI();
