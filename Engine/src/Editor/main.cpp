@@ -1,6 +1,7 @@
 #include "../Ossium.h"
 #include "Examples/simple_demo_window.h"
 #include "Examples/demo_window_docking.h"
+#include "Examples/layout_diagram.h"
 
 using namespace Ossium;
 using namespace Ossium::Editor;
@@ -20,11 +21,16 @@ int main(int argc, char* argv[])
 
     // The main native window manager that deals with editor window docking
     EditorLayout* window = new EditorLayout(&input, &resources, "Ossium");
-    window->Add<DemoDockingWindow>(DockingMode::TOP);
+    EditorLayout* layoutView = new EditorLayout(&input, &resources, "Layout Tree");
+    layoutView->Add<LayoutDiagram>(DockingMode::LEFT)->target = window->Add<DemoDockingWindow>(DockingMode::LEFT);
 
     //window.Insert(&dockView, &view, DockingMode::LEFT);
 
     bool quit = false;
+
+    window->GetNativeWindow()->OnCloseButton += [&] (Window& caller) {
+        quit = true;
+    };
 
     SDL_Event e;
 
@@ -38,11 +44,23 @@ int main(int argc, char* argv[])
                 break;
             }
             window->HandleEvent(e);
+            layoutView->HandleEvent(e);
             input.HandleEvent(e);
         }
 
         // Update the GUI
         window->Update();
+        layoutView->Update();
+    }
+
+    /// TODO: fix crash when deleting these editor layouts
+    if (window != nullptr)
+    {
+        delete window;
+    }
+    if (layoutView != nullptr)
+    {
+        delete layoutView;
     }
 
     resources.FreeAll();

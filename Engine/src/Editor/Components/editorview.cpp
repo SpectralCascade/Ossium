@@ -631,7 +631,7 @@ namespace Ossium::Editor
 
     bool EditorLayout::Remove(EditorWindow* source)
     {
-        if (source->node->parent != nullptr && source->node->parent->children.size() == 2)
+        if (source != nullptr && source->node != nullptr && source->node->parent != nullptr && source->node->parent->children.size() == 2)
         {
             // When removing a node that only has one other sibling, the tree needs to be normalised
             // i.e. all nodes must have at least one sibling (except the root node), and every leaf must have a valid editor window instance.

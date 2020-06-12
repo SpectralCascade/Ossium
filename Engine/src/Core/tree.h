@@ -44,19 +44,19 @@ namespace Ossium
         T data;
 
         /// Pointer to parent node; null if this is a root node.
-        Node<T>* parent;
+        Node<T>* parent = nullptr;
 
         /// Children nodes; empty if this is a leaf node
         vector<Node<T>*> children;
 
         /// Unique identifier
-        int id;
+        int id = 0;
 
         /// How deep this node is.
-        Uint32 depth;
+        Uint32 depth = 0;
 
         /// The index of this node in the parent node's array of children.
-        unsigned int childIndex;
+        unsigned int childIndex = 0;
 
         /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
         void SetParent(Node<T>* node, int index = -1)

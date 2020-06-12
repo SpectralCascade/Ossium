@@ -197,6 +197,7 @@ namespace Ossium::Editor
             toAdd->Init(this);
             toAdd->viewport = dest->viewport;
             toAdd->viewport.w = dest->viewport.w / 2;
+            toAdd->viewport.h = dest->viewport.h / 2;
             if (!Insert(toAdd, dest, mode))
             {
                 delete toAdd;
