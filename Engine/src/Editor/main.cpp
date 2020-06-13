@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 
         // Update the GUI
         window->Update();
-        layoutView->Update();
+        layoutView->Update(true);
     }
 
     /// TODO: fix crash when deleting these editor layouts

@@ -3,6 +3,8 @@
 namespace Ossium::Editor
 {
 
+    EditorWindow* LayoutDiagram::mouseHovered = nullptr;
+
     void LayoutDiagram::OnGUI()
     {
         // Note: this assumes the current mode is breadth-first
@@ -52,6 +54,10 @@ namespace Ossium::Editor
 
             // Draw the node
             Rect(x, y, nodeSize, nodeSize).DrawFilled(*renderer, n->children.empty() ? leafColor : parentColor);
+            if (n->data.window != nullptr && n->data.window == mouseHovered)
+            {
+                Rect(x - 1, y - 1, nodeSize + 2, nodeSize + 2).Draw(*renderer, Colors::WHITE);
+            }
             if (!parentX.empty())
             {
                 // Draw line between node and parent

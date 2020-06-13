@@ -11,6 +11,8 @@ namespace Ossium::Editor
     public:
         EditorLayout* target = nullptr;
 
+        static EditorWindow* mouseHovered;
+
     protected:
         void OnGUI();
 

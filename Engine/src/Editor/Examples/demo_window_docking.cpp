@@ -1,11 +1,17 @@
 #include "demo_window_docking.h"
 #include "simple_demo_window.h"
+#include "layout_diagram.h"
 
 namespace Ossium::Editor
 {
 
     void DemoDockingWindow::OnGUI()
     {
+
+        if (Rect(0, 0, viewport.w, viewport.h).Contains(InputState.mousePos))
+        {
+            LayoutDiagram::mouseHovered = this;
+        }
 
         Space(20);
 

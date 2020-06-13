@@ -360,7 +360,7 @@ namespace Ossium::Editor
         return &layout;
     }
 
-    void EditorLayout::Update()
+    void EditorLayout::Update(bool forceUpdate)
     {
 
         // Setup rendering to texture
@@ -378,7 +378,7 @@ namespace Ossium::Editor
 
         // First stage - update the viewports (but only if necessary).
         // Optimiser: keep track of nodes that need updating and only update those sections of the layout tree?
-        if (updateViewports)
+        if (updateViewports || forceUpdate)
         {
             for (auto itr = flatTree.begin(); itr < endItr; itr++)
             {
@@ -482,7 +482,7 @@ namespace Ossium::Editor
                 {
                     node->data.window->input->SetActive(false);
                 }
-                node->data.window->Update(didUpdateViewports);
+                node->data.window->Update(didUpdateViewports || forceUpdate);
 
             }
         }

@@ -180,7 +180,7 @@ namespace Ossium::Editor
         void HandleEvent(SDL_Event& e);
 
         /// Update editor windows.
-        void Update();
+        void Update(bool forceUpdate = false);
 
         /// Return the native OS window instance
         Window* GetNativeWindow();
