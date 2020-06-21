@@ -176,6 +176,18 @@ namespace Ossium::Editor
             Colors::BLACK,
             Colors::WHITE
         );
+        NeuronClickableStyle NEURON_CONTEXT_OPTION_STYLE = NeuronClickableStyle(
+            Colors::WHITE,
+            Color(0, 255, 255, 100),
+            Color(0, 255, 255, 100),
+            NEURON_TEXT_NORMAL_STYLE,
+            NEURON_TEXT_NORMAL_STYLE,
+            NEURON_TEXT_NORMAL_STYLE,
+            Colors::WHITE,
+            Color(200, 200, 200, 255),
+            Colors::WHITE,
+            Colors::WHITE
+        );
     }
 
     //

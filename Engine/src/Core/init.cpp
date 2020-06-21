@@ -33,9 +33,16 @@ namespace Ossium
 {
     int InitialiseOssium()
     {
+        // TODO: JSON configuration settings? Potentially those should be done independently though
+
         SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
         // Use OpenGL to avoid Direct3D issues (such as texture destruction on window resize).
         SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+
+        #ifdef OSSIUM_EDITOR
+        // Enable this by default such that mouse events are handled even if the window isn't focused.
+        SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+        #endif
 
         string numCPUs = "";
         Logger::EngineLog().Info("{0} | {1} core CPU | {2} MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());

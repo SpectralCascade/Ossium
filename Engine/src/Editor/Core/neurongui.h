@@ -113,6 +113,7 @@ namespace Ossium::Editor
         extern NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE;
         extern NeuronClickableStyle NEURON_TEXTFIELD_STYLE;
         extern NeuronClickableStyle NEURON_CHECKBOX_STYLE;
+        extern NeuronClickableStyle NEURON_CONTEXT_OPTION_STYLE;
     }
 
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.

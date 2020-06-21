@@ -98,6 +98,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-std=c++1z" />
+					<Add option="-DOSSIUM_EDITOR" />
 					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
 					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
@@ -144,6 +145,7 @@
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
 					<Add option="-DOSSIUM_DEBUG" />
+					<Add option="-DOSSIUM_EDITOR" />
 					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
 					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
@@ -157,6 +159,8 @@
 					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
+					<Add option="-static-libstdc++" />
+					<Add option="-static-libgcc" />
 					<Add option="-lmingw32" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
@@ -287,6 +291,14 @@
 		<Unit filename="src/Core/window.h" />
 		<Unit filename="src/Editor/Components/editorview.cpp" />
 		<Unit filename="src/Editor/Components/editorview.h" />
+		<Unit filename="src/Editor/Core/contextmenu.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/contextmenu.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+		</Unit>
 		<Unit filename="src/Editor/Core/neurongui.cpp" />
 		<Unit filename="src/Editor/Core/neurongui.h" />
 		<Unit filename="src/Editor/Examples/demo_window_docking.cpp">

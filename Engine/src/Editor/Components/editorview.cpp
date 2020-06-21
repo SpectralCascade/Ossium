@@ -324,6 +324,24 @@ namespace Ossium::Editor
             return ActionOutcome::Ignore;
         };
 
+        native->OnMouseEnter += [&] (Window& window) {
+            for (auto node : layout.GetFlatTree()) {
+                if (node->data.window != nullptr)
+                {
+                    node->data.window->input->SetActive(true);
+                }
+            }
+        };
+
+        native->OnMouseLeave += [&] (Window& window) {
+            for (auto node : layout.GetFlatTree()) {
+                if (node->data.window != nullptr)
+                {
+                    node->data.window->input->SetActive(false);
+                }
+            }
+        };
+
     }
 
     EditorLayout::~EditorLayout()
@@ -474,16 +492,7 @@ namespace Ossium::Editor
             // Now update the editor window, if this node is not a stem
             if (node->data.window != nullptr)
             {
-                if (native->IsMouseFocus())
-                {
-                    node->data.window->input->SetActive(true);
-                }
-                else
-                {
-                    node->data.window->input->SetActive(false);
-                }
                 node->data.window->Update(didUpdateViewports || forceUpdate);
-
             }
         }
 
