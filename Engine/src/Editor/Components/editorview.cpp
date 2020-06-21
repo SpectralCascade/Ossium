@@ -633,14 +633,23 @@ namespace Ossium::Editor
 
     bool EditorLayout::Remove(EditorWindow* source)
     {
+        // First check for a single sibling node
+        Node<EditorRect>* sibling = nullptr;
         if (source != nullptr && source->node != nullptr && source->node->parent != nullptr && source->node->parent->children.size() == 2)
+        {
+            sibling = source->node->parent->children[(unsigned int)(!source->node->childIndex)];
+        }
+        // Now the sibling is determined, the source node can be safely removed
+        if (!layout.Remove(source->node))
+        {
+            Logger::EngineLog().Error("Failed to remove EditorWindow node!");
+        }
+
+        if (sibling != nullptr)
         {
             // When removing a node that only has one other sibling, the tree needs to be normalised
             // i.e. all nodes must have at least one sibling (except the root node), and every leaf must have a valid editor window instance.
             // There are 2 main cases in this scenario; one is that the sibling node is a leaf, and one where it is not.
-            // First, get the sibling node.
-            Node<EditorRect>* sibling = source->node->parent->children[(unsigned int)(!source->node->childIndex)];
-            //Logger::EngineLog().Debug("Removing sibling {0}", sibling);
 
             if (sibling->data.window != nullptr)
             {
@@ -648,7 +657,7 @@ namespace Ossium::Editor
                 sibling->parent->data.window = sibling->data.window;
                 sibling->data.window->node = sibling->parent;
                 layout.Remove(sibling);
-                //Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
+                Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
             }
             else
             {
@@ -670,34 +679,25 @@ namespace Ossium::Editor
                 else
                 {
                     // In this scenario, move all the children of the sibling node 2 levels up while maintaining the order.
-                    int siblingParentIndex = -1;
-                    for (auto child : sibling->parent->parent->children)
+                    int insertIndex = sibling->parent->childIndex;
+                    Logger::EngineLog().Debug("Removing null sibling at depth {0} child index {1}, moved it's children up 2 levels.", sibling->depth, insertIndex);
+                    vector<Node<EditorRect>*> children = sibling->children;
+                    for (auto child : children)
                     {
-                        siblingParentIndex++;
-                        if (child == sibling->parent)
-                        {
-                            break;
-                        }
+                        child->SetParent(sibling->parent->parent, insertIndex);
+                        Logger::EngineLog().Info("Inserted child at {0} (new depth = {1}, true child index = {2})", insertIndex, child->depth, child->childIndex);
+                        insertIndex++;
                     }
-                    for (auto child : sibling->children)
-                    {
-                        child->SetParent(sibling->parent->parent, siblingParentIndex);
-                        siblingParentIndex++;
-                    }
-                    // Remove both the sibling node and it's parent in one call
+                    // Remove both the sibling node and it's parent
                     layout.Remove(sibling->parent);
-                    //Logger::EngineLog().Debug("Removed sibling, moved it's children up 2 levels.");
                 }
             }
             updateViewports = true;
-        }
-        //Logger::EngineLog().Debug("Removing node {0}", source->node);
-        if (!layout.Remove(source->node))
-        {
-            return false;
+            Logger::EngineLog().Debug("Normalised tree after removing a window node");
         }
         if (source != nullptr)
         {
+            Logger::EngineLog().Debug("Destroying window \"{0}\"", source->title);
             delete source;
         }
         else

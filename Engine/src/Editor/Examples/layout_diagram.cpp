@@ -40,14 +40,14 @@ namespace Ossium::Editor
                     //Logger::EngineLog().Debug("Next parentX cleared, level {0}", n->depth - 1);
 
                     parentIndex = 0;
-                    Logger::EngineLog().Debug("new level, parentIndex = 0");
+                    //Logger::EngineLog().Debug("new level, parentIndex = 0");
                 }
                 else
                 {
                     parentIndex += (int)(currentParent != n->parent);
                     if (currentParent != n->parent)
                     {
-                        Logger::EngineLog().Debug("parentIndex incremented");
+                        //Logger::EngineLog().Debug("parentIndex incremented");
                     }
                 }
             }
@@ -72,7 +72,7 @@ namespace Ossium::Editor
             x += nodeSize * 2;
 
             currentParent = n->parent;
-            Logger::EngineLog().Debug("parentX = {0} at level {1}, nextParentX = {2} (node: {3} parent: {4})", parentX, n->depth, nextParentX, n, n->parent);
+            //Logger::EngineLog().Debug("parentX = {0} at level {1}, nextParentX = {2} (node: {3} parent: {4})", parentX, n->depth, nextParentX, n, n->parent);
 
         }
 

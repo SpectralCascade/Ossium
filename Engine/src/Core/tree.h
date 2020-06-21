@@ -61,16 +61,16 @@ namespace Ossium
         /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
         void SetParent(Node<T>* node, int index = -1)
         {
+            Logger::EngineLog().Info("\nInsert index = {0}, childIndex = {1}\n\n", index, childIndex);
             if (parent != nullptr)
             {
+                DEBUG_ASSERT(childIndex < parent->children.size(), "err");
                 // First, update the current parent of the node
-                for (auto itr = parent->children.begin(); itr != parent->children.end(); itr++)
+                parent->children.erase(parent->children.begin() + childIndex);
+                for (auto i = parent->children.begin() + childIndex, counti = parent->children.end(); i < counti; i++)
                 {
-                    if (*itr == this)
-                    {
-                        parent->children.erase(itr);
-                        break;
-                    }
+                    // Update children
+                    (*i)->childIndex--;
                 }
             }
             // Now reassign the parent
@@ -81,6 +81,11 @@ namespace Ossium
                 {
                     parent->children.insert(parent->children.begin() + index, this);
                     childIndex = index;
+                    for (auto i = parent->children.begin() + childIndex + 1, counti = parent->children.end(); i < counti; i++)
+                    {
+                        // Update children
+                        (*i)->childIndex++;
+                    }
                 }
                 else
                 {
@@ -92,6 +97,7 @@ namespace Ossium
             else
             {
                 depth = 0;
+                childIndex = 0;
                 // TODO: roots!
             }
         }
@@ -126,32 +132,7 @@ namespace Ossium
         /// Adds data to the tree. If parent is null, adds to root node children. Returns pointer to the node
         Node<T>* Insert(T data, Node<T>* parent = nullptr)
         {
-            Node<T>* node = new Node<T>();
-            node->data = data;
-            node->parent = parent;
-            Insert(node);
-            return node;
-        }
-
-        void Insert(Node<T>* node)
-        {
-            node->id = nextId;
-            if (node->parent != nullptr)
-            {
-                node->childIndex = node->parent->children.size();
-                node->parent->children.push_back(node);
-                node->depth = node->parent->depth + 1;
-            }
-            else
-            {
-                node->childIndex = roots.size();
-                roots.push_back(node);
-                node->depth = 0;
-            }
-
-            updateFlattened = true;
-            total++;
-            nextId++;
+            return Insert(data, parent, parent != nullptr ? parent->children.size() : 0);
         }
 
         /// Creates a node and inserts at a particular index in the specified parent's children. If parent is null, the node is inserted in the roots array at the given index.
@@ -162,23 +143,24 @@ namespace Ossium
             node->data = data;
             node->parent = parent;
             node->id = nextId;
-            node->childIndex = childIndex;
-            node->depth = parent != nullptr ? parent->depth + 1 : 0;
-            vector<Node<T>*>& children = parent != nullptr ? parent->children : roots;
 
-            DEBUG_ASSERT(childIndex >= 0 && childIndex <= children.size(), "Tree insertion error - child index out of range!");
-
-            //Logger::EngineLog().Info("Placing at index {0}", childIndex);
-
-            children.insert(children.begin() + childIndex, node);
-            for (auto childItr = children.begin() + childIndex + 1; childItr < children.end(); childItr++)
+            if (parent != nullptr)
             {
-                (*childItr)->childIndex++;
+                DEBUG_ASSERT(childIndex >= 0 && childIndex <= parent->children.size(), "Tree insertion error - child index out of range!");
+                node->childIndex = parent->children.size();
+                parent->children.push_back(node);
+                node->depth = parent->depth + 1;
             }
-
+            else
+            {
+                node->childIndex = roots.size();
+                roots.push_back(node);
+                node->depth = 0;
+            }
             updateFlattened = true;
             total++;
             nextId++;
+
             return node;
         }
 
