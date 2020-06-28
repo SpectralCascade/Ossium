@@ -24,7 +24,7 @@ namespace Ossium::Editor
         void Init(InputController* inputController, ResourceController* resourceController);
 
         /// Returns the main context menu.
-        static ContextMenu* GetMainInstance();
+        static ContextMenu* GetMainInstance(ResourceController* resourceController);
 
         /// Sets the dimensions of the option icons.
         static void SetIconDimensions(int w, int h);
@@ -49,7 +49,7 @@ namespace Ossium::Editor
         void Add(string text, function<void(void)> onClick, Image* icon = nullptr, bool enabled = true);
 
         /// Adds an option to the context menu that pops out into another context menu when hovered (useful for grouping options).
-        /*ContextMenu* AddPopoutMenu(string text, Image* icon = nullptr, bool enabled = true);*/
+        //ContextMenu* AddPopoutMenu(string text, Image* icon = nullptr, bool enabled = true);
 
         /// Simply sets the options as a list directly.
         void SetOptions(vector<Option> options);

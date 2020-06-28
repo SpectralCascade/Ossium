@@ -629,6 +629,12 @@ namespace Ossium
 
     void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        if (&renderer != currentRenderer)
+        {
+            currentRenderer = &renderer;
+            atlas.PopGPU();
+            updateAtlasTexture = true;
+        }
         if (updateAtlasTexture)
         {
             atlas.PushGPU(renderer, SDL_TEXTUREACCESS_STATIC);

@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
         // Update the GUI
         window->Update();
         //layoutView->Update();
-        ContextMenu::GetMainInstance()->Update();
+        ContextMenu::GetMainInstance(&resources)->Update();
     }
 
     /// TODO: fix crash when deleting these editor layouts

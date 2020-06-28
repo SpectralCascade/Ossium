@@ -32,15 +32,15 @@ namespace Ossium::Editor
 
             if (Button("Test Dropdown"))
             {
-                if (ContextMenu::GetMainInstance()->GetOptions().empty())
+                if (ContextMenu::GetMainInstance(resources)->GetOptions().empty())
                 {
-                    ContextMenu::GetMainInstance()->SetOptions({
+                    ContextMenu::GetMainInstance(resources)->SetOptions({
                         ContextMenu::Option("Beep", [] () { Logger::EngineLog().Info("Beep!"); }),
                         ContextMenu::Option("Boop", [] () { Logger::EngineLog().Info("Boop!"); }),
                         ContextMenu::Option("Wow", [] () { Logger::EngineLog().Info("Wooooooowww"); })
                     });
                 }
-                ContextMenu::GetMainInstance()->Show(GetEditorLayout()->GetNativeWindow()->GetPosition() + Vector2(viewport.x, viewport.y) + GetLayoutPosition());
+                ContextMenu::GetMainInstance(resources)->Show(GetEditorLayout()->GetNativeWindow()->GetPosition() + Vector2(viewport.x, viewport.y) + GetLayoutPosition());
             }
 
             Space(20);

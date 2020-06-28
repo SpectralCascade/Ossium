@@ -21,6 +21,15 @@ namespace Ossium::Editor
 
     ContextMenu::~ContextMenu()
     {
+        for (Option& option : options)
+        {
+            if (option.expansion != nullptr)
+            {
+                delete option.expansion;
+                option.expansion = nullptr;
+            }
+        }
+
         delete renderer;
         delete nativeWindow;
         if (mainContextMenu == this)
@@ -31,13 +40,13 @@ namespace Ossium::Editor
         delete input;
     }
 
-    ContextMenu* ContextMenu::GetMainInstance()
+    ContextMenu* ContextMenu::GetMainInstance(ResourceController* resourceController)
     {
         if (mainContextMenu == nullptr)
         {
             mainContextMenu = new ContextMenu();
             mainInput = new InputController();
-            mainResources = new ResourceController();
+            mainResources = resourceController;
             mainContextMenu->Init(mainInput, mainResources);
             mainContextMenu->nativeWindow->OnFocusLost += [&] (Window& caller) { mainContextMenu->Hide(); };
         }
@@ -197,7 +206,6 @@ namespace Ossium::Editor
     /*ContextMenu* ContextMenu::AddPopoutMenu(string text, Image* icon, bool enabled)
     {
         ContextMenu* expansion = new ContextMenu();
-        // TODO: own input controller?
         expansion->Init(nativeInput, resources);
         options.push_back(Option(text, [] () {}, expansion, enabled));
         return expansion;

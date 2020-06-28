@@ -395,6 +395,9 @@ namespace Ossium
         /// The number of glyphs that have been batched so far. This is reset to zero when BatchPackBegin() or BatchPackEnd() are called.
         Uint32 batched = 0;
 
+        /// The renderer that is currently associated with the font atlas.
+        Renderer* currentRenderer = nullptr;
+
     };
 
 }
