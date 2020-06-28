@@ -178,11 +178,11 @@ namespace Ossium::Editor
         );
         NeuronClickableStyle NEURON_CONTEXT_OPTION_STYLE = NeuronClickableStyle(
             Color(240, 240, 240),
-            Color(50, 50, 255),
-            Color(50, 50, 255),
+            Color(0, 200, 255),
+            Color(0, 200, 255),
             NEURON_TEXT_NORMAL_STYLE,
-            NEURON_TEXT_INVERSE_STYLE,
-            NEURON_TEXT_INVERSE_STYLE,
+            NEURON_TEXT_NORMAL_STYLE,
+            NEURON_TEXT_NORMAL_STYLE,
             Color(240, 240, 240),
             Color(240, 240, 240),
             Color(240, 240, 240),
