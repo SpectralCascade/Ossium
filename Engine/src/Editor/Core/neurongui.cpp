@@ -664,7 +664,21 @@ namespace Ossium::Editor
             Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             Vector2 layoutPos = GetLayoutPosition();
 
-            bool result = Button(useMaxWidth ? renderer->GetWidth() - xpadding : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding);
+            bool isHovered, isPressed;
+            bool result = Button(useMaxWidth ? renderer->GetWidth() - xpadding : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding, nullptr, &isHovered, &isPressed);
+            if (isHovered)
+            {
+                textLayout.mainColor = style.hoverTextStyle.fg;
+                textLayout.mainStyle = style.hoverTextStyle.style;
+                textLayout.SetText(*renderer, font, text, true);
+            }
+            else if (isPressed)
+            {
+                textLayout.mainColor = style.clickTextStyle.fg;
+                textLayout.mainStyle = style.clickTextStyle.style;
+                textLayout.SetText(*renderer, font, text, true);
+            }
+            textLayout.Update(font);
             textLayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
             return result;
         }
@@ -681,7 +695,7 @@ namespace Ossium::Editor
         return Button(image->GetWidth(), image->GetHeight(), style, invertOutline, xpadding, ypadding, image);
     }
 
-    bool NeuronGUI::Button(int w, int h, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Image* image)
+    bool NeuronGUI::Button(int w, int h, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Image* image, bool* isHovered, bool* isPressed)
     {
         if (IsVisible())
         {
@@ -691,6 +705,14 @@ namespace Ossium::Editor
 
             bool hovered = buttonDest.Contains(InputState.mousePos);
             bool pressed = InputState.mousePressed && buttonDest.Contains(InputState.mouseDownPos);
+            if (isHovered != nullptr)
+            {
+                *isHovered = hovered;
+            }
+            if (isPressed != nullptr)
+            {
+                *isPressed = pressed;
+            }
 
             SDL_Color buttonColour = hovered ?
                 (pressed ?
