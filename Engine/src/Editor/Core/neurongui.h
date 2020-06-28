@@ -197,7 +197,7 @@ namespace Ossium::Editor
         Vector2 nativeOrigin = Vector2::Zero;
 
         /// Read only reference to the input state information
-        const NeuronInputState& InputState = input_state;
+        NeuronInputState& InputState = input_state;
 
     public:
         CONSTRUCT_SCHEMA(SchemaRoot, NeuronViewportSchema);

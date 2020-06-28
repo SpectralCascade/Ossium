@@ -666,7 +666,7 @@ namespace Ossium::Editor
                 sibling->parent->data.window = sibling->data.window;
                 sibling->data.window->node = sibling->parent;
                 layout.Remove(sibling);
-                Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
+                //Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
             }
             else
             {
@@ -689,12 +689,12 @@ namespace Ossium::Editor
                 {
                     // In this scenario, move all the children of the sibling node 2 levels up while maintaining the order.
                     int insertIndex = sibling->parent->childIndex;
-                    Logger::EngineLog().Debug("Removing null sibling at depth {0} child index {1}, moved it's children up 2 levels.", sibling->depth, insertIndex);
+                    //Logger::EngineLog().Debug("Removing null sibling at depth {0} child index {1}, moved it's children up 2 levels.", sibling->depth, insertIndex);
                     vector<Node<EditorRect>*> children = sibling->children;
                     for (auto child : children)
                     {
                         child->SetParent(sibling->parent->parent, insertIndex);
-                        Logger::EngineLog().Info("Inserted child at {0} (new depth = {1}, true child index = {2})", insertIndex, child->depth, child->childIndex);
+                        //Logger::EngineLog().Info("Inserted child at {0} (new depth = {1}, true child index = {2})", insertIndex, child->depth, child->childIndex);
                         insertIndex++;
                     }
                     // Remove both the sibling node and it's parent
@@ -702,7 +702,7 @@ namespace Ossium::Editor
                 }
             }
             updateViewports = true;
-            Logger::EngineLog().Debug("Normalised tree after removing a window node");
+            //Logger::EngineLog().Debug("Normalised tree after removing a window node");
         }
         if (source != nullptr)
         {

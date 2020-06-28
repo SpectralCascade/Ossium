@@ -85,8 +85,9 @@ namespace Ossium::Editor
 
         renderer->SetDrawColor(backgroundColor);
         SDL_RenderClear(renderer->GetRendererSDL());
+        nativeOrigin = nativeWindow->GetPosition();
         NeuronGUI::Refresh();
-        Logger::EngineLog().Info("InputState = {0}", InputState.ToString());
+        //Logger::EngineLog().Info("InputState = {0}", InputState.ToString());
         if (fitRenderer)
         {
             fitRenderer = false;
@@ -131,6 +132,8 @@ namespace Ossium::Editor
             if (Button(option.text, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, iconWidth + 4, 2, true))
             {
                 option.onClick();
+                Hide();
+                break;
             }
 
             // Draw extra features
@@ -220,6 +223,7 @@ namespace Ossium::Editor
         nativeWindow->SetPosition(position);
         nativeWindow->Show();
         nativeWindow->Focus();
+        TriggerUpdate();
     }
 
     void ContextMenu::Hide()
