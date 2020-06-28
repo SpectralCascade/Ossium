@@ -152,28 +152,30 @@ namespace Ossium::Editor
         Vector2 scrollPos = Vector2::Zero;
 
         /// Contains input state information
-        struct NeuronInputState
+        struct NeuronInputState : public Schema<NeuronInputState, 7>
         {
+            DECLARE_BASE_SCHEMA(NeuronInputState, 7);
+
             /// The position of the mouse in the current Refresh() call.
-            Vector2 mousePos = Vector2::Zero;
+            M(Vector2, mousePos) = Vector2::Zero;
 
             /// The position of the mouse in the previous Refresh() call.
-            Vector2 lastMousePos = Vector2::Zero;
+            M(Vector2, lastMousePos) = Vector2::Zero;
 
             /// The position of the mouse when it last pressed down.
-            Vector2 mouseDownPos = Vector2::NegOneNegOne;
+            M(Vector2, mouseDownPos) = Vector2::NegOneNegOne;
 
             /// The position of the mouse when it last released.
-            Vector2 mouseUpPos = Vector2::NegOneNegOne;
+            M(Vector2, mouseUpPos) = Vector2::NegOneNegOne;
 
             /// Whether the mouse is currently pressed.
-            bool mousePressed = false;
+            M(bool, mousePressed) = false;
 
             /// Whether the mouse was pressed in the last Refresh() call.
-            bool mouseWasPressed = false;
+            M(bool, mouseWasPressed) = false;
 
             /// True if the mouse is hovering over a text field.
-            bool textFieldHovered = false;
+            M(bool, textFieldHovered) = false;
 
         } input_state;
 
@@ -271,10 +273,13 @@ namespace Ossium::Editor
         string TextField(string text);
         string TextField(string text, NeuronClickableStyle style, SDL_Color cursorColor = Colors::BLACK);
 
+        /// Dumps an image at the current layout position.
+        void PlaceImage(Image* image);
+
         /// Displays a button that takes input. When a user activates the button, this returns true.
         bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
-        bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
-        bool Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
+        bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false);
+        bool Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false);
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
         bool Button(int w, int h, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr);

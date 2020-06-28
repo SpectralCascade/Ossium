@@ -17,6 +17,7 @@
 #include "funcutils.h"
 #include "window.h"
 #include "coremaths.h"
+#include "image.h"
 
 namespace Ossium
 {
@@ -224,6 +225,49 @@ namespace Ossium
         border = false;
     }
 
+    void Window::SetIcon(Image* image)
+    {
+        if (image->GetSurface() != nullptr)
+        {
+            SDL_SetWindowIcon(window, image->GetSurface());
+        }
+        else
+        {
+            Logger::EngineLog().Warning("Attempted to set window icon with image that has a NULL surface!");
+        }
+    }
+
+    void Window::SetPosition(Vector2 position)
+    {
+        SDL_SetWindowPosition(window, (int)position.x, (int)position.y);
+    }
+
+    void Window::Show()
+    {
+        if (!shown)
+        {
+            shown = true;
+            SDL_ShowWindow(window);
+        }
+    }
+
+    void Window::Hide()
+    {
+        if (shown)
+        {
+            shown = false;
+            SDL_HideWindow(window);
+        }
+    }
+
+    void Window::Focus()
+    {
+        if (!focus)
+        {
+            SDL_RaiseWindow(window);
+        }
+    }
+
     bool Window::IsMinimised()
     {
         return minimized;
@@ -242,6 +286,11 @@ namespace Ossium
     bool Window::IsMouseFocus()
     {
         return mouseFocus;
+    }
+
+    bool Window::IsShown()
+    {
+        return shown;
     }
 
 /*

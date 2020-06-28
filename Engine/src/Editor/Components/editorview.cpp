@@ -297,7 +297,7 @@ namespace Ossium::Editor
         SDL_SetWindowMinimumSize(native->GetWindowSDL(), (int)MIN_DIMENSIONS.x, (int)MIN_DIMENSIONS.y);
 
         renderer = new Renderer(native);
-        renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, native->GetWidth(), native->GetHeight());
+        renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w <= 0 ? 1 : w, h <= 0 ? 1 : h);
 
         // Use breadth-first traversal to get the flat tree
         layout.SetFlatTreeBuildMode(false);

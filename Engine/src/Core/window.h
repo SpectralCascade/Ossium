@@ -33,6 +33,7 @@ namespace Ossium
 {
 
     struct Vector2;
+    class Image;
 
     /// Wrapper class for SDL_Window
     class OSSIUM_EDL Window
@@ -76,6 +77,16 @@ namespace Ossium
         void SetBorderless();
         /// Sets the title of this window.
         void SetTitle(string title);
+        /// Sets the icon of this window.
+        void SetIcon(Image* image);
+        /// Sets the position of this window on the display.
+        void SetPosition(Vector2 position);
+        /// Shows this window.
+        void Show();
+        /// Hides this window.
+        void Hide();
+        /// Focuses this window.
+        void Focus();
 
         // Return active flags
         /// Is this window minimised?
@@ -86,6 +97,8 @@ namespace Ossium
         bool IsFocus();
         /// Is the mouse cursor over the window?
         bool IsMouseFocus();
+        /// Is this window shown or hidden?
+        bool IsShown();
 
         // Callbacks for window state changes
         /// Called when the window size has been changed; this includes cases the size is changed directly by the API.
@@ -135,6 +148,7 @@ namespace Ossium
         bool focus;
         bool mouseFocus;
         bool border;
+        bool shown;
 
     };
 

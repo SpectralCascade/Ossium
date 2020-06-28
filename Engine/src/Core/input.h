@@ -453,7 +453,7 @@ namespace Ossium
     {
     public:
         InputController();
-        ~InputController();
+        virtual ~InputController();
 
         /// Adds an input context; ideally do this just once when starting Ossium
         void AddContext(string name, InputContext* context);

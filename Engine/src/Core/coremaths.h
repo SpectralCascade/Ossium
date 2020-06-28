@@ -106,6 +106,7 @@ namespace Ossium
 
         const static Vector2 Zero;
         const static Vector2 OneOne;
+        const static Vector2 OneNegOne;
         const static Vector2 OneZero;
         const static Vector2 ZeroOne;
         const static Vector2 NegOneNegOne;

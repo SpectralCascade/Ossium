@@ -162,6 +162,7 @@ namespace Ossium
 
     const Vector2 Vector2::Zero         =   {0, 0};
     const Vector2 Vector2::OneOne       =   {1, 1};
+    const Vector2 Vector2::OneNegOne    =   {1, -1};
     const Vector2 Vector2::OneZero      =   {1, 0};
     const Vector2 Vector2::ZeroOne      =   {0, 1};
     const Vector2 Vector2::NegOneNegOne =   {-1, -1};

@@ -1,6 +1,7 @@
 #include "demo_window_docking.h"
 #include "simple_demo_window.h"
 #include "layout_diagram.h"
+#include "../Core/contextmenu.h"
 
 namespace Ossium::Editor
 {
@@ -28,6 +29,21 @@ namespace Ossium::Editor
             style.normalTextStyle.fg = Colors::WHITE;
             style.hoverTextStyle.fg = Colors::WHITE;
             style.clickTextStyle.fg = Color(100, 100, 100);
+
+            if (Button("Test Dropdown"))
+            {
+                if (ContextMenu::GetMainInstance()->GetOptions().empty())
+                {
+                    ContextMenu::GetMainInstance()->SetOptions({
+                        ContextMenu::Option("Beep", [] () { Logger::EngineLog().Info("Beep!"); }),
+                        ContextMenu::Option("Boop", [] () { Logger::EngineLog().Info("Boop!"); }),
+                        ContextMenu::Option("Wow", [] () { Logger::EngineLog().Info("Wooooooowww"); })
+                    });
+                }
+                ContextMenu::GetMainInstance()->Show(GetEditorLayout()->GetNativeWindow()->GetPosition() + Vector2(viewport.x, viewport.y) + GetLayoutPosition());
+            }
+
+            Space(20);
 
             if (Button("<b>X</b>", style, true, 12, 8))
             {

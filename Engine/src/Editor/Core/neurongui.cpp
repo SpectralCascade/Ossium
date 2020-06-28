@@ -177,16 +177,16 @@ namespace Ossium::Editor
             Colors::WHITE
         );
         NeuronClickableStyle NEURON_CONTEXT_OPTION_STYLE = NeuronClickableStyle(
-            Colors::WHITE,
-            Color(0, 255, 255, 100),
-            Color(0, 255, 255, 100),
+            Color(240, 240, 240),
+            Color(50, 50, 255),
+            Color(50, 50, 255),
             NEURON_TEXT_NORMAL_STYLE,
-            NEURON_TEXT_NORMAL_STYLE,
-            NEURON_TEXT_NORMAL_STYLE,
-            Colors::WHITE,
-            Color(200, 200, 200, 255),
-            Colors::WHITE,
-            Colors::WHITE
+            NEURON_TEXT_INVERSE_STYLE,
+            NEURON_TEXT_INVERSE_STYLE,
+            Color(240, 240, 240),
+            Color(240, 240, 240),
+            Color(240, 240, 240),
+            Color(240, 240, 240)
         );
     }
 
@@ -625,12 +625,19 @@ namespace Ossium::Editor
         return text;
     }
 
+    void NeuronGUI::PlaceImage(Image* image)
+    {
+        Vector2 dimensions = Vector2(image->GetWidth(), image->GetHeight());
+        image->Render(renderer->GetRendererSDL(), Rect(GetLayoutPosition().x, GetLayoutPosition().y, dimensions.x, dimensions.y).SDL());
+        Move(dimensions);
+    }
+
     bool NeuronGUI::Button(string text, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
     {
         return Button(text, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding);
     }
 
-    bool NeuronGUI::Button(string text, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    bool NeuronGUI::Button(string text, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth)
     {
         if (IsVisible())
         {
@@ -645,19 +652,19 @@ namespace Ossium::Editor
             tlayout.mainStyle = style.normalTextStyle.style;
             tlayout.SetText(*renderer, font, text, true);
             tlayout.Update(font);
-            return Button(text, tlayout, style, invertOutline, xpadding, ypadding);
+            return Button(text, tlayout, style, invertOutline, xpadding, ypadding, useMaxWidth);
         }
         return false;
     }
 
-    bool NeuronGUI::Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    bool NeuronGUI::Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth)
     {
         if (IsVisible())
         {
             Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             Vector2 layoutPos = GetLayoutPosition();
 
-            bool result = Button(textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding);
+            bool result = Button(useMaxWidth ? renderer->GetWidth() - xpadding : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding);
             textLayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
             return result;
         }
