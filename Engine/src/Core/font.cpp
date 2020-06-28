@@ -28,7 +28,7 @@ namespace Ossium
     //
 
     TextStyle::TextStyle(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
-        int styling, int renderingMode, SDL_Color backgroundColor)
+        int styling, int renderingMode, int alignment, SDL_Color backgroundColor)
     {
         fontPath = font;
         ptsize = fontSize;
@@ -38,6 +38,7 @@ namespace Ossium
         outline = outlineThickness;
         style = styling;
         rendermode = renderingMode;
+        this->alignment = alignment;
         bg = backgroundColor;
     }
 

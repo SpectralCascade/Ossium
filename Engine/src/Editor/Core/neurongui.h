@@ -277,11 +277,11 @@ namespace Ossium::Editor
         void PlaceImage(Image* image);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
-        bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
-        bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false);
-        bool Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false);
-        bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
-        bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4);
+        bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(int w, int h, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr, bool* isHovered = nullptr, bool* isPressed = nullptr);
 
         /// Behaves somewhat like a regular button... except it's invisible and it's position is absolute.

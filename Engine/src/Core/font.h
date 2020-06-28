@@ -45,6 +45,14 @@ namespace Ossium
             RIGHT_TO_LEFT
         };
 
+        enum TextAlignment
+        {
+            LEFT_ALIGNED = 0,
+            RIGHT_ALIGNED,
+            CENTERED,
+            JUSTIFIED
+        };
+
     }
 
     enum TextRenderModes
@@ -55,9 +63,9 @@ namespace Ossium
         RENDERTEXT_BLEND_WRAPPED
     };
 
-    struct TextStyle : public Schema<TextStyle, 9>
+    struct TextStyle : public Schema<TextStyle, 10>
     {
-        DECLARE_BASE_SCHEMA(TextStyle, 9);
+        DECLARE_BASE_SCHEMA(TextStyle, 10);
 
         TextStyle(
             string font = "",
@@ -68,6 +76,7 @@ namespace Ossium
             int outlineThickness = 0,
             int styling = 0,
             int renderingMode = RENDERTEXT_BLEND,
+            int alignment = Typographic::TextAlignment::LEFT_ALIGNED,
             SDL_Color backgroundColor = Colors::TRANSPARENT
         );
 
@@ -79,6 +88,7 @@ namespace Ossium
         M(int, outline) = 0;
         M(int, style) = 0;
         M(int, rendermode) = RENDERTEXT_SOLID;
+        M(int, alignment) = Typographic::TextAlignment::LEFT_ALIGNED;
         M(SDL_Color, bg) = Colors::TRANSPARENT;
     };
 

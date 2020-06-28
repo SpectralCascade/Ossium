@@ -27,19 +27,6 @@ using namespace std;
 namespace Ossium
 {
 
-    namespace Typographic
-    {
-
-        enum TextAlignment
-        {
-            LEFT_ALIGNED = 0,
-            RIGHT_ALIGNED,
-            CENTERED,
-            JUSTIFIED
-        };
-
-    }
-
     struct TextLayoutSchema : public Schema<TextLayoutSchema, 9>
     {
         DECLARE_BASE_SCHEMA(TextLayoutSchema, 9);

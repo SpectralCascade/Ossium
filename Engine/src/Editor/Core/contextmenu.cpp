@@ -138,7 +138,23 @@ namespace Ossium::Editor
 
             Vector2 oldPos = GetLayoutPosition();
 
-            if (Button(option.text, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, iconWidth + 4, 2, true))
+            // Setup text layout for the button
+            int xpadding = iconWidth + 4;
+            int ypadding = 2;
+
+            TextLayout tlayout;
+            Vector2 limits = Vector2(viewport.w - oldPos.x - xpadding, renderer->GetHeight() - ypadding);
+            tlayout.SetPointSize(NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.ptsize);
+            tlayout.SetBounds(limits);
+            tlayout.mainColor = NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.fg;
+            tlayout.mainStyle = NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.style;
+            tlayout.SetAlignment(Typographic::TextAlignment::LEFT_ALIGNED);
+            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
+            tlayout.SetText(*renderer, font, option.text, true);
+            tlayout.Update(font);
+
+            bool hovered;
+            if (Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, nullptr, &hovered))
             {
                 option.onClick();
                 Hide();
@@ -152,12 +168,9 @@ namespace Ossium::Editor
             }
             if (option.expansion != nullptr && option.expansion != this)
             {
-                bool hovered = false;
-                // Check if hovered (we only care about the Y axis), if so show the pop-out menu.
-                if (oldPos.y + InputState.mousePos.y < GetLayoutPosition().y && attached != option.expansion)
+                // Check if hovered, if so show the pop-out menu.
+                if (hovered && attached != option.expansion)
                 {
-                    hovered = true;
-
                     if (attached != nullptr)
                     {
                         attached->Hide();
@@ -203,13 +216,13 @@ namespace Ossium::Editor
         options.push_back(Option(text, onClick, icon, nullptr, enabled));
     }
 
-    /*ContextMenu* ContextMenu::AddPopoutMenu(string text, Image* icon, bool enabled)
+    ContextMenu* ContextMenu::AddPopoutMenu(string text, Image* icon, bool enabled)
     {
         ContextMenu* expansion = new ContextMenu();
         expansion->Init(nativeInput, resources);
-        options.push_back(Option(text, [] () {}, expansion, enabled));
+        options.push_back(Option(text, [] () {}, icon, expansion, enabled));
         return expansion;
-    }*/
+    }
 
     void ContextMenu::SetOptions(vector<Option> options)
     {

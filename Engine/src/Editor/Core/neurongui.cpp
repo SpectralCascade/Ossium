@@ -124,6 +124,7 @@ namespace Ossium::Editor
             0,
             0,
             0,
+            Typographic::TextAlignment::LEFT_ALIGNED,
             RENDERTEXT_BLEND_WRAPPED
         );
         TextStyle NEURON_TEXT_INVERSE_STYLE = TextStyle(
@@ -134,6 +135,29 @@ namespace Ossium::Editor
             0,
             0,
             0,
+            Typographic::TextAlignment::LEFT_ALIGNED,
+            RENDERTEXT_BLEND_WRAPPED
+        );
+        TextStyle NEURON_TEXT_NORMAL_CENTERED_STYLE = TextStyle(
+            "assets/Orkney Regular.ttf",
+            12,
+            Colors::BLACK,
+            0,
+            0,
+            0,
+            0,
+            Typographic::TextAlignment::CENTERED,
+            RENDERTEXT_BLEND_WRAPPED
+        );
+        TextStyle NEURON_TEXT_INVERSE_CENTERED_STYLE = TextStyle(
+            "assets/Orkney Regular.ttf",
+            12,
+            Colors::WHITE,
+            0,
+            0,
+            0,
+            0,
+            Typographic::TextAlignment::CENTERED,
             RENDERTEXT_BLEND_WRAPPED
         );
         NeuronClickableStyle NEURON_BUTTON_STYLE = NeuronClickableStyle(
@@ -632,12 +656,12 @@ namespace Ossium::Editor
         Move(dimensions);
     }
 
-    bool NeuronGUI::Button(string text, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    bool NeuronGUI::Button(string text, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed)
     {
-        return Button(text, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding);
+        return Button(text, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding, useMaxWidth, isHovered, isPressed);
     }
 
-    bool NeuronGUI::Button(string text, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth)
+    bool NeuronGUI::Button(string text, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed)
     {
         if (IsVisible())
         {
@@ -645,34 +669,43 @@ namespace Ossium::Editor
             TextLayout tlayout;
             Vector2 layoutPos = GetLayoutPosition();
             Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
-            // TODO: support other text styles for hover and click?
             tlayout.SetPointSize(style.normalTextStyle.ptsize);
             tlayout.SetBounds(limits);
             tlayout.mainColor = style.normalTextStyle.fg;
             tlayout.mainStyle = style.normalTextStyle.style;
+            tlayout.SetAlignment(useMaxWidth ? Typographic::TextAlignment::CENTERED : (Typographic::TextAlignment)style.normalTextStyle.alignment);
             tlayout.SetText(*renderer, font, text, true);
             tlayout.Update(font);
-            return Button(text, tlayout, style, invertOutline, xpadding, ypadding, useMaxWidth);
+            return Button(text, tlayout, style, invertOutline, xpadding, ypadding, useMaxWidth, isHovered, isPressed);
         }
         return false;
     }
 
-    bool NeuronGUI::Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth)
+    bool NeuronGUI::Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed)
     {
         if (IsVisible())
         {
             Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             Vector2 layoutPos = GetLayoutPosition();
 
-            bool isHovered, isPressed;
-            bool result = Button(useMaxWidth ? renderer->GetWidth() - xpadding : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding, nullptr, &isHovered, &isPressed);
-            if (isHovered)
+            bool hovered;
+            bool pressed;
+            if (isHovered == nullptr)
+            {
+                isHovered = &hovered;
+            }
+            if (isPressed == nullptr)
+            {
+                isPressed = &pressed;
+            }
+            bool result = Button(useMaxWidth ? viewport.w - xpadding : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding, nullptr, isHovered, isPressed);
+            if (*isHovered && (textLayout.mainColor != style.hoverTextStyle.fg || textLayout.mainStyle != style.hoverTextStyle.style))
             {
                 textLayout.mainColor = style.hoverTextStyle.fg;
                 textLayout.mainStyle = style.hoverTextStyle.style;
                 textLayout.SetText(*renderer, font, text, true);
             }
-            else if (isPressed)
+            else if (*isPressed && (textLayout.mainColor != style.clickTextStyle.fg || textLayout.mainStyle != style.clickTextStyle.style))
             {
                 textLayout.mainColor = style.clickTextStyle.fg;
                 textLayout.mainStyle = style.clickTextStyle.style;
@@ -685,14 +718,14 @@ namespace Ossium::Editor
         return false;
     }
 
-    bool NeuronGUI::Button(Image* image, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    bool NeuronGUI::Button(Image* image, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool* isHovered, bool* isPressed)
     {
-        return Button(image, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding);
+        return Button(image, NeuronStyles::NEURON_BUTTON_STYLE, invertOutline, xpadding, ypadding, isHovered, isPressed);
     }
 
-    bool NeuronGUI::Button(Image* image, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    bool NeuronGUI::Button(Image* image, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool* isHovered, bool* isPressed)
     {
-        return Button(image->GetWidth(), image->GetHeight(), style, invertOutline, xpadding, ypadding, image);
+        return Button(image->GetWidth(), image->GetHeight(), style, invertOutline, xpadding, ypadding, image, isHovered, isPressed);
     }
 
     bool NeuronGUI::Button(int w, int h, NeuronClickableStyle style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Image* image, bool* isHovered, bool* isPressed)
