@@ -2,6 +2,7 @@
 #include "simple_demo_window.h"
 #include "layout_diagram.h"
 #include "../Core/contextmenu.h"
+#include "font_viewer.h"
 
 namespace Ossium::Editor
 {
@@ -28,18 +29,15 @@ namespace Ossium::Editor
             style.hoverTextStyle.fg = Colors::WHITE;
             style.clickTextStyle.fg = Color(100, 100, 100);
 
-            if (Button("Test Dropdown"))
+            if (Button("Windows"))
             {
                 if (ContextMenu::GetMainInstance(resources)->GetOptions().empty())
                 {
                     ContextMenu::GetMainInstance(resources)->SetOptions({
-                        ContextMenu::Option("Beep", [] () { Logger::EngineLog().Info("Beep!"); }),
-                        ContextMenu::Option("Boop", [] () { Logger::EngineLog().Info("Boop!"); }),
-                        ContextMenu::Option("Wow", [] () { Logger::EngineLog().Info("Wooooooowww"); }),
-                    });
-                    ContextMenu::GetMainInstance(resources)->AddPopoutMenu("Check this out...")->SetOptions({
-                        ContextMenu::Option("More beep!", [] () { Logger::EngineLog().Info("BEEP"); }),
-                        ContextMenu::Option("More boop!", [] () { Logger::EngineLog().Info("BOOP"); })
+                        ContextMenu::Option("Font Viewer", [&] () {
+                            GetEditorLayout()->Add<FontViewer>(this, DockingMode::RIGHT);
+                            ContextMenu::GetMainInstance(resources)->SetOptionEnabled(0, false);
+                        })
                     });
                 }
                 ContextMenu::GetMainInstance(resources)->Show(GetEditorLayout()->GetNativeWindow()->GetPosition() + Vector2(viewport.x, viewport.y) + GetLayoutPosition());

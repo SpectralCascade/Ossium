@@ -309,6 +309,14 @@
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
 		</Unit>
+		<Unit filename="src/Editor/Examples/font_viewer.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+		</Unit>
+		<Unit filename="src/Editor/Examples/font_viewer.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+		</Unit>
 		<Unit filename="src/Editor/Examples/layout_diagram.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />

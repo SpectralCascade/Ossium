@@ -138,6 +138,17 @@ namespace Ossium::Editor
             Typographic::TextAlignment::LEFT_ALIGNED,
             RENDERTEXT_BLEND_WRAPPED
         );
+        TextStyle NEURON_TEXT_GRAY_STYLE = TextStyle(
+            "assets/Orkney Regular.ttf",
+            12,
+            Color(180, 180, 180, 255),
+            0,
+            0,
+            0,
+            0,
+            Typographic::TextAlignment::LEFT_ALIGNED,
+            RENDERTEXT_BLEND_WRAPPED
+        );
         TextStyle NEURON_TEXT_NORMAL_CENTERED_STYLE = TextStyle(
             "assets/Orkney Regular.ttf",
             12,
@@ -207,6 +218,18 @@ namespace Ossium::Editor
             NEURON_TEXT_NORMAL_STYLE,
             NEURON_TEXT_NORMAL_STYLE,
             NEURON_TEXT_NORMAL_STYLE,
+            Color(240, 240, 240),
+            Color(240, 240, 240),
+            Color(240, 240, 240),
+            Color(240, 240, 240)
+        );
+        NeuronClickableStyle NEURON_CONTEXT_OPTION_DISABLED_STYLE = NeuronClickableStyle(
+            Color(240, 240, 240),
+            Color(0, 200, 255),
+            Color(0, 200, 255),
+            NEURON_TEXT_GRAY_STYLE,
+            NEURON_TEXT_GRAY_STYLE,
+            NEURON_TEXT_GRAY_STYLE,
             Color(240, 240, 240),
             Color(240, 240, 240),
             Color(240, 240, 240),

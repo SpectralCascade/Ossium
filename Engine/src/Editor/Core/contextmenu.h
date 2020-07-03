@@ -12,7 +12,7 @@ namespace Ossium::Editor
     public:
         struct Option
         {
-            Option(string text, function<void(void)> onClick, Image* icon = nullptr, ContextMenu* expansion = nullptr, bool enabled = true);
+            Option(string text, function<void(void)> onClick, bool enabled = true, Image* icon = nullptr, ContextMenu* expansion = nullptr);
 
             string text;
             ContextMenu* expansion;
@@ -50,6 +50,9 @@ namespace Ossium::Editor
 
         /// Adds an option to the context menu that pops out into another context menu when hovered (useful for grouping options).
         ContextMenu* AddPopoutMenu(string text, Image* icon = nullptr, bool enabled = true);
+
+        /// Attempts to enable or disable an option at the given index.
+        void SetOptionEnabled(unsigned int index, bool enable);
 
         /// Simply sets the options as a list directly.
         void SetOptions(vector<Option> options);

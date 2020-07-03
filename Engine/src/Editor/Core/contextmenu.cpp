@@ -3,7 +3,7 @@
 namespace Ossium::Editor
 {
 
-    ContextMenu::Option::Option(string text, function<void(void)> onClick, Image* icon, ContextMenu* expansion, bool enabled)
+    ContextMenu::Option::Option(string text, function<void(void)> onClick, bool enabled, Image* icon, ContextMenu* expansion)
     {
         this->text = text;
         this->onClick = onClick;
@@ -179,22 +179,30 @@ namespace Ossium::Editor
             Vector2 limits = Vector2(viewport.w - oldPos.x - xpadding, renderer->GetHeight() - ypadding);
             tlayout.SetPointSize(NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.ptsize);
             tlayout.SetBounds(limits);
-            tlayout.mainColor = NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.fg;
-            tlayout.mainStyle = NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.style;
+            tlayout.mainColor = option.enabled ? NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.fg : NeuronStyles::NEURON_CONTEXT_OPTION_DISABLED_STYLE.normalTextStyle.fg;
+            tlayout.mainStyle = option.enabled ? NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.style : NeuronStyles::NEURON_CONTEXT_OPTION_DISABLED_STYLE.normalTextStyle.style;
             tlayout.SetAlignment(Typographic::TextAlignment::LEFT_ALIGNED);
             Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
             tlayout.SetText(*renderer, font, option.text, true);
             tlayout.Update(font);
 
             bool hovered = false;
-            if (Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, &hovered))
+
+            if (option.enabled)
             {
-                option.onClick();
-                if (option.expansion == nullptr)
+                if (Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, &hovered))
                 {
-                    mainContextMenu->Hide();
-                    break;
+                    option.onClick();
+                    if (option.expansion == nullptr)
+                    {
+                        mainContextMenu->Hide();
+                        break;
+                    }
                 }
+            }
+            else
+            {
+                Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_DISABLED_STYLE, false, xpadding, ypadding, true);
             }
 
             if (hovered && attached != option.expansion)
@@ -250,15 +258,23 @@ namespace Ossium::Editor
 
     void ContextMenu::Add(string text, function<void(void)> onClick, Image* icon, bool enabled)
     {
-        options.push_back(Option(text, onClick, icon, nullptr, enabled));
+        options.push_back(Option(text, onClick, enabled, icon, nullptr));
     }
 
     ContextMenu* ContextMenu::AddPopoutMenu(string text, Image* icon, bool enabled)
     {
         ContextMenu* expansion = new ContextMenu();
         expansion->Init(mainInput, resources);
-        options.push_back(Option(text, [] () {}, icon, expansion, enabled));
+        options.push_back(Option(text, [] () {}, enabled, icon, expansion));
         return expansion;
+    }
+
+    void ContextMenu::SetOptionEnabled(unsigned int index, bool enable)
+    {
+        if (index < options.size())
+        {
+            options[index].enabled = enable;
+        }
     }
 
     void ContextMenu::SetOptions(vector<Option> options)

@@ -108,12 +108,16 @@ namespace Ossium::Editor
     {
         extern TextStyle NEURON_TEXT_NORMAL_STYLE;
         extern TextStyle NEURON_TEXT_INVERSE_STYLE;
+        extern TextStyle NEURON_TEXT_GRAY_STYLE;
+        extern TextStyle NEURON_TEXT_NORMAL_CENTERED_STYLE;
+        extern TextStyle NEURON_TEXT_INVERSE_CENTERED_STYLE;
         extern NeuronClickableStyle NEURON_BUTTON_STYLE;
         extern NeuronClickableStyle NEURON_SLIDER_STYLE;
         extern NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE;
         extern NeuronClickableStyle NEURON_TEXTFIELD_STYLE;
         extern NeuronClickableStyle NEURON_CHECKBOX_STYLE;
         extern NeuronClickableStyle NEURON_CONTEXT_OPTION_STYLE;
+        extern NeuronClickableStyle NEURON_CONTEXT_OPTION_DISABLED_STYLE;
     }
 
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
