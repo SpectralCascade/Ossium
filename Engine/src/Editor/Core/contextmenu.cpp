@@ -17,6 +17,18 @@ namespace Ossium::Editor
         backgroundColor = Color(240, 240, 240, 255);
         nativeWindow = new Window("Menu", width + (borderThickness * 2), 16, false, SDL_WINDOW_HIDDEN | SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_SKIP_TASKBAR | SDL_WINDOW_BORDERLESS);
         renderer = new Renderer(nativeWindow);
+
+        nativeWindow->OnFocusLost += [&] (Window& caller) {
+            if (focus == nullptr || focus == this)
+            {
+                mainContextMenu->Hide();
+            }
+            else if (attached != focus || focus == this)
+            {
+                Hide();
+            }
+        };
+
     }
 
     ContextMenu::~ContextMenu()
@@ -48,7 +60,6 @@ namespace Ossium::Editor
             mainInput = new InputController();
             mainResources = resourceController;
             mainContextMenu->Init(mainInput, mainResources);
-            mainContextMenu->nativeWindow->OnFocusLost += [&] (Window& caller) { mainContextMenu->Hide(); };
         }
         return mainContextMenu;
     }
@@ -83,13 +94,27 @@ namespace Ossium::Editor
     {
         if (mainContextMenu != nullptr)
         {
-            mainContextMenu->nativeWindow->HandleEvent(e);
+            mainContextMenu->HandleWindowEvent(e);
             mainInput->HandleEvent(e);
+        }
+    }
+
+    void ContextMenu::HandleWindowEvent(SDL_Event& e)
+    {
+        if (!nativeWindow->HandleEvent(e) && attached != nullptr)
+        {
+            // Pass the event on to the next context menu
+            attached->HandleWindowEvent(e);
         }
     }
 
     void ContextMenu::Refresh()
     {
+        if (!IsShown())
+        {
+            return;
+        }
+
         DEBUG_ASSERT(renderer != nullptr, "NULL renderer in context menu!");
 
         renderer->SetDrawColor(backgroundColor);
@@ -110,6 +135,12 @@ namespace Ossium::Editor
             renderer->SetViewportRect(border.SDL());
             border.Draw(*renderer, Colors::GRAY);
         }
+
+        if (attached != nullptr && attached->IsShown())
+        {
+            attached->Refresh();
+        }
+
         SDL_RenderPresent(renderer->GetRendererSDL());
     }
 
@@ -153,12 +184,20 @@ namespace Ossium::Editor
             tlayout.SetText(*renderer, font, option.text, true);
             tlayout.Update(font);
 
-            bool hovered;
-            if (Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, nullptr, &hovered))
+            bool hovered = false;
+            if (Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, &hovered))
             {
                 option.onClick();
-                Hide();
-                break;
+                if (option.expansion == nullptr)
+                {
+                    mainContextMenu->Hide();
+                    break;
+                }
+            }
+
+            if (hovered && attached != option.expansion)
+            {
+                HideAttached();
             }
 
             // Draw extra features
@@ -171,22 +210,19 @@ namespace Ossium::Editor
                 // Check if hovered, if so show the pop-out menu.
                 if (hovered && attached != option.expansion)
                 {
-                    if (attached != nullptr)
-                    {
-                        attached->Hide();
-                    }
                     attached = option.expansion;
+                    attached->parent = this;
                     attached->Show(nativeWindow->GetPosition() +
                         Vector2(nativeWindow->GetWidth() * (nativeWindow->GetPosition().x > nativeWindow->GetDisplayWidth() - nativeWindow->GetWidth() ? 1.0f : -1.0f),
-                                oldPos.y - viewport.y
+                                oldPos.y + viewport.y
                         )
                     );
-
+                    Logger::EngineLog().Info("Expanded context menu");
                 }
 
                 // Draw an arrow indicating that the menu pops out.
                 float arrowHeight = 9.0f;
-                Vector2 arrowPos = Vector2(viewport.x, viewport.y) + oldPos + Vector2(renderer->GetWidth() - ((iconWidth - 4) / 2), ((GetLayoutPosition().y - oldPos.y) / 2) - (arrowHeight / 2.0f));
+                Vector2 arrowPos = oldPos + Vector2(renderer->GetWidth() - ((iconWidth - 4) / 2), ((GetLayoutPosition().y - oldPos.y) / 2) - (arrowHeight / 2.0f));
                 Line arrowLine = Line(arrowPos, arrowPos + Vector2(0, arrowHeight));
 
                 renderer->SetDrawColor(hovered ? Colors::WHITE : Colors::BLACK);
@@ -219,13 +255,20 @@ namespace Ossium::Editor
     ContextMenu* ContextMenu::AddPopoutMenu(string text, Image* icon, bool enabled)
     {
         ContextMenu* expansion = new ContextMenu();
-        expansion->Init(nativeInput, resources);
+        expansion->Init(mainInput, resources);
         options.push_back(Option(text, [] () {}, icon, expansion, enabled));
         return expansion;
     }
 
     void ContextMenu::SetOptions(vector<Option> options)
     {
+        for (Option& option : options)
+        {
+            if (option.expansion != nullptr)
+            {
+                delete option.expansion;
+            }
+        }
         this->options = options;
     }
 
@@ -234,8 +277,15 @@ namespace Ossium::Editor
         return options;
     }
 
-    void ContextMenu::Clear()
+    void ContextMenu::ClearOptions()
     {
+        for (Option& option : options)
+        {
+            if (option.expansion != nullptr)
+            {
+                delete option.expansion;
+            }
+        }
         options.clear();
     }
 
@@ -244,20 +294,40 @@ namespace Ossium::Editor
         nativeWindow->SetPosition(position);
         nativeWindow->Show();
         nativeWindow->Focus();
+        focus = this;
         TriggerUpdate();
     }
 
     void ContextMenu::Hide()
     {
-        nativeWindow->Hide();
-        if (attached != nullptr)
+        if (focus == this)
         {
-            attached->Hide();
-            attached = nullptr;
+            focus = nullptr;
+        }
+        nativeWindow->Hide();
+        HideAttached();
+        if (parent != nullptr)
+        {
+            parent->attached = nullptr;
+            parent = nullptr;
         }
     }
 
+    void ContextMenu::HideAttached()
+    {
+        if (attached != nullptr && attached->IsShown())
+        {
+            attached->Hide();
+        }
+    }
+
+    bool ContextMenu::IsShown()
+    {
+        return nativeWindow->IsShown();
+    }
+
     ContextMenu* ContextMenu::mainContextMenu = nullptr;
+    ContextMenu* ContextMenu::focus = nullptr;
     int ContextMenu::iconWidth = 32;
     int ContextMenu::iconHeight = 32;
     int ContextMenu::width = 128;

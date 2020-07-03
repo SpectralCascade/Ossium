@@ -27,8 +27,8 @@ namespace Ossium
         window = NULL;
         minimized = false;
         fullscreen = fullscrn;
-        focus = true;
-        mouseFocus = true;
+        focus = false;
+        mouseFocus = false;
         border = true;
         width = w;
         height = h;
@@ -70,12 +70,12 @@ namespace Ossium
         window = NULL;
     }
 
-    void Window::HandleEvent(SDL_Event &event)
+    bool Window::HandleEvent(SDL_Event &event)
     {
         if (event.type != SDL_WINDOWEVENT || event.window.windowID != SDL_GetWindowID(window))
         {
             /// If not a window event or the id doesn't match this window, early out.
-            return;
+            return false;
         }
         switch (event.window.event)
         {
@@ -141,6 +141,7 @@ namespace Ossium
                 break;
             }
         }
+        return true;
     }
 
     SDL_Window* Window::GetWindowSDL()

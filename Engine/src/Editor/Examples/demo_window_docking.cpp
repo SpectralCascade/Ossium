@@ -37,7 +37,11 @@ namespace Ossium::Editor
                     ContextMenu::GetMainInstance(resources)->SetOptions({
                         ContextMenu::Option("Beep", [] () { Logger::EngineLog().Info("Beep!"); }),
                         ContextMenu::Option("Boop", [] () { Logger::EngineLog().Info("Boop!"); }),
-                        ContextMenu::Option("Wow", [] () { Logger::EngineLog().Info("Wooooooowww"); })
+                        ContextMenu::Option("Wow", [] () { Logger::EngineLog().Info("Wooooooowww"); }),
+                    });
+                    ContextMenu::GetMainInstance(resources)->AddPopoutMenu("Check this out...")->SetOptions({
+                        ContextMenu::Option("More beep!", [] () { Logger::EngineLog().Info("BEEP"); }),
+                        ContextMenu::Option("More boop!", [] () { Logger::EngineLog().Info("BOOP"); })
                     });
                 }
                 ContextMenu::GetMainInstance(resources)->Show(GetEditorLayout()->GetNativeWindow()->GetPosition() + Vector2(viewport.x, viewport.y) + GetLayoutPosition());

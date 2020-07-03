@@ -42,8 +42,8 @@ namespace Ossium
         Window(const char* title = "Ossium Engine", int w = 640, int h = 480, bool fullscrn = false, Uint32 flags = SDL_WINDOW_SHOWN);
         ~Window();
 
-        /// Handles window events
-        void HandleEvent(SDL_Event &event);
+        /// Handles a window event. Returns true if the event for this specific window.
+        bool HandleEvent(SDL_Event &event);
 
         // Get/Set specifiers
         /// Returns a pointer to the SDL instance representing the native window.

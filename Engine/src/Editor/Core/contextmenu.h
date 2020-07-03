@@ -42,7 +42,7 @@ namespace Ossium::Editor
         /// Updates the main context menu.
         static void HandleInput(SDL_Event& e);
 
-        /// Override to refresh all attached menus.
+        /// Override that does some extra bits, such as drawing a border, setting the native window origin and refreshing any attached context menu.
         void Refresh();
 
         /// Adds an option to the context menu.
@@ -58,7 +58,7 @@ namespace Ossium::Editor
         vector<Option> GetOptions();
 
         /// Clears all options in this context menu.
-        void Clear();
+        void ClearOptions();
 
         /// Shows this context menu at an absolute position on screen.
         void Show(Vector2 position);
@@ -66,16 +66,27 @@ namespace Ossium::Editor
         /// Hides this context menu. Any open expansion menus connected to the options will also be hidden.
         void Hide();
 
+        /// Returns true if this context menu is shown on screen.
+        bool IsShown();
+
     protected:
         void OnGUI();
 
         NeuronClickableStyle style = NeuronStyles::NEURON_CONTEXT_OPTION_STYLE;
 
     private:
+        /// Hides the attached context menu
+        void HideAttached();
+
+        /// Handles a given window event.
+        void HandleWindowEvent(SDL_Event& e);
+
         vector<Option> options;
 
         // The context menu attached to this menu, if any.
         ContextMenu* attached = nullptr;
+        // The parent context menu, to which this menu is attached.
+        ContextMenu* parent = nullptr;
 
         Window* nativeWindow;
         InputController* nativeInput;
@@ -83,7 +94,11 @@ namespace Ossium::Editor
         // Should the window and renderer be resized to fit the options after the current refresh?
         bool fitRenderer = false;
 
+        // The root context menu
         static ContextMenu* mainContextMenu;
+
+        // The context menu that is currently in focus.
+        static ContextMenu* focus;
 
         static int iconWidth;
         static int iconHeight;
