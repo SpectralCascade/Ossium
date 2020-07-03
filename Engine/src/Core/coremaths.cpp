@@ -466,6 +466,8 @@ namespace Ossium
         return "(" + Utilities::ToString(x) + ", " + Utilities::ToString(y) + ", " + Utilities::ToString(w) + ", " + Utilities::ToString(h) + ")";
     }
 
+    const Rect Rect::Zero = {0, 0, 0, 0};
+
     bool Rect::operator==(const Rect& rect)
     {
         return rect.x == x && rect.y == y && rect.w == w && rect.h == h;

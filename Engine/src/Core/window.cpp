@@ -46,21 +46,6 @@ namespace Ossium
             OnFullscreen(*this);
         }
 
-        /// Get max display size
-        SDL_Rect display_bounds;
-        int index = SDL_GetWindowDisplayIndex(window);
-        if (index < 0 || SDL_GetDisplayBounds(index, &display_bounds) != 0)
-        {
-            Logger::EngineLog().Error("Failed to get primary display bounds! Defaulting to initial window size. SDL_Error: {0}", SDL_GetError());
-            display_width = width;
-            display_height = height;
-        }
-        else
-        {
-            display_width = display_bounds.w;
-            display_height = display_bounds.h;
-        }
-
     }
 
     Window::~Window()
@@ -164,14 +149,17 @@ namespace Ossium
         return Vector2(width, height);
     }
 
-    int Window::GetDisplayWidth()
+    Rect Window::GetDisplayBounds()
     {
-        return display_width;
-    }
-
-    int Window::GetDisplayHeight()
-    {
-        return display_height;
+        Rect rect = Rect::Zero;
+        int index = SDL_GetWindowDisplayIndex(window);
+        if (index >= 0)
+        {
+            SDL_Rect bounds;
+            SDL_GetDisplayBounds(index, &bounds);
+            rect = Rect(bounds);
+        }
+        return rect;
     }
 
     string Window::GetTitle()
@@ -184,6 +172,17 @@ namespace Ossium
         int x = 0, y = 0;
         SDL_GetWindowPosition(window, &x, &y);
         return Vector2((float)x, (float)y);
+    }
+
+    Vector2 Window::GetRelativePosition()
+    {
+        if (SDL_GetNumVideoDisplays() <= 1)
+        {
+            return GetPosition();
+        }
+        SDL_Rect bounds;
+        SDL_GetDisplayBounds(SDL_GetWindowDisplayIndex(window), &bounds);
+        return GetPosition() - Vector2(bounds.x, bounds.y);
     }
 
     void Window::SetWidth(int newWidth)

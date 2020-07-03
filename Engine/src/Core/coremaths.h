@@ -279,6 +279,9 @@ namespace Ossium
         /// Returns the string representation of this object.
         string ToString();
 
+        /// A rect initialised to zero.
+        const static Rect Zero;
+
     };
 
     struct OSSIUM_EDL Triangle

@@ -148,9 +148,11 @@ namespace Ossium::Editor
     {
         for (Option& option : options)
         {
+            Rect displayRect = nativeWindow->GetDisplayBounds();
+
             if (!IsVisible())
             {
-                if (nativeWindow->GetHeight() >= (float)nativeWindow->GetDisplayHeight())
+                if (nativeWindow->GetHeight() >= (float)displayRect.h)
                 {
                     // TODO: handle this case better - ideally prevent it.
                     break;
@@ -161,7 +163,7 @@ namespace Ossium::Editor
                     // such that the options can be drawn and we can figure out exactly how much space is needed, resize the window + renderer to match
                     // and then trigger an update in the next frame.
                     fitRenderer = true;
-                    viewport = Rect(0, 0, width, nativeWindow->GetDisplayHeight()).SDL();
+                    viewport = Rect(0, 0, width, displayRect.h).SDL();
                     renderer->SetViewportRect(viewport);
                     TriggerUpdate();
                 }
@@ -213,7 +215,7 @@ namespace Ossium::Editor
                     attached = option.expansion;
                     attached->parent = this;
                     attached->Show(nativeWindow->GetPosition() +
-                        Vector2(nativeWindow->GetWidth() * (nativeWindow->GetPosition().x > nativeWindow->GetDisplayWidth() - nativeWindow->GetWidth() ? 1.0f : -1.0f),
+                        Vector2(nativeWindow->GetWidth() * (nativeWindow->GetPosition().x - displayRect.x < displayRect.w - nativeWindow->GetWidth() ? 1.0f : -1.0f),
                                 oldPos.y + viewport.y
                         )
                     );

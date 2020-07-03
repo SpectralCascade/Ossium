@@ -20,6 +20,7 @@
 
 #include "renderer.h"
 #include "window.h"
+#include "coremaths.h"
 
 using namespace std;
 
@@ -261,15 +262,14 @@ namespace Ossium
         float percent_height = 1.0f;
         int width = renderWindow->GetWidth();
         int height = renderWindow->GetHeight();
-        int display_width = renderWindow->GetDisplayWidth();
-        int display_height = renderWindow->GetDisplayHeight();
+        Rect displayRect = renderWindow->GetDisplayBounds();
 
         if (aspect_width > 0 && aspect_height > 0)
         {
             if (renderWindow->IsFullscreen())
             {
-                percent_width = (float)display_width / (float)aspect_width;
-                percent_height = (float)display_height / (float)aspect_height;
+                percent_width = (float)displayRect.w / (float)aspect_width;
+                percent_height = (float)displayRect.h / (float)aspect_height;
             }
             else
             {
@@ -290,8 +290,8 @@ namespace Ossium
             {
                 smallest_percent = Clamp(smallest_percent, 0.0f, 1.0f);
             }
-            viewRect.h = (int)(smallest_percent * (!renderWindow->IsFullscreen() ? (float)aspect_height : (float)display_height));
-            viewRect.w = (int)(smallest_percent * (!renderWindow->IsFullscreen() ? (float)aspect_width : (float)display_width));
+            viewRect.h = (int)(smallest_percent * (!renderWindow->IsFullscreen() ? (float)aspect_height : (float)displayRect.h));
+            viewRect.w = (int)(smallest_percent * (!renderWindow->IsFullscreen() ? (float)aspect_width : (float)displayRect.w));
 
             /// Calculate viewport anchor position
             int deltaw = (width - viewRect.w);

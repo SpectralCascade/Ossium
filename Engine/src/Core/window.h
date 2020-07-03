@@ -33,6 +33,7 @@ namespace Ossium
 {
 
     struct Vector2;
+    struct Rect;
     class Image;
 
     /// Wrapper class for SDL_Window
@@ -54,14 +55,14 @@ namespace Ossium
         int GetHeight();
         /// Return the dimensions as a vector.
         Vector2 GetDimensions();
-        /// Returns the total height of the display.
-        int GetDisplayWidth();
-        /// Returns the total width of the display.
-        int GetDisplayHeight();
+        /// Returns the display bounds for the display the window is currently associated with.
+        Rect GetDisplayBounds();
         /// Returns the title of this window.
         string GetTitle();
-        /// Returns the position of this window on the display.
+        /// Returns the absolute position of this window across ALL displays.
         Vector2 GetPosition();
+        /// Returns the relative position of this window to the current display bounds.
+        Vector2 GetRelativePosition();
 
         /// Sets the width of this window.
         void SetWidth(int newWidth);
@@ -137,10 +138,6 @@ namespace Ossium
         // Window dimensions
         int width;
         int height;
-
-        // The dimensions of the main display
-        int display_width;
-        int display_height;
 
         // Active flags
         bool minimized;
