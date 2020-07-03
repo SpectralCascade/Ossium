@@ -35,7 +35,17 @@ namespace Ossium::Editor
 
         EndHorizontal();
 
+        Space(5);
+
+        BeginHorizontal();
+
+        TextLabel("Scale:");
+        Tab(20);
         scale = Slider(scale, 0, 10);
+        Space(5);
+        TextLabel(Utilities::ToString(scale));
+
+        EndHorizontal();
 
         Space(5);
 
