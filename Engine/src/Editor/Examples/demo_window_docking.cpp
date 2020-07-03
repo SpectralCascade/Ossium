@@ -14,8 +14,6 @@ namespace Ossium::Editor
             LayoutDiagram::mouseHovered = this;
         }
 
-        Space(20);
-
         BeginHorizontal();
         {
             TextLabel("<b>Window docking demo</b>");

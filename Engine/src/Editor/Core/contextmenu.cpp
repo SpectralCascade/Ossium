@@ -219,7 +219,6 @@ namespace Ossium::Editor
                                 oldPos.y + viewport.y
                         )
                     );
-                    Logger::EngineLog().Info("Expanded context menu");
                 }
 
                 // Draw an arrow indicating that the menu pops out.
