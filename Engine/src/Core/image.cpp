@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 extern "C"
 {
@@ -64,23 +64,25 @@ namespace Ossium
         return tempSurface != NULL;
     }
 
-    bool Image::CreateEmptySurface(int w, int h, Uint32 pixelFormat)
+    SDL_Surface* Image::CreateEmptySurface(int w, int h, Uint32 pixelFormat, SDL_Color color)
     {
-        FreeSurface();
         if (pixelFormat == SDL_PIXELFORMAT_UNKNOWN)
         {
-            pixelFormat = format;
+            // Default to this, it's fairly likely to be what the caller really wants.
+            pixelFormat = SDL_PIXELFORMAT_ARGB8888;
         }
-        else
+        SDL_Surface* emptySurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, pixelFormat);
+        if (emptySurface != NULL && color != Colors::TRANSPARENT)
         {
-            format = pixelFormat;
+            SDL_Rect rect = {0, 0, w, h};
+            SDL_PixelFormat* format = SDL_AllocFormat(pixelFormat);
+            if (format != NULL)
+            {
+                SDL_FillRect(emptySurface, &rect, SDL_MapRGBA(format, color.r, color.g, color.b, color.a));
+                SDL_FreeFormat(format);
+            }
         }
-        tempSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, pixelFormat);
-        if (tempSurface == NULL)
-        {
-            return false;
-        }
-        return true;
+        return emptySurface;
     }
 
     void Image::SetSurface(SDL_Surface* loadedSurface, Uint32 pixelFormat)

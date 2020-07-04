@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef IMAGE_H
 #define IMAGE_H
@@ -50,7 +50,8 @@ namespace Ossium
         bool Load(string guid_path);
 
         /// Creates an empty surface. Optionally specify a pixel format, if not specified the last set surface pixel format will be used.
-        bool CreateEmptySurface(int w, int h, Uint32 pixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+        /// You may also specify the colour of the empty surface.
+        static SDL_Surface* CreateEmptySurface(int w, int h, Uint32 pixelFormat = SDL_PIXELFORMAT_UNKNOWN, SDL_Color color = Colors::TRANSPARENT);
 
         /// Frees the current surface and sets it to this. Useful if you want to generate surfaces on the fly.
         /// NOTE: Does not make a copy of the surface data. Simply takes ownership of the reference.

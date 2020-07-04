@@ -283,8 +283,8 @@ namespace Ossium
         }
         Logger::EngineLog().Verbose("Font {0} has atlas size: {1}, max glyphs: {2}, cache limit: {3}, mipmap depth: {4}", guid_path, actualTextureSize.x, maxAtlasGlyphs, cacheLimit, mipmapDepth);
 
-        // Create the atlas surface and push onto the GPU.
-        atlas.CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat);
+        // Create the empty atlas surface in transparent white so color modulation works.
+        atlas.SetSurface(Image::CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat, Alpha(Colors::WHITE, 0)), pixelFormat);
         return atlas.GetSurface() != NULL;
     }
 
@@ -393,7 +393,7 @@ namespace Ossium
                 // Render the glyph
                 // TODO: ditto regarding converting encoding from UCS-2 to UCS-4 when SDL_TTF gets updated
                 SDL_Surface* renderedGlyph = TTF_RenderGlyph_Blended(font, (Uint16)codepoint, Colors::WHITE);
-                SDL_Surface* created = SDL_CreateRGBSurfaceWithFormat(0, GetAtlasCellSize().x, GetAtlasCellSize().y, 32, renderedGlyph->format->format);
+                SDL_Surface* created = Image::CreateEmptySurface(GetAtlasCellSize().x, GetAtlasCellSize().y, renderedGlyph->format->format, Alpha(Colors::WHITE, 0));
                 if (created != NULL && renderedGlyph != NULL)
                 {
                     // First, get the scaling correct
