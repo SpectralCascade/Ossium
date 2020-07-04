@@ -602,7 +602,10 @@ namespace Ossium
 
             //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
 
-            // Render the actual glyph
+            // Erase any existing glyph.
+            SDL_FillRect(atlas.GetSurface(), &dest, SDL_MapRGBA(atlas.GetSurface()->format, 255, 255, 255, 0));
+
+            // Blit the glyph onto the font atlas
             SDL_Rect src = {0, 0, glyph->cached.GetWidthSurface(), glyph->cached.GetHeightSurface()};
             SDL_BlitScaled(glyph->cached.GetSurface(), &src, atlas.GetSurface(), &dest);
 
