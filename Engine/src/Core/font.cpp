@@ -832,7 +832,7 @@ namespace Ossium
         {
             quantity = maxAtlasGlyphs;
         }
-        for (Uint32 i = 0, counti = min(quantity, atlasGlyphMap.empty() ? 0 : atlasGlyphMap.size()); i < counti; i++)
+        for (Uint32 i = 0, counti = min(quantity, (Uint32)(atlasGlyphMap.empty() ? 0 : atlasGlyphMap.size())); i < counti; i++)
         {
             Uint32 index = textureCache.GetLRU();
             auto id = atlasGlyphMap.find(index);

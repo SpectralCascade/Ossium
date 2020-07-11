@@ -83,7 +83,7 @@ namespace Ossium
         Uint32 oldIndex = cursorIndex;
         cursorIndex = 0;
         Insert(str);
-        cursorIndex = min(unicode.size(), oldIndex);
+        cursorIndex = min((Uint32)unicode.size(), oldIndex);
     }
 
     void TextInputHandler::Clear()
@@ -178,7 +178,7 @@ namespace Ossium
 
     void TextInputHandler::SetCursorIndex(Uint32 unicode_index)
     {
-        cursorIndex = min(unicode_index, unicode.size());
+        cursorIndex = min(unicode_index, (Uint32)unicode.size());
     }
 
     Uint32 TextInputHandler::GetCursorIndex()
