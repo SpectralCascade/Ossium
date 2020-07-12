@@ -24,7 +24,7 @@
 namespace Ossium
 {
 
-    class OSSIUM_EDL EngineSystem : public GlobalServices
+    class OSSIUM_EDL EngineSystem
     {
     public:
         friend class Scene;

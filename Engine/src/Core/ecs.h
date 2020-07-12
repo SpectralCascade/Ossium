@@ -157,7 +157,7 @@ namespace Ossium
         typename enable_if<!is_component<T>::value, void>::type
         WalkComponents(function<void(T*)> operation)
         {
-            Logger::EngineLog().Error("SFINAE attempting to walk ECS components!");
+            Log.Error("SFINAE attempting to walk ECS components!");
             //static_assert(false, "You cannot walk over non-component types with an ECS object.");
         }
 
@@ -311,7 +311,7 @@ namespace Ossium
                 itr->second[0] = nullptr;
                 itr->second.erase(itr->second.begin());
             }
-            Logger::EngineLog().Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, name);
+            Log.Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, name);
         }
 
         /// Returns a pointer to the first found instance of a component attached

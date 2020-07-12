@@ -164,7 +164,7 @@ namespace Ossium
             {
                 return &((*itr).second);
             }
-            Logger::EngineLog().Warning("Could not find binding value for state '{0}'.", name);
+            Log.Warning("Could not find binding value for state '{0}'.", name);
             return nullptr;
         }
 
@@ -227,7 +227,7 @@ namespace Ossium
             auto itr = _action_bindings.find(action);
             if (itr == _action_bindings.end())
             {
-                Logger::EngineLog().Warning("Input handler attempted to bind action '{0}' but this action has not been added to the handler!", action);
+                Log.Warning("Input handler attempted to bind action '{0}' but this action has not been added to the handler!", action);
             }
             else
             {
@@ -253,7 +253,7 @@ namespace Ossium
             {
                 return &((*itr).second);
             }
-            Logger::EngineLog().Warning("Could not find binding value for action '{0}'.", action);
+            Log.Warning("Could not find binding value for action '{0}'.", action);
             return nullptr;
         }
 
@@ -291,7 +291,7 @@ namespace Ossium
                 ActionOutcome outcome = (*i)(data);
                 if (outcome != ActionOutcome::Ignore)
                 {
-                    //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
+                    //Log.Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
                     return outcome;
                 }
             }
@@ -302,7 +302,7 @@ namespace Ossium
                 ActionOutcome outcome = (*actionItr).second(data);
                 if (outcome != ActionOutcome::Ignore)
                 {
-                    //Logger::EngineLog().Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
+                    //Log.Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
                     return outcome;
                 }
             }
@@ -360,7 +360,7 @@ namespace Ossium
             }
             else
             {
-                Logger::EngineLog().Warning("Attempted to add an input handler to a context, but the context already has an input handler of type [{0}].", GetInputHandlerType<T>());
+                Log.Warning("Attempted to add an input handler to a context, but the context already has an input handler of type [{0}].", GetInputHandlerType<T>());
             }
             return GetHandler<T>();
         }

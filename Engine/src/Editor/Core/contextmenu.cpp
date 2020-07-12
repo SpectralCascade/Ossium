@@ -121,7 +121,7 @@ namespace Ossium::Editor
         SDL_RenderClear(renderer->GetRendererSDL());
         nativeOrigin = nativeWindow->GetPosition();
         NeuronGUI::Refresh();
-        //Logger::EngineLog().Info("InputState = {0}", InputState.ToString());
+        //Log.Info("InputState = {0}", InputState.ToString());
         if (fitRenderer)
         {
             fitRenderer = false;

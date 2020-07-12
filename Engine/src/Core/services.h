@@ -78,7 +78,7 @@ namespace Ossium
             {
                 return reinterpret_cast<T*>(services[index]);
             }
-            Logger::EngineLog().Warning("Failed to get service, invalid service type requested.");
+            Log.Warning("Failed to get service, invalid service type requested.");
             return nullptr;
         }
 

@@ -36,7 +36,7 @@ namespace Ossium
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
         if (window == NULL)
         {
-            Logger::EngineLog().Error("Window creation failed! SDL_Error: {0}", SDL_GetError());
+            Log.Error("Window creation failed! SDL_Error: {0}", SDL_GetError());
             throw;
         }
 
@@ -99,14 +99,14 @@ namespace Ossium
             {
                 focus = true;
                 OnFocusGained(*this);
-                //Logger::EngineLog().Info("window {0} focus gained", this);
+                //Log.Info("window {0} focus gained", this);
                 break;
             }
             case SDL_WINDOWEVENT_FOCUS_LOST:
             {
                 focus = false;
                 OnFocusLost(*this);
-                //Logger::EngineLog().Info("window {0} focus lost", this);
+                //Log.Info("window {0} focus lost", this);
                 break;
             }
             case SDL_WINDOWEVENT_ENTER:
@@ -233,7 +233,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Warning("Attempted to set window icon with image that has a NULL surface!");
+            Log.Warning("Attempted to set window icon with image that has a NULL surface!");
         }
     }
 

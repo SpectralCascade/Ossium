@@ -131,7 +131,7 @@ namespace Ossium
                 SDL_PixelFormat* pixelFormat = SDL_AllocFormat(format);
                 if (pixelFormat == NULL)
                 {
-                    Logger::EngineLog().Error("Could not allocate pixel format to apply effect! SDL_Error: {0}", SDL_GetError());
+                    Log.Error("Could not allocate pixel format to apply effect! SDL_Error: {0}", SDL_GetError());
                     return false;
                 }
                 SDL_Color pixelData;

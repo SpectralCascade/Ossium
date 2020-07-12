@@ -95,7 +95,7 @@ namespace Ossium
                 }
                 else
                 {
-                    Logger::EngineLog().Warning("Failed to get glyph dimensions for codepoint {0}! TTF_Error: {1}", codepoint, TTF_GetError());
+                    Log.Warning("Failed to get glyph dimensions for codepoint {0}! TTF_Error: {1}", codepoint, TTF_GetError());
                 }
             }
             else
@@ -106,7 +106,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Error("Failed to get glyph metrics from font, font is not loaded!");
+            Log.Error("Failed to get glyph metrics from font, font is not loaded!");
         }
     }
 
@@ -185,7 +185,7 @@ namespace Ossium
         font = TTF_OpenFont(guid_path.c_str(), loadedPointSize);
         if (font == NULL)
         {
-            Logger::EngineLog().Error("Failed to open font '{0}'! TTF_Error: {1}", guid_path, TTF_GetError());
+            Log.Error("Failed to open font '{0}'! TTF_Error: {1}", guid_path, TTF_GetError());
         }
         return font != NULL;
     }
@@ -203,7 +203,7 @@ namespace Ossium
         fontHeight = TTF_FontHeight(font);
         if (fontHeight <= 0)
         {
-            Logger::EngineLog().Error("Font has invalid height! Cannot initialise.");
+            Log.Error("Font has invalid height! Cannot initialise.");
             return false;
         }
 
@@ -254,11 +254,11 @@ namespace Ossium
         for (int level = 0; level < mipmapDepth; level++)
         {
             pointSize = pointSize * 0.5f;
-            //Logger::EngineLog().Info("Loading font '{0}' at point size {1}", guid_path, pointSize);
+            //Log.Info("Loading font '{0}' at point size {1}", guid_path, pointSize);
             mipmapFonts.push_back(TTF_OpenFont(guid_path.c_str(), (int)pointSize));
             if (mipmapFonts.back() == NULL)
             {
-                Logger::EngineLog().Error("TTF_Error opening font '{0}': {1}", guid_path, TTF_GetError());
+                Log.Error("TTF_Error opening font '{0}': {1}", guid_path, TTF_GetError());
             }
         }
 
@@ -281,7 +281,7 @@ namespace Ossium
         {
             cacheLimit = glyphCacheLimit;
         }
-        Logger::EngineLog().Verbose("Font {0} has atlas size: {1}, max glyphs: {2}, cache limit: {3}, mipmap depth: {4}", guid_path, actualTextureSize.x, maxAtlasGlyphs, cacheLimit, mipmapDepth);
+        Log.Verbose("Font {0} has atlas size: {1}, max glyphs: {2}, cache limit: {3}, mipmap depth: {4}", guid_path, actualTextureSize.x, maxAtlasGlyphs, cacheLimit, mipmapDepth);
 
         // Create the empty atlas surface in transparent white so color modulation works.
         atlas.SetSurface(Image::CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat, Alpha(Colors::WHITE, 0)), pixelFormat);
@@ -295,7 +295,7 @@ namespace Ossium
             f = font;
             if (f == NULL)
             {
-                Logger::EngineLog().Error("TTF Font is not loaded for on-the-fly text generation!");
+                Log.Error("TTF Font is not loaded for on-the-fly text generation!");
                 return NULL;
             }
         }
@@ -415,7 +415,7 @@ namespace Ossium
                     bool blitSuccess = false;
                     if (inverseScale != 1.0f)
                     {
-                        Logger::EngineLog().Verbose("Glyph [Codepoint: {0}] is too large for atlas cell, downscaling. Scaling artifacts may be present. Upscale factor is {1}.", codepoint, inverseScale);
+                        Log.Verbose("Glyph [Codepoint: {0}] is too large for atlas cell, downscaling. Scaling artifacts may be present. Upscale factor is {1}.", codepoint, inverseScale);
                         // Scale the glyph when blitting it
                         float scale = (1.0f / inverseScale);
                         SDL_Rect dest = {0, 0, (int)((float)renderedGlyph->w * scale), (int)((float)renderedGlyph->h * scale)};
@@ -445,7 +445,7 @@ namespace Ossium
                             else
                             {
                                 // This should never happen. If it does there's a problem in code.
-                                Logger::EngineLog().Error("Font system failure! LRU decimal code point {0} not found in glyphs map :(", toReplace);
+                                Log.Error("Font system failure! LRU decimal code point {0} not found in glyphs map :(", toReplace);
                             }
                         }
                         else
@@ -481,14 +481,14 @@ namespace Ossium
                                 SDL_Surface* mipped = TTF_RenderGlyph_Blended(mipFont, codepoint, Colors::WHITE);
                                 if (mipped != NULL)
                                 {
-                                    //Logger::EngineLog().Info("Blitting from {0} onto {1} (surface = {2})", Vector2(mipped->w, mipped->h), dest, Vector2(renderedGlyph->w, renderedGlyph->h));
+                                    //Log.Info("Blitting from {0} onto {1} (surface = {2})", Vector2(mipped->w, mipped->h), dest, Vector2(renderedGlyph->w, renderedGlyph->h));
                                     SDL_BlitSurface(mipped, NULL, created, &dest);
                                     SDL_FreeSurface(mipped);
                                     mipped = NULL;
                                 }
                                 else
                                 {
-                                    Logger::EngineLog().Error("Failed to blit mipmap level {0} for glyph [Codepoint {1}]!", level, codepoint);
+                                    Log.Error("Failed to blit mipmap level {0} for glyph [Codepoint {1}]!", level, codepoint);
                                 }
                             }
                         }
@@ -500,13 +500,13 @@ namespace Ossium
                     }
                     else
                     {
-                        Logger::EngineLog().Error("Failed to blit glyph. SDL_Error: {0}", SDL_GetError());
+                        Log.Error("Failed to blit glyph. SDL_Error: {0}", SDL_GetError());
                     }
 
                 }
                 else
                 {
-                    Logger::EngineLog().Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
+                    Log.Error("Failed to render glyph to surface. TTF_Error: {0}", TTF_GetError());
                 }
                 if (renderedGlyph != NULL)
                 {
@@ -516,7 +516,7 @@ namespace Ossium
             }
             else
             {
-                Logger::EngineLog().Verbose("Glyph is not provided for UTF-8 character [Codepoint {0}].", codepoint);
+                Log.Verbose("Glyph is not provided for UTF-8 character [Codepoint {0}].", codepoint);
             }
 
         }
@@ -574,7 +574,7 @@ namespace Ossium
             }
             if (failedReplace)
             {
-                Logger::EngineLog().Error("Failed to find mapped glyph for atlas index {0}! Either the cache is smaller than GetAtlasMaxGlyphs() or this font is not initialised.", index);
+                Log.Error("Failed to find mapped glyph for atlas index {0}! Either the cache is smaller than GetAtlasMaxGlyphs() or this font is not initialised.", index);
             }
         }
         else
@@ -594,13 +594,13 @@ namespace Ossium
             // Render the glyph to the atlas.
             if (glyph->cached.GetWidth() > dest.w || glyph->cached.GetHeight() > dest.h)
             {
-                Logger::EngineLog().Warning("Attempting to pack glyph that is bigger than the atlas cell size! It'll be a bit squashed.");
+                Log.Warning("Attempting to pack glyph that is bigger than the atlas cell size! It'll be a bit squashed.");
             }
             // For the sake of robustness, don't want to overwrite any other glyphs!
             dest.w = min(dest.w, glyph->cached.GetWidth());
             dest.h = min(dest.h, glyph->cached.GetHeight());
 
-            //Logger::EngineLog().Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
+            //Log.Verbose("Rendering glyph {0} to font atlas...", glyph->GetCodePointUTF8());
 
             // Erase any existing glyph.
             SDL_FillRect(atlas.GetSurface(), &dest, SDL_MapRGBA(atlas.GetSurface()->format, 255, 255, 255, 0));
@@ -731,7 +731,7 @@ namespace Ossium
         SDL_Rect rect = {0, 0, 0, 0};
         if (index < 1 || index > GetAtlasMaxGlyphs() || atlas.GetSurface() == NULL)
         {
-            Logger::EngineLog().Warning("Failed to get atlas cell for index {0} (note: index must be between 1 and {1} inclusive and atlas must be initialised)", index, GetAtlasMaxGlyphs());
+            Log.Warning("Failed to get atlas cell for index {0} (note: index must be between 1 and {1} inclusive and atlas must be initialised)", index, GetAtlasMaxGlyphs());
             return rect;
         }
         int linearPosition = ((index - 1) * cellSize.x);

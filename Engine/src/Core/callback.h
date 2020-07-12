@@ -56,7 +56,7 @@ namespace Ossium
             auto itr = callees.empty() ? callees.end() : callees.find(handle);
             if (itr == callees.end())
             {
-                Logger::EngineLog().Warning("Failed to unregister callback! Provided handle = [{0}]", handle);
+                Log.Warning("Failed to unregister callback! Provided handle = [{0}]", handle);
                 return;
             }
             callees.erase(itr);

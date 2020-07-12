@@ -23,7 +23,7 @@ namespace Ossium
         Instance.currentSystemCursor = id;
         if (cursor == NULL)
         {
-            Logger::EngineLog().Warning("Failed to create system cursor. SDL_Error: {0}", SDL_GetError());
+            Log.Warning("Failed to create system cursor. SDL_Error: {0}", SDL_GetError());
         }
         else
         {
@@ -36,7 +36,7 @@ namespace Ossium
         SDL_Cursor* cursor = SDL_CreateColorCursor(image->GetSurface(), hotx, hoty);
         if (cursor == NULL)
         {
-            Logger::EngineLog().Warning("Failed to create custom cursor. SDL_Error: {0}", SDL_GetError());
+            Log.Warning("Failed to create custom cursor. SDL_Error: {0}", SDL_GetError());
         }
         else
         {

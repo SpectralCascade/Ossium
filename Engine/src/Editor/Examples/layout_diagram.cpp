@@ -37,17 +37,17 @@ namespace Ossium::Editor
                     x = 10;
                     parentX = nextParentX;
                     nextParentX.clear();
-                    //Logger::EngineLog().Debug("Next parentX cleared, level {0}", n->depth - 1);
+                    //Log.Debug("Next parentX cleared, level {0}", n->depth - 1);
 
                     parentIndex = 0;
-                    //Logger::EngineLog().Debug("new level, parentIndex = 0");
+                    //Log.Debug("new level, parentIndex = 0");
                 }
                 else
                 {
                     parentIndex += (int)(currentParent != n->parent);
                     if (currentParent != n->parent)
                     {
-                        //Logger::EngineLog().Debug("parentIndex incremented");
+                        //Log.Debug("parentIndex incremented");
                     }
                 }
             }
@@ -63,7 +63,7 @@ namespace Ossium::Editor
                 // Draw line between node and parent
                 Line line = Line(Vector2(x + halfNode, y + halfNode), Vector2(parentX[parentIndex] + halfNode, (y - yspacing) + halfNode));
                 line.Draw(*renderer, lineColor);
-                //Logger::EngineLog().Debug("Drawing line from {0} to {1} [child index = {2} - parent index = {3} of parent x {4}]", line.a, line.b, n->childIndex, parentIndex, parentX);
+                //Log.Debug("Drawing line from {0} to {1} [child index = {2} - parent index = {3} of parent x {4}]", line.a, line.b, n->childIndex, parentIndex, parentX);
             }
             if (!n->children.empty())
             {
@@ -72,7 +72,7 @@ namespace Ossium::Editor
             x += nodeSize * 2;
 
             currentParent = n->parent;
-            //Logger::EngineLog().Debug("parentX = {0} at level {1}, nextParentX = {2} (node: {3} parent: {4})", parentX, n->depth, nextParentX, n, n->parent);
+            //Log.Debug("parentX = {0} at level {1}, nextParentX = {2} (node: {3} parent: {4})", parentX, n->depth, nextParentX, n, n->parent);
 
         }
 

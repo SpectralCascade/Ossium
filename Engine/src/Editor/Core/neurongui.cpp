@@ -265,7 +265,7 @@ namespace Ossium::Editor
                 {
                     // Stop text field input
                     activeTextFieldId = 0;
-                    //Logger::EngineLog().Info("Unset active text field");
+                    //Log.Info("Unset active text field");
                     input->GetHandler<TextInputHandler>()->StopListening();
                 }
                 this->update = true;
@@ -647,7 +647,7 @@ namespace Ossium::Editor
             if (Button(text, tlayout, style, false))
             {
                 activeTextFieldId = textFieldCounter;
-                //Logger::EngineLog().Info("Active text field set to {0}", activeTextFieldId);
+                //Log.Info("Active text field set to {0}", activeTextFieldId);
                 textinput->StartListening();
                 textinput->SetText(text);
                 // Locate the closest glyph to the mouse

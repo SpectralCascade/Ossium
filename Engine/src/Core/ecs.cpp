@@ -254,7 +254,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Error("Failed to get entity name!");
+            Log.Error("Failed to get entity name!");
         }
 
         entity_itr = data.find("Active");
@@ -264,7 +264,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Warning("Failed to get entity active flag!");
+            Log.Warning("Failed to get entity active flag!");
         }
 
         entity_itr = data.find("Components");
@@ -278,10 +278,10 @@ namespace Ossium
                 compType = GetComponentType(component.first);
                 if (!TypeSystem::TypeRegistry<BaseComponent>::IsValidType(compType))
                 {
-                    Logger::EngineLog().Error("Failed to add component of type \"{0}\" [{1}] due to invalid type!", component.first, compType);
+                    Log.Error("Failed to add component of type \"{0}\" [{1}] due to invalid type!", component.first, compType);
                     continue;
                 }
-                //Logger::EngineLog().Info("Creating component of type \"{0}\" [{1}]", component.first, compType);
+                //Log.Info("Creating component of type \"{0}\" [{1}]", component.first, compType);
                 vector<JString> componentData = component.second.ToArray();
                 vector<BaseComponent*>& compsOfType = components[compType];
                 unsigned int totalComponents = compsOfType.empty() ? 0 : compsOfType.size();
@@ -293,12 +293,12 @@ namespace Ossium
                         comp = TypeSystem::TypeFactory<BaseComponent, ComponentType>::Create(compType, (void*)this);
                         if (comp == nullptr)
                         {
-                            Logger::EngineLog().Error("Failed to add component of type \"{0}\" [{1}] to entity during Entity::FromString()!", component.first, compType);
+                            Log.Error("Failed to add component of type \"{0}\" [{1}] to entity during Entity::FromString()!", component.first, compType);
                             continue;
                         }
                         else
                         {
-                            //Logger::EngineLog().Info("Created component of type \"{0}\" [{1}].", GetComponentName(comp->GetType()), comp->GetType());
+                            //Log.Info("Created component of type \"{0}\" [{1}].", GetComponentName(comp->GetType()), comp->GetType());
                             totalComponents++;
                         }
                     }
@@ -314,7 +314,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Error("Invalid JSON string input during entity FromString() call!");
+            Log.Error("Invalid JSON string input during entity FromString() call!");
         }
     }
 
@@ -424,7 +424,7 @@ namespace Ossium
     {
         if (services == nullptr)
         {
-            Logger::EngineLog().Error("ServicesProvider argument cannot be NULL when creating an ECS instance!");
+            Log.Error("ServicesProvider argument cannot be NULL when creating an ECS instance!");
             DEBUG_ASSERT(services != nullptr, "ServicesProvider argument cannot be NULL when creating an ECS instance!");
             throw;
         }
@@ -476,12 +476,12 @@ namespace Ossium
             }
             else
             {
-                Logger::EngineLog().Warning("Attempted to destroy entity but it is not managed by this entity component system instance!");
+                Log.Warning("Attempted to destroy entity but it is not managed by this entity component system instance!");
             }
         }
         else
         {
-            Logger::EngineLog().Warning("Attempted to destroy entity but it was already destroyed.");
+            Log.Warning("Attempted to destroy entity but it was already destroyed.");
         }
     }
 
@@ -565,7 +565,7 @@ namespace Ossium
         {
             if (!IsInt(itr.first))
             {
-                Logger::EngineLog().Error("Failed to load entity due to invalid ID '{0}'!", itr.first);
+                Log.Error("Failed to load entity due to invalid ID '{0}'!", itr.first);
                 continue;
             }
             int id = ToInt(itr.first);
@@ -596,7 +596,7 @@ namespace Ossium
             }
             else
             {
-                Logger::EngineLog().Warning("Failed to get entity parent!");
+                Log.Warning("Failed to get entity parent!");
             }
         }
         /// Now setup the entity hierarchy
@@ -609,7 +609,7 @@ namespace Ossium
             }
             else
             {
-                Logger::EngineLog().Warning("Entity with id '{0}' does not exist in this ECS!", itr.second);
+                Log.Warning("Entity with id '{0}' does not exist in this ECS!", itr.second);
             }
         }
         /// Finally, hook up the serialised pointers
@@ -627,7 +627,7 @@ namespace Ossium
                 }
                 else
                 {
-                    Logger::EngineLog().Warning("Could not find entity with id '{0}'.", itr.first);
+                    Log.Warning("Could not find entity with id '{0}'.", itr.first);
                 }
             }
             else
@@ -657,27 +657,27 @@ namespace Ossium
                                 }
                                 else
                                 {
-                                    Logger::EngineLog().Warning("Could not find component '{0}'.", itr.first);
+                                    Log.Warning("Could not find component '{0}'.", itr.first);
                                 }
                             }
                             else
                             {
-                                Logger::EngineLog().Warning("Could not find component of type \"{0}\" [{1}] with index '{2}'.", comp_type, compTypeId, compid);
+                                Log.Warning("Could not find component of type \"{0}\" [{1}] with index '{2}'.", comp_type, compTypeId, compid);
                             }
                         }
                         else
                         {
-                            Logger::EngineLog().Warning("Could not find component due to invalid type '{0}'.", comp_type);
+                            Log.Warning("Could not find component due to invalid type '{0}'.", comp_type);
                         }
                     }
                     else
                     {
-                        Logger::EngineLog().Warning("Could not find entity using component id '{0}'.", itr.first);
+                        Log.Warning("Could not find entity using component id '{0}'.", itr.first);
                     }
                 }
                 else
                 {
-                    Logger::EngineLog().Warning("Failed to extract entity id from key '{0}'.", itr.first);
+                    Log.Warning("Failed to extract entity id from key '{0}'.", itr.first);
                 }
             }
         }

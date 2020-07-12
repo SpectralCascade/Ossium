@@ -92,7 +92,6 @@ namespace Ossium
         Component::OnDestroy();
         if (GetService<Renderer>() != nullptr && renderLayer >= 0)
         {
-            //Log.Info("Unregistering from renderer: {0}", entity->name);
             GetService<Renderer>()->Unregister(this, renderLayer);
             renderLayer = -1;
         }

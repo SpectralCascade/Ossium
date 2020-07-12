@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <fstream>
 #include <string>
@@ -102,10 +102,10 @@ namespace Ossium
         }
         if (data.empty() || data[0].empty())
         {
-            Logger::EngineLog().Warning("Attempted to import CSV '{0}' but no data was loaded.", path);
+            Log.Warning("Attempted to import CSV '{0}' but no data was loaded.", path);
             return false;
         }
-        Logger::EngineLog().Info("Imported CSV '{0}' with {1} rows and {2} columns.", path, (int)data.size(), numColumns);
+        Log.Info("Imported CSV '{0}' with {1} rows and {2} columns.", path, (int)data.size(), numColumns);
         return true;
     }
 
@@ -142,7 +142,7 @@ namespace Ossium
         {
             return data[row][column];
         }
-        Logger::EngineLog().Warning("Could not get cell data from CSV, cell [row: {0}, column: {1}] is out of range!", row, column);
+        Log.Warning("Could not get cell data from CSV, cell [row: {0}, column: {1}] is out of range!", row, column);
         return "";
     }
 
@@ -152,7 +152,7 @@ namespace Ossium
         {
             return data[index];
         }
-        Logger::EngineLog().Warning("Could not get row from CSV, row index [{0}] is out of range!", index);
+        Log.Warning("Could not get row from CSV, row index [{0}] is out of range!", index);
         vector<string> none;
         return none;
     }
@@ -170,7 +170,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Warning("Could not get column from CSV, column index [{0}] is out of range!", index);
+            Log.Warning("Could not get column from CSV, column index [{0}] is out of range!", index);
         }
         return column;
     }

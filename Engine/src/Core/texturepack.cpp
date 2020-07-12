@@ -104,7 +104,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Warning("Failed to import TexturePack data.");
+            Log.Warning("Failed to import TexturePack data.");
             success = false;
         }
         // Now load the texture itself
@@ -122,7 +122,7 @@ namespace Ossium
         Image* importedTexture = new Image();
         if (!importedTexture->LoadAndInit(path, renderer, pixelFormatting, SDL_TEXTUREACCESS_STREAMING))
         {
-            Logger::EngineLog().Error("Failed to import texture into texture pack with path '{0}'", path);
+            Log.Error("Failed to import texture into texture pack with path '{0}'", path);
             return false;
         }
         bool mipmapped = false;
@@ -210,7 +210,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Error("Failed to load font '{0}' into texture packer! TTF_Error: {1}", path, TTF_GetError());
+            Log.Error("Failed to load font '{0}' into texture packer! TTF_Error: {1}", path, TTF_GetError());
             return false;
         }
         return true;
@@ -225,7 +225,7 @@ namespace Ossium
         TTF_SetFontStyle(font, oldStyle);
         if (renderedText == NULL)
         {
-            Logger::EngineLog().Warning("Failed to render TrueType font from UTF-8 character '{0}'!", utfChar);
+            Log.Warning("Failed to render TrueType font from UTF-8 character '{0}'!", utfChar);
             return false;
         }
         else
@@ -291,7 +291,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Error("Failed to create texture pack!");
+            Log.Error("Failed to create texture pack!");
             return -1;
         }
         SDL_Texture* originalTarget = SDL_GetRenderTarget(render);
@@ -351,7 +351,7 @@ namespace Ossium
         if (!stbrp_pack_rects(&rect_packer, rects, totalRects))
         {
             // Not all rects were packed.
-            Logger::EngineLog().Warning("TexturePack failed to pack some textures!");
+            Log.Warning("TexturePack failed to pack some textures!");
         }
 
         // Now all the packed rects have been computed, render the corresponding textures to a blank texture.
@@ -383,7 +383,7 @@ namespace Ossium
             else
             {
                 // Log warning
-                Logger::EngineLog().Warning("TexturePack failed to pack texture '{0}'.", importedData[i].path);
+                Log.Warning("TexturePack failed to pack texture '{0}'.", importedData[i].path);
             }
         }
 
@@ -424,13 +424,13 @@ namespace Ossium
             SDL_Surface* renderSurface = SDL_CreateRGBSurface(0, targetRect.w, targetRect.h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
             if (renderSurface == NULL)
             {
-                Logger::EngineLog().Error("Failed to create surface during TexturePack save process!");
+                Log.Error("Failed to create surface during TexturePack save process!");
                 return false;
             }
             SDL_Texture* renderTarget = SDL_CreateTexture(render, pixelFormatting, SDL_TEXTUREACCESS_TARGET, targetRect.w, targetRect.h);
             if (renderTarget == NULL)
             {
-                Logger::EngineLog().Error("Failed to create render target texture during TexturePack save process!");
+                Log.Error("Failed to create render target texture during TexturePack save process!");
                 return false;
             }
             SDL_SetRenderTarget(render, renderTarget);
@@ -457,12 +457,12 @@ namespace Ossium
             SerialiseOut(data);
             data.Export(path + ".tpm");
 
-            Logger::EngineLog().Info("Saved TexturePack at '{0}'.", path);
+            Log.Info("Saved TexturePack at '{0}'.", path);
             return true;
         }
         else
         {
-            Logger::EngineLog().Warning("Could not save TexturePack, source texture is NULL.");
+            Log.Warning("Could not save TexturePack, source texture is NULL.");
         }
         return false;
     }
@@ -481,7 +481,7 @@ namespace Ossium
                 return packData[i].pureClip;
             }
         }
-        Logger::EngineLog().Warning("Could not locate texture '{0}' in texture pack!", textureId);
+        Log.Warning("Could not locate texture '{0}' in texture pack!", textureId);
         return {0, 0, 1, 1};
     }
 

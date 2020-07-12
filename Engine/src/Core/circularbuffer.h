@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef CIRCULARBUFFER_H
 #define CIRCULARBUFFER_H
@@ -33,7 +33,7 @@ namespace Ossium
         {
             if (length <= 1)
             {
-                Logger::EngineLog().Error("CircularBuffer cannot be initialised with a length of 1 or less!");
+                Log.Error("CircularBuffer cannot be initialised with a length of 1 or less!");
                 #ifdef OSSIUM_DEBUG
                 /// Chucked in the SDL assert as it's useful to have in debug builds
                 SDL_assert(length > 1);
@@ -130,7 +130,7 @@ namespace Ossium
             /// We don't want to wrap around if there are no items left in the buffer
             if (count <= 0)
             {
-                Logger::EngineLog().Error("Cannot pop_back from an empty circular buffer!");
+                Log.Error("Cannot pop_back from an empty circular buffer!");
                 /// Return whatever junk value remains rather than throw an exception
                 return buffer[back];
             }
@@ -149,7 +149,7 @@ namespace Ossium
             /// We don't want to wrap around if there are no items left in the buffer
             if (count <= 0)
             {
-                Logger::EngineLog().Error("Cannot pop_front from an empty circular buffer!");
+                Log.Error("Cannot pop_front from an empty circular buffer!");
                 /// Return whatever junk value rather than throw an exception
                 return buffer[front];
             }
@@ -173,7 +173,7 @@ namespace Ossium
                 back = Wrap(front, index, 0, max_size - 1);
                 return true;
             }
-            Logger::EngineLog().Warning("CircularBuffer drop_back index out of range, cannot drop back.");
+            Log.Warning("CircularBuffer drop_back index out of range, cannot drop back.");
             return false;
         }
 
@@ -221,7 +221,7 @@ namespace Ossium
             #endif // DEBUG
             if (count == 0 || front + index > count)
             {
-                Logger::EngineLog().Warning("Attempted to access undefined data. Returning back as default.");
+                Log.Warning("Attempted to access undefined data. Returning back as default.");
                 return buffer[back];
             }
             return buffer[front + Wrap(front, index, 0, max_size)];

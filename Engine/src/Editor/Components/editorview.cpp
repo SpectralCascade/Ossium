@@ -414,12 +414,12 @@ namespace Ossium::Editor
                         {
                             combinedSize += isRow ? node->data.w : node->data.h;
                         }
-                        //Logger::EngineLog().Debug("\nUpdating group [{0}] {1}", currentGroup, currentGroup->data);
+                        //Log.Debug("\nUpdating group [{0}] {1}", currentGroup, currentGroup->data);
 
                         bool currentRow = currentGroup->depth % 2 == layoutColumn;
                         float scaleFactor = (currentRow ? currentGroup->data.w : currentGroup->data.h) / (float)combinedSize;
 
-                        //Logger::EngineLog().Debug("Current group is a {0}, combined size = {1}, scale factor = {2}", currentRow ? "row" : "column", combinedSize, scaleFactor);
+                        //Log.Debug("Current group is a {0}, combined size = {1}, scale factor = {2}", currentRow ? "row" : "column", combinedSize, scaleFactor);
 
                         // Update the entire group of rectangles now we know their total combined width/height
                         if (currentRow)
@@ -525,7 +525,7 @@ namespace Ossium::Editor
     {
         if (dest->node == nullptr)
         {
-            Logger::EngineLog().Error("Cannot dock editor window to window that has a NULL layout node!");
+            Log.Error("Cannot dock editor window to window that has a NULL layout node!");
             return false;
         }
 
@@ -630,7 +630,7 @@ namespace Ossium::Editor
         }
         dest->node->data = destRect;
         source->node->data = sourceRect;
-        //Logger::EngineLog().Debug("Source window viewport = {0}, dest window viewport = {1}", sourceRect, destRect);
+        //Log.Debug("Source window viewport = {0}, dest window viewport = {1}", sourceRect, destRect);
         source->renderer = renderer;
         source->viewport = sourceRect.SDL();
         dest->viewport = destRect.SDL();
@@ -651,7 +651,7 @@ namespace Ossium::Editor
         // Now the sibling is determined, the source node can be safely removed
         if (!layout.Remove(source->node))
         {
-            Logger::EngineLog().Error("Failed to remove EditorWindow node!");
+            Log.Error("Failed to remove EditorWindow node!");
         }
 
         if (sibling != nullptr)
@@ -666,7 +666,7 @@ namespace Ossium::Editor
                 sibling->parent->data.window = sibling->data.window;
                 sibling->data.window->node = sibling->parent;
                 layout.Remove(sibling);
-                //Logger::EngineLog().Debug("Removed sibling which was a leaf, moved it up.");
+                //Log.Debug("Removed sibling which was a leaf, moved it up.");
             }
             else
             {
@@ -680,7 +680,7 @@ namespace Ossium::Editor
                         child->SetParent(sibling->parent);
                     }
                     layout.Remove(sibling);
-                    //Logger::EngineLog().Debug("Removed sibling, made it root.");
+                    //Log.Debug("Removed sibling, made it root.");
                     // Flip the layout levels - rows become columns, columns become rows.
                     layoutRow = !layoutRow;
                     layoutColumn = !layoutColumn;
@@ -689,12 +689,12 @@ namespace Ossium::Editor
                 {
                     // In this scenario, move all the children of the sibling node 2 levels up while maintaining the order.
                     int insertIndex = sibling->parent->childIndex;
-                    //Logger::EngineLog().Debug("Removing null sibling at depth {0} child index {1}, moved it's children up 2 levels.", sibling->depth, insertIndex);
+                    //Log.Debug("Removing null sibling at depth {0} child index {1}, moved it's children up 2 levels.", sibling->depth, insertIndex);
                     vector<Node<EditorRect>*> children = sibling->children;
                     for (auto child : children)
                     {
                         child->SetParent(sibling->parent->parent, insertIndex);
-                        //Logger::EngineLog().Info("Inserted child at {0} (new depth = {1}, true child index = {2})", insertIndex, child->depth, child->childIndex);
+                        //Log.Info("Inserted child at {0} (new depth = {1}, true child index = {2})", insertIndex, child->depth, child->childIndex);
                         insertIndex++;
                     }
                     // Remove both the sibling node and it's parent
@@ -702,16 +702,16 @@ namespace Ossium::Editor
                 }
             }
             updateViewports = true;
-            //Logger::EngineLog().Debug("Normalised tree after removing a window node");
+            //Log.Debug("Normalised tree after removing a window node");
         }
         if (source != nullptr)
         {
-            Logger::EngineLog().Debug("Destroying window \"{0}\"", source->title);
+            Log.Debug("Destroying window \"{0}\"", source->title);
             delete source;
         }
         else
         {
-            Logger::EngineLog().Warning("Attempted to remove editor window that is already destroyed!");
+            Log.Warning("Attempted to remove editor window that is already destroyed!");
         }
         return true;
     }

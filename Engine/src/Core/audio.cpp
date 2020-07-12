@@ -57,7 +57,7 @@ namespace Ossium
             audioChunk = Mix_LoadWAV(guid_path.c_str());
             if (audioChunk == NULL)
             {
-                Logger::EngineLog().Error("Failed to load audio clip '{0}'! Mix_Error: {1}", guid_path, Mix_GetError());
+                Log.Error("Failed to load audio clip '{0}'! Mix_Error: {1}", guid_path, Mix_GetError());
                 return false;
             }
             path = guid_path;
@@ -159,7 +159,7 @@ namespace Ossium
                 }
                 else if (id >= numChannels)
                 {
-                    Logger::EngineLog().Error("ChannelController: Channel id is out of range.");
+                    Log.Error("ChannelController: Channel id is out of range.");
                     return;
                 }
                 else
@@ -734,13 +734,13 @@ namespace Ossium
                 else
                 {
                     /// unexpected parse failure
-                    Logger::EngineLog().Warning("Failed to parse audio mixer bus data!");
+                    Log.Warning("Failed to parse audio mixer bus data!");
                 }
             }
             else
             {
                 /// unexpected parse failure
-                Logger::EngineLog().Warning("Failed to parse audio mixer data!");
+                Log.Warning("Failed to parse audio mixer data!");
             }
         }
 

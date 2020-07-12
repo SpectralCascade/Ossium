@@ -78,7 +78,7 @@ namespace Ossium
         {
             return itr->second;
         }
-        Logger::EngineLog().Warning("Failed to retrieve context {0} from input controller.", name);
+        Log.Warning("Failed to retrieve context {0} from input controller.", name);
         return nullptr;
     }
 

@@ -40,7 +40,7 @@ namespace Ossium
             TextLine& line = lines[i];
             Vector2 position = startPos + line.position;
 
-            //Logger::EngineLog().Info("Start pos = {0}, line pos = {1}, true linepos = {2}", startPos, line.position, position);
+            //Log.Info("Start pos = {0}, line pos = {1}, true linepos = {2}", startPos, line.position, position);
             linePos = position;
             currentGroupPosition = position;
             Vector2 oldGroupPosition = position;
@@ -262,7 +262,7 @@ namespace Ossium
                             Uint8 oldStyle = currentGroup.style;
                             if (!ParseTag(tagText, boldTags, italicTags, underlineTags, strikeTags, colours, currentGroup.style))
                             {
-                                //Logger::EngineLog().Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
+                                //Log.Warning("Failed to parse tag '<{0}>' in string '{1}'.", tagText, text);
                             }
                             if (currentGroup.color != colours.top() || currentGroup.style != oldStyle)
                             {
@@ -518,7 +518,7 @@ namespace Ossium
                     location.glyph = glyphs[i];
                     location.position.y = location.line.position.y;
                     location.position.x = width;
-                    //Logger::EngineLog().Info("Found glyph at location {0}", location.position);
+                    //Log.Info("Found glyph at location {0}", location.position);
                     break;
                 }
                 width += advance;

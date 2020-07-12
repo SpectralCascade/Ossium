@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <fstream>
 #include <sstream>
@@ -126,7 +126,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Warning("Attempted to convert JString value into array, but the value is not an array!");
+            Log.Warning("Attempted to convert JString value into array, but the value is not an array!");
         }
         return dataArray;
     }
@@ -193,7 +193,7 @@ namespace Ossium
         }
         else
         {
-            Logger::EngineLog().Warning("Attempted to get element from JSON array, but this JString instance is not an array!");
+            Log.Warning("Attempted to get element from JSON array, but this JString instance is not an array!");
         }
         /// Exceeded bounds special value
         return JString("\\!EB!\\");
@@ -222,7 +222,7 @@ namespace Ossium
         string toParse = Utilities::FileToString(file);
         if (toParse.empty())
         {
-            Logger::EngineLog().Warning("Failed to load JSON file '{0}'!", path);
+            Log.Warning("Failed to load JSON file '{0}'!", path);
             return false;
         }
         file.close();
@@ -230,7 +230,7 @@ namespace Ossium
         {
             return false;
         }
-        Logger::EngineLog().Info("Imported JSON '{0}' successfully.", path);
+        Log.Info("Imported JSON '{0}' successfully.", path);
         return true;
     }
 
@@ -441,7 +441,7 @@ namespace Ossium
         }
         if (open || !isJson)
         {
-            Logger::EngineLog().Warning("Failed to parse JSON correctly due to bad formatting.");
+            Log.Warning("Failed to parse JSON correctly due to bad formatting.");
             return false;
         }
         return true;

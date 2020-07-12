@@ -61,7 +61,7 @@ namespace Ossium
         /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
         void SetParent(Node<T>* node, int index = -1)
         {
-            Logger::EngineLog().Info("\nInsert index = {0}, childIndex = {1}\n\n", index, childIndex);
+            Log.Info("\nInsert index = {0}, childIndex = {1}\n\n", index, childIndex);
             if (parent != nullptr)
             {
                 DEBUG_ASSERT(childIndex < parent->children.size(), "err");
@@ -169,7 +169,7 @@ namespace Ossium
         {
             if (node == nullptr)
             {
-                Logger::EngineLog().Warning("(!) Attempted to remove node that is already null.");
+                Log.Warning("(!) Attempted to remove node that is already null.");
                 return false;
             }
             vector<Node<T>*> all = GetAllBelow(node);
@@ -185,12 +185,12 @@ namespace Ossium
                 total--;
             }
             vector<Node<T>*>& children = node->parent != nullptr ? node->parent->children : roots;
-            //Logger::EngineLog().Info("Removing child {0} from {1}", node->childIndex, children);
+            //Log.Info("Removing child {0} from {1}", node->childIndex, children);
             auto index = children.begin() + node->childIndex;
             for (auto i = index + 1; i < children.end(); i++)
             {
                 (*i)->childIndex--;
-                //Logger::EngineLog().Info("Reduced child index from {0} to {1}", (*i)->childIndex + 1, (*i)->childIndex);
+                //Log.Info("Reduced child index from {0} to {1}", (*i)->childIndex + 1, (*i)->childIndex);
             }
             children.erase(index);
             updateFlattened = true;
@@ -335,7 +335,7 @@ namespace Ossium
             vector<Node<T>*> all;
             if (source == nullptr)
             {
-                Logger::EngineLog().Warning("(!) Attempted to retrieve all below a null node.");
+                Log.Warning("(!) Attempted to retrieve all below a null node.");
                 return all;
             }
             if (includeSource)
@@ -415,7 +415,7 @@ namespace Ossium
                 }
 
                 updateFlattened = false;
-                //Logger::EngineLog().Debug("Flattened tree = {0}", flatTree);
+                //Log.Debug("Flattened tree = {0}", flatTree);
             }
             return flatTree;
         }

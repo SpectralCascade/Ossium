@@ -45,19 +45,19 @@ namespace Ossium
         #endif
 
         string numCPUs = "";
-        Logger::EngineLog().Info("{0} | {1} core CPU | {2} MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
+        Log.Info("{0} | {1} core CPU | {2} MB memory\n", SDL_GetPlatform(), SDL_GetCPUCount(), SDL_GetSystemRAM());
 
         int error = 0;
 
         /// Initialise ECS subsystem
         if (TypeFactory<BaseComponent, ComponentType>::Init() < 0)
         {
-            Logger::EngineLog().Warning("Failed to initialise ECS subsystem, component polymorphism not supported!");
+            Log.Warning("Failed to initialise ECS subsystem, component polymorphism not supported!");
         }
 
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
-            Logger::EngineLog().Error("SDL error during initialisation: {0}", SDL_GetError());
+            Log.Error("SDL error during initialisation: {0}", SDL_GetError());
             error = INIT_ERROR_SDL;
         }
         else
@@ -65,14 +65,14 @@ namespace Ossium
             int imgFlags = IMG_INIT_PNG;
             if (!(IMG_Init(imgFlags) & imgFlags))
             {
-                Logger::EngineLog().Error("SDL_Image error during initialisation: {0}", IMG_GetError());
+                Log.Error("SDL_Image error during initialisation: {0}", IMG_GetError());
                 error = INIT_ERROR_IMG;
             }
             else
             {
                 if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
                 {
-                    Logger::EngineLog().Error("SDL_Mixer error during initialisation: {0}", Mix_GetError());
+                    Log.Error("SDL_Mixer error during initialisation: {0}", Mix_GetError());
                     error = INIT_ERROR_MIXER;
                 }
                 else
@@ -82,12 +82,12 @@ namespace Ossium
 
                     if (TTF_Init() == -1)
                     {
-                        Logger::EngineLog().Error("SDL_ttf error during initialisation: {0}", TTF_GetError());
+                        Log.Error("SDL_ttf error during initialisation: {0}", TTF_GetError());
                         error = INIT_ERROR_TTF;
                     }
                     else
                     {
-                        Logger::EngineLog().Info("Initialised OSSIUM ENGINE successfully!");
+                        Log.Info("Initialised OSSIUM ENGINE successfully!");
                     }
                 }
             }

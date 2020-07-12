@@ -48,13 +48,13 @@ namespace Ossium
         tempSurface = IMG_Load(guid_path.c_str());
         if (tempSurface == NULL)
         {
-            Logger::EngineLog().Error("Could not load image '{0}'! IMG_Error: {1}", guid_path, IMG_GetError());
+            Log.Error("Could not load image '{0}'! IMG_Error: {1}", guid_path, IMG_GetError());
         }
         #else
         tempSurface = SDL_LoadBMP(guid_path.c_str());
         if (tempSurface == NULL)
         {
-            Logger::EngineLog().Error("Could not load image '{0}'! SDL_Error: {1}", guid_path, SDL_GetError());
+            Log.Error("Could not load image '{0}'! SDL_Error: {1}", guid_path, SDL_GetError());
         }
         #endif // SDL_IMAGE_H_
         else
@@ -106,7 +106,7 @@ namespace Ossium
         {
             if (pixelFormat == SDL_PIXELFORMAT_UNKNOWN)
             {
-                Logger::EngineLog().Warning("Cannot set surface format to unknown surface format!");
+                Log.Warning("Cannot set surface format to unknown surface format!");
                 return;
             }
             if (tempSurface != NULL && tempSurface->format->format != pixelFormat)
@@ -120,7 +120,7 @@ namespace Ossium
                 }
                 else
                 {
-                    Logger::EngineLog().Error("Failed to convert surface format from {0} to {1}!", SDL_GetPixelFormatName(format), SDL_GetPixelFormatName(pixelFormat));
+                    Log.Error("Failed to convert surface format from {0} to {1}!", SDL_GetPixelFormatName(format), SDL_GetPixelFormatName(pixelFormat));
                 }
             }
             format = pixelFormat;
@@ -242,14 +242,14 @@ namespace Ossium
 
         if (tempSurface == NULL)
         {
-            Logger::EngineLog().Error("No surface loaded, cannot copy to GPU memory!");
+            Log.Error("No surface loaded, cannot copy to GPU memory!");
         }
         else if (accessMode != SDL_TEXTUREACCESS_STATIC)
         {
             texture = SDL_CreateTexture(renderer.GetRendererSDL(), format, accessMode, tempSurface->w, tempSurface->h);
             if (texture == NULL)
             {
-                Logger::EngineLog().Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
+                Log.Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
             }
             else if (accessMode == SDL_TEXTUREACCESS_STREAMING)
             {
@@ -268,7 +268,7 @@ namespace Ossium
             texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
             if (texture == NULL)
             {
-                Logger::EngineLog().Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
+                Log.Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
             }
             else
             {
@@ -324,7 +324,7 @@ namespace Ossium
         }
         else if (pixels == NULL && SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
         {
-            Logger::EngineLog().Error("Failed to lock GPU texture! {0}", SDL_GetError());
+            Log.Error("Failed to lock GPU texture! {0}", SDL_GetError());
             return false;
         }
         return true;

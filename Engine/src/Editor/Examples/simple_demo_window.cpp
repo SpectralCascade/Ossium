@@ -89,12 +89,12 @@ namespace Ossium::Editor
 
         if (Button("Magic Button - Press me!"))
         {
-            Logger::EngineLog().Info("Boop!");
+            Log.Info("Boop!");
         }
 
         /*if (Button("Generate font pack", true, 40))
         {
-            Logger::EngineLog().Info("Starting texture packing of font 'Orkney Regular'...");
+            Log.Info("Starting texture packing of font 'Orkney Regular'...");
             TexturePack fontPack = TexturePack();
             if (fontPack.ImportFont("../assets/Orkney Regular.ttf", 14, *renderer) && fontPack.ImportFont("../assets/Orkney Regular.ttf", 36, *renderer, "ł¶ŧ←↓→øþßðđŋħ«»¢“”µ·£¹²³€½¾"))
             {
