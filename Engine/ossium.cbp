@@ -247,7 +247,6 @@
 		<Unit filename="src/Core/font.h" />
 		<Unit filename="src/Core/funcutils.cpp" />
 		<Unit filename="src/Core/funcutils.h" />
-		<Unit filename="src/Core/globalservices.cpp" />
 		<Unit filename="src/Core/helpermacros.h" />
 		<Unit filename="src/Core/image.cpp" />
 		<Unit filename="src/Core/image.h" />
