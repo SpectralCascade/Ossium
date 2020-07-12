@@ -8,4 +8,6 @@ ossium.depend
 ossium.layout
 bin/Debug/Orkney Regular.ttf
 bin/ossium/libossium.a
+Engine/bin/
+
 test_output.csv
