@@ -971,4 +971,30 @@ namespace Ossium::Editor
         return sliderValue;
     }
 
+    string NeuronGUI::DragAndDropField(string currentInput, bool* changed)
+    {
+        if (IsVisible())
+        {
+            bool hovered = false;
+            bool pressed = false;
+            Button(currentInput, false, 4, 4, true, &hovered, &pressed);
+            if (hovered)
+            {
+                if (pressed)
+                {
+                    // TODO: Set drag & drop state string to currentInput
+                }
+                else if (InputState.mouseWasPressed && !InputState.mousePressed)
+                {
+                    // TODO: Set currentInput to drag & drop state string
+                    //currentInput = ;
+                    *changed = true;
+                }
+
+            }
+
+        }
+        return currentInput;
+    }
+
 }

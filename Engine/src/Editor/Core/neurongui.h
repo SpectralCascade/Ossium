@@ -317,6 +317,31 @@ namespace Ossium::Editor
              Uint32 ypadding = 4
         );
 
+        /// A drag-and-drop field that allows dragging and dropping of strings.
+        /// This can be built upon to support SchemaReferable ID references or file paths.
+        string DragAndDropField(string currentInput, bool* changed = nullptr);
+
+        /// A drag-and-drop reference field for a specified implementation of SchemaReferable.
+        /// A mapping function must be provided that converts a reference ID into a valid reference of the specified type.
+        template<typename T>
+        typename enable_if<is_base_of<SchemaReferable, T>::value, T*>::type
+        ReferenceField(T* currentReference, function<T*(string)> findReference, string emptyField = "(null)")
+        {
+            if (IsVisible())
+            {
+                bool didChange = false;
+                string result = DragAndDropField(
+                    currentReference != nullptr ? currentReference->GetReferenceName() : emptyField,
+                    &didChange
+                );
+                if (didChange)
+                {
+                    currentReference = findReference(result);
+                }
+            }
+            return currentReference;
+        }
+
         /// Displays a drop-down list of items when clicked. Returns the selected item.
         /// TODO: show as overlay, take input control from the window while open.
         /*template<typename T>

@@ -26,4 +26,9 @@ namespace Ossium
         return ref_type_registry.GetType();
     }
 
+    string SchemaReferable::GetReferenceName()
+    {
+        return GetReferenceID();
+    }
+
 }

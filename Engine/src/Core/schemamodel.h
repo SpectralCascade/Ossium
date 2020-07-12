@@ -325,6 +325,8 @@ namespace Ossium
 
         virtual string GetReferenceID() = 0;
 
+        virtual string GetReferenceName();
+
         Uint32 GetReferableType();
 
     private:
