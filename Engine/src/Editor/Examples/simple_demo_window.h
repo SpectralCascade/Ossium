@@ -1,7 +1,7 @@
 #ifndef SIMPLE_DEMO_WINDOW_H
 #define SIMPLE_DEMO_WINDOW_H
 
-#include "../Components/editorview.h"
+#include "../Core/editorwindow.h"
 #include "../../Core/textlayout.h"
 
 namespace Ossium::Editor

@@ -1,7 +1,7 @@
 #ifndef FONT_VIEWER_H
 #define FONT_VIEWER_H
 
-#include "../Components/editorview.h"
+#include "../Core/editorwindow.h"
 
 namespace Ossium::Editor
 {

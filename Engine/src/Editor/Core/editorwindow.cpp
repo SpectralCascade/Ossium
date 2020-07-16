@@ -14,7 +14,7 @@
  *  3. This notice may not be removed or altered from any source distribution.
  *
 **/
-#include "editorview.h"
+#include "editorwindow.h"
 #include "../../Core/mousecursor.h"
 
 namespace Ossium::Editor
