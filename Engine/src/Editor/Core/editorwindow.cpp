@@ -50,6 +50,11 @@ namespace Ossium::Editor
         return native;
     }
 
+    Vector2 EditorWindow::GetNativePosition(bool relative)
+    {
+        return (relative ? GetEditorLayout()->GetNativeWindow()->GetRelativePosition() : GetEditorLayout()->GetNativeWindow()->GetPosition()) + Vector2(viewport.x, viewport.y);
+    }
+
     string EditorWindow::GetTitle()
     {
         return settings.title;

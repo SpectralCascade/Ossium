@@ -19,7 +19,6 @@
 
 #include "coremaths.h"
 #include "ecs.h"
-#include "globalservices.h"
 
 namespace Ossium
 {

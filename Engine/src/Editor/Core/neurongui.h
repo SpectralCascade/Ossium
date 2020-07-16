@@ -269,6 +269,10 @@ namespace Ossium::Editor
         /// Stops positioning GUI elements vertically.
         void EndVertical();
 
+        /// When in a BeginHorizontal() or BeginVertical() block, returns the size difference between the beginning and end of the block so far.
+        /// Note this is susceptible to change as you add more GUI elements or move further along the layout inside the block.
+        float GetCurrentBlockSize();
+
         /// Displays some text.
         void TextLabel(string text);
         void TextLabel(string text, TextStyle style);

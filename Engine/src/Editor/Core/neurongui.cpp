@@ -531,6 +531,15 @@ namespace Ossium::Editor
         EndLayout();
     }
 
+    float NeuronGUI::GetCurrentBlockSize()
+    {
+        if (layoutDifference.size() > 1)
+        {
+            return layoutDifference.top();
+        }
+        return 0;
+    }
+
     void NeuronGUI::TextLabel(string text)
     {
         TextLabel(text, styleLabel);
