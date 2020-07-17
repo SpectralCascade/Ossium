@@ -14,11 +14,12 @@
  *  3. This notice may not be removed or altered from any source distribution.
  *
 **/
-#ifndef NEURONGUI_H
-#define NEURONGUI_H
+#ifndef EDITORGUI_H
+#define EDITORGUI_H
 
 #include <stack>
 #include "../../Ossium.h"
+#include "editorstyle.h"
 
 using namespace Ossium;
 using namespace std;
@@ -26,102 +27,28 @@ using namespace std;
 namespace Ossium::Editor
 {
 
-    enum NeuronLayoutDirection
+    enum EditorLayoutDirection
     {
-        NEURON_LAYOUT_HORIZONTAL = 0,
-        NEURON_LAYOUT_VERTICAL = 1
+        EDITOR_LAYOUT_HORIZONTAL = 0,
+        EDITOR_LAYOUT_VERTICAL = 1
     };
 
-    struct NeuronViewportSchema : public Schema<NeuronViewportSchema, 20>
+    struct EditorViewportSchema : public Schema<EditorViewportSchema, 20>
     {
-        DECLARE_BASE_SCHEMA(NeuronViewportSchema, 20);
+        DECLARE_BASE_SCHEMA(EditorViewportSchema, 20);
 
         // Default text styles, used when no text style is specified.
-        M(TextStyle, styleLabel);
-        M(TextStyle, styleTextField);
-        M(TextStyle, styleDropdownText);
-        M(TextStyle, styleButtonText);
+        M(StyleText, styleLabel);
+        M(StyleText, styleTextField);
+        M(StyleText, styleDropdownText);
+        M(StyleText, styleButtonText);
         M(SDL_Color, backgroundColor) = Color(200, 200, 200);
         M(SDL_Rect, viewport) = {0, 0, 0, 0};
 
     };
 
-    struct NeuronClickableStyle : public Schema<NeuronClickableStyle, 10>
-    {
-        DECLARE_BASE_SCHEMA(NeuronClickableStyle, 10);
-
-        NeuronClickableStyle(
-            SDL_Color bodyColor,
-            TextStyle textStyle
-        );
-
-        NeuronClickableStyle(
-            SDL_Color bodyColor,
-            TextStyle textStyle,
-            SDL_Color outlineColor
-        );
-
-        NeuronClickableStyle(
-            SDL_Color bodyColor,
-            TextStyle textStyle,
-            SDL_Color endEdgeColors,
-            SDL_Color sideEdgeColors
-        );
-
-        NeuronClickableStyle(
-            SDL_Color bodyColor,
-            TextStyle textStyle,
-            SDL_Color topColor,
-            SDL_Color bottomColor,
-            SDL_Color leftColor,
-            SDL_Color rightColor
-        );
-
-        NeuronClickableStyle(
-            SDL_Color bodyNormal,
-            SDL_Color bodyHover,
-            SDL_Color bodyClick,
-            TextStyle textNormal,
-            TextStyle textHover,
-            TextStyle textClick,
-            SDL_Color topColor,
-            SDL_Color bottomColor,
-            SDL_Color leftColor,
-            SDL_Color rightColor
-        );
-
-        M(SDL_Color, normalColor);
-        M(SDL_Color, hoverColor);
-        M(SDL_Color, clickColor);
-
-        M(TextStyle, normalTextStyle);
-        M(TextStyle, hoverTextStyle);
-        M(TextStyle, clickTextStyle);
-
-        M(SDL_Color, topEdgeColor);
-        M(SDL_Color, bottomEdgeColor);
-        M(SDL_Color, leftEdgeColor);
-        M(SDL_Color, rightEdgeColor);
-    };
-
-    namespace NeuronStyles
-    {
-        extern TextStyle NEURON_TEXT_NORMAL_STYLE;
-        extern TextStyle NEURON_TEXT_INVERSE_STYLE;
-        extern TextStyle NEURON_TEXT_GRAY_STYLE;
-        extern TextStyle NEURON_TEXT_NORMAL_CENTERED_STYLE;
-        extern TextStyle NEURON_TEXT_INVERSE_CENTERED_STYLE;
-        extern NeuronClickableStyle NEURON_BUTTON_STYLE;
-        extern NeuronClickableStyle NEURON_SLIDER_STYLE;
-        extern NeuronClickableStyle NEURON_DROPDOWN_ITEM_STYLE;
-        extern NeuronClickableStyle NEURON_TEXTFIELD_STYLE;
-        extern NeuronClickableStyle NEURON_CHECKBOX_STYLE;
-        extern NeuronClickableStyle NEURON_CONTEXT_OPTION_STYLE;
-        extern NeuronClickableStyle NEURON_CONTEXT_OPTION_DISABLED_STYLE;
-    }
-
     /// Provides immediate-mode GUI methods to derivative classes for fundamental UI elements and layouts.
-    class NeuronGUI : public NeuronViewportSchema
+    class EditorGUI : public EditorViewportSchema
     {
     private:
         /// Used to determine how GUI elements are positioned.
@@ -156,9 +83,9 @@ namespace Ossium::Editor
         Vector2 scrollPos = Vector2::Zero;
 
         /// Contains input state information
-        struct NeuronInputState : public Schema<NeuronInputState, 7>
+        struct EditorInputState : public Schema<EditorInputState, 7>
         {
-            DECLARE_BASE_SCHEMA(NeuronInputState, 7);
+            DECLARE_BASE_SCHEMA(EditorInputState, 7);
 
             /// The position of the mouse in the current Refresh() call.
             M(Vector2, mousePos) = Vector2::Zero;
@@ -201,13 +128,13 @@ namespace Ossium::Editor
         Vector2 nativeOrigin = Vector2::Zero;
 
         /// Read only reference to the input state information
-        NeuronInputState& InputState = input_state;
+        EditorInputState& InputState = input_state;
 
     public:
-        CONSTRUCT_SCHEMA(SchemaRoot, NeuronViewportSchema);
+        CONSTRUCT_SCHEMA(SchemaRoot, EditorViewportSchema);
 
-        NeuronGUI() = default;
-        virtual ~NeuronGUI() = default;
+        EditorGUI() = default;
+        virtual ~EditorGUI() = default;
 
         /// Initialises everything. Must be called immediately after construction!
         void Init(InputContext* inputContext, ResourceController* resourceController);
@@ -275,22 +202,22 @@ namespace Ossium::Editor
 
         /// Displays some text.
         void TextLabel(string text);
-        void TextLabel(string text, TextStyle style);
+        void TextLabel(string text, StyleText style);
 
         /// Takes text input and displays it. Returns the current string input.
         string TextField(string text);
-        string TextField(string text, NeuronClickableStyle style, SDL_Color cursorColor = Colors::BLACK);
+        string TextField(string text, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
 
         /// Dumps an image at the current layout position.
         void PlaceImage(Image* image);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
         bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(string text, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(string text, TextLayout& textLayout, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(string text, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(string text, TextLayout& textLayout, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(Image* image, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(int w, int h, NeuronClickableStyle style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(Image* image, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(int w, int h, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr, bool* isHovered = nullptr, bool* isPressed = nullptr);
 
         /// Behaves somewhat like a regular button... except it's invisible and it's position is absolute.
         bool InvisibleButton(Rect area);
@@ -306,7 +233,7 @@ namespace Ossium::Editor
 
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
         bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
-        bool Toggle(bool toggleValue, NeuronClickableStyle style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
+        bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
 
         float Slider(
              float sliderValue,
@@ -315,7 +242,7 @@ namespace Ossium::Editor
              int length = 50,
              int buttonWidth = 8,
              int buttonHeight = 8,
-             NeuronClickableStyle style = NeuronStyles::NEURON_SLIDER_STYLE,
+             StyleClickable style = EditorStyle::EDITOR_SLIDER_STYLE,
              bool invertOutline = false,
              Uint32 xpadding = 4,
              Uint32 ypadding = 4
@@ -382,4 +309,4 @@ namespace Ossium::Editor
 
 }
 
-#endif // NEURONGUI_H
+#endif // EDITORGUI_H

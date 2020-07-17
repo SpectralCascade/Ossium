@@ -24,10 +24,10 @@ namespace Ossium
 {
 
     //
-    // TextStyle
+    // StyleText
     //
 
-    TextStyle::TextStyle(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
+    StyleText::StyleText(string font, int fontSize, SDL_Color color, int hint, int kern, int outlineThickness,
         int styling, int renderingMode, int alignment, SDL_Color backgroundColor)
     {
         fontPath = font;
@@ -348,7 +348,7 @@ namespace Ossium
         return tempSurface;
     }
 
-    SDL_Surface* Font::GenerateFromText(string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f)
+    SDL_Surface* Font::GenerateFromText(string text, const StyleText& style, Uint32 wrapLength, TTF_Font* f)
     {
         return GenerateFromText(text, style.fg, style.hinting, style.kerning, style.style, style.rendermode, style.bg, style.outline, wrapLength, f);
     }

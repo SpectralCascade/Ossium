@@ -1,13 +1,13 @@
 #ifndef CONTEXTMENU_H
 #define CONTEXTMENU_H
 
-#include "neurongui.h"
+#include "editorgui.h"
 
 namespace Ossium::Editor
 {
 
     /// Represents a context menu, which can be used for drop downs and other editing tools.
-    class ContextMenu : public NeuronGUI
+    class ContextMenu : public EditorGUI
     {
     public:
         struct Option
@@ -75,7 +75,7 @@ namespace Ossium::Editor
     protected:
         void OnGUI();
 
-        NeuronClickableStyle style = NeuronStyles::NEURON_CONTEXT_OPTION_STYLE;
+        StyleClickable style = EditorStyle::EDITOR_CONTEXT_OPTION_STYLE;
 
     private:
         /// Hides the attached context menu

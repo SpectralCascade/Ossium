@@ -21,13 +21,13 @@ namespace Ossium::Editor
 
             Space(20);
 
-            NeuronClickableStyle style = NeuronStyles::NEURON_BUTTON_STYLE;
+            StyleClickable style = EditorStyle::StandardButton;
             style.hoverColor = Colors::RED;
             style.normalColor = Color(230, 0, 0);
             style.clickColor = Color(150, 0, 0);
-            style.normalTextStyle.fg = Colors::WHITE;
-            style.hoverTextStyle.fg = Colors::WHITE;
-            style.clickTextStyle.fg = Color(100, 100, 100);
+            style.normalStyleText.fg = Colors::WHITE;
+            style.hoverStyleText.fg = Colors::WHITE;
+            style.clickStyleText.fg = Color(100, 100, 100);
 
             if (Button("Windows"))
             {

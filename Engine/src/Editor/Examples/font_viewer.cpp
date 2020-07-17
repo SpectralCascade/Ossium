@@ -1,4 +1,5 @@
 #include "font_viewer.h"
+#include "../Core/editorstyle.h"
 #include <math.h>
 
 namespace Ossium::Editor
@@ -49,7 +50,7 @@ namespace Ossium::Editor
 
         Space(5);
 
-        Font* font = resources->Get<Font>(currentFontPath, NeuronStyles::NEURON_TEXT_NORMAL_STYLE.ptsize);
+        Font* font = resources->Get<Font>(currentFontPath, EditorStyle::StandardText.ptsize);
         if (font != nullptr)
         {
             font->Render(*renderer, Rect(0, GetLayoutPosition().y, scale * min((float)viewport.w, (float)font->GetAtlasSize()), scale * min((float)viewport.h, (float)font->GetAtlasSize())).SDL(), NULL, color);

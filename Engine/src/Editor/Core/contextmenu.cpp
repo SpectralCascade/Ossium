@@ -120,7 +120,7 @@ namespace Ossium::Editor
         renderer->SetDrawColor(backgroundColor);
         SDL_RenderClear(renderer->GetRendererSDL());
         nativeOrigin = nativeWindow->GetPosition();
-        NeuronGUI::Refresh();
+        EditorGUI::Refresh();
         //Log.Info("InputState = {0}", InputState.ToString());
         if (fitRenderer)
         {
@@ -177,12 +177,12 @@ namespace Ossium::Editor
 
             TextLayout tlayout;
             Vector2 limits = Vector2(viewport.w - oldPos.x - xpadding, renderer->GetHeight() - ypadding);
-            tlayout.SetPointSize(NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.ptsize);
+            tlayout.SetPointSize(EditorStyle::EDITOR_CONTEXT_OPTION_STYLE.normalStyleText.ptsize);
             tlayout.SetBounds(limits);
-            tlayout.mainColor = option.enabled ? NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.fg : NeuronStyles::NEURON_CONTEXT_OPTION_DISABLED_STYLE.normalTextStyle.fg;
-            tlayout.mainStyle = option.enabled ? NeuronStyles::NEURON_CONTEXT_OPTION_STYLE.normalTextStyle.style : NeuronStyles::NEURON_CONTEXT_OPTION_DISABLED_STYLE.normalTextStyle.style;
+            tlayout.mainColor = option.enabled ? EditorStyle::EDITOR_CONTEXT_OPTION_STYLE.normalStyleText.fg : EditorStyle::EDITOR_CONTEXT_OPTION_DISABLED_STYLE.normalStyleText.fg;
+            tlayout.mainStyle = option.enabled ? EditorStyle::EDITOR_CONTEXT_OPTION_STYLE.normalStyleText.style : EditorStyle::EDITOR_CONTEXT_OPTION_DISABLED_STYLE.normalStyleText.style;
             tlayout.SetAlignment(Typographic::TextAlignment::LEFT_ALIGNED);
-            Font& font = *resources->Get<Font>(style.normalTextStyle.fontPath, style.normalTextStyle.ptsize);
+            Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
             tlayout.SetText(*renderer, font, option.text, true);
             tlayout.Update(font);
 
@@ -190,7 +190,7 @@ namespace Ossium::Editor
 
             if (option.enabled)
             {
-                if (Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, &hovered))
+                if (Button(option.text, tlayout, EditorStyle::EDITOR_CONTEXT_OPTION_STYLE, false, xpadding, ypadding, true, &hovered))
                 {
                     option.onClick();
                     if (option.expansion == nullptr)
@@ -202,7 +202,7 @@ namespace Ossium::Editor
             }
             else
             {
-                Button(option.text, tlayout, NeuronStyles::NEURON_CONTEXT_OPTION_DISABLED_STYLE, false, xpadding, ypadding, true);
+                Button(option.text, tlayout, EditorStyle::EDITOR_CONTEXT_OPTION_DISABLED_STYLE, false, xpadding, ypadding, true);
             }
 
             if (hovered && attached != option.expansion)
@@ -253,7 +253,7 @@ namespace Ossium::Editor
         nativeInput = inputController;
         input = new InputContext();
         nativeInput->AddContext(Utilities::Format("ContextMenu@{0}", this), input);
-        NeuronGUI::Init(input, resourceController);
+        EditorGUI::Init(input, resourceController);
     }
 
     void ContextMenu::Add(string text, function<void(void)> onClick, Image* icon, bool enabled)

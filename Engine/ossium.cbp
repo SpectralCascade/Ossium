@@ -313,16 +313,46 @@
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
+		<Unit filename="src/Editor/Core/editorgui.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/editorgui.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/editorlayout.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/editorlayout.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/editorstyle.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/editorstyle.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
 		<Unit filename="src/Editor/Core/editorwindow.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
 		<Unit filename="src/Editor/Core/editorwindow.h">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
-		<Unit filename="src/Editor/Core/neurongui.cpp" />
-		<Unit filename="src/Editor/Core/neurongui.h" />
 		<Unit filename="src/Editor/Examples/demo_window_docking.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />

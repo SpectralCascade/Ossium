@@ -63,11 +63,11 @@ namespace Ossium
         RENDERTEXT_BLEND_WRAPPED
     };
 
-    struct TextStyle : public Schema<TextStyle, 10>
+    struct StyleText : public Schema<StyleText, 10>
     {
-        DECLARE_BASE_SCHEMA(TextStyle, 10);
+        DECLARE_BASE_SCHEMA(StyleText, 10);
 
-        TextStyle(
+        StyleText(
             string font = "",
             int fontSize = 12,
             SDL_Color color = Colors::BLACK,
@@ -202,7 +202,7 @@ namespace Ossium
         );
 
         /// Ditto, but bundled some parameters.
-        SDL_Surface* GenerateFromText(string text, const TextStyle& style, Uint32 wrapLength, TTF_Font* f = NULL);
+        SDL_Surface* GenerateFromText(string text, const StyleText& style, Uint32 wrapLength, TTF_Font* f = NULL);
 
         /// Copies a glyph to the font atlas.
         /** You should call this between BatchPackBegin() and BatchPackEnd(). Returns the number of glyphs that have been packed since BatchPackBegin() was last called.

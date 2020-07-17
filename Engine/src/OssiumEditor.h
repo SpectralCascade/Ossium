@@ -18,6 +18,7 @@
 #define OSSIUMEDITOR_H
 
 #include "Editor/Core/editorwindow.h"
+#include "Editor/Core/editorlayout.h"
 #include "Editor/Core/contextmenu.h"
 
 #endif // OSSIUMEDITOR_H
