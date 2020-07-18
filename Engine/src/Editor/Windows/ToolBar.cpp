@@ -11,7 +11,7 @@ namespace Ossium::Editor
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
-        editor->AddCustomMenu("Edit", [&] () {});
+        editor->AddCustomMenu("Edit/Undo", [&] () {});
         editor->AddToolWindow<FontViewer>("View/Fonts");
 
     }
@@ -30,27 +30,38 @@ namespace Ossium::Editor
         ContextMenu& menu = *ContextMenu::GetMainInstance(resources);
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
-        // TODO: make this a vector of pairs (to maintain order).
-        map<string, vector<FuncPath>> menus;
-        for (auto itr : editor->customMenuTools)
+        unordered_map<string, unsigned int> menuNameMap;
+        vector<MenuData> menus;
+        for (auto tool : editor->customMenuTools)
         {
-            vector<string> path = Utilities::Split(itr.first, '/');
+            vector<string> path = Utilities::Split(tool.path, '/');
             if (path.size() < 2)
             {
-                Log.Warning("Cannot add custom menu button at path '{0}' because it does not specify a dropdown option.", itr.first);
+                Log.Warning("Cannot add custom menu button at path '{0}' because it does not specify a dropdown option.", tool.path);
                 continue;
             }
             string menuName = path[0];
             path.erase(path.begin());
-            menus[menuName].push_back(FuncPath(itr.first, path, itr.second));
+
+            auto pos = menuNameMap.find(menuName);
+            if (pos == menuNameMap.end())
+            {
+                pos = menuNameMap.emplace(menuName, menus.size()).first;
+                menus.push_back(MenuData());
+            }
+            menus[pos->second].name = menuName;
+            menus[pos->second].path.push_back(FuncPath(tool.path, path, tool.onClick));
         }
 
         Vector2 oldPos;
-        for (auto itr : menus)
+        for (auto menuRoot : menus)
         {
             oldPos = GetLayoutPosition();
-            if (Button(itr.first))
+            if (Button(menuRoot.name))
             {
+                // Always clear previous options
+                menu.ClearOptions();
+
                 vector<ContextMenu*> expansions = { &menu };
                 vector<ContextMenu*> nextExpansions;
                 unsigned int completed = 0;
@@ -59,10 +70,10 @@ namespace Ossium::Editor
                 for (auto expansion : expansions)
                 {
                     ContextMenu& currentMenu = *expansion;
-                    while (completed < itr.second.size())
+                    while (completed < menuRoot.path.size())
                     {
                         completed = 0;
-                        for (FuncPath& funcPath : itr.second)
+                        for (FuncPath& funcPath : menuRoot.path)
                         {
                             if (funcPath.split.empty())
                             {
@@ -81,7 +92,7 @@ namespace Ossium::Editor
                             else
                             {
                                 nextExpansions.push_back(
-                                    currentMenu.AddPopoutMenu(name, nullptr, true);
+                                    currentMenu.AddPopoutMenu(name, nullptr, true)
                                 );
                             }
                         }

@@ -9,8 +9,6 @@ namespace Ossium::Editor
     class ToolBar : public EditorWindow, public Service<ToolBar>
     {
     public:
-        void AddMenu(string name);
-
         bool ShouldQuit();
 
     protected:
@@ -27,6 +25,12 @@ namespace Ossium::Editor
             string id;
             vector<string> split;
             function<void()> func;
+        };
+
+        struct MenuData
+        {
+            string name;
+            vector<FuncPath> path;
         };
 
     };

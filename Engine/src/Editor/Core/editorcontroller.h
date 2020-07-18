@@ -51,8 +51,15 @@ namespace Ossium::Editor
             AddCustomMenu(menuPath, [&] () { AddLayout<T>(); });
         }
 
+        struct MenuTool
+        {
+            MenuTool(string path, function<void()> onClick);
+            string path;
+            function<void()> onClick;
+        };
+
         /// Developer-defined menu tools.
-        map<string, function<void()>> customMenuTools;
+        vector<MenuTool> customMenuTools;
 
     private:
         // Helper method for a template

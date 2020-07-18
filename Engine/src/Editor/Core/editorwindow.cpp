@@ -41,8 +41,8 @@ namespace Ossium::Editor
         if (nativeWindow != native)
         {
             nativeWindow->GetInputController()->AddContext(Utilities::Format("EditorWindow {0}", this), input);
-            EditorGUI::Init(input, nativeWindow->GetResources());
             native = nativeWindow;
+            EditorGUI::Init(input, nativeWindow->GetResources());
         }
     }
 
