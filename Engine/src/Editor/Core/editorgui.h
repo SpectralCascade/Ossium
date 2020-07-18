@@ -273,37 +273,35 @@ namespace Ossium::Editor
             return currentReference;
         }
 
-        /// Displays a drop-down list of items when clicked. Returns the selected item.
-        /// TODO: show as overlay, take input control from the window while open.
-        /*template<typename T>
-        vector<typename T>::iterator Dropdown(vector<typename T>::iterator selected, const vector<typename T>& values)
+        /// Displays a drop-down list of items when clicked. You must indicate which item is currently selected and provide a function to handle the dropdown selection.
+        /// Optionally, provide a list of names corresponding to the given values. By default Utilities::ToString() is used  to determine these names.
+        template<typename T>
+        typename enable_if<!is_same<T, string>::value, void>::type
+        Dropdown(unsigned int selected, const vector<T>& values, function<void(unsigned int)> onSelectHandler)
         {
-            Font& font = *resources->Get<Font>(style.fontPath, style.ptsize, *renderer);
-            vector<TextLayout> textLayouts;
-
-            // First, find the widest element in the list
-            float biggestWidth = 0;
-            for (auto itr : values)
+            if (IsVisible())
             {
-                TextLayout tlayout;
-                Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
-                tlayout.SetPointSize(style.ptsize);
-                tlayout.SetBounds(limits);
-                tlayout.mainColor = style.fg;
-                tlayout.mainStyle = style.style;
-                tlayout.SetText(*renderer, font, text, true);
-                tlayout.Update(font);
-                tlayout.Render(*renderer, font, layoutPos);
+                Vector2 oldPos = GetLayoutPosition();
+                if (Button(Utilities::ToString(values[selected])))
+                {
+                    vector<string> converted;
+                    for (auto& value : values)
+                    {
+                        converted.push_back(Utilities::ToString(value));
+                    }
+                    OnDropdown(
+                        Vector2(oldPos.x, GetLayoutPosition().y) + renderer->GetWindow()->GetPosition(),
+                        converted,
+                        onSelectHandler
+                    );
+                }
+            }
+        }
 
-                textLayouts.push_back();
-                biggestWidth = GetButtonRect(,, );
-            }
-            // Now create buttons for each element but at an even width.
-            for (auto itr : values)
-            {
-            }
-            return selected;
-        }*/
+        void Dropdown(unsigned int selected, vector<string>& values, function<void(unsigned int)> onSelectHandler);
+
+    private:
+        void OnDropdown(Vector2 position, vector<string>& names, function<void(unsigned int)> onSelectHandler);
 
     };
 

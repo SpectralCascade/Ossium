@@ -105,6 +105,13 @@ namespace Ossium::Editor
         }
 
         EndHorizontal();
+
+        vector<float> test = {0, 2.44f, 5692354.0f, -5128.26893f};
+        Dropdown(
+            selected,
+            test,
+            [&] (unsigned int i) { this->selected = i; Log.Info("Set selected to {0}!", i); }
+        );
     }
 
     bool ToolBar::ShouldQuit()

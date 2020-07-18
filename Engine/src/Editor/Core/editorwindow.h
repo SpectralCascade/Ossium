@@ -84,8 +84,8 @@ namespace Ossium::Editor
         /// Returns the native editor window that owns this editor window.
         EditorLayout* GetEditorLayout();
 
-        /// Returns the position of this editor window in the native display.
-        /// Set relative = false to get the absolute position of this editor window across all native displays.
+        /// Returns the position of this editor window across all displays.
+        /// Set relative = true to get the relative position of this editor window relative to it's native display.
         Vector2 GetNativePosition(bool relative = false);
 
         /// Sets the window title.

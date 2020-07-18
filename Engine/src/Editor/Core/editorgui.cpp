@@ -15,6 +15,7 @@
  *
 **/
 #include "editorgui.h"
+#include "contextmenu.h"
 #include "../../Core/textinput.h"
 #include "../../Core/mousecursor.h"
 
@@ -790,6 +791,33 @@ namespace Ossium::Editor
 
         }
         return currentInput;
+    }
+
+    void EditorGUI::Dropdown(unsigned int selected, vector<string>& values, function<void(unsigned int)> onSelectHandler)
+    {
+        if (IsVisible())
+        {
+            Vector2 oldPos = GetLayoutPosition();
+            if (Button(values[selected]))
+            {
+                OnDropdown(
+                    Vector2(oldPos.x, GetLayoutPosition().y) + renderer->GetWindow()->GetPosition(),
+                    values,
+                    onSelectHandler
+                );
+            }
+        }
+    }
+
+    void EditorGUI::OnDropdown(Vector2 position, vector<string>& names, function<void(unsigned int)> onSelectHandler)
+    {
+        ContextMenu& menu = *ContextMenu::GetMainInstance(resources);
+        menu.ClearOptions();
+        for (unsigned int i = 0, counti = names.size(); i < counti; i++)
+        {
+            menu.Add(names[i], [&] () { onSelectHandler(i); });
+        }
+        menu.Show(position);
     }
 
 }

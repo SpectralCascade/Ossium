@@ -279,6 +279,7 @@ namespace Ossium::Editor
 
     void ContextMenu::SetOptions(vector<Option> options)
     {
+        fitRenderer = true;
         for (Option& option : options)
         {
             if (option.expansion != nullptr)
@@ -296,6 +297,7 @@ namespace Ossium::Editor
 
     void ContextMenu::ClearOptions()
     {
+        fitRenderer = true;
         for (Option& option : options)
         {
             if (option.expansion != nullptr)
