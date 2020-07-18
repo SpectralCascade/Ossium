@@ -161,6 +161,26 @@ namespace Ossium
             return data.substr(0, index);
         }
 
+        vector<string> Split(string data, char delimiter)
+        {
+            vector<string> out;
+            unsigned int startIndex = 0;
+            unsigned int counti = data.length();
+            for (unsigned int i = 0; i < counti; i++)
+            {
+                if (data[i] == delimiter && (startIndex != i - 1 || (i == 1 && data[0] != delimiter)))
+                {
+                    out.push_back(data.substr(startIndex, i - startIndex));
+                    startIndex = i + 1;
+                }
+            }
+            if (startIndex < counti)
+            {
+                out.push_back(data.substr(startIndex, counti - startIndex));
+            }
+            return out;
+        }
+
         bool IsInt(const string& data)
         {
             bool isi = false;

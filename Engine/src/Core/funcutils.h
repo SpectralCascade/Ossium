@@ -59,6 +59,8 @@ namespace Ossium
         OSSIUM_EDL string SplitRight(string data, char delimiter = ' ', string outputOnError = "%s");
         /// Ditto but returns the first half instead.
         OSSIUM_EDL string SplitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
+        /// Splits a string up into smaller strings depending on the delimiter.
+        OSSIUM_EDL vector<string> Split(string data, char delimited = ' ');
 
         ///
         /// Type query functions (for converting strings to specific data types).

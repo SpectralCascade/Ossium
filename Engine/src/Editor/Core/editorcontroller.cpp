@@ -28,6 +28,17 @@ namespace Ossium::Editor
         delete input;
     }
 
+    EditorController::CustomMenuButton::CustomMenuButton(string path, function<void()> func)
+    {
+        menuPath = path;
+        onClick = func;
+    }
+
+    void EditorController::AddCustomMenu(string menuPath, function<void()> onClick)
+    {
+        customMenuTools[menuPath] = onClick;
+    }
+
     EditorLayout* EditorController::CreateLayout()
     {
         EditorLayout* layout = new EditorLayout(this, "Ossium Editor");

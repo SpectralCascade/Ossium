@@ -21,6 +21,14 @@ namespace Ossium::Editor
     private:
         bool doQuit = false;
 
+        struct FuncPath
+        {
+            FuncPath(string id, vector<string> split, function<void()> func);
+            string id;
+            vector<string> split;
+            function<void()> func;
+        };
+
     };
 
 }

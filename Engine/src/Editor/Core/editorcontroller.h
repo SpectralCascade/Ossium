@@ -42,6 +42,18 @@ namespace Ossium::Editor
         /// Operates all editor logic. Returns true if the application should quit.
         bool Update();
 
+        void AddCustomMenu(string menuPath, function<void()> onClick);
+
+        template<typename T>
+        void AddToolWindow(string menuPath)
+        {
+            // TODO: if already opened, simply focus the layout window.
+            AddCustomMenu(menuPath, [&] () { AddLayout<T>(); });
+        }
+
+        /// Developer-defined menu tools.
+        map<string, function<void()>> customMenuTools;
+
     private:
         // Helper method for a template
         EditorLayout* CreateLayout();
