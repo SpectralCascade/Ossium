@@ -1,5 +1,6 @@
 #include "editorlayout.h"
 #include "editorwindow.h"
+#include "editorcontroller.h"
 
 namespace Ossium::Editor
 {
@@ -9,11 +10,12 @@ namespace Ossium::Editor
     // EditorLayout
     //
 
-    EditorLayout::EditorLayout(InputController* controller, ResourceController* resourceController, string title, int w, int h)
+    EditorLayout::EditorLayout(EditorController* controller, string title, int w, int h)
     {
-        // Setup input and native window
-        input = controller;
-        resources = resourceController;
+        this->controller = controller;
+        this->input = controller->GetInput();
+        this->resources = controller->GetResources();
+
         input->AddContext(Utilities::Format("EditorLayout {0}", this), &windowContext);
         native = new Window(title.c_str(), w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (w < 0 || h < 0 ? SDL_WINDOW_MAXIMIZED : 0));
 
@@ -64,6 +66,10 @@ namespace Ossium::Editor
                     node->data.window->input->SetActive(false);
                 }
             }
+        };
+
+        native->OnCloseButton += [&] (Window& window) {
+            GetEditorController()->RemoveLayout(this);
         };
 
     }
@@ -567,6 +573,11 @@ namespace Ossium::Editor
     ResourceController* EditorLayout::GetResources()
     {
         return resources;
+    }
+
+    EditorController* EditorLayout::GetEditorController()
+    {
+        return controller;
     }
 
 }

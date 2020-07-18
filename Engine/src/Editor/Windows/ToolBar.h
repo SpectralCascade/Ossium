@@ -1,7 +1,7 @@
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
 
-#include "../Core/editorwindow.h"
+#include "../../OssiumEditor.h"
 
 namespace Ossium::Editor
 {

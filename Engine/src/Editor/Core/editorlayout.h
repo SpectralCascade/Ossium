@@ -10,6 +10,7 @@ namespace Ossium::Editor
 {
 
     class EditorWindow;
+    class EditorController;
 
     /// Represents a rectangular area within an editor window. May contain a specific window.
     class EditorRect : public Rect
@@ -39,7 +40,7 @@ namespace Ossium::Editor
     /// This holds the actual native editor window and the layout tree for docked editor windows.
     class EditorLayout
     {
-    private:
+    protected:
         /// The renderer to use for this window.
         Renderer* renderer = nullptr;
 
@@ -75,6 +76,9 @@ namespace Ossium::Editor
         /// Should the viewports be updated on the next Update() call?
         bool updateViewports = false;
 
+        /// Reference back to the editor controller instance.
+        EditorController* controller = nullptr;
+
         /// Docks an existing source editor window to a destination editor window.
         bool Insert(EditorWindow* source, EditorWindow* dest, DockingMode mode);
 
@@ -83,7 +87,7 @@ namespace Ossium::Editor
 
     public:
         /// Creates the window and initialises the tree.
-        EditorLayout(InputController* controller, ResourceController* resourceController, string title = "Untitled", int w = -1, int h = -1);
+        EditorLayout(EditorController* controller, string title = "Untitled", int w = -1, int h = -1);
         virtual ~EditorLayout();
 
         /// Handles an incoming SDL_Event
@@ -176,6 +180,9 @@ namespace Ossium::Editor
 
         /// TODO: remove me
         Tree<EditorRect>* GetLayout();
+
+        /// Returns the main editor controller.
+        EditorController* GetEditorController();
 
     };
 

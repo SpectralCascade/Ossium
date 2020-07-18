@@ -2,8 +2,7 @@
 #include "Examples/simple_demo_window.h"
 #include "Examples/demo_window_docking.h"
 #include "Examples/layout_diagram.h"
-#include "Windows/ToolBar.h"
-#include "Core/contextmenu.h"
+#include "Core/editorcontroller.h"
 
 using namespace Ossium;
 using namespace Ossium::Editor;
@@ -15,65 +14,16 @@ int main(int argc, char* argv[])
 
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
-    // Setup input
-    InputController input;
-
-    // Setup resources
     ResourceController resources;
+    EditorController* editor = new EditorController(&resources);
 
-    // The main native window manager that deals with editor window docking
-    EditorLayout* window = new EditorLayout(&input, &resources, "Ossium");
-    //EditorLayout* layoutView = new EditorLayout(&input, &resources, "Layout Tree");
-    //window->Add<DemoDockingWindow>(DockingMode::LEFT);
-    //layoutView->Add<LayoutDiagram>(DockingMode::LEFT)->target = window;
-    ToolBar* toolBar = window->Add<ToolBar>(DockingMode::TOP);
-
-    //window.Insert(&dockView, &view, DockingMode::LEFT);
-
-    bool quit = false;
-
-    window->GetNativeWindow()->OnCloseButton += [&] (Window& caller) {
-        quit = true;
-    };
-
-    SDL_Event e;
-
-    while (!quit)
+    while (editor->Update())
     {
-        while (SDL_PollEvent(&e) != 0)
-        {
-            if (e.type == SDL_QUIT)
-            {
-                quit = true;
-                break;
-            }
-            window->HandleEvent(e);
-            ContextMenu::HandleInput(e);
-            //layoutView->HandleEvent(e);
-            input.HandleEvent(e);
-        }
-
-        // Update the GUI
-        window->Update();
-
-        //layoutView->Update();
-        ContextMenu::GetMainInstance(&resources)->Update();
-
-        if (toolBar->ShouldQuit())
-        {
-            quit = true;
-        }
+        // Update until the editor stops running.
     }
 
-    /// TODO: fix crash when deleting these editor layouts
-    if (window != nullptr)
-    {
-        delete window;
-    }
-    /*if (layoutView != nullptr)
-    {
-        delete layoutView;
-    }*/
+    delete editor;
+    editor = nullptr;
 
     resources.FreeAll();
 
