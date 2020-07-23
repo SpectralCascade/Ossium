@@ -201,21 +201,22 @@ namespace Ossium
             }
         }
 
-        /// Adds an action that is not bound to an identifier
-        void AddBindlessAction(InputAction action)
+        /// Adds an action that is not bound to a particular input id. Returns a handle id that is required to remove given action.
+        int AddBindlessAction(InputAction action)
         {
             /// No duplicates checks, but why would you add multiple identical actions?!
-            _any_actions.push_back(action);
+            _any_actions[++bindlessIdCounter] = action;
+            return bindlessIdCounter;
         }
 
-        /// TODO: this doesn't work as you cannot compare function objects. Consider using IDs and/or providing a ClearBindlessActions() method to remove all of them.
-        void RemoveBindlessAction(InputAction action)
+        /// Removes a bindless action, requiring the corresponding id returned by AddBindlessAction().
+        void RemoveBindlessAction(int id)
         {
             for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
             {
-                if (*i == action)
+                if (i->first == id)
                 {
-                    _any_actions.erase(i);
+                    _any_actions.erase(i->first);
                     return;
                 }
             }
@@ -288,7 +289,7 @@ namespace Ossium
             /// Call all actions that accept any old data, regardless of identifier first
             for (auto i = _any_actions.begin(); i != _any_actions.end(); i++)
             {
-                ActionOutcome outcome = (*i)(data);
+                ActionOutcome outcome = (i->second)(data);
                 if (outcome != ActionOutcome::Ignore)
                 {
                     //Log.Info("ActionOutcome returned outcome {0}.", GetActionOutcomeName(outcome));
@@ -313,7 +314,7 @@ namespace Ossium
         /// When there are no corresponding actions for an input which is of the relevant type,
         /// these actions will be called. Useful for things like custom control bindings in a game,
         /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code.
-        vector<InputAction> _any_actions;
+        map<int, InputAction> _any_actions;
 
         /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_action_bindings is changed.
         unordered_map<InputIdent, InputAction> _input_map;
@@ -330,6 +331,9 @@ namespace Ossium
 
         /// Constant bindings of names to actions; this shouldn't be changed once all actions are added
         unordered_map<string, InputAction> _action_bindings;
+
+        /// Increments each time a bindless action is added.
+        int bindlessIdCounter = 0;
 
     };
 

@@ -128,7 +128,7 @@ namespace Ossium
         /// TODO: Use a generic input handler that takes touch input as well as mouse input.
         /// Mouse actions setup
         pointer = AddHandler<MouseHandler>();
-        pointer->AddBindlessAction([&] (const MouseInput& data) { return HandlePointer(data); });
+        mouseActionId = pointer->AddBindlessAction([&] (const MouseInput& data) { return HandlePointer(data); });
         /// Keyboard actions setup
         keyboard = AddHandler<KeyboardHandler>();
         keyboard->AddAction("confirm_selection", [&] (const KeyboardInput& data) { return this->ConfirmSelection(data); }, SDLK_RETURN);
@@ -139,6 +139,11 @@ namespace Ossium
         keyboard->AddAction("switch_context_forward", [&] (const KeyboardInput& data) { return this->SwitchContextForward(data); }, SDLK_TAB);
         keyboard->AddAction("switch_context_back", [&] (const KeyboardInput& data) { return this->SwitchContextBack(data); }, SDLK_BACKQUOTE);
         keyboard->AddAction("go_back", [&] (const KeyboardInput& data) { return this->GoBack(data); }, SDLK_ESCAPE);
+    }
+
+    void InputGUI::OnDestroy()
+    {
+        GetHandler<MouseHandler>()->RemoveBindlessAction(mouseActionId);
     }
 
     void InputGUI::AddInteractable(StrID context, InteractableGUI& element)

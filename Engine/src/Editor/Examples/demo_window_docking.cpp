@@ -34,7 +34,7 @@ namespace Ossium::Editor
                 if (ContextMenu::GetMainInstance(resources)->GetOptions().empty())
                 {
                     ContextMenu::GetMainInstance(resources)->SetOptions({
-                        ContextMenu::Option("Font Viewer", [&] () {
+                        ContextMenu::Option("Font Viewer", [&] () { // TODO: make sure this is cleaned up if the object is destroyed.
                             GetEditorLayout()->Add<FontViewer>(this, DockingMode::RIGHT);
                             ContextMenu::GetMainInstance(resources)->SetOptionEnabled(0, false);
                         })

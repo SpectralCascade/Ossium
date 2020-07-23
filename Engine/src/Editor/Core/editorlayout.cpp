@@ -13,8 +13,8 @@ namespace Ossium::Editor
     EditorLayout::EditorLayout(EditorController* controller, string title, int w, int h)
     {
         this->controller = controller;
-        this->input = controller->GetInput();
-        this->resources = controller->GetResources();
+        input = controller->GetInput();
+        resources = controller->GetResources();
 
         input->AddContext(Utilities::Format("EditorLayout {0}", this), &windowContext);
         native = new Window(title.c_str(), w, h, false, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | (w < 0 || h < 0 ? SDL_WINDOW_MAXIMIZED : 0));
@@ -76,12 +76,24 @@ namespace Ossium::Editor
 
     EditorLayout::~EditorLayout()
     {
+        // Manually run through the tree, deleting all windows.
+        for (auto node : layout.GetFlatTree())
+        {
+            if (node->data.window != nullptr)
+            {
+                delete node->data.window;
+            }
+        }
+        layout.Clear();
+        if (input != nullptr)
+        {
+            input->RemoveContext(Utilities::Format("EditorLayout {0}", this));
+        }
         if (renderBuffer != NULL)
         {
             SDL_DestroyTexture(renderBuffer);
             renderBuffer = NULL;
         }
-        layout.Clear();
         if (renderer != nullptr)
         {
             delete renderer;

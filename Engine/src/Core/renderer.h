@@ -161,6 +161,8 @@ namespace Ossium
 
         /// Pointer to the window associated with this renderer
         Window* renderWindow;
+        /// Handle to clean up the window's OnDestroy callback if this renderer gets destroyed before the window.
+        int windowDestroyedHandle;
 
         /// Called when the associated window is destroyed.
         void OnWindowDestroyed(Window& windowCaller);

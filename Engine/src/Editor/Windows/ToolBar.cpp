@@ -11,7 +11,7 @@ namespace Ossium::Editor
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
-        editor->AddCustomMenu("Edit/Undo", [&] () {});
+        editor->AddCustomMenu("Edit/Undo", [] () {});
         editor->AddToolWindow<FontViewer>("View/Fonts");
 
     }
@@ -110,7 +110,7 @@ namespace Ossium::Editor
         Dropdown(
             selected,
             test,
-            [&] (unsigned int i) { this->selected = i; Log.Info("Set selected to {0}!", i); }
+            [&] (unsigned int i) { this->selected = i; }
         );
     }
 

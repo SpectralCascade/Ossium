@@ -64,8 +64,7 @@ namespace Ossium
         registeredGraphics = new set<Graphic*>[numLayers];
         queuedGraphics = new queue<Graphic*>[numLayers];
 
-        /// No need to store id as the OnDestroyed callback is automatically freed after being called.
-        window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
+        windowDestroyedHandle = window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
 
         viewportRect.x = 0;
         viewportRect.y = 0;
@@ -80,6 +79,8 @@ namespace Ossium
     {
         if (renderWindow != nullptr)
         {
+            // Clean up callback
+            renderWindow->OnDestroyed -= windowDestroyedHandle;
             renderWindow = nullptr;
         }
 

@@ -28,6 +28,13 @@ namespace Ossium::Editor
     // EditorGUI
     //
 
+    EditorGUI::~EditorGUI()
+    {
+        if (input != nullptr)
+        {
+        }
+    }
+
     void EditorGUI::Init(InputContext* inputContext, ResourceController* resourceController)
     {
         input = inputContext;
@@ -46,7 +53,7 @@ namespace Ossium::Editor
         // Refresh whenever the mouse interacts.
         // TODO: this is bad practice; bindless actions must be cleaned up when this object gets destroyed!
         // Consider what might happen if this object gets destroyed but the mouse handler is still in use...
-        input->GetHandler<MouseHandler>()->AddBindlessAction(
+        mouseActionId = input->GetHandler<MouseHandler>()->AddBindlessAction(
             [&] (const MouseInput& m) {
                 if (activeTextFieldId != 0 && m.type != MOUSE_MOTION && m.type != MOUSE_WHEEL)
                 {
@@ -62,13 +69,13 @@ namespace Ossium::Editor
         KeyboardHandler* keyboard = input->GetHandler<KeyboardHandler>();
         TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
         // TODO: this is bad practice; bindless actions must be cleaned up when this object gets destroyed!
-        keyboard->AddBindlessAction(
+        keyboardActionId = keyboard->AddBindlessAction(
             [&] (const KeyboardInput& key) {
                 return this->HandleTextField(key);
             }
         );
         // Don't need to store the handle because the callback is destroyed when this is destroyed
-        textinput->AddBindlessAction([&] (const InputChar& c) { this->update = true; return ActionOutcome::Ignore; });
+        textActionId = textinput->AddBindlessAction([&] (const InputChar& c) { this->update = true; return ActionOutcome::Ignore; });
 
         // There should always be at least one element on the stack
         layoutStack.push(Vector2(0, 0));
@@ -815,7 +822,7 @@ namespace Ossium::Editor
         menu.ClearOptions();
         for (unsigned int i = 0, counti = names.size(); i < counti; i++)
         {
-            menu.Add(names[i], [&] () { onSelectHandler(i); });
+            menu.Add(names[i], [i, onSelectHandler, names] () { onSelectHandler(i); Log.Info("Option \"{0}\" [{1}] clicked.", names[i], i); });
         }
         menu.Show(position);
     }

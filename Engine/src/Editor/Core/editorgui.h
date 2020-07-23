@@ -60,6 +60,11 @@ namespace Ossium::Editor
         /// Used to determine how much to move after completing a horizontal or vertical layout group.
         stack<float> layoutDifference;
 
+        // Store handles to the corresponding bindless functions.
+        int mouseActionId;
+        int keyboardActionId;
+        int textActionId;
+
         /// Used for order-based idents for text fields.
         Uint32 textFieldCounter = 1;
 
@@ -134,7 +139,7 @@ namespace Ossium::Editor
         CONSTRUCT_SCHEMA(SchemaRoot, EditorViewportSchema);
 
         EditorGUI() = default;
-        virtual ~EditorGUI() = default;
+        virtual ~EditorGUI();
 
         /// Initialises everything. Must be called immediately after construction!
         void Init(InputContext* inputContext, ResourceController* resourceController);

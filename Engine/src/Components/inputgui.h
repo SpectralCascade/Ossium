@@ -85,6 +85,9 @@ namespace Ossium
         /// Sets up the input context and all bindings accordingly.
         void OnCreate();
 
+        /// Cleans up actions
+        void OnDestroy();
+
         /// Adds an interactable GUI element to a context.
         void AddInteractable(StrID context, InteractableGUI& element);
 
@@ -128,6 +131,9 @@ namespace Ossium
         /// The current GUI context
         StrID currentContext = nullptr;
         unsigned int currentContextIndex = 0;
+
+        /// Handle for the bindless mouse action
+        int mouseActionId;
 
         /// Lookup table for GUI elements in different GUI contexts.
         /// Uses string interning for fast key hashing.
