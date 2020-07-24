@@ -49,6 +49,10 @@ namespace Ossium::Editor
             delete mainInput;
             delete mainResources;
         }
+        else
+        {
+            mainInput->RemoveContext(Utilities::Format("ContextMenu@{0}", this));
+        }
         delete input;
     }
 
@@ -310,6 +314,7 @@ namespace Ossium::Editor
 
     void ContextMenu::Show(Vector2 position)
     {
+        input->SetActive(true);
         nativeWindow->SetPosition(position);
         nativeWindow->Show();
         nativeWindow->Focus();
@@ -330,6 +335,7 @@ namespace Ossium::Editor
             parent->attached = nullptr;
             parent = nullptr;
         }
+        input->SetActive(false);
     }
 
     void ContextMenu::HideAttached()

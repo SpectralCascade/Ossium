@@ -86,7 +86,7 @@ namespace Ossium
         /// Convert a string to a bool
         OSSIUM_EDL bool ToBool(const string& data);
 
-        /// Picks an object from a vector if it meets the specified condition function.
+        /// Picks the first object from a vector that meets the predicate, returning a pointer to it. Returns nullptr if no object meets the predicate.
         template<class T>
         T* Pick(vector<T>& data, function<bool(T&)> picker)
         {
@@ -95,6 +95,21 @@ namespace Ossium
                 if (picker(item))
                 {
                     return &item;
+                }
+            }
+            return nullptr;
+        }
+
+        /// Picks a pointer from a vector if it meets the specified condition function.
+        template<class T>
+        typename enable_if<is_pointer<T>::value, T>::type
+        PickPointer(vector<T>& data, function<bool(T)> picker)
+        {
+            for (auto item : data)
+            {
+                if (picker(item))
+                {
+                    return item;
                 }
             }
             return nullptr;

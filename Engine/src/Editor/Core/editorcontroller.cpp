@@ -78,15 +78,15 @@ namespace Ossium::Editor
                 break;
             }
 
+            // Update the context menu
+            ContextMenu::HandleInput(e);
+
             // Update native layout windows
             mainLayout->HandleEvent(e);
             for (auto layout : layouts)
             {
                 layout->HandleEvent(e);
             }
-
-            // Update the context menu
-            ContextMenu::HandleInput(e);
 
             // Handle standard input events.
             input->HandleEvent(e);

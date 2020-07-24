@@ -1,6 +1,7 @@
 #include "ToolBar.h"
 #include "../Examples/font_viewer.h"
 #include "../Core/contextmenu.h"
+#include "../Examples/demo_window_docking.h"
 
 namespace Ossium::Editor
 {
@@ -10,6 +11,7 @@ namespace Ossium::Editor
         bordered = false;
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
+        editor->AddCustomMenu("File/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
         editor->AddCustomMenu("Edit/Undo", [] () {});
         editor->AddToolWindow<FontViewer>("View/Fonts");
@@ -30,8 +32,7 @@ namespace Ossium::Editor
         ContextMenu& menu = *ContextMenu::GetMainInstance(resources);
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
-        unordered_map<string, unsigned int> menuNameMap;
-        vector<MenuData> menus;
+        Tree<FuncPath> toolTree;
         for (auto tool : editor->customMenuTools)
         {
             vector<string> path = Utilities::Split(tool.path, '/');
@@ -40,66 +41,68 @@ namespace Ossium::Editor
                 Log.Warning("Cannot add custom menu button at path '{0}' because it does not specify a dropdown option.", tool.path);
                 continue;
             }
-            string menuName = path[0];
-            path.erase(path.begin());
 
-            auto pos = menuNameMap.find(menuName);
-            if (pos == menuNameMap.end())
+            Node<FuncPath>* previous = nullptr;
+            for (auto i = path.begin(); i != path.end(); i++)
             {
-                pos = menuNameMap.emplace(menuName, menus.size()).first;
-                menus.push_back(MenuData());
+                string id = *i;
+                Node<FuncPath>* found = previous != nullptr ?
+                    Utilities::PickPointer<Node<FuncPath>*>(previous->children, [id] (auto n) { return n->data.id == id; })
+                    : toolTree.Find([id] (auto n) { return n->data.id == id; });
+
+                if (found == nullptr)
+                {
+                    if (i == path.end() - 1)
+                    {
+                        found = toolTree.Insert(FuncPath(id, path, tool.onClick), previous);
+                    }
+                    else
+                    {
+                        found = toolTree.Insert(FuncPath(id, {}, {}), previous);
+                    }
+                }
+                previous = found;
             }
-            menus[pos->second].name = menuName;
-            menus[pos->second].path.push_back(FuncPath(tool.path, path, tool.onClick));
         }
 
         Vector2 oldPos;
-        for (auto menuRoot : menus)
+        auto roots = toolTree.GetRoots();
+        for (Node<FuncPath>* menuRoot : roots)
         {
             oldPos = GetLayoutPosition();
-            if (Button(menuRoot.name))
+            if (Button(menuRoot->data.id))
             {
                 // Always clear previous options
                 menu.ClearOptions();
 
-                vector<ContextMenu*> expansions = { &menu };
-                vector<ContextMenu*> nextExpansions;
-                unsigned int completed = 0;
+                stack<ContextMenu*> expansions;
+                expansions.push(&menu);
 
-                // Breadth-first traversal from the root menu
-                for (auto expansion : expansions)
-                {
-                    ContextMenu& currentMenu = *expansion;
-                    while (completed < menuRoot.path.size())
-                    {
-                        completed = 0;
-                        for (FuncPath& funcPath : menuRoot.path)
+                toolTree.Walk(
+                    [&] (auto n) {
+                        if (n != menuRoot && !n->children.empty())
                         {
-                            if (funcPath.split.empty())
+                            // On the walk down, add expansion menus
+                            expansions.push(expansions.top()->AddPopoutMenu(n->data.id));
+                        }
+                    },
+                    [&] (auto n) {
+                        if (!expansions.empty())
+                        {
+                            // On the walk back up, add options
+                            if (!n->children.empty())
                             {
-                                // Skip, already done
-                                completed++;
-                                continue;
+                                expansions.pop();
                             }
-
-                            string name = *funcPath.split.begin();
-                            funcPath.split.erase(funcPath.split.begin());
-                            if (funcPath.split.empty())
+                            else if (!expansions.empty())
                             {
-                                completed++;
-                                currentMenu.Add(name, funcPath.func, nullptr, true);
-                            }
-                            else
-                            {
-                                nextExpansions.push_back(
-                                    currentMenu.AddPopoutMenu(name, nullptr, true)
-                                );
+                                expansions.top()->Add(n->data.id, n->data.func);
                             }
                         }
-                    }
-                    expansions = nextExpansions;
-                    nextExpansions.clear();
-                }
+                    },
+                    menuRoot
+                );
+
                 menu.Show(Vector2(GetNativePosition().x + oldPos.x, GetCurrentBlockSize() + GetNativePosition().y));
             }
         }

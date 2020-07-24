@@ -226,20 +226,34 @@ namespace Ossium
         typedef function<void(Node<T>*)> NodeOp;
 
         /// Depth-first tree traversal
-        void Walk(NodeOp walkFunc)
+        void Walk(NodeOp walkFunc, Node<T>* fromNode = nullptr)
         {
-            for (auto child : roots)
+            if (fromNode == nullptr)
             {
-                RecursiveWalk(walkFunc, child);
+                for (auto child : roots)
+                {
+                    RecursiveWalk(walkFunc, child);
+                }
+            }
+            else
+            {
+                RecursiveWalk(walkFunc, fromNode);
             }
         }
 
         /// Overload takes an additional function that is called when walking back up the tree.
-        void Walk(NodeOp walkDown, NodeOp walkUp)
+        void Walk(NodeOp walkDown, NodeOp walkUp, Node<T>* fromNode = nullptr)
         {
-            for (auto child : roots)
+            if (fromNode == nullptr)
             {
-                RecursiveWalk(walkDown, walkUp, child);
+                for (auto child : roots)
+                {
+                    RecursiveWalk(walkDown, walkUp, child);
+                }
+            }
+            else
+            {
+                RecursiveWalk(walkDown, walkUp, fromNode);
             }
         }
 

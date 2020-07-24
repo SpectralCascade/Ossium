@@ -24,15 +24,10 @@ namespace Ossium::Editor
         struct FuncPath
         {
             FuncPath(string id, vector<string> split, function<void()> func);
+            FuncPath() = default;
             string id;
             vector<string> split;
             function<void()> func;
-        };
-
-        struct MenuData
-        {
-            string name;
-            vector<FuncPath> path;
         };
 
     };
