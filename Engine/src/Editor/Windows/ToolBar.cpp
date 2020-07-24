@@ -9,6 +9,7 @@ namespace Ossium::Editor
     void ToolBar::OnInit()
     {
         bordered = false;
+        backgroundColor = Color(250, 250, 250);
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
         editor->AddCustomMenu("File/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
@@ -70,7 +71,8 @@ namespace Ossium::Editor
         for (Node<FuncPath>* menuRoot : roots)
         {
             oldPos = GetLayoutPosition();
-            if (Button(menuRoot->data.id))
+            // TODO: once the context menu is open, you should be able to hover other buttons to show the appropriate menu without clicking.
+            if (Button(menuRoot->data.id, EditorStyle::ToolBarButton, false, 6, 4))
             {
                 // Always clear previous options
                 menu.ClearOptions();

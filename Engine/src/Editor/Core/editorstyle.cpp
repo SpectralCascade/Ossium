@@ -132,6 +132,18 @@ namespace Ossium::Editor
             Color(240, 240, 240),
             Color(240, 240, 240)
         );
+        StyleClickable ToolBarButton = StyleClickable(
+            Color(250, 250, 250),
+            Color(100, 210, 250),
+            Color(100, 210, 250),
+            StandardText,
+            StandardText,
+            StandardText,
+            Color(250, 250, 250),
+            Color(250, 250, 250),
+            Color(250, 250, 250),
+            Color(250, 250, 250)
+        );
     }
 
     //

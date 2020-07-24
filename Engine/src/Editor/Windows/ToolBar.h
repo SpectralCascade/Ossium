@@ -21,6 +21,8 @@ namespace Ossium::Editor
 
         unsigned int selected = 0;
 
+        bool didOpenMenu = false;
+
         struct FuncPath
         {
             FuncPath(string id, vector<string> split, function<void()> func);

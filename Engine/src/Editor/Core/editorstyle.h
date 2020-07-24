@@ -84,6 +84,7 @@ namespace Ossium::Editor
         extern StyleClickable EDITOR_CHECKBOX_STYLE;
         extern StyleClickable EDITOR_CONTEXT_OPTION_STYLE;
         extern StyleClickable EDITOR_CONTEXT_OPTION_DISABLED_STYLE;
+        extern StyleClickable ToolBarButton;
     }
 
     /// A schema that defines how the editor should look.
