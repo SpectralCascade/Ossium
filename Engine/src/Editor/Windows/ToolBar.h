@@ -19,10 +19,6 @@ namespace Ossium::Editor
     private:
         bool doQuit = false;
 
-        unsigned int selected = 0;
-
-        bool didOpenMenu = false;
-
         struct FuncPath
         {
             FuncPath(string id, vector<string> split, function<void()> func);

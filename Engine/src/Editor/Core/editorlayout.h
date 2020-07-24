@@ -53,7 +53,7 @@ namespace Ossium::Editor
         /// The resource controller instance.
         ResourceController* resources;
 
-        /// Minimum dimensions of the window.
+        /// Minimum dimensions of the native window.
         const Vector2 MIN_DIMENSIONS = {64, 64};
 
         /// Layout tree, consisting of alternating row-column-row (or column-row-column, depending on root layout).

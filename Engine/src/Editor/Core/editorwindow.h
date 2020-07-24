@@ -37,6 +37,7 @@ namespace Ossium::Editor
         M(SDL_Color, borderColor) = Colors::BLACK;
         M(bool, bordered) = true;
         M(int, padding) = 6;
+        M(Vector2, minDimensions) = {64, 64};
         // TODO: min size and fixed size
 
     };

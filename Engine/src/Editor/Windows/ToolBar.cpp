@@ -10,6 +10,8 @@ namespace Ossium::Editor
     {
         bordered = false;
         backgroundColor = Color(250, 250, 250);
+        minDimensions.y = 16;
+
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
         editor->AddCustomMenu("File/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
@@ -111,12 +113,8 @@ namespace Ossium::Editor
 
         EndHorizontal();
 
-        vector<float> test = {0, 2.44f, 5692354.0f, -5128.26893f};
-        Dropdown(
-            selected,
-            test,
-            [&] (unsigned int i) { this->selected = i; }
-        );
+        minDimensions.y = GetLayoutPosition().y;
+
     }
 
     bool ToolBar::ShouldQuit()

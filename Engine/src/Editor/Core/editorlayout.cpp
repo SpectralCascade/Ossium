@@ -290,7 +290,7 @@ namespace Ossium::Editor
                 }
 
                 // TODO: proper dimension checks, return false if there's not enough space
-                destRect.h = max(MIN_DIMENSIONS.y, destRect.h - sourceRect.h);
+                destRect.h = max(dest->minDimensions.y, destRect.h - sourceRect.h);
 
                 // Warning: rect positioning and resizing assumes the source rect has already been resized to fit!
                 if (mode == DockingMode::BOTTOM)
@@ -331,8 +331,8 @@ namespace Ossium::Editor
                     layoutColumn = 0;
                 }
 
-                // TODO: proper dimension checks, return false if there's not enough space
-                destRect.w = max(MIN_DIMENSIONS.x, destRect.w - sourceRect.w);
+                // TODO: proper dimension checks, return false if there's not enough space?
+                destRect.w = max(dest->minDimensions.x, destRect.w - sourceRect.w);
 
                 // Warning: rect positioning and resizing assumes the source rect has already been resized to fit!
                 if (mode == DockingMode::RIGHT)
@@ -463,8 +463,8 @@ namespace Ossium::Editor
         // First, normalise the rect
         rect = Rect(Utilities::Clamp(rect.x, 0.0f, (float)native->GetWidth()),
                     Utilities::Clamp(rect.y, 0.0f, (float)native->GetHeight()),
-                    Utilities::Clamp(rect.w, MIN_DIMENSIONS.x, (float)native->GetWidth()),
-                    Utilities::Clamp(rect.h, MIN_DIMENSIONS.y, (float)native->GetHeight())
+                    Utilities::Clamp(rect.w, window->minDimensions.x, (float)native->GetWidth()),
+                    Utilities::Clamp(rect.h, window->minDimensions.y, (float)native->GetHeight())
         );
 
         Node<EditorRect>* node = window->node;
@@ -492,14 +492,14 @@ namespace Ossium::Editor
         // Now the fun begins
         if (rect.x != node->data.x)
         {
-            maxpos = node->data.xmax() - MIN_DIMENSIONS.x;
+            maxpos = node->data.xmax() - window->minDimensions.x;
             if (previous != nullptr)
             {
-                minpos = previous->data.x + MIN_DIMENSIONS.x;
+                minpos = previous->data.x + previous->data.window->minDimensions.x;
             }
             else
             {
-                minpos = MIN_DIMENSIONS.x;
+                minpos = window->minDimensions.x;
             }
             float xmax = node->data.xmax();
             node->data.x = Utilities::Clamp(rect.x, minpos, maxpos);
@@ -512,10 +512,10 @@ namespace Ossium::Editor
         }
         else if (rect.w != node->data.w)
         {
-            minpos = MIN_DIMENSIONS.x;
+            minpos = window->minDimensions.x;
             if (next != nullptr)
             {
-                maxpos = (next->data.xmax() - node->data.x) - MIN_DIMENSIONS.x;
+                maxpos = (next->data.xmax() - node->data.x) - next->data.window->minDimensions.x;
             }
             else
             {
@@ -532,14 +532,14 @@ namespace Ossium::Editor
 
         if (rect.y != node->data.y)
         {
-            maxpos = node->data.ymax() - MIN_DIMENSIONS.y;
+            maxpos = node->data.ymax() - window->minDimensions.y;
             if (previous != nullptr)
             {
-                minpos = previous->data.y + MIN_DIMENSIONS.y;
+                minpos = previous->data.y + previous->data.window->minDimensions.y;
             }
             else
             {
-                minpos = MIN_DIMENSIONS.y;
+                minpos = window->minDimensions.y;
             }
             float ymax = node->data.ymax();
             node->data.y = Utilities::Clamp(rect.y, minpos, maxpos);
@@ -552,10 +552,10 @@ namespace Ossium::Editor
         }
         else if (rect.h != node->data.h)
         {
-            minpos = MIN_DIMENSIONS.y;
+            minpos = window->minDimensions.y;
             if (next != nullptr)
             {
-                maxpos = (next->data.ymax() - node->data.y) - MIN_DIMENSIONS.y;
+                maxpos = (next->data.ymax() - node->data.y) - next->data.window->minDimensions.y;
             }
             else
             {
