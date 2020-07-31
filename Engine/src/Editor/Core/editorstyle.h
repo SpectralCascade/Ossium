@@ -73,7 +73,7 @@ namespace Ossium::Editor
     namespace EditorStyle
     {
         extern StyleText StandardText;
-        extern StyleText EDITOR_TEXT_INVERSE_STYLE;
+        extern StyleText StandardTextWhite;
         extern StyleText EDITOR_TEXT_GRAY_STYLE;
         extern StyleText EDITOR_TEXT_NORMAL_CENTERED_STYLE;
         extern StyleText EDITOR_TEXT_INVERSE_CENTERED_STYLE;
@@ -85,6 +85,8 @@ namespace Ossium::Editor
         extern StyleClickable EDITOR_CONTEXT_OPTION_STYLE;
         extern StyleClickable EDITOR_CONTEXT_OPTION_DISABLED_STYLE;
         extern StyleClickable ToolBarButton;
+        extern StyleClickable HierarchyScene;
+        extern StyleClickable HierarchySceneSelected;
     }
 
     /// A schema that defines how the editor should look.

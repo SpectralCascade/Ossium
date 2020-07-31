@@ -420,16 +420,36 @@ namespace Ossium
     /// Scene
     ///
 
+    REGISTER_RESOURCE(Scene);
+
     Scene::Scene(ServicesProvider* services)
     {
-        if (services == nullptr)
-        {
-            Log.Error("ServicesProvider argument cannot be NULL when creating an ECS instance!");
-            DEBUG_ASSERT(services != nullptr, "ServicesProvider argument cannot be NULL when creating an ECS instance!");
-            throw;
-        }
         servicesProvider = services;
         components = new vector<BaseComponent*>[TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes()];
+    }
+
+    bool Scene::Load(string guid_path)
+    {
+        ifstream file(guid_path.c_str());
+        string toParse = Utilities::FileToString(file);
+        file.close();
+        if (toParse.empty())
+        {
+            return false;
+        }
+        FromString(toParse);
+        return true;
+    }
+
+    bool Scene::Init(ServicesProvider* services)
+    {
+        servicesProvider = services;
+        return true;
+    }
+
+    bool Scene::LoadAndInit(string guid_path, ServicesProvider* services)
+    {
+        return Load(guid_path) && Init(services);
     }
 
     void Scene::UpdateComponents()
@@ -708,6 +728,29 @@ namespace Ossium
             roots.push_back(node->data);
         }
         return roots;
+    }
+
+    void Scene::WalkEntities(function<void(Entity*)> walkFunc, bool breadthFirst)
+    {
+        if (breadthFirst)
+        {
+            entityTree.WalkBreadth([&walkFunc] (Node<Entity*>* node) {
+                if (node->data != nullptr)
+                {
+                    walkFunc(node->data);
+                }
+            });
+        }
+        else
+        {
+            entityTree.Walk([&walkFunc] (Node<Entity*>* node) {
+                if (node->data != nullptr)
+                {
+                    walkFunc(node->data);
+                }
+            });
+        }
+
     }
 
     Scene::~Scene()

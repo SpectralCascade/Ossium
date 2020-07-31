@@ -1,4 +1,5 @@
 #include "ToolBar.h"
+#include "SceneHierarchy.h"
 #include "../Examples/font_viewer.h"
 #include "../Core/contextmenu.h"
 #include "../Examples/demo_window_docking.h"
@@ -15,6 +16,7 @@ namespace Ossium::Editor
 
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
+        editor->AddCustomMenu("File/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("File/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
         editor->AddCustomMenu("Edit/Undo", [] () {});

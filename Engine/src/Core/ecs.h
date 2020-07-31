@@ -30,6 +30,7 @@
 #include "stringintern.h"
 #include "schemamodel.h"
 #include "services.h"
+#include "resourcecontroller.h"
 
 using namespace std;
 
@@ -138,12 +139,19 @@ namespace Ossium
     };
 
     /// Controls all entities and components at runtime and has access to engine services.
-    class OSSIUM_EDL Scene
+    class OSSIUM_EDL Scene : public Resource
     {
     public:
+        DECLARE_RESOURCE(Scene);
+
         friend class Ossium::Entity;
 
-        Scene(ServicesProvider* services);
+        Scene(ServicesProvider* services = nullptr);
+
+        // Resource loading methods
+        bool Load(string guid_path);
+        bool Init(ServicesProvider* services);
+        bool LoadAndInit(string guid_path, ServicesProvider* services);
 
         ~Scene();
 
@@ -177,6 +185,10 @@ namespace Ossium
             }
         }
 
+        /// Walks over all entities and calls the provided function, passing in each entity.
+        /// Set breadthFirst to false to walk the entity tree depth-first.
+        void WalkEntities(function<void(Entity*)> walkFunc, bool breadthFirst = true);
+
         /// Creates a new entity within this system and returns a reference to it.
         Entity* CreateEntity();
 
@@ -205,6 +217,7 @@ namespace Ossium
         template<typename T>
         T* GetService()
         {
+            DEBUG_ASSERT(servicesProvider != nullptr, "Services should not be NULL for a Scene instance!");
             return servicesProvider->GetService<T>();
         }
 

@@ -24,7 +24,7 @@ namespace Ossium::Editor
             Typographic::TextAlignment::LEFT_ALIGNED,
             RENDERTEXT_BLEND_WRAPPED
         );
-        StyleText EDITOR_TEXT_INVERSE_STYLE = StyleText(
+        StyleText StandardTextWhite = StyleText(
             "assets/Orkney Regular.ttf",
             12,
             Colors::WHITE,
@@ -93,8 +93,8 @@ namespace Ossium::Editor
             Color(0, 200, 0),
             Color(0, 200, 0),
             StandardText,
-            EDITOR_TEXT_INVERSE_STYLE,
-            EDITOR_TEXT_INVERSE_STYLE,
+            StandardTextWhite,
+            StandardTextWhite,
             Colors::TRANSPARENT,
             Colors::TRANSPARENT,
             Colors::TRANSPARENT,
@@ -143,6 +143,30 @@ namespace Ossium::Editor
             Color(250, 250, 250),
             Color(250, 250, 250),
             Color(250, 250, 250)
+        );
+        StyleClickable HierarchyScene = StyleClickable(
+            Color(250, 250, 250),
+            Color(100, 110, 150),
+            Color(100, 110, 150),
+            StandardText,
+            StandardTextWhite,
+            StandardTextWhite,
+            Color(250, 250, 250),
+            Color(250, 250, 250),
+            Color(250, 250, 250),
+            Color(250, 250, 250)
+        );
+        StyleClickable HierarchySceneSelected = StyleClickable(
+            Color(100, 110, 150),
+            Color(100, 110, 150),
+            Color(100, 110, 150),
+            StandardTextWhite,
+            StandardTextWhite,
+            StandardTextWhite,
+            Color(150, 150, 150),
+            Color(150, 150, 150),
+            Color(150, 150, 150),
+            Color(150, 150, 150)
         );
     }
 

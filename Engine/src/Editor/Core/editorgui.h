@@ -239,6 +239,7 @@ namespace Ossium::Editor
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
         bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
         bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
+        bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, function<void(bool)> drawFunc);
 
         float Slider(
              float sliderValue,

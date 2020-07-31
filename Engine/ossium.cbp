@@ -403,6 +403,16 @@
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
+		<Unit filename="src/Editor/Windows/SceneHierarchy.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Windows/SceneHierarchy.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
 		<Unit filename="src/Editor/Windows/ToolBar.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />

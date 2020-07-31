@@ -112,10 +112,10 @@ namespace Ossium::Editor
             Rect rect = Rect(viewport);
 
             // Hitboxes for borders
-            Rect left = Rect(rect.x, rect.y, padding, rect.h);
-            Rect top = Rect(rect.x, rect.y, rect.w, padding);
-            Rect right = Rect(rect.x + rect.w - padding, rect.y, padding, rect.h);
-            Rect bottom = Rect(rect.x, rect.y + rect.h - padding, rect.w, padding);
+            Rect left = Rect(rect.x, rect.y, max(padding, 4), rect.h);
+            Rect top = Rect(rect.x, rect.y, rect.w, max(padding, 4));
+            Rect right = Rect(rect.x + rect.w - max(padding, 4), rect.y, max(padding, 4), rect.h);
+            Rect bottom = Rect(rect.x, rect.y + rect.h - max(padding, 4), rect.w, max(padding, 4));
 
             bool clicked = InputState.mousePressed && !InputState.mouseWasPressed;
 

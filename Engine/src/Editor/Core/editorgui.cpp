@@ -648,21 +648,36 @@ namespace Ossium::Editor
     bool EditorGUI::Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, SDL_Color checkColor)
     {
         Vector2 rootPos = GetLayoutPosition();
-        // Checkbox button
-        if (Button("", style, false, (Uint32)boxSize.x, (Uint32)boxSize.y))
-        {
-            toggleValue = !toggleValue;
-        }
+        return Toggle(
+            toggleValue,
+            style,
+            boxSize,
+            [&] (bool on) {
+                if (on)
+                {
+                    // Do tick
+                    Line line(rootPos + Vector2(boxSize.x / 4, boxSize.y / 2), rootPos + Vector2(boxSize.x / 2, (boxSize.y / 6) * 5));
+                    line.Draw(*renderer, checkColor);
+                    line.a = Vector2(Vector2((boxSize.x / 4) * 3, boxSize.y / 6)) + rootPos;
+                    line.Draw(*renderer, checkColor);
+                }
+            }
+        );
+    }
 
-        if (toggleValue)
+    bool EditorGUI::Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, function<void(bool)> drawFunc)
+    {
+        if (IsVisible())
         {
-            // Do tick
-            Line line(rootPos + Vector2(boxSize.x / 4, boxSize.y / 2), rootPos + Vector2(boxSize.x / 2, (boxSize.y / 6) * 5));
-            line.Draw(*renderer, checkColor);
-            line.a = Vector2(Vector2((boxSize.x / 4) * 3, boxSize.y / 6)) + rootPos;
-            line.Draw(*renderer, checkColor);
-        }
+            // Empty button
+            if (Button("", style, false, (Uint32)boxSize.x, (Uint32)boxSize.y))
+            {
+                toggleValue = !toggleValue;
+            }
 
+            // Draw whatever we want on top
+            drawFunc(toggleValue);
+        }
         return toggleValue;
     }
 
