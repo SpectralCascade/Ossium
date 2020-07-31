@@ -290,7 +290,7 @@ namespace Ossium::Editor
                 }
 
                 // TODO: proper dimension checks, return false if there's not enough space
-                destRect.h = max(dest->minDimensions.y, destRect.h - sourceRect.h);
+                destRect.h = max(MIN_DIMENSIONS.y, destRect.h - sourceRect.h);
 
                 // Warning: rect positioning and resizing assumes the source rect has already been resized to fit!
                 if (mode == DockingMode::BOTTOM)
@@ -331,8 +331,8 @@ namespace Ossium::Editor
                     layoutColumn = 0;
                 }
 
-                // TODO: proper dimension checks, return false if there's not enough space?
-                destRect.w = max(dest->minDimensions.x, destRect.w - sourceRect.w);
+                // TODO: proper dimension checks, return false if there's not enough space
+                destRect.w = max(MIN_DIMENSIONS.x, destRect.w - sourceRect.w);
 
                 // Warning: rect positioning and resizing assumes the source rect has already been resized to fit!
                 if (mode == DockingMode::RIGHT)
@@ -458,114 +458,127 @@ namespace Ossium::Editor
         return true;
     }
 
+    Node<EditorRect>* EditorLayout::FindSibling(Node<EditorRect>* node, int dir, bool isRow)
+    {
+        if (node == nullptr)
+        {
+            // Base case. Can't do anything beyond the root node.
+            return nullptr;
+        }
+        // Is this node a row or column as intended?
+        if (node->parent != nullptr && node->depth % 2 == (isRow ? layoutRow : layoutColumn))
+        {
+            // If so, check for a sibling
+            int index = node->childIndex + dir;
+            if (index >= 0 && index < (int)node->parent->children.size())
+            {
+                return node->parent->children[index];
+            }
+        }
+        // If not, move on up the tree.
+        return FindSibling(node->parent, dir, isRow);
+    }
+
     void EditorLayout::Resize(EditorWindow* window, Rect rect)
     {
         // First, normalise the rect
         rect = Rect(Utilities::Clamp(rect.x, 0.0f, (float)native->GetWidth()),
                     Utilities::Clamp(rect.y, 0.0f, (float)native->GetHeight()),
-                    Utilities::Clamp(rect.w, window->minDimensions.x, (float)native->GetWidth()),
-                    Utilities::Clamp(rect.h, window->minDimensions.y, (float)native->GetHeight())
+                    Utilities::Clamp(rect.w, MIN_DIMENSIONS.x, (float)native->GetWidth()),
+                    Utilities::Clamp(rect.h, MIN_DIMENSIONS.y, (float)native->GetHeight())
         );
 
         Node<EditorRect>* node = window->node;
-        Node<EditorRect>* parent = node->parent;
 
-        // Locate siblings
-        Node<EditorRect>* previous = parent != nullptr && node->childIndex > 0 ? parent->children[node->childIndex - 1] : nullptr;
-        Node<EditorRect>* next = parent != nullptr && parent->children.size() > node->childIndex + 1 ? parent->children[node->childIndex + 1] : nullptr;
+        bool isRow = node->depth % 2 == layoutRow;
 
-        // Locate guncles
-        if (parent != nullptr && parent->parent != nullptr)
-        {
-            if (previous == nullptr)
-            {
-                previous = parent->childIndex > 0 ? parent->parent->children[parent->childIndex - 1] : nullptr;
-            }
-            if (next == nullptr)
-            {
-                next = parent->parent->children.size() > parent->childIndex + 1 ? parent->parent->children[parent->childIndex + 1] : nullptr;
-            }
-        }
+        // Locate the 4 adjacent nodes
+        Node<EditorRect>* top = FindSibling(node, -1, isRow);
+        Node<EditorRect>* bottom = FindSibling(node, 1, isRow);
+        Node<EditorRect>* left = FindSibling(node, -1, !isRow);
+        Node<EditorRect>* right = FindSibling(node, 1, !isRow);
 
-        float minpos = 0, maxpos = 0;
+        float minFloat, maxFloat;
 
         // Now the fun begins
         if (rect.x != node->data.x)
         {
-            maxpos = node->data.xmax() - window->minDimensions.x;
-            if (previous != nullptr)
+            maxFloat = node->data.xmax() - window->minDimensions.x;
+            if (left != nullptr)
             {
-                minpos = previous->data.x + previous->data.window->minDimensions.x;
+                // TODO: If node is not a window, handle minimum size based on child windows.
+                minFloat = left->data.x + (left->data.window != nullptr ? left->data.window->minDimensions.x : MIN_DIMENSIONS.x);
             }
             else
             {
-                minpos = window->minDimensions.x;
+                minFloat = node->data.window->minDimensions.x;
             }
             float xmax = node->data.xmax();
-            node->data.x = Utilities::Clamp(rect.x, minpos, maxpos);
+            // TODO: handle undefined behaviour (where minpos > maxpos).
+            node->data.x = Utilities::Clamp(rect.x, minFloat, maxFloat);
             node->data.w = xmax - node->data.x;
-            if (previous != nullptr)
+            if (left != nullptr)
             {
-                previous->data.w = node->data.x - previous->data.x;
+                left->data.w = node->data.x - left->data.x;
             }
             updateViewports = true;
         }
         else if (rect.w != node->data.w)
         {
-            minpos = window->minDimensions.x;
-            if (next != nullptr)
+            minFloat = window->minDimensions.x;
+            if (right != nullptr)
             {
-                maxpos = (next->data.xmax() - node->data.x) - next->data.window->minDimensions.x;
+                maxFloat = (right->data.xmax() - node->data.x) - (right->data.window != nullptr ? right->data.window->minDimensions.x : MIN_DIMENSIONS.x);
             }
             else
             {
-                maxpos = native->GetWidth() - node->data.x;
+                maxFloat = native->GetWidth() - node->data.x;
             }
-            node->data.w = Utilities::Clamp(rect.w, minpos, maxpos);
-            if (next != nullptr)
+            node->data.w = Utilities::Clamp(rect.w, minFloat, maxFloat);
+            if (right != nullptr)
             {
-                next->data.w = next->data.xmax() - node->data.xmax();
-                next->data.x = node->data.xmax();
+                right->data.w = right->data.xmax() - node->data.xmax();
+                right->data.x = node->data.xmax();
             }
             updateViewports = true;
         }
 
         if (rect.y != node->data.y)
         {
-            maxpos = node->data.ymax() - window->minDimensions.y;
-            if (previous != nullptr)
+            maxFloat = node->data.ymax() - window->minDimensions.y;
+            if (top != nullptr)
             {
-                minpos = previous->data.y + previous->data.window->minDimensions.y;
+                minFloat = top->data.y + (top->data.window != nullptr ? top->data.window->minDimensions.y : MIN_DIMENSIONS.y);
             }
             else
             {
-                minpos = window->minDimensions.y;
+                minFloat = window->minDimensions.y;
             }
             float ymax = node->data.ymax();
-            node->data.y = Utilities::Clamp(rect.y, minpos, maxpos);
+            node->data.y = Utilities::Clamp(rect.y, minFloat, maxFloat);
             node->data.h = ymax - node->data.y;
-            if (previous != nullptr)
+            if (top != nullptr)
             {
-                previous->data.h = node->data.y - previous->data.y;
+                top->data.h = node->data.y - top->data.y;
             }
             updateViewports = true;
         }
         else if (rect.h != node->data.h)
         {
-            minpos = window->minDimensions.y;
-            if (next != nullptr)
+            minFloat = window->minDimensions.y;
+            if (bottom != nullptr)
             {
-                maxpos = (next->data.ymax() - node->data.y) - next->data.window->minDimensions.y;
+                maxFloat = (bottom->data.ymax() - node->data.y) - (bottom->data.window != nullptr ? bottom->data.window->minDimensions.y : MIN_DIMENSIONS.y);
             }
             else
             {
-                maxpos = native->GetHeight() - node->data.y;
+                maxFloat = native->GetHeight() - node->data.y;
             }
-            node->data.h = Utilities::Clamp(rect.h, minpos, maxpos);
-            if (next != nullptr)
+            node->data.h = Utilities::Clamp(rect.h, minFloat, maxFloat);
+            if (bottom != nullptr)
             {
-                next->data.h = next->data.ymax() - node->data.ymax();
-                next->data.y = node->data.ymax();
+                bottom->data.h = bottom->data.ymax() - node->data.ymax();
+                bottom->data.y = node->data.ymax();
             }
             updateViewports = true;
         }

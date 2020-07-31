@@ -2,6 +2,7 @@
 #include "../Examples/font_viewer.h"
 #include "../Core/contextmenu.h"
 #include "../Examples/demo_window_docking.h"
+#include "../Examples/layout_diagram.h"
 
 namespace Ossium::Editor
 {
@@ -18,6 +19,11 @@ namespace Ossium::Editor
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
         editor->AddCustomMenu("Edit/Undo", [] () {});
         editor->AddToolWindow<FontViewer>("View/Fonts");
+        editor->AddCustomMenu("View/Layout", [&] () {
+            EditorLayout* layout = GetEditorLayout()->GetEditorController()->AddLayout<LayoutDiagram>();
+            // This is safe because we know there's only one window in the layout at this point.
+            ((LayoutDiagram*)layout->GetLayout()->GetRoots()[0]->data.window)->target = GetEditorLayout();
+        });
 
     }
 

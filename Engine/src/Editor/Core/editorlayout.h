@@ -85,6 +85,9 @@ namespace Ossium::Editor
         /// Removes an editor window from this native editor window.
         bool Remove(EditorWindow* source);
 
+        // Recursive search up the tree for an adjacent node. Returns nullptr if no node is found.
+        Node<EditorRect>* FindSibling(Node<EditorRect>* node, int dir, bool isRow);
+
     public:
         /// Creates the window and initialises the tree.
         EditorLayout(EditorController* controller, string title = "Untitled", int w = -1, int h = -1);
