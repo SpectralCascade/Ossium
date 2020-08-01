@@ -21,11 +21,12 @@ namespace Ossium::Editor
 
         struct FuncPath
         {
-            FuncPath(string id, vector<string> split, function<void()> func);
+            FuncPath(std::string id, std::vector<std::string> split, std::function<void()> func, std::function<bool()> isEnabled);
             FuncPath() = default;
-            string id;
-            vector<string> split;
-            function<void()> func;
+            std::string id;
+            std::vector<std::string> split;
+            std::function<void()> func;
+            std::function<bool()> isEnabled;
         };
 
     };

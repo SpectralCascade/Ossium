@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef TEXT_H
 #define TEXT_H
@@ -22,8 +22,6 @@
 #include "../Core/font.h"
 #include "../Core/component.h"
 #include "../Core/helpermacros.h"
-
-using namespace std;
 
 namespace Ossium
 {
@@ -50,7 +48,7 @@ namespace Ossium
         int boxPaddingHeight = 2;
 
         /// The text string
-        string text = "";
+        std::string text = "";
 
         /// Text colour
         SDL_Color color = {0xFF, 0xFF, 0xFF, 0xFF};
@@ -78,7 +76,7 @@ namespace Ossium
         Font* font = nullptr;
 
         /// GUID of font to use:
-        string font_guid;
+        std::string font_guid;
 
     };
 

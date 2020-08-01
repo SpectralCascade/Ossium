@@ -16,6 +16,8 @@
 **/
 #include "schemamodel.h"
 
+using namespace std;
+
 namespace Ossium
 {
 

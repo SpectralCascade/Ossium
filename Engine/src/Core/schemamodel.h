@@ -28,8 +28,6 @@ extern "C"
 #include "typefactory.h"
 #include "jsondata.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -45,7 +43,7 @@ namespace Ossium
         typedef unsigned int MemberIdent;
 
         static unsigned int AddMember(const char* type, const char* name, size_t mem_size, int mem_attribute,
-                                      function<bool(void*, const char*, string)> lambdaFromString, function<string(void*, const char*)> lambdaToString, const char* ultimate_name)
+                                      std::function<bool(void*, const char*, std::string)> lambdaFromString, std::function<std::string(void*, const char*)> lambdaToString, const char* ultimate_name)
         {
             DEBUG_ASSERT(count < MaximumMembers, "Exceeded maximum number of members. Please allocate a higher maximum in the Schema.");
             member_names[count] = name;
@@ -85,24 +83,24 @@ namespace Ossium
             return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
-        void FromString(string& str)
+        void FromString(std::string& str)
         {
             JSON data(str);
             SerialiseIn(data);
         }
 
         /// Creates a JSON string with all the schema members.
-        string ToString()
+        std::string ToString()
         {
             JSON data;
             SerialiseOut(data);
             return data.ToString();
         }
 
-        bool Load(string filePath)
+        bool Load(std::string filePath)
         {
-            ifstream file(filePath);
-            string data = Utilities::FileToString(file);
+            std::ifstream file(filePath);
+            std::string data = Utilities::FileToString(file);
             if (!data.empty())
             {
                 FromString(data);
@@ -113,9 +111,9 @@ namespace Ossium
             return false;
         }
 
-        bool Save(string filePath)
+        bool Save(std::string filePath)
         {
-            ofstream file(filePath);
+            std::ofstream file(filePath);
             if (file.is_open())
             {
                 file << ToString();
@@ -131,7 +129,7 @@ namespace Ossium
             for (unsigned int i = 0; i < count; i++)
             {
                 /// Key consists of type and member name
-                string key = member_names[i];
+                std::string key = member_names[i];
                 /// Value is obtained directly from the member
                 void* member = GetMember(i);
                 if (member != nullptr)
@@ -151,7 +149,7 @@ namespace Ossium
         {
             for (unsigned int i = 0; i < count; i++)
             {
-                string key = string(member_names[i]);
+                std::string key = std::string(member_names[i]);
                 auto itr = data.find(key);
                 if (itr != data.end())
                 {
@@ -177,14 +175,14 @@ namespace Ossium
     protected:
         static size_t member_byte_offsets[MaximumMembers];
 
-        virtual void MapReference(string identdata, void** member)
+        virtual void MapReference(std::string identdata, void** member)
         {
             Log.Warning("Reference mapping not implemented for a type deriving from schema type \"{0}\"", schema_name);
         }
 
     private:
-        static function<bool(void*, const char*, string)> member_from_string[MaximumMembers];
-        static function<string(void*, const char*)> member_to_string[MaximumMembers];
+        static std::function<bool(void*, const char*, std::string)> member_from_string[MaximumMembers];
+        static std::function<std::string(void*, const char*)> member_to_string[MaximumMembers];
         /// Array of associated user attributes for each schema member
         static int member_attributes[MaximumMembers];
         /// Array of names for each schema member
@@ -199,10 +197,10 @@ namespace Ossium
     };
 
     template<class BaseType, unsigned int MaximumMembers>
-    function<bool(void*, const char*, string)> Schema<BaseType, MaximumMembers>::member_from_string[MaximumMembers];
+    std::function<bool(void*, const char*, std::string)> Schema<BaseType, MaximumMembers>::member_from_string[MaximumMembers];
 
     template<class BaseType, unsigned int MaximumMembers>
-    function<string(void*, const char*)> Schema<BaseType, MaximumMembers>::member_to_string[MaximumMembers];
+    std::function<std::string(void*, const char*)> Schema<BaseType, MaximumMembers>::member_to_string[MaximumMembers];
 
     template<class BaseType, unsigned int MaximumMembers>
     int Schema<BaseType, MaximumMembers>::member_attributes[MaximumMembers];
@@ -276,7 +274,7 @@ namespace Ossium
     template<typename SchemaType, typename Type, typename strType, typename strName>
     struct OSSIUM_EDL MemberInfo
     {
-        MemberInfo(unsigned int& m_count, function<bool(void*, const char*, string)> lambdaFromString, function<string(void*, const char*)> lambdaToString, const char* ultimate_name, size_t member_offset, int mem_attribute)
+        MemberInfo(unsigned int& m_count, std::function<bool(void*, const char*, std::string)> lambdaFromString, std::function<std::string(void*, const char*)> lambdaToString, const char* ultimate_name, size_t member_offset, int mem_attribute)
         {
             ++m_count;
             index = SchemaType::AddMember(strType::str, strName::str, member_offset, mem_attribute, lambdaFromString, lambdaToString, ultimate_name);
@@ -323,9 +321,9 @@ namespace Ossium
     public:
         virtual ~SchemaReferable() = default;
 
-        virtual string GetReferenceID() = 0;
+        virtual std::string GetReferenceID() = 0;
 
-        virtual string GetReferenceName();
+        virtual std::string GetReferenceName();
 
         Uint32 GetReferableType();
 
@@ -364,7 +362,7 @@ namespace Ossium
     ///
 
     #define MEMBER_FROM_STRING(TYPE)                                        \
-    [](void* member, const char* strtype, string data)                      \
+    [](void* member, const char* strtype, std::string data)                 \
     {                                                                       \
         if (strcmp (strtype, SID(#TYPE )::str ) == 0)                       \
         {                                                                   \
@@ -381,7 +379,7 @@ namespace Ossium
         {                                                                   \
             return Utilities::ToString(*(( TYPE *)member));                 \
         }                                                                   \
-        return string("");                                                  \
+        return std::string("");                                             \
     }
 
     /// This doesn't actually convert ids to valid pointers; it merely attempts to map
@@ -389,19 +387,19 @@ namespace Ossium
     /// Note schema members only support pointer types to Entity and Component-derived types, if the type is invalid the member is made null.
     /// TODO: make SchemaReferable more developer-friendly (with regards to reference mapping).
     #define REFPTR_FROM_STRING(TYPE)                                                                                                            \
-    [this](void* member, const char* strtype, string data)                                                                                      \
+    [this](void* member, const char* strtype, std::string data)                                                                                 \
     {                                                                                                                                           \
         if (strcmp(strtype, SID(#TYPE )::str) == 0)                                                                                             \
         {                                                                                                                                       \
             if (!data.empty() && data != "null")                                                                                                \
             {                                                                                                                                   \
-                if (is_base_of<SchemaReferable, remove_pointer<TYPE>::type>::value)                                                             \
+                if (std::is_base_of<SchemaReferable, std::remove_pointer<TYPE>::type>::value)                                                   \
                 {                                                                                                                               \
                     MapReference(data, (void**)member);                                                                                         \
                 }                                                                                                                               \
                 else                                                                                                                            \
                 {                                                                                                                               \
-                    Log.Warning("Type \"{0}\" is not SchemaReferable.", strtype);                                               \
+                    Log.Warning("Type \"{0}\" is not SchemaReferable.", strtype);                                                               \
                 }                                                                                                                               \
             }                                                                                                                                   \
             (*((void**)member)) = nullptr;                                                                                                      \
@@ -420,16 +418,16 @@ namespace Ossium
         {                                                                                                   \
             if ((*((void**)member)) == nullptr)                                                             \
             {                                                                                               \
-                return string("null");                                                                      \
+                return std::string("null");                                                                 \
             }                                                                                               \
-            else if (is_base_of<SchemaReferable, remove_pointer<TYPE>::type>::value)                        \
+            else if (std::is_base_of<SchemaReferable, std::remove_pointer<TYPE>::type>::value)              \
             {                                                                                               \
                 return (*((SchemaReferable**)member))->GetReferenceID();                                    \
             }                                                                                               \
-            Log.Warning("Invalid schema member reference type \"{0}\".", strtype);  \
+            Log.Warning("Invalid schema member reference type \"{0}\".", strtype);                          \
             return Utilities::ToString(*(( TYPE *)member));                                                 \
         }                                                                                                   \
-        return string("null");                                                                              \
+        return std::string("null");                                                                         \
     }
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
@@ -437,7 +435,7 @@ namespace Ossium
     #define SCHEMA_MEMBER(ATTRIBUTE, TYPE, NAME)                                                                                                                        \
             MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                             \
             {                                                                                                                                                           \
-                static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info = is_pointer<TYPE>::value ?                                       \
+                static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info = std::is_pointer<TYPE>::value ?                                  \
                     new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count,                                                                \
                                     REFPTR_FROM_STRING( TYPE ), REFPTR_TO_STRING( TYPE ), schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME), ATTRIBUTE)  \
                     :                                                                                                                                                   \
@@ -496,13 +494,13 @@ namespace Ossium
                 BASETYPE::SerialiseOut(data);                                                           \
                 SCHEMA_TYPE::SerialiseOut(data);                                                        \
             }                                                                                           \
-            virtual string ToString()                                                                   \
+            virtual std::string ToString()                                                              \
             {                                                                                           \
                 JSON data;                                                                              \
                 SerialiseOut(data);                                                                     \
                 return data.ToString();                                                                 \
             }                                                                                           \
-            virtual void FromString(string& str)                                                        \
+            virtual void FromString(std::string& str)                                                   \
             {                                                                                           \
                 JSON data = JSON(str);                                                                  \
                 SerialiseIn(data);                                                                      \

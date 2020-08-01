@@ -26,45 +26,45 @@ namespace Ossium
     {
     public:
         template<typename ...Args>
-        void Info(string message, Args&&... args)
+        void Info(std::string message, Args&&... args)
         {
-            message = Format(message, forward<Args>(args)...);
+            message = Format(message, std::forward<Args>(args)...);
             SDL_LogInfo(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
         }
 
         template<typename ...Args>
-        void Warning(string message, Args&&... args)
+        void Warning(std::string message, Args&&... args)
         {
-            message = Format(message, forward<Args>(args)...);
+            message = Format(message, std::forward<Args>(args)...);
             SDL_LogWarn(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
         }
 
         template<typename ...Args>
-        void Error(string message, Args&&... args)
+        void Error(std::string message, Args&&... args)
         {
-            message = Format(message, forward<Args>(args)...);
+            message = Format(message, std::forward<Args>(args)...);
             SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
         }
 
         template<typename ...Args>
-        void Critical(string message, Args&&... args)
+        void Critical(std::string message, Args&&... args)
         {
-            message = Format(message, forward<Args>(args)...);
+            message = Format(message, std::forward<Args>(args)...);
             SDL_LogCritical(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
         }
 
         template<typename ...Args>
-        void Verbose(string message, Args&&... args)
+        void Verbose(std::string message, Args&&... args)
         {
-            message = Format(message, forward<Args>(args)...);
+            message = Format(message, std::forward<Args>(args)...);
             SDL_LogVerbose(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
         }
 
         template<typename ...Args>
-        void Debug(string message, Args&&... args)
+        void Debug(std::string message, Args&&... args)
         {
             #ifdef OSSIUM_DEBUG
-            message = Format(message, forward<Args>(args)...);
+            message = Format(message, std::forward<Args>(args)...);
             SDL_LogDebug(SDL_LOG_CATEGORY_CUSTOM, "%s", message.c_str());
             #endif // DEBUG
         }

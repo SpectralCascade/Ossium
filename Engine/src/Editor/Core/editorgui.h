@@ -22,7 +22,6 @@
 #include "editorstyle.h"
 
 using namespace Ossium;
-using namespace std;
 
 namespace Ossium::Editor
 {
@@ -52,13 +51,13 @@ namespace Ossium::Editor
     {
     private:
         /// Used to determine how GUI elements are positioned.
-        stack<Vector2> layoutStack;
+        std::stack<Vector2> layoutStack;
 
         /// Used to determine whether elements should be positioned vertically or horizontally.
-        stack<bool> layoutDirection;
+        std::stack<bool> layoutDirection;
 
         /// Used to determine how much to move after completing a horizontal or vertical layout group.
-        stack<float> layoutDifference;
+        std::stack<float> layoutDifference;
 
         // Store handles to the corresponding bindless functions.
         int mouseActionId;
@@ -206,20 +205,20 @@ namespace Ossium::Editor
         float GetCurrentBlockSize();
 
         /// Displays some text.
-        void TextLabel(string text);
-        void TextLabel(string text, StyleText style);
+        void TextLabel(std::string text);
+        void TextLabel(std::string text, StyleText style);
 
         /// Takes text input and displays it. Returns the current string input.
-        string TextField(string text);
-        string TextField(string text, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
+        std::string TextField(std::string text);
+        std::string TextField(std::string text, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
 
         /// Dumps an image at the current layout position.
         void PlaceImage(Image* image);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
-        bool Button(string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(string text, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(string text, TextLayout& textLayout, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(std::string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(std::string text, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(std::string text, TextLayout& textLayout, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(Image* image, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(int w, int h, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr, bool* isHovered = nullptr, bool* isPressed = nullptr);
@@ -239,7 +238,7 @@ namespace Ossium::Editor
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
         bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
         bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
-        bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, function<void(bool)> drawFunc);
+        bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, std::function<void(bool)> drawFunc);
 
         float Slider(
              float sliderValue,
@@ -256,18 +255,18 @@ namespace Ossium::Editor
 
         /// A drag-and-drop field that allows dragging and dropping of strings.
         /// This can be built upon to support SchemaReferable ID references or file paths.
-        string DragAndDropField(string currentInput, bool* changed = nullptr);
+        std::string DragAndDropField(std::string currentInput, bool* changed = nullptr);
 
         /// A drag-and-drop reference field for a specified implementation of SchemaReferable.
         /// A mapping function must be provided that converts a reference ID into a valid reference of the specified type.
         template<typename T>
-        typename enable_if<is_base_of<SchemaReferable, T>::value, T*>::type
-        ReferenceField(T* currentReference, function<T*(string)> findReference, string emptyField = "(null)")
+        typename std::enable_if<std::is_base_of<SchemaReferable, T>::value, T*>::type
+        ReferenceField(T* currentReference, std::function<T*(std::string)> findReference, std::string emptyField = "(null)")
         {
             if (IsVisible())
             {
                 bool didChange = false;
-                string result = DragAndDropField(
+                std::string result = DragAndDropField(
                     currentReference != nullptr ? currentReference->GetReferenceName() : emptyField,
                     &didChange
                 );
@@ -282,15 +281,15 @@ namespace Ossium::Editor
         /// Displays a drop-down list of items when clicked. You must indicate which item is currently selected and provide a function to handle the dropdown selection.
         /// Optionally, provide a list of names corresponding to the given values. By default Utilities::ToString() is used  to determine these names.
         template<typename T>
-        typename enable_if<!is_same<T, string>::value, void>::type
-        Dropdown(unsigned int selected, const vector<T>& values, function<void(unsigned int)> onSelectHandler)
+        typename std::enable_if<!std::is_same<T, std::string>::value, void>::type
+        Dropdown(unsigned int selected, const std::vector<T>& values, std::function<void(unsigned int)> onSelectHandler)
         {
             if (IsVisible())
             {
                 Vector2 oldPos = GetLayoutPosition();
                 if (Button(Utilities::ToString(values[selected])))
                 {
-                    vector<string> converted;
+                    std::vector<std::string> converted;
                     for (auto& value : values)
                     {
                         converted.push_back(Utilities::ToString(value));
@@ -304,10 +303,10 @@ namespace Ossium::Editor
             }
         }
 
-        void Dropdown(unsigned int selected, vector<string>& values, function<void(unsigned int)> onSelectHandler);
+        void Dropdown(unsigned int selected, std::vector<std::string>& values, std::function<void(unsigned int)> onSelectHandler);
 
     private:
-        void OnDropdown(Vector2 position, vector<string>& names, function<void(unsigned int)> onSelectHandler);
+        void OnDropdown(Vector2 position, std::vector<std::string>& names, std::function<void(unsigned int)> onSelectHandler);
 
     };
 

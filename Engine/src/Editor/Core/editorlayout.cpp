@@ -2,6 +2,8 @@
 #include "editorwindow.h"
 #include "editorcontroller.h"
 
+using namespace std;
+
 namespace Ossium::Editor
 {
 
@@ -72,6 +74,9 @@ namespace Ossium::Editor
             GetEditorController()->RemoveLayout(this);
         };
 
+        // Provide access to basic services like the renderer and resources.
+        services = new ServicesProvider(resources, renderer);
+
     }
 
     EditorLayout::~EditorLayout()
@@ -105,6 +110,12 @@ namespace Ossium::Editor
             delete native;
             native = nullptr;
         }
+        delete services;
+    }
+
+    ServicesProvider* EditorLayout::GetServices()
+    {
+        return services;
     }
 
     void EditorLayout::HandleEvent(SDL_Event& e)

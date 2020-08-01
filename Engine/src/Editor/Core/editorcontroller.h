@@ -4,12 +4,14 @@
 #include "../../Ossium.h"
 #include "editorstyle.h"
 #include "editorlayout.h"
+#include "editorconstants.h"
 
 namespace Ossium::Editor
 {
 
     // Forward declarations
     class ToolBar;
+    class Project;
 
     /// This is the core of the editor at runtime.
     class EditorController : public EditorTheme
@@ -39,13 +41,30 @@ namespace Ossium::Editor
         /// Returns a pointer to the main input controller for the editor.
         InputController* GetInput();
 
+        /// Returns the main window layout.
+        EditorLayout* GetMainLayout();
+
         /// Operates all editor logic. Returns true if the application should quit.
         bool Update();
 
-        void AddCustomMenu(string menuPath, function<void()> onClick);
+        /// Returns the loaded project, or nullptr if no project is loaded.
+        Project* GetProject();
 
+        /// Note: this frees the current project and opens a new, empty project.
+        Project* CreateProject();
+
+        /// Loads a specified project file.
+        Project* OpenProject(std::string path);
+
+        /// Frees the current project.
+        void CloseProject();
+
+        /// Adds a custom menu option to the tool bar. Optionally
+        void AddCustomMenu(std::string menuPath, std::function<void()> onClick, std::function<bool()> isEnabled = [&] () { return true; });
+
+        /// Adds a custom menu option to the tool bar that opens a window.
         template<typename T>
-        void AddToolWindow(string menuPath)
+        void AddToolWindow(std::string menuPath)
         {
             // TODO: if already opened, simply focus the layout window.
             AddCustomMenu(menuPath, [&] () { AddLayout<T>(); });
@@ -53,13 +72,14 @@ namespace Ossium::Editor
 
         struct MenuTool
         {
-            MenuTool(string path, function<void()> onClick);
-            string path;
-            function<void()> onClick;
+            MenuTool(std::string path, std::function<void()> onClick, std::function<bool()> isEnabled);
+            std::string path;
+            std::function<void()> onClick;
+            std::function<bool()> isEnabled;
         };
 
         /// Developer-defined menu tools.
-        vector<MenuTool> customMenuTools;
+        std::vector<MenuTool> customMenuTools;
 
     private:
         // Helper method for a template
@@ -78,7 +98,10 @@ namespace Ossium::Editor
         bool running = true;
 
         /// Additional native layouts.
-        vector<EditorLayout*> layouts;
+        std::vector<EditorLayout*> layouts;
+
+        /// The current project.
+        Project* loadedProject = nullptr;
 
     };
 

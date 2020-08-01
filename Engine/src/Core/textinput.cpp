@@ -1,6 +1,8 @@
 #include "textinput.h"
 #include "utf8.h"
 
+using namespace std;
+
 namespace Ossium
 {
 

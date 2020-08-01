@@ -22,6 +22,8 @@
 #include "statesprite.h"
 #include "../Core/renderer.h"
 
+using namespace std;
+
 namespace Ossium
 {
 

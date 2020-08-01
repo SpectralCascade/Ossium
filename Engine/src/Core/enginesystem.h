@@ -38,7 +38,7 @@ namespace Ossium
         }
 
         template<typename ...Args>
-        EngineSystem(ServicesProvider* engineServices, string configFilePath = "")
+        EngineSystem(ServicesProvider* engineServices, std::string configFilePath = "")
         {
             services = engineServices;
             ecs = new Scene(services);
@@ -54,7 +54,7 @@ namespace Ossium
         void ClearScene();
 
         /// Configures the engine with a JSON file.
-        void Init(string configFilePath);
+        void Init(std::string configFilePath);
         /// Configures the engine with a JSON object.
         void Init(JSON& configData);
 
@@ -63,7 +63,7 @@ namespace Ossium
         bool Update();
 
         /// Loads a game scene into the entity component system.
-        bool LoadScene(string path);
+        bool LoadScene(std::string path);
 
         /// Returns the ECS instance.
         Scene* GetScene();

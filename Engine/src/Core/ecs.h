@@ -32,8 +32,6 @@
 #include "services.h"
 #include "resourcecontroller.h"
 
-using namespace std;
-
 namespace Ossium
 {
     typedef Uint32 ComponentType;
@@ -50,7 +48,7 @@ namespace Ossium
         TYPE& operator=(const Entity& src) = delete;                                    \
         TYPE(const TYPE& src) = default;                                                \
                                                                                         \
-        virtual void MapReference(string identdata, void** member);                     \
+        virtual void MapReference(std::string identdata, void** member);                \
                                                                                         \
         static const bool is_abstract_component = false;                                \
                                                                                         \
@@ -75,7 +73,7 @@ namespace Ossium
     {                                                                                                       \
         return ((Entity*)target_entity)->AddComponent<TYPE>();                                              \
     }                                                                                                       \
-    void TYPE::MapReference(string identdata, void** member)                                                \
+    void TYPE::MapReference(std::string identdata, void** member)                                           \
     {                                                                                                       \
         entity->MapReference(identdata, member);                                                            \
     }                                                                                                       \
@@ -85,7 +83,7 @@ namespace Ossium
         SID( #TYPE )::str, ComponentFactory                                                                 \
     ) :                                                                                                     \
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                          \
-        SID( #TYPE )::str, ComponentFactory, string(parentTypeName)                                         \
+        SID( #TYPE )::str, ComponentFactory, std::string(parentTypeName)                                    \
     );                                                                                                      \
                                                                                                             \
     TYPE* TYPE::Clone()                                                                                     \
@@ -101,14 +99,14 @@ namespace Ossium
     }
 
     template<class T>
-    const vector<ComponentType>& GetDerivedComponentTypes()
+    const std::vector<ComponentType>& GetDerivedComponentTypes()
     {
         return T::__ecs_factory_.GetDerivedTypes();
     }
 
     /// Dynamic type checking
-    OSSIUM_EDL ComponentType GetComponentType(string name);
-    OSSIUM_EDL string GetComponentName(ComponentType id);
+    OSSIUM_EDL ComponentType GetComponentType(std::string name);
+    OSSIUM_EDL std::string GetComponentName(ComponentType id);
 
     /// Forward declarations for the controller class
     class Entity;
@@ -127,7 +125,7 @@ namespace Ossium
     };
 
     template <class T>
-    struct is_component<T, typename enable_if<is_base_of<BaseComponent, T>::value, void>::type>
+    struct is_component<T, typename std::enable_if<std::is_base_of<BaseComponent, T>::value, void>::type>
     {
         typedef T type;
 
@@ -149,10 +147,20 @@ namespace Ossium
         Scene(ServicesProvider* services = nullptr);
 
         // Resource loading methods
-        bool Load(string guid_path);
+        bool Load(std::string guid_path);
         bool Init(ServicesProvider* services);
-        bool LoadAndInit(string guid_path, ServicesProvider* services);
+        bool LoadAndInit(std::string guid_path, ServicesProvider* services);
 
+        // Save the scene at a specified directory.
+        bool Save(std::string directoryPath);
+
+        // Sets the name of this scene.
+        void SetName(std::string name);
+
+        // Returns the name of this scene
+        std::string GetName();
+
+        // Clean up the scene once finished.
         ~Scene();
 
         /// Iterates through all components that implement the Update() method and calls it for each one
@@ -162,8 +170,8 @@ namespace Ossium
 
         /// SFINAE case, where type T is not a valid component type.
         template<typename T>
-        typename enable_if<!is_component<T>::value, void>::type
-        WalkComponents(function<void(T*)> operation)
+        typename std::enable_if<!is_component<T>::value, void>::type
+        WalkComponents(std::function<void(T*)> operation)
         {
             Log.Error("SFINAE attempting to walk ECS components!");
             //static_assert(false, "You cannot walk over non-component types with an ECS object.");
@@ -172,8 +180,8 @@ namespace Ossium
         /// Walks over all components of type T and operates on them.
         /// O(n) time complexity, where n == number of instances of component type T controlled by this ECS instance.
         template<typename T>
-        typename enable_if<is_component<T>::value, void>::type
-        WalkComponents(function<void(T*)> operation)
+        typename std::enable_if<is_component<T>::value, void>::type
+        WalkComponents(std::function<void(T*)> operation)
         {
             const ComponentType compType = GetComponentType<T>();
             for (unsigned int i = 0, counti = components[compType].empty() ? 0 : components[compType].size(); i < counti; i++)
@@ -187,7 +195,7 @@ namespace Ossium
 
         /// Walks over all entities and calls the provided function, passing in each entity.
         /// Set breadthFirst to false to walk the entity tree depth-first.
-        void WalkEntities(function<void(Entity*)> walkFunc, bool breadthFirst = true);
+        void WalkEntities(std::function<void(Entity*)> walkFunc, bool breadthFirst = true);
 
         /// Creates a new entity within this system and returns a reference to it.
         Entity* CreateEntity();
@@ -211,7 +219,7 @@ namespace Ossium
         unsigned int GetTotalEntities();
 
         /// Returns an array of all entities in the root of the hierarchy.
-        vector<Entity*> GetRootEntities();
+        std::vector<Entity*> GetRootEntities();
 
         /// Attempt to get an instance of a specific service type.
         template<typename T>
@@ -222,8 +230,8 @@ namespace Ossium
         }
 
         /// Serialise everything
-        string ToString();
-        void FromString(string& str);
+        std::string ToString();
+        void FromString(std::string& str);
 
     private:
         /// Removes the entity from the inactiveEntities set.
@@ -236,28 +244,31 @@ namespace Ossium
         bool IsActive(Entity* entity);
 
         /// All GLOBALLY inactive entities - includes entities that could be locally active.
-        unordered_set<Entity*> inactiveEntities;
+        std::unordered_set<Entity*> inactiveEntities;
 
         /// Vector of pointers to ALL component instances, inside an array ordered by component type.
         /// This is maintained because it's more efficient when updating or rendering lots of components
         /// of a specific type each frame
-        vector<BaseComponent*>* components;
+        std::vector<BaseComponent*>* components;
 
         /// All entities currently pending destruction. These will be destroyed at the end of the frame.
         /// They cannot be removed once added until they are destroyed.
-        vector<Entity*> pendingDestruction;
+        std::vector<Entity*> pendingDestruction;
 
         /// Entity tree hierarchy (pure scene graph).
         Tree<Entity*> entityTree;
 
         /// Hash table of entity nodes by id
-        unordered_map<int, Node<Entity*>*> entities;
+        std::unordered_map<int, Node<Entity*>*> entities;
 
         /// Direct map of ids to reference type members that point to entities or components
-        unordered_map<string, set<void**>> serialised_pointers;
+        std::unordered_map<std::string, std::set<void**>> serialised_pointers;
 
         /// Provider for non-static engine services such as a ResourceController instance.
         ServicesProvider* servicesProvider = nullptr;
+
+        /// The name of this scene. Cannot be empty.
+        std::string name = "New Scene";
 
     };
 
@@ -280,7 +291,7 @@ namespace Ossium
             }
             else
             {
-                vector<BaseComponent*> component_vector;
+                std::vector<BaseComponent*> component_vector;
                 component_vector.push_back(component);
                 components.insert({GetComponentType<T>(), component_vector});
             }
@@ -308,7 +319,7 @@ namespace Ossium
             auto itr = components.find(GetComponentType<T>());
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
-                vector<BaseComponent*>& ecs_components = controller->components[GetComponentType<T>()];
+                std::vector<BaseComponent*>& ecs_components = controller->components[GetComponentType<T>()];
                 /// First, remove the component pointer from the Scene
                 for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
                 {
@@ -340,7 +351,7 @@ namespace Ossium
             }
             else
             {
-                vector<ComponentType> derivedTypes = GetDerivedComponentTypes<T>();
+                std::vector<ComponentType> derivedTypes = GetDerivedComponentTypes<T>();
                 for (ComponentType type : derivedTypes)
                 {
                     itr = components.find(type);
@@ -356,10 +367,10 @@ namespace Ossium
         /// Returns a vector of pointers to all component instances of a given type
         /// attached to this entity. Also returns derivative type instances!
         template <class T>
-        vector<T*> GetComponents()
+        std::vector<T*> GetComponents()
         {
-            vector<T*> retComponents;
-            vector<ComponentType> allTypes = GetDerivedComponentTypes<T>();
+            std::vector<T*> retComponents;
+            std::vector<ComponentType> allTypes = GetDerivedComponentTypes<T>();
             allTypes.insert(allTypes.begin(), GetComponentType<T>());
             for (ComponentType type : allTypes)
             {
@@ -377,7 +388,7 @@ namespace Ossium
 
         /// Returns a reference to the Component* array of a specified type.
         /// Faster than the GetComponents() template but doesn't do any type conversion.
-        vector<BaseComponent*>& GetComponents(ComponentType compType);
+        std::vector<BaseComponent*>& GetComponents(ComponentType compType);
 
         template <class T>
         bool HasComponent()
@@ -402,12 +413,12 @@ namespace Ossium
 
         /// Returns ALL matching components in this entity's children
         template<class T>
-        vector<T*> GetComponentsInChildren()
+        std::vector<T*> GetComponentsInChildren()
         {
-            vector<T*> output;
+            std::vector<T*> output;
             for (unsigned int i = 0, counti = self->children.empty() ? 0 : self->children.size(); i < counti; i++)
             {
-                vector<T*> data = self->children[i]->data->GetComponents<T>();
+                std::vector<T*> data = self->children[i]->data->GetComponents<T>();
                 for (T* component : data)
                 {
                     output.push_back(component);
@@ -424,7 +435,7 @@ namespace Ossium
         }
 
         /// Maps an id to a reference for serialisation.
-        void MapReference(string ident, void** ptr);
+        void MapReference(std::string ident, void** ptr);
 
         Entity* GetParent();
         void SetParent(Entity* parent);
@@ -433,7 +444,7 @@ namespace Ossium
         const int GetID();
 
         /// Ditto but in string form, required by SchemaReferable derived types.
-        string GetReferenceID();
+        std::string GetReferenceID();
 
         /// Returns true when this entity is active in the scene (i.e. no parents are inactive
         /// and not inactive locally).
@@ -448,9 +459,9 @@ namespace Ossium
         Entity* Clone();
 
         /// Returns pointer to first found instance of an entity
-        Entity* Find(string name);
+        Entity* Find(std::string name);
         /// Ditto, but searches only for entities below the parent
-        Entity* Find(string name, Entity* parent);
+        Entity* Find(std::string name, Entity* parent);
 
         /// Creates a child entity of this entity
         Entity* CreateChild();
@@ -459,11 +470,11 @@ namespace Ossium
         Scene* GetScene();
 
         /// String conversion methods get/set with the JSON representation of all attached components.
-        void FromString(string& str);
-        string ToString();
+        void FromString(std::string& str);
+        std::string ToString();
 
         /// The name of this entity.
-        string name;
+        std::string name;
 
         void Destroy(bool immediate = false);
 
@@ -488,7 +499,7 @@ namespace Ossium
 
         /// Hashtable of components attached to this entity by type
         /// TODO: optimise this! Not necessarily the best data structure for the job.
-        unordered_map<ComponentType, vector<BaseComponent*>> components;
+        std::unordered_map<ComponentType, std::vector<BaseComponent*>> components;
 
         /// Pointer to the system this entity exists in
         Scene* controller;
@@ -527,7 +538,7 @@ namespace Ossium
 
         virtual Uint32 GetType() = 0;
 
-        string GetReferenceID();
+        std::string GetReferenceID();
 
         /// Returns true only when enabled and the associated entity is active.
         bool IsActiveAndEnabled();

@@ -4,6 +4,11 @@
 #include "../Core/contextmenu.h"
 #include "../Examples/demo_window_docking.h"
 #include "../Examples/layout_diagram.h"
+#include "../../Core/engineconstants.h"
+#include "../Core/editorconstants.h"
+#include "../Core/tinyfiledialogs.h"
+
+using namespace std;
 
 namespace Ossium::Editor
 {
@@ -16,24 +21,110 @@ namespace Ossium::Editor
 
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
-        editor->AddCustomMenu("File/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
-        editor->AddCustomMenu("File/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
+        editor->AddCustomMenu("File/New/Project", [&] () {
+                // Close the context menu before pausing the editor
+                ContextMenu::GetMainInstance(resources)->Hide();
+
+                Project* project = GetEditorLayout()->GetEditorController()->CreateProject();
+                project->SetName("Untitled");
+                project->SetPath(EDITOR_DEFAULT_DIRECTORY);
+
+                if (!project->SaveAs())
+                {
+                    GetEditorLayout()->GetEditorController()->CloseProject();
+                }
+
+            }
+        );
+        editor->AddCustomMenu("File/Open...", [&] () {
+                ContextMenu::GetMainInstance(resources)->Hide();
+
+                const char* filters[1] = { "*.ossium" };
+
+                string path = tinyfd_openFileDialog(
+                    "Ossium | Open Project",
+                    EDITOR_DEFAULT_DIRECTORY,
+                    1,
+                    filters,
+                    "Ossium Project",
+                    0
+                );
+
+                if (!path.empty())
+                {
+                    GetEditorLayout()->GetEditorController()->OpenProject(path);
+                }
+
+            }
+        );
+
+        editor->AddCustomMenu("File/Save", [&] () {
+                Project* project = GetEditorLayout()->GetEditorController()->GetProject();
+                if (project != nullptr)
+                {
+                    project->Save(project->GetPath());
+                }
+                else
+                {
+                    Log.Warning("Cannot save because no project is loaded.");
+                }
+            },
+            [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
+        );
+
+        editor->AddCustomMenu("File/Save as...", [&] () {
+                Project* project = GetEditorLayout()->GetEditorController()->GetProject();
+                if (project != nullptr)
+                {
+                    ContextMenu::GetMainInstance(resources)->Hide();
+                    project->SaveAs();
+                }
+                else
+                {
+                    Log.Warning("Cannot save because no project is loaded.");
+                }
+            },
+            [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
+        );
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
-        editor->AddCustomMenu("Edit/Undo", [] () {});
+
+        // TODO: edit menus
+        //editor->AddCustomMenu("Edit/Undo", [] () {});
+        //editor->AddCustomMenu("Edit/Redo", [] () {});
+
+        editor->AddCustomMenu("Create/Scene",
+            [&] () {
+                Project* project = GetEditorLayout()->GetEditorController()->GetProject();
+                if (project != nullptr)
+                {
+                    Scene* newScene = new Scene();
+                    string path = project->GetAssetsPath() + "Untitled" + EngineConstants::SceneFileExtension;
+                    newScene->Save(path);
+                    delete newScene;
+                    resources->LoadAndInit<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices());
+                }
+            },
+            [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
+        );
+
+        editor->AddCustomMenu("View/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
+        editor->AddCustomMenu("View/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
         editor->AddToolWindow<FontViewer>("View/Fonts");
         editor->AddCustomMenu("View/Layout", [&] () {
-            EditorLayout* layout = GetEditorLayout()->GetEditorController()->AddLayout<LayoutDiagram>();
-            // This is safe because we know there's only one window in the layout at this point.
-            ((LayoutDiagram*)layout->GetLayout()->GetRoots()[0]->data.window)->target = GetEditorLayout();
-        });
+                EditorLayout* layout = GetEditorLayout()->GetEditorController()->AddLayout<LayoutDiagram>();
+                // This is safe because we know there's only one window in the layout at this point.
+                ((LayoutDiagram*)layout->GetLayout()->GetRoots()[0]->data.window)->target = GetEditorLayout();
+            }
+        );
 
     }
 
-    ToolBar::FuncPath::FuncPath(string id, vector<string> split, function<void()> func)
+    ToolBar::FuncPath::FuncPath(string id, vector<string> split, function<void()> func, function<bool()> isEnabled)
     {
         this->id = id;
         this->split = split;
         this->func = func;
+        this->isEnabled = isEnabled;
     }
 
     void ToolBar::OnGUI()
@@ -65,11 +156,11 @@ namespace Ossium::Editor
                 {
                     if (i == path.end() - 1)
                     {
-                        found = toolTree.Insert(FuncPath(id, path, tool.onClick), previous);
+                        found = toolTree.Insert(FuncPath(id, path, tool.onClick, tool.isEnabled), previous);
                     }
                     else
                     {
-                        found = toolTree.Insert(FuncPath(id, {}, {}), previous);
+                        found = toolTree.Insert(FuncPath(id, {}, {}, [] () { return true; }), previous);
                     }
                 }
                 previous = found;
@@ -108,7 +199,7 @@ namespace Ossium::Editor
                             }
                             else if (!expansions.empty())
                             {
-                                expansions.top()->Add(n->data.id, n->data.func);
+                                expansions.top()->Add(n->data.id, n->data.func, nullptr, n->data.isEnabled());
                             }
                         }
                     },

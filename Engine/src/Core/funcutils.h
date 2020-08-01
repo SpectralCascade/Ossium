@@ -25,8 +25,6 @@
 #include "helpermacros.h"
 #include "jsondata.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -45,50 +43,56 @@ namespace Ossium
         OSSIUM_EDL float MapRange(float value, float min, float max, float min_new, float max_new);
 
         /// Converts numerical values to strings using stringstream.
-        OSSIUM_EDL string ToString(float n);
-        OSSIUM_EDL string ToString(int n);
+        OSSIUM_EDL std::string ToString(float n);
+        OSSIUM_EDL std::string ToString(int n);
 
         /// Turns an entire file stream into a string.
-        OSSIUM_EDL string FileToString(ifstream& fileStream);
+        OSSIUM_EDL std::string FileToString(std::ifstream& fileStream);
 
         /// Removes white space or some other specified character from both ends of a string
-        OSSIUM_EDL string Strip(string data, char optionalChar = ' ');
+        OSSIUM_EDL std::string Strip(std::string data, char optionalChar = ' ');
+
+        /// Removes the filename from a path.
+        OSSIUM_EDL std::string StripFilename(std::string path);
+
+        /// Removes invalid characters from a given file name and strips it.
+        OSSIUM_EDL std::string SanitiseFilename(std::string name);
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
         /// If an error occurs, these functions return the string outputOnError, or the data string if using the default value for outputOnError.
-        OSSIUM_EDL string SplitRight(string data, char delimiter = ' ', string outputOnError = "%s");
+        OSSIUM_EDL std::string SplitRight(std::string data, char delimiter = ' ', std::string outputOnError = "%s");
         /// Ditto but returns the first half instead.
-        OSSIUM_EDL string SplitLeft(string data, char delimiter = ' ', string outputOnError = "%s");
+        OSSIUM_EDL std::string SplitLeft(std::string data, char delimiter = ' ', std::string outputOnError = "%s");
         /// Splits a string up into smaller strings depending on the delimiter.
-        OSSIUM_EDL vector<string> Split(string data, char delimited = ' ');
+        OSSIUM_EDL std::vector<std::string> Split(std::string data, char delimited = ' ');
 
         ///
         /// Type query functions (for converting strings to specific data types).
         ///
 
         /// Does this string represent a integer value?
-        OSSIUM_EDL bool IsInt(const string& data);
+        OSSIUM_EDL bool IsInt(const std::string& data);
         /// Does this string represent a floating point value?
-        OSSIUM_EDL bool IsFloat(const string& data);
+        OSSIUM_EDL bool IsFloat(const std::string& data);
         /// Does this string represent a numerical value?
-        OSSIUM_EDL bool IsNumber(const string& data);
+        OSSIUM_EDL bool IsNumber(const std::string& data);
         /// Does this string represent a boolean value?
-        OSSIUM_EDL bool IsBool(const string& data);
+        OSSIUM_EDL bool IsBool(const std::string& data);
         /// Does this string represent a string value?
-        OSSIUM_EDL bool IsString(const string& data);
+        OSSIUM_EDL bool IsString(const std::string& data);
 
         /// Convert a decimal string to an int.
-        OSSIUM_EDL int ToInt(const string& data);
+        OSSIUM_EDL int ToInt(const std::string& data);
         /// Convert an ASCII hex string to a Uint32.
-        OSSIUM_EDL Uint32 ToUint32FromHex(const string& data);
+        OSSIUM_EDL Uint32 ToUint32FromHex(const std::string& data);
         /// Convert a string to a float
-        OSSIUM_EDL float ToFloat(const string& data);
+        OSSIUM_EDL float ToFloat(const std::string& data);
         /// Convert a string to a bool
-        OSSIUM_EDL bool ToBool(const string& data);
+        OSSIUM_EDL bool ToBool(const std::string& data);
 
         /// Picks the first object from a vector that meets the predicate, returning a pointer to it. Returns nullptr if no object meets the predicate.
         template<class T>
-        T* Pick(vector<T>& data, function<bool(T&)> picker)
+        T* Pick(std::vector<T>& data, std::function<bool(T&)> picker)
         {
             for (auto& item : data)
             {
@@ -102,8 +106,8 @@ namespace Ossium
 
         /// Picks a pointer from a vector if it meets the specified condition function.
         template<class T>
-        typename enable_if<is_pointer<T>::value, T>::type
-        PickPointer(vector<T>& data, function<bool(T)> picker)
+        typename std::enable_if<std::is_pointer<T>::value, T>::type
+        PickPointer(std::vector<T>& data, std::function<bool(T)> picker)
         {
             for (auto item : data)
             {

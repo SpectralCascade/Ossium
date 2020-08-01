@@ -24,8 +24,6 @@
 #include "renderer.h"
 #include "helpermacros.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -101,8 +99,8 @@ namespace Ossium
         Vector2 Min(Vector2 vec);
 
         /// String conversion methods
-        string ToString();
-        void FromString(string str);
+        std::string ToString();
+        void FromString(std::string str);
 
         const static Vector2 Zero;
         const static Vector2 OneOne;
@@ -132,9 +130,9 @@ namespace Ossium
         void SetRadians(float radians);
 
         /// Convert rotation from a given string
-        void FromString(string data);
+        void FromString(std::string data);
         /// Convert rotation to a string
-        string ToString();
+        std::string ToString();
 
     protected:
         using b2Rot::Set;
@@ -277,7 +275,7 @@ namespace Ossium
         SDL_Rect SDL();
 
         /// Returns the string representation of this object.
-        string ToString();
+        std::string ToString();
 
         /// A rect initialised to zero.
         const static Rect Zero;
@@ -311,7 +309,7 @@ namespace Ossium
         void DrawFilled(Renderer& renderer, SDL_Color color);
 
         /// The vertices of the polygon
-        vector<Point> vertices;
+        std::vector<Point> vertices;
 
     };
 

@@ -22,8 +22,6 @@
 
 #include "logging.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -31,7 +29,7 @@ namespace Ossium
     class OSSIUM_EDL Callback
     {
     public:
-        typedef function<void(CallerType&)> RegisteredCallback;
+        typedef std::function<void(CallerType&)> RegisteredCallback;
 
         /// Calls all listeners, passing in a reference to the caller.
         void operator()(CallerType& caller)
@@ -46,7 +44,7 @@ namespace Ossium
         int operator+=(RegisteredCallback callee)
         {
             nextHandle++;
-            callees.insert(pair<int, RegisteredCallback>(nextHandle, callee));
+            callees.insert(std::pair<int, RegisteredCallback>(nextHandle, callee));
             return nextHandle;
         }
         /// Unregisters a listener from this callback. The argument should match the value returned from a previous,
@@ -69,7 +67,7 @@ namespace Ossium
 
     private:
         /// All registered callback functions identified by handle
-        map<int, RegisteredCallback> callees;
+        std::map<int, RegisteredCallback> callees;
 
         static int nextHandle;
 

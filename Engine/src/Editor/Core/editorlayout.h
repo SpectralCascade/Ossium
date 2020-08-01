@@ -71,7 +71,7 @@ namespace Ossium::Editor
         SDL_Texture* renderBuffer = NULL;
 
         /// Set of editor windows that are to be removed at the end of the next Update() call.
-        set<EditorWindow*> toRemove;
+        std::set<EditorWindow*> toRemove;
 
         /// Should the viewports be updated on the next Update() call?
         bool updateViewports = false;
@@ -88,26 +88,40 @@ namespace Ossium::Editor
         // Recursive search up the tree for an adjacent node. Returns nullptr if no node is found.
         Node<EditorRect>* FindSibling(Node<EditorRect>* node, int dir, bool isRow);
 
+        /// Services available to editor windows in this layout, such as the renderer and resource controller.
+        ServicesProvider* services = nullptr;
+
     public:
         /// Creates the window and initialises the tree.
-        EditorLayout(EditorController* controller, string title = "Untitled", int w = -1, int h = -1);
+        EditorLayout(EditorController* controller, std::string title = "Untitled", int w = -1, int h = -1);
         virtual ~EditorLayout();
 
-        /// Handles an incoming SDL_Event
+        /// Handles an incoming SDL_Event.
         void HandleEvent(SDL_Event& e);
 
         /// Update editor windows.
         void Update(bool forceUpdate = false);
 
-        /// Return the native OS window instance
+        /// Return the native OS window instance.
         Window* GetNativeWindow();
+
+        /// Obtain a particular service.
+        template<typename T>
+        typename std::enable_if<std::is_base_of<ServiceBase, T>::value, T*>::type
+        GetService()
+        {
+            return services->GetService<T>();
+        }
+
+        /// Returns a pointer to the services provider.
+        ServicesProvider* GetServices();
 
         /// Attempts to resize and editor window rect given an input rect.
         void Resize(EditorWindow* window, Rect rect);
 
         /// Instantiates a specific editor window instance and initialises it, then inserts within the layout tree.
         template<typename T>
-        typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
+        typename std::enable_if<std::is_base_of<EditorWindow, T>::value, T*>::type
         Add(EditorWindow* dest, DockingMode mode)
         {
             T* toAdd = new T();
@@ -125,7 +139,7 @@ namespace Ossium::Editor
 
         /// Overload that just creates an editor window at the root of the window layout.
         template<typename T>
-        typename enable_if<is_base_of<EditorWindow, T>::value, T*>::type
+        typename std::enable_if<std::is_base_of<EditorWindow, T>::value, T*>::type
         Add(DockingMode mode)
         {
             T* toAdd = new T();

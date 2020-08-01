@@ -16,6 +16,8 @@
 **/
 #include "debugdraw.h"
 
+using namespace std;
+
 namespace Ossium
 {
 

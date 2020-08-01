@@ -99,10 +99,10 @@ namespace Ossium
 
         /// Returns array of references to all the GUI elements in a particular context.
         /// Returns null if the context does not exist.
-        vector<InteractableGUI*>* GetContext(StrID context);
+        std::vector<InteractableGUI*>* GetContext(StrID context);
 
         /// Returns the current context.
-        vector<InteractableGUI*>* GetCurrentContext();
+        std::vector<InteractableGUI*>* GetCurrentContext();
 
         /// Removes all contexts from the lookup table.
         void RemoveAll();
@@ -137,9 +137,9 @@ namespace Ossium
 
         /// Lookup table for GUI elements in different GUI contexts.
         /// Uses string interning for fast key hashing.
-        map<StrID, pair<vector<InteractableGUI*>, unsigned int>> contextLookup;
+        std::map<StrID, std::pair<std::vector<InteractableGUI*>, unsigned int>> contextLookup;
         /// Used to maintain GUI context order, where contexts added later are further down the navigation chain.
-        vector<StrID> contextOrder;
+        std::vector<StrID> contextOrder;
 
     };
 

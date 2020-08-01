@@ -18,6 +18,8 @@
 #include "editorlayout.h"
 #include "../../Core/mousecursor.h"
 
+using namespace std;
+
 namespace Ossium::Editor
 {
 

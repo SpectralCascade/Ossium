@@ -19,6 +19,7 @@
 #include "../../Core/textinput.h"
 #include "../../Core/mousecursor.h"
 
+using namespace std;
 using namespace Ossium;
 
 namespace Ossium::Editor

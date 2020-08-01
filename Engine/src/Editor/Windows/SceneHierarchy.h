@@ -2,6 +2,7 @@
 #define SCENEHIERARCHY_H
 
 #include "../Core/editorwindow.h"
+#include "../Core/project.h"
 
 namespace Ossium
 {
@@ -13,30 +14,9 @@ namespace Ossium
 namespace Ossium::Editor
 {
 
-    struct SceneHierarchyItem : public Schema<SceneHierarchyItem, 4>
-    {
-        DECLARE_BASE_SCHEMA(SceneHierarchyItem, 4);
-
-        M(string, name);
-        M(string, path);
-        M(bool, opened) = true;
-    };
-
-    struct SceneHierarchySchema : public Schema<SceneHierarchySchema, 20>
-    {
-        DECLARE_BASE_SCHEMA(SceneHierarchySchema, 20);
-
-    protected:
-        // All associated scenes, whether loaded or not.
-        M(vector<SceneHierarchyItem>, usedScenes);
-
-    };
-
-    class SceneHierarchy : public EditorWindow, public SceneHierarchySchema
+    class SceneHierarchy : public EditorWindow
     {
     public:
-        CONSTRUCT_SCHEMA(EditorWindow, SceneHierarchySchema);
-
         void OnInit();
 
         void OnGUI();
@@ -47,7 +27,7 @@ namespace Ossium::Editor
 
         // The selected entity, if any.
         Entity* selectedEntity = nullptr;
-        string selectedScene;
+        std::string selectedScene;
 
     };
 

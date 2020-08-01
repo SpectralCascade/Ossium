@@ -24,6 +24,7 @@
 #include "stringconvert.h"
 #include "ecs.h"
 #include "delta.h"
+#include "engineconstants.h"
 
 using namespace std;
 
@@ -450,6 +451,37 @@ namespace Ossium
     bool Scene::LoadAndInit(string guid_path, ServicesProvider* services)
     {
         return Load(guid_path) && Init(services);
+    }
+
+    bool Scene::Save(string directoryPath)
+    {
+        if (directoryPath.empty() || (directoryPath[directoryPath.size() - 1] != '/' && directoryPath[directoryPath.size() - 1] != '\\'))
+        {
+            directoryPath += "/";
+        }
+        directoryPath += name + EngineConstants::SceneFileExtension;
+        ofstream file(directoryPath);
+        file << ToString();
+        file.close();
+        return true;
+    }
+
+    void Scene::SetName(string name)
+    {
+        name = Utilities::SanitiseFilename(name);
+        if (!name.empty())
+        {
+            this->name = name;
+        }
+        else
+        {
+            Log.Warning("Scene name empty or invalid characters were used, cannot set name to '{0}'.", name);
+        }
+    }
+
+    string Scene::GetName()
+    {
+        return name;
     }
 
     void Scene::UpdateComponents()

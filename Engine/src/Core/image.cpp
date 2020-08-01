@@ -21,6 +21,8 @@ extern "C"
 
 #include "image.h"
 
+using namespace std;
+
 namespace Ossium
 {
 

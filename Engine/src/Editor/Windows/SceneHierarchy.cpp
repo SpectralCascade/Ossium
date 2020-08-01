@@ -1,4 +1,5 @@
 #include "SceneHierarchy.h"
+#include "../Core/editorcontroller.h"
 #include "../Core/editorstyle.h"
 
 #include "../../Core/ecs.h"
@@ -15,21 +16,29 @@ namespace Ossium::Editor
 
     void SceneHierarchy::OnGUI()
     {
-        for (auto& scene : usedScenes)
+        if (GetEditorLayout()->GetEditorController()->GetProject() != nullptr)
         {
-            Scene* loaded = resources->Find<Scene>(scene.name);
-            if (!loaded)
+            for (auto& scene : GetEditorLayout()->GetEditorController()->GetProject()->openScenes)
             {
-                // Show the name of the scene, but indicate it is not loaded.
-                scene.opened = false;
-                ListScene(scene, false);
-            }
-            else
-            {
-                ListScene(scene, true);
-                loaded->WalkEntities([&] (Entity* entity) {
-                    ListEntity(entity);
-                });
+                if (!IsVisible())
+                {
+                    // early out
+                    break;
+                }
+                Scene* loaded = resources->Find<Scene>(scene.name);
+                if (!loaded)
+                {
+                    // Show the name of the scene, but indicate it is not loaded.
+                    scene.opened = false;
+                    ListScene(scene, false);
+                }
+                else
+                {
+                    ListScene(scene, true);
+                    loaded->WalkEntities([&] (Entity* entity) {
+                        ListEntity(entity);
+                    });
+                }
             }
         }
     }

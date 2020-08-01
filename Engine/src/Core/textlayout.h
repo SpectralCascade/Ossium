@@ -22,8 +22,6 @@
 #include "font.h"
 #include "schemamodel.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -153,7 +151,7 @@ namespace Ossium
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
             Also takes natural line break characters (ASCII only) that are used for line wrapping without breaking words.
         */
-        void SetText(Renderer& renderer, Font& font, string str, bool applyMarkup);
+        void SetText(Renderer& renderer, Font& font, std::string str, bool applyMarkup);
 
         /// Recomputes layout if any changes have been made. This must be called before rendering or glyph location.
         void Update(Font& font);
@@ -208,14 +206,14 @@ namespace Ossium
 
     private:
         /// Attempts to parse a tag. Returns false on invalid tag.
-        bool ParseTag(string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, stack<SDL_Color>& colors, Uint8& style);
+        bool ParseTag(std::string tagText, Uint32& boldTags, Uint32& italicTags, Uint32& underlineTags, Uint32& strikeTags, std::stack<SDL_Color>& colors, Uint8& style);
 
         /// Computes the text layout and batch packs as many glyphs from the text string as possible.
         // Other common line break characters may include '/', '!', '?' and '|'. By default only white space is broken.
-        void ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters = " ");
+        void ComputeLayout(Renderer& renderer, Font& font, std::string& text, bool applyMarkup, std::string lineBreakCharacters = " ");
 
         /// Computes the text layout using the pre-existing glyphs array. Useful when the bounds change.
-        void ComputeLayout(TextLine& startLine, string lineBreakCharacters = " ");
+        void ComputeLayout(TextLine& startLine, std::string lineBreakCharacters = " ");
 
         /// Computes the position of the next glyph given a specific glyph, applying line wrapping etc.
         void ComputeGlyphPosition(unsigned int glyphIndex, TextLine& line, const GlyphGroup& group, float& lastWordWidth, int lastLineBreakIndex = -1);
@@ -230,13 +228,13 @@ namespace Ossium
         Vector2 bbox;
 
         /// Specifies the starting index for each line in the glyphs array, as well as the size of each line.
-        vector<TextLine> lines;
+        std::vector<TextLine> lines;
 
         /// Groupings of glyphs that have the same style, size, color etc. in sequential order.
-        vector<GlyphGroup> groups;
+        std::vector<GlyphGroup> groups;
 
         /// Array of glyphs, corresponding to the text string.
-        vector<GlyphMeta> glyphs;
+        std::vector<GlyphMeta> glyphs;
 
         /// Determines which parts of the text layout should be updated.
         Uint8 updateFlags = 0;

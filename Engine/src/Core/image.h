@@ -47,7 +47,7 @@ namespace Ossium
         void FreeSurface();
 
         /// Load an image and returns true if it was successful
-        bool Load(string guid_path);
+        bool Load(std::string guid_path);
 
         /// Creates an empty surface. Optionally specify a pixel format, if not specified the last set surface pixel format will be used.
         /// You may also specify the colour of the empty surface.
@@ -77,7 +77,7 @@ namespace Ossium
         bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
 
         /// Shorthand method
-        bool LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
+        bool LoadAndInit(std::string guid_path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
 
         /// Returns true if the texture is not NULL
         /// TODO: remove me, does same job as GetTexture().
@@ -113,7 +113,7 @@ namespace Ossium
         int GetHeightSurface();
 
         /// Returns the name of the loaded image, if it has one.
-        string GetPathName();
+        std::string GetPathName();
 
         /// Applies a pixel manipulation function to the image. The argument function accepts pixel data as an SDL_Color
         /// in addition to an SDL_Point which indicates which pixel is being modified relative to the top left of the image.
@@ -210,7 +210,7 @@ namespace Ossium
         NOCOPY(Image);
 
         /// The path used to load the current image.
-        string pathname = "";
+        std::string pathname = "";
 
         /// The image prior to being converted to an SDL_Texture
         SDL_Surface* tempSurface = NULL;

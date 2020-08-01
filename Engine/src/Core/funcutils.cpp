@@ -133,6 +133,36 @@ namespace Ossium
             return data;
         }
 
+        string StripFilename(string path)
+        {
+            bool modified = false;
+            for (int i = path.size() - 1; i >= 0; i--)
+            {
+                if (i == '/' || i == '\\')
+                {
+                    path = path.substr(0, i + 1);
+                    break;
+                }
+            }
+            return path;
+        }
+
+        string SanitiseFilename(string name)
+        {
+            name = Strip(name);
+            string sanitised;
+            for (unsigned int i = 0, counti = name.size(); i < counti; i++)
+            {
+                char c = name[i];
+                if (c == '<' || c == '>' || c == '"' || c == '|' || c == ':' || c == '/' || c == '\\' || c == '?' || c == '*' || c == '%')
+                {
+                    continue;
+                }
+                sanitised += c;
+            }
+            return sanitised;
+        }
+
         string SplitRight(string data, char delimiter, string outputOnError)
         {
             int index = data.find(delimiter);

@@ -21,8 +21,6 @@
 
 #include "logging.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -77,35 +75,35 @@ namespace Ossium
         class OSSIUM_EDL TypeFactory : public TypeRegistry<CoreType>
         {
         private:
-            typedef function<CoreType*(void*)> FactoryFunc;
+            typedef std::function<CoreType*(void*)> FactoryFunc;
 
             /// Construct-on-first-use idiom to solve static initialisation order fiasco
-            static unordered_map<Uint32, FactoryFunc>& gen_map()
+            static std::unordered_map<Uint32, FactoryFunc>& gen_map()
             {
-                static unordered_map<Uint32, FactoryFunc>* sifmap = new unordered_map<Uint32, FactoryFunc>();
+                static std::unordered_map<Uint32, FactoryFunc>* sifmap = new std::unordered_map<Uint32, FactoryFunc>();
                 return *sifmap;
             }
-            static unordered_map<string, Uint32>& type_name_map()
+            static std::unordered_map<std::string, Uint32>& type_name_map()
             {
-                static unordered_map<string, Uint32>* sifmap = new unordered_map<string, Uint32>();
+                static std::unordered_map<std::string, Uint32>* sifmap = new std::unordered_map<std::string, Uint32>();
                 return *sifmap;
             }
-            static unordered_map<Uint32, const char*>& type_id_map()
+            static std::unordered_map<Uint32, const char*>& type_id_map()
             {
-                static unordered_map<Uint32, const char*>* sifmap = new unordered_map<Uint32, const char*>();
+                static std::unordered_map<Uint32, const char*>* sifmap = new std::unordered_map<Uint32, const char*>();
                 return *sifmap;
             }
             /// Map of base names to the names of all derivative types.
-            static unordered_map<string, vector<IdType>>& derived_type_name_map()
+            static std::unordered_map<std::string, std::vector<IdType>>& derived_type_name_map()
             {
-                static unordered_map<string, vector<IdType>>* sifmap = new unordered_map<string, vector<IdType>>();
+                static std::unordered_map<std::string, std::vector<IdType>>* sifmap = new std::unordered_map<std::string, std::vector<IdType>>();
                 return *sifmap;
             }
             /// Map of base type ids to the type ids of all derivative types.
             /// Note that this must be MANUALLY initialised from within the main() function.
-            static unordered_map<IdType, vector<IdType>>& derived_type_id_map()
+            static std::unordered_map<IdType, std::vector<IdType>>& derived_type_id_map()
             {
-                static unordered_map<IdType, vector<IdType>>* sifmap = new unordered_map<IdType, vector<IdType>>();
+                static std::unordered_map<IdType, std::vector<IdType>>* sifmap = new std::unordered_map<IdType, std::vector<IdType>>();
                 return *sifmap;
             }
 
@@ -116,7 +114,7 @@ namespace Ossium
         public:
             TypeFactory() = delete;
 
-            TypeFactory(const char* name, FactoryFunc factory, string baseName)
+            TypeFactory(const char* name, FactoryFunc factory, std::string baseName)
             {
                 Log.Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
@@ -169,7 +167,7 @@ namespace Ossium
                 return nullptr;
             }
 
-            static CoreType* Create(string targetType, void* args)
+            static CoreType* Create(std::string targetType, void* args)
             {
                 auto itr = type_name_map().find(targetType);
                 if (itr != type_name_map().end())
@@ -180,7 +178,7 @@ namespace Ossium
                 return nullptr;
             }
 
-            static string GetName(IdType ident)
+            static std::string GetName(IdType ident)
             {
                 auto itr = type_id_map().find(ident);
                 if (itr != type_id_map().end())
@@ -190,7 +188,7 @@ namespace Ossium
                 return "";
             }
 
-            static IdType GetId(string name)
+            static IdType GetId(std::string name)
             {
                 auto itr = type_name_map().find(name);
                 if (itr != type_name_map().end())
@@ -200,12 +198,12 @@ namespace Ossium
                 return TypeRegistry<CoreType>::GetTotalTypes();
             }
 
-            vector<IdType>& GetDerivedTypes()
+            std::vector<IdType>& GetDerivedTypes()
             {
                 return derived_type_id_map()[TypeRegistry<CoreType>::typeIdent];
             }
 
-            string GetName()
+            std::string GetName()
             {
                 return key;
             }

@@ -1,5 +1,7 @@
 #include "layout_diagram.h"
 
+using namespace std;
+
 namespace Ossium::Editor
 {
 

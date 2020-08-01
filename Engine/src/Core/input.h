@@ -29,8 +29,6 @@ extern "C"
 #include "helpermacros.h"
 #include "services.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -55,7 +53,7 @@ namespace Ossium
     };
 
     /// Returns the name of an action outcome value
-    OSSIUM_EDL string GetActionOutcomeName(ActionOutcome outcome);
+    OSSIUM_EDL std::string GetActionOutcomeName(ActionOutcome outcome);
 
     typedef Uint32 InputHandlerType;
 
@@ -100,7 +98,7 @@ namespace Ossium
     {
     public:
         /// Function pointer for actions based on this input data
-        typedef function<ActionOutcome(const InputData&)> InputAction;
+        typedef std::function<ActionOutcome(const InputData&)> InputAction;
 
         OSSIUM_EDL static TypeSystem::TypeRegistry<BaseInputHandler> __input_type_entry_;
 
@@ -110,20 +108,20 @@ namespace Ossium
         }
 
         /// Adds a state tracker to the input handler
-        void AddState(string name)
+        void AddState(std::string name)
         {
             InputIdent junk = InputIdent();
             _input_state_bindings[name] = junk;
         }
 
         /// Simplifies adding states.
-        void AddState(string name, InputIdent binding)
+        void AddState(std::string name, InputIdent binding)
         {
             AddState(name);
             BindState(name, binding);
         }
 
-        bool GetState(string name)
+        bool GetState(std::string name)
         {
             auto itr = _input_state_bindings.find(name);
             if (itr != _input_state_bindings.end())
@@ -134,7 +132,7 @@ namespace Ossium
         }
 
         /// Removes the specified state. Returns false if the state does not exist.
-        void RemoveState(string name)
+        void RemoveState(std::string name)
         {
             auto binding = _input_state_bindings.find(name);
             if (binding != _input_state_bindings.end())
@@ -149,7 +147,7 @@ namespace Ossium
         }
 
         /// Binds a state to a specific input
-        void BindState(string name, InputIdent stateIdent)
+        void BindState(std::string name, InputIdent stateIdent)
         {
             RemoveState(name);
             _input_state_bindings[name] = stateIdent;
@@ -157,7 +155,7 @@ namespace Ossium
         }
 
         /// Returns the input ident bound to the specified input
-        const InputIdent* GetStateBind(string name)
+        const InputIdent* GetStateBind(std::string name)
         {
             auto itr = _input_state_bindings.find(name);
             if (itr != _input_state_bindings.end())
@@ -169,20 +167,20 @@ namespace Ossium
         }
 
         /// This method adds a callback for a specific game action
-        void AddAction(string name, InputAction action)
+        void AddAction(std::string name, InputAction action)
         {
             _action_bindings[name] = action;
         }
 
         /// Simplifies adding actions.
-        void AddAction(string name, InputAction action, InputIdent binding)
+        void AddAction(std::string name, InputAction action, InputIdent binding)
         {
             AddAction(name, action);
             BindAction(name, binding);
         }
 
         /// Removes the specified action. Returns false if the action does not exist.
-        void RemoveAction(string name)
+        void RemoveAction(std::string name)
         {
             auto actionbind = _action_bindings.find(name);
             if (actionbind != _action_bindings.end())
@@ -223,7 +221,7 @@ namespace Ossium
         }
 
         /// Binds an action to a specified input condition
-        void BindAction(string action, InputIdent condition)
+        void BindAction(std::string action, InputIdent condition)
         {
             auto itr = _action_bindings.find(action);
             if (itr == _action_bindings.end())
@@ -247,7 +245,7 @@ namespace Ossium
             }
         }
 
-        const InputIdent* GetActionBind(string action)
+        const InputIdent* GetActionBind(std::string action)
         {
             auto itr = _action_bindings.find(action);
             if (itr != _action_bindings.end())
@@ -314,23 +312,23 @@ namespace Ossium
         /// When there are no corresponding actions for an input which is of the relevant type,
         /// these actions will be called. Useful for things like custom control bindings in a game,
         /// where you just need the data from any mouse or keyboard event to obtain an identifier such as a key code.
-        map<int, InputAction> _any_actions;
+        std::map<int, InputAction> _any_actions;
 
         /// Direct map of inputs to actions purely for fast lookup at runtime; changes when _input_action_bindings is changed.
-        unordered_map<InputIdent, InputAction> _input_map;
+        std::unordered_map<InputIdent, InputAction> _input_map;
 
         /// Direct map of inputs to states for fast lookup at runtime; changes when _input_state_bindings is changed.
-        unordered_map<InputIdent, bool> _state_map;
+        std::unordered_map<InputIdent, bool> _state_map;
 
     private:
         /// Input data bindings for states
-        unordered_map<string, InputIdent> _input_state_bindings;
+        std::unordered_map<std::string, InputIdent> _input_state_bindings;
 
         /// Input data bindings for actions
-        unordered_map<string, InputIdent> _input_action_bindings;
+        std::unordered_map<std::string, InputIdent> _input_action_bindings;
 
         /// Constant bindings of names to actions; this shouldn't be changed once all actions are added
-        unordered_map<string, InputAction> _action_bindings;
+        std::unordered_map<std::string, InputAction> _action_bindings;
 
         /// Increments each time a bindless action is added.
         int bindlessIdCounter = 0;
@@ -446,7 +444,7 @@ namespace Ossium
 
     private:
         /// List of input handlers e.g. keyboard handler, mouse handler, joystick handler etc.
-        unordered_map<InputHandlerType, BaseInputHandler*> inputs;
+        std::unordered_map<InputHandlerType, BaseInputHandler*> inputs;
 
         /// When true, the input system will pass input data to this context
         bool active = true;
@@ -460,18 +458,18 @@ namespace Ossium
         virtual ~InputController();
 
         /// Adds an input context; ideally do this just once when starting Ossium
-        void AddContext(string name, InputContext* context);
+        void AddContext(std::string name, InputContext* context);
 
         /// Removes a specified input context
-        void RemoveContext(string name);
+        void RemoveContext(std::string name);
 
         /// Returns the specified context instance, or nullptr if the context doesn't exist.
-        InputContext* GetContext(string name);
+        InputContext* GetContext(std::string name);
 
         /// Attempts to retrieve a specified event handler type from the given context.
         /// Creates an active context and valid handler if they don't already exist.
         template<class HandlerType>
-        HandlerType* Get(string name)
+        HandlerType* Get(std::string name)
         {
             InputContext* context = GetContext(name);
             if (context == nullptr)
@@ -494,7 +492,7 @@ namespace Ossium
 
     private:
         /// All contexts by name
-        unordered_map<string, InputContext*> contexts;
+        std::unordered_map<std::string, InputContext*> contexts;
 
         NOCOPY(InputController);
 

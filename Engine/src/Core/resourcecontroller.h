@@ -24,8 +24,6 @@
 #include "stringintern.h"
 #include "services.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -68,7 +66,7 @@ namespace Ossium
 
         /// Attempts to load a resource
         template<typename T, typename ...Args>
-        T* Load(string guid_path, Args&&... args)
+        T* Load(std::string guid_path, Args&&... args)
         {
             bool success = true;
             T* resource = Find<T>(guid_path);
@@ -76,7 +74,7 @@ namespace Ossium
             {
                 resource = new T();
             }
-            if (!resource->Load(guid_path, forward<Args>(args)...))
+            if (!resource->Load(guid_path, std::forward<Args>(args)...))
             {
                 success = false;
             }
@@ -96,12 +94,12 @@ namespace Ossium
 
         /// Attempts to initialise a resource post load.
         template<typename T, typename ...Args>
-        T* Init(string guid_path, Args&&... args)
+        T* Init(std::string guid_path, Args&&... args)
         {
             T* resource = Find<T>(guid_path);
             if (resource != nullptr)
             {
-                resource->Init(forward<Args>(args)...);
+                resource->Init(std::forward<Args>(args)...);
             }
             else
             {
@@ -112,7 +110,7 @@ namespace Ossium
 
         /// Attempts to load and initialise a resource.
         template<typename T, typename ...Args>
-        T* LoadAndInit(string guid_path, Args&&... args)
+        T* LoadAndInit(std::string guid_path, Args&&... args)
         {
             T* resource = Find<T>(guid_path);
             if (resource == nullptr)
@@ -121,7 +119,7 @@ namespace Ossium
             }
             if (resource != nullptr)
             {
-                if (resource->LoadAndInit(guid_path, forward<Args>(args)...))
+                if (resource->LoadAndInit(guid_path, std::forward<Args>(args)...))
                 {
                     /// Add to registry if it isn't already added.
                     registry<T>()[guid_path] = resource;
@@ -142,19 +140,19 @@ namespace Ossium
 
         /// Returns a resource, or attempts to load and initialise a resource if it does not exist.
         template<typename T, typename ...Args>
-        T* Get(string guid_path, Args&&... args)
+        T* Get(std::string guid_path, Args&&... args)
         {
             T* resource = Find<T>(guid_path);
             if (resource == nullptr)
             {
-                resource = LoadAndInit<T>(guid_path, forward<Args>(args)...);
+                resource = LoadAndInit<T>(guid_path, std::forward<Args>(args)...);
             }
             return resource;
         }
 
         /// Destroys a resource and removes it from the registry
         template<class T>
-        void Free(string guid_path)
+        void Free(std::string guid_path)
         {
             if (registry<T>().find(guid_path) != registry<T>().end())
             {
@@ -168,7 +166,7 @@ namespace Ossium
 
         /// Returns pointer to a resource, or nullptr if the GUID doesn't exist in the registry
         template<class T>
-        T* Find(string guid_path)
+        T* Find(std::string guid_path)
         {
             auto found = registry<T>().find(guid_path);
             if (found == registry<T>().end())
@@ -178,6 +176,13 @@ namespace Ossium
             }
             return reinterpret_cast<T*>(found->second);
         };
+
+        /// Returns a vector of all loaded resources of the specified type.
+        template<typename T>
+        std::unordered_map<std::string, Resource*>& GetAll()
+        {
+            return registry<T>();
+        }
 
         /// Destroys all resources of all types
         void FreeAll()
@@ -217,13 +222,13 @@ namespace Ossium
 
         /// Returns a reference to the registry for a particular type.
         template<class T>
-        unordered_map<string, Resource*>& registry()
+        std::unordered_map<std::string, Resource*>& registry()
         {
             return registryByType[T::__resource_factory.GetType()];
         }
 
         /// Lookup registry array, ordered by type id; key = guid_path, value = pointer to resource
-        unordered_map<string, Resource*>* registryByType;
+        std::unordered_map<std::string, Resource*>* registryByType;
 
     };
 

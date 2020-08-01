@@ -26,8 +26,6 @@
 #include "../Core/renderer.h"
 #include "../Core/schemamodel.h"
 
-using namespace std;
-
 namespace Ossium
 {
     /// Bit masks for flag that decides whether a state texture is split along x or y axis
@@ -40,11 +38,11 @@ namespace Ossium
     /// Final bit decides whether clipping along horizontal or vertical
     /// This is in a separate class so it can implement the ToString() and FromString methods,
     /// which are required for schema serialisation because maps and pairs are not supported at the time of writing
-    class OSSIUM_EDL StateSpriteTable : public map<string, pair<Image*, Uint16>>
+    class OSSIUM_EDL StateSpriteTable : public std::map<std::string, std::pair<Image*, Uint16>>
     {
     public:
-        string ToString();
-        void FromString(string& data);
+        std::string ToString();
+        void FromString(std::string& data);
     };
 
     struct OSSIUM_EDL StateSpriteSchema : public Schema<StateSpriteSchema>
@@ -52,7 +50,7 @@ namespace Ossium
         DECLARE_SCHEMA(StateSpriteSchema, Schema<StateSpriteSchema>);
 
         /// Current state key
-        M(string, currentState) = "";
+        M(std::string, currentState) = "";
 
         /// Current substate
         M(Uint16, currentSubState) = 0;
@@ -77,16 +75,16 @@ namespace Ossium
 
         /// Adds a state to the sprite; horizontal specifies whether the image should be sliced horizontally or vertically,
         /// and segments specifies how many substates the image should be sliced up into.
-        bool AddState(string state, Image* image, bool horizontal = true, Uint16 segments = 1);
+        bool AddState(std::string state, Image* image, bool horizontal = true, Uint16 segments = 1);
 
         /// Changes state and initialises current substate to 0
-        bool ChangeState(const string& state);
+        bool ChangeState(const std::string& state);
 
         /// Changes current substate clip segment
         void ChangeSubState(Uint16 substate, bool forceChange = false);
 
         /// Returns the string id of the current state
-        string GetCurrentState();
+        std::string GetCurrentState();
 
         /// Returns the current substate segment number
         Uint16 GetCurrentSubstate();
@@ -96,7 +94,7 @@ namespace Ossium
 
     protected:
         /// Original addState method - this one does worry about bit masks, hence why it's abstracted away
-        bool AddState(string state, Image* image, Uint16 clipData = 1 | STATE_HORIZONTAL);
+        bool AddState(std::string state, Image* image, Uint16 clipData = 1 | STATE_HORIZONTAL);
 
     };
 

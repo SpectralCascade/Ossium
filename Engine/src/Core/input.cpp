@@ -16,6 +16,8 @@
 **/
 #include "input.h"
 
+using namespace std;
+
 namespace Ossium
 {
 

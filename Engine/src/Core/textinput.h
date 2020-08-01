@@ -8,7 +8,7 @@ namespace Ossium
 
     struct OSSIUM_EDL InputChar
     {
-        string utf8;
+        std::string utf8;
 
         Uint32 codepoint = 0;
 
@@ -34,19 +34,19 @@ namespace Ossium
         /// This is useful if you have multiple text input fields but only one TextInput instance to go round.
         /// TODO: this is horrifically inefficient as it means the computed data is thrown away. Instead, make InputTextHandler a specialised type (not bound to input system),
         /// then there can be multiple instances.
-        void SetText(string str);
+        void SetText(std::string str);
 
         /// Returns text collected during input handling.
-        string GetText();
+        std::string GetText();
 
         /// Inserts some text into the input buffer at the current cursor index.
-        void Insert(string str);
+        void Insert(std::string str);
 
         /// Removes part of the text from the current cursor index.
         void Erase(Uint32 len = 1);
 
         /// Returns the Unicode codepoints of the input text string.
-        vector<Uint32> GetUnicode();
+        std::vector<Uint32> GetUnicode();
 
         /// Removes and returns the last character that was input. Returns an empty string if the buffer is empty.
         InputChar PopChar();
@@ -65,13 +65,13 @@ namespace Ossium
         Uint32 GetTextIndex(Uint32 unicode_index);
 
         /// The raw text input buffer.
-        string text;
+        std::string text;
 
         /// The Unicode string of codepoints.
-        vector<Uint32> unicode;
+        std::vector<Uint32> unicode;
 
         /// Mapping between unicode indices and the raw text string indices.
-        vector<Uint32> unicodeToText;
+        std::vector<Uint32> unicodeToText;
 
         /// The current cursor index.
         Uint32 cursorIndex = 0;

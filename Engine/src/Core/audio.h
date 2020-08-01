@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef AUDIO_H
 #define AUDIO_H
@@ -29,8 +29,6 @@ extern "C"
 #include "delta.h"
 #include "resourcecontroller.h"
 #include "schemamodel.h"
-
-using namespace std;
 
 namespace Ossium
 {
@@ -193,7 +191,7 @@ namespace Ossium
 
             private:
                 /// All reserved channels have a callback object which is called when the channel finishes playback; if unreserved, callback is null
-                vector<AudioPlayer*> channels;
+                std::vector<AudioPlayer*> channels;
 
                 /// Total channels allocated
                 int numChannels = 0;
@@ -221,10 +219,10 @@ namespace Ossium
             M(bool, muted);
 
             /// Name of this audio bus
-            M(string, name);
+            M(std::string, name);
 
             /// Name of the linked audio bus
-            M(string, linkedName);
+            M(std::string, linkedName);
 
         };
 
@@ -243,9 +241,9 @@ namespace Ossium
             virtual ~AudioBus() = default;
 
             /// Sets the name of this audio channel
-            void SetName(string setName);
+            void SetName(std::string setName);
             /// Returns the name of this audio bus
-            string GetName();
+            std::string GetName();
 
             /// Links this bus to an audio bus. Cannot link to more than 1 input bus;
             /// Unlinks current bus if already linked to an input bus and connects to the new one instead
@@ -258,7 +256,7 @@ namespace Ossium
             AudioBus* GetLinkedBus();
 
             /// Returns the name of the linked audio bus, or an empty string if not linked.
-            string GetLinkedBusName();
+            std::string GetLinkedBusName();
 
             /// Convenience method for checking if this audio signal is linked to an audio bus or not
             bool IsLinked();
@@ -290,9 +288,9 @@ namespace Ossium
             AudioBus* linkedBus;
 
             /// The set of input buses coming into this audio bus
-            set<AudioBus*> input_buses;
+            std::set<AudioBus*> input_buses;
             /// The set of input signals coming into this bus
-            set<AudioPlayer*> input_signals;
+            std::set<AudioPlayer*> input_signals;
 
             /// The audio stream coming into this bus; usually null unless the AudioStream has been linked
             Internals::AudioStream* input_stream;
@@ -310,16 +308,16 @@ namespace Ossium
 
             void Free();
 
-            bool Load(string guid_path);
+            bool Load(std::string guid_path);
             bool Init();
 
-            bool LoadAndInit(string guid_path);
+            bool LoadAndInit(std::string guid_path);
 
             /// Returns the audio chunk
             Mix_Chunk* GetChunk();
 
             /// Returns the file path to the original audio sample
-            string GetPath();
+            std::string GetPath();
 
         private:
             NOCOPY(AudioClip);
@@ -328,7 +326,7 @@ namespace Ossium
             Mix_Chunk* audioChunk;
 
             /// File path to the sample
-            string path;
+            std::string path;
 
         };
 
@@ -441,13 +439,13 @@ namespace Ossium
                 void Free();
 
                 /// Loads an audio file from disk; returns false on error
-                bool Load(string path);
+                bool Load(std::string path);
 
                 /// Plays loaded audio as many times as specified by the loops argument, or forever if loops = -1
                 void Play(float vol = -1.0f, int loops = 1);
 
                 /// Loads an audio file and then immediately starts playing
-                void Play(string path, float vol = -1.0f, int loops = 1);
+                void Play(std::string path, float vol = -1.0f, int loops = 1);
 
                 /// Pauses the stream if it is currently playing
                 void Pause();
@@ -477,7 +475,7 @@ namespace Ossium
                 Mix_Music* GetStream();
 
                 /// Returns the cached path of the last or current file of the stream. Returns empty string if no file has been loaded successfully
-                string GetPath();
+                std::string GetPath();
 
                 /// Always returns 0 as the audio stream is not designed for panning
                 const Sint16 GetFinalPanning();
@@ -496,7 +494,7 @@ namespace Ossium
                 AudioBus* linkedBus = nullptr;
 
                 /// The file path is cached
-                string cachedPath;
+                std::string cachedPath;
 
                 /// Whether the audio stream is started or not
                 bool started = false;
@@ -513,21 +511,21 @@ namespace Ossium
         {
         public:
             /// Add and remove audio buses
-            AudioBus* InsertBus(string name);
-            void RemoveBus(string name);
+            AudioBus* InsertBus(std::string name);
+            void RemoveBus(std::string name);
 
             /// Returns the audio bus by name, if it exists. Otherwise returns nullptr.
-            AudioBus* FindBus(string name);
+            AudioBus* FindBus(std::string name);
 
             /// Converts audio bus links into a stringified list of data for serialisation.
-            string ToString();
+            std::string ToString();
 
             /// Sets up specified audio buses.
-            void FromString(string data);
+            void FromString(std::string data);
 
         private:
             /// All audio buses.
-            unordered_map<string, AudioBus*> buses;
+            std::unordered_map<std::string, AudioBus*> buses;
 
             /// The main audio stream, used for music and long audio files that are more efficient to stream.
             Audio::Internals::AudioStream stream;

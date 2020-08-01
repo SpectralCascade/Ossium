@@ -2,6 +2,9 @@
 #include "editorlayout.h"
 #include "../Windows/ToolBar.h"
 #include "contextmenu.h"
+#include "project.h"
+
+using namespace std;
 
 namespace Ossium::Editor
 {
@@ -28,15 +31,16 @@ namespace Ossium::Editor
         delete input;
     }
 
-    EditorController::MenuTool::MenuTool(string path, function<void()> onClick)
+    EditorController::MenuTool::MenuTool(string path, function<void()> onClick, function<bool()> isEnabled)
     {
         this->path = path;
         this->onClick = onClick;
+        this->isEnabled = isEnabled;
     }
 
-    void EditorController::AddCustomMenu(string menuPath, function<void()> onClick)
+    void EditorController::AddCustomMenu(string menuPath, function<void()> onClick, function<bool()> isEnabled)
     {
-        customMenuTools.push_back(MenuTool(menuPath, onClick));
+        customMenuTools.push_back(MenuTool(menuPath, onClick, isEnabled));
     }
 
     EditorLayout* EditorController::CreateLayout()
@@ -109,6 +113,49 @@ namespace Ossium::Editor
         return running;
     }
 
+    Project* EditorController::GetProject()
+    {
+        return loadedProject;
+    }
+
+    Project* EditorController::CreateProject()
+    {
+        CloseProject();
+        loadedProject = new Project();
+        return loadedProject;
+    }
+
+    Project* EditorController::OpenProject(string path)
+    {
+        CloseProject();
+        loadedProject = new Project();
+        loadedProject->Load(path);
+        for (SceneHierarchyItem& scene : loadedProject->openScenes)
+        {
+            if (scene.loaded)
+            {
+                // TODO: consider how the Scene is loaded/initialised; it is dependant on a renderer, which is limited to an individual window.
+                // This isn't ideal, potentially scene loading can be done independently to avoid limiting the scene view to the main layout window?
+                resources->LoadAndInit<Scene>(scene.path, mainLayout->GetServices());
+            }
+            else
+            {
+                resources->Free<Scene>(scene.path);
+            }
+        }
+        loadedProject->SetPath(Utilities::StripFilename(path));
+        return loadedProject;
+    }
+
+    void EditorController::CloseProject()
+    {
+        if (loadedProject != nullptr)
+        {
+            delete loadedProject;
+            loadedProject = nullptr;
+        }
+    }
+
     ResourceController* EditorController::GetResources()
     {
         return resources;
@@ -117,6 +164,11 @@ namespace Ossium::Editor
     InputController* EditorController::GetInput()
     {
         return input;
+    }
+
+    EditorLayout* EditorController::GetMainLayout()
+    {
+        return mainLayout;
     }
 
 }

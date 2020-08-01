@@ -29,8 +29,6 @@ extern "C"
 #include "helpermacros.h"
 #include "services.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -194,9 +192,9 @@ namespace Ossium
         #endif // DEBUG
 
         /// Registered graphics
-        set<Graphic*>* registeredGraphics;
+        std::set<Graphic*>* registeredGraphics;
         /// Graphics queued to be rendered for this frame only
-        queue<Graphic*>* queuedGraphics;
+        std::queue<Graphic*>* queuedGraphics;
 
     };
 

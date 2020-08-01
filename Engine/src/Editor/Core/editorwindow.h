@@ -33,7 +33,7 @@ namespace Ossium::Editor
     {
         DECLARE_BASE_SCHEMA(EditorWindowSettings, 20);
 
-        M(string, title) = "Untitled";
+        M(std::string, title) = "Untitled";
         M(SDL_Color, borderColor) = Colors::BLACK;
         M(bool, bordered) = true;
         M(int, padding) = 6;
@@ -90,10 +90,10 @@ namespace Ossium::Editor
         Vector2 GetNativePosition(bool relative = false);
 
         /// Sets the window title.
-        void SetTitle(string title);
+        void SetTitle(std::string title);
 
         /// Returns the window title.
-        string GetTitle();
+        std::string GetTitle();
 
         /// Override of EditorGUI
         void Refresh();

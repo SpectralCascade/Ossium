@@ -31,8 +31,6 @@ extern "C"
 #include "lrucache.h"
 #include "../Core/helpermacros.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -68,7 +66,7 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(StyleText, 10);
 
         StyleText(
-            string font = "",
+            std::string font = "",
             int fontSize = 12,
             SDL_Color color = Colors::BLACK,
             int hint = 0,
@@ -80,7 +78,7 @@ namespace Ossium
             SDL_Color backgroundColor = Colors::TRANSPARENT
         );
 
-        M(string, fontPath);
+        M(std::string, fontPath);
         M(int, ptsize) = 12;
         M(SDL_Color, fg) = Colors::BLACK;
         M(int, hinting) = 0;
@@ -177,11 +175,11 @@ namespace Ossium
         void FreeAtlas();
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
-        bool Load(string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(string guid_path, int maxPointSize, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        bool Load(std::string guid_path, int maxPointSize = 96);
+        bool LoadAndInit(std::string guid_path, int maxPointSize, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(string guid_path, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        bool Init(std::string guid_path, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -189,7 +187,7 @@ namespace Ossium
          *  It does, however, support more out-of-the-box options in regards to text styling, kerning, hinting and so on as well as basic text wrapping.
          */
         SDL_Surface* GenerateFromText(
-            string text,
+            std::string text,
             SDL_Color color = Colors::RED,
             int hinting = 0,
             int kerning = 1,
@@ -202,7 +200,7 @@ namespace Ossium
         );
 
         /// Ditto, but bundled some parameters.
-        SDL_Surface* GenerateFromText(string text, const StyleText& style, Uint32 wrapLength, TTF_Font* f = NULL);
+        SDL_Surface* GenerateFromText(std::string text, const StyleText& style, Uint32 wrapLength, TTF_Font* f = NULL);
 
         /// Copies a glyph to the font atlas.
         /** You should call this between BatchPackBegin() and BatchPackEnd(). Returns the number of glyphs that have been packed since BatchPackBegin() was last called.
@@ -331,13 +329,13 @@ namespace Ossium
         Font operator=(const Font& thisCopy);
 
         /// Path to the font so it can be reloaded if necessary
-        string path;
+        std::string path;
 
         /// Pointer to the main font in memory
         TTF_Font* font = NULL;
 
         /// Pointers to fonts at different point sizes for mipmaps
-        vector<TTF_Font*> mipmapFonts;
+        std::vector<TTF_Font*> mipmapFonts;
 
         /// The font atlas texture.
         Image atlas;
@@ -380,14 +378,14 @@ namespace Ossium
         const Uint32 ABSOLUTE_MAXIMUM_ATLAS_GLYPHS = 1024;
 
         /// The relative mipmap rect for each mipmap level.
-        vector<SDL_Rect> mipOffsets;
+        std::vector<SDL_Rect> mipOffsets;
 
         /// Map of IDs to cached glyphs.
         /// TODO?: use slot_map/array instead?
-        unordered_map<GlyphID, Glyph*> glyphs;
+        std::unordered_map<GlyphID, Glyph*> glyphs;
 
         /// Maps atlas indexes to glyph ids.
-        map<Uint32, GlyphID> atlasGlyphMap;
+        std::map<Uint32, GlyphID> atlasGlyphMap;
 
         /// Keeps track of the least recently used glyph in the texture atlas.
         LRUCache<Uint32> textureCache;

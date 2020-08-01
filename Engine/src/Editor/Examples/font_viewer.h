@@ -13,11 +13,11 @@ namespace Ossium::Editor
 
         SDL_Color color = Colors::BLACK;
 
-        string colorText = "000000";
+        std::string colorText = "000000";
 
-        string inputFontPath = "assets/Orkney Regular.ttf";
+        std::string inputFontPath = "assets/Orkney Regular.ttf";
 
-        string currentFontPath = "assets/Orkney Regular.ttf";
+        std::string currentFontPath = "assets/Orkney Regular.ttf";
 
         float scale = 1.0f;
 

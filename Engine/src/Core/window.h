@@ -27,8 +27,6 @@ extern "C"
 #include "services.h"
 #include "callback.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -58,7 +56,7 @@ namespace Ossium
         /// Returns the display bounds for the display the window is currently associated with.
         Rect GetDisplayBounds();
         /// Returns the title of this window.
-        string GetTitle();
+        std::string GetTitle();
         /// Returns the absolute position of this window across ALL displays.
         Vector2 GetPosition();
         /// Returns the relative position of this window to the current display bounds.
@@ -77,7 +75,7 @@ namespace Ossium
         /// Makes this window borderless.
         void SetBorderless();
         /// Sets the title of this window.
-        void SetTitle(string title);
+        void SetTitle(std::string title);
         /// Sets the icon of this window.
         void SetIcon(Image* image);
         /// Sets the position of this window on the display.

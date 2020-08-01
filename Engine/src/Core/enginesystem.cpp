@@ -44,7 +44,7 @@ namespace Ossium
         /// Set flags here to configure how the engine operates.
     }
 
-    void EngineSystem::Init(string configFilePath)
+    void EngineSystem::Init(std::string configFilePath)
     {
         /// Load the configuration file into a JSON object
         JSON data;
@@ -113,12 +113,12 @@ namespace Ossium
         return !quit;
     }
 
-    bool EngineSystem::LoadScene(string path)
+    bool EngineSystem::LoadScene(std::string path)
     {
         JSON raw;
         if (raw.Import(path))
         {
-            string data = raw.ToString();
+            std::string data = raw.ToString();
             ecs->FromString(data);
             return true;
         }

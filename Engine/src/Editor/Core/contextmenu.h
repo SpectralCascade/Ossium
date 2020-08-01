@@ -12,12 +12,12 @@ namespace Ossium::Editor
     public:
         struct Option
         {
-            Option(string text, function<void(void)> onClick, bool enabled = true, Image* icon = nullptr, ContextMenu* expansion = nullptr);
+            Option(std::string text, std::function<void(void)> onClick, bool enabled = true, Image* icon = nullptr, ContextMenu* expansion = nullptr);
 
-            string text;
+            std::string text;
             ContextMenu* expansion;
             bool enabled;
-            function<void(void)> onClick;
+            std::function<void(void)> onClick;
             Image* icon = nullptr;
         };
 
@@ -46,19 +46,19 @@ namespace Ossium::Editor
         void Refresh();
 
         /// Adds an option to the context menu.
-        void Add(string text, function<void(void)> onClick, Image* icon = nullptr, bool enabled = true);
+        void Add(std::string text, std::function<void(void)> onClick, Image* icon = nullptr, bool enabled = true);
 
         /// Adds an option to the context menu that pops out into another context menu when hovered (useful for grouping options).
-        ContextMenu* AddPopoutMenu(string text, Image* icon = nullptr, bool enabled = true);
+        ContextMenu* AddPopoutMenu(std::string text, Image* icon = nullptr, bool enabled = true);
 
         /// Attempts to enable or disable an option at the given index.
         void SetOptionEnabled(unsigned int index, bool enable);
 
         /// Simply sets the options as a list directly.
-        void SetOptions(vector<Option> options);
+        void SetOptions(std::vector<Option> options);
 
         /// Returns the set of options in this context menu.
-        vector<Option> GetOptions();
+        std::vector<Option> GetOptions();
 
         /// Clears all options in this context menu.
         void ClearOptions();
@@ -84,7 +84,7 @@ namespace Ossium::Editor
         /// Handles a given window event.
         void HandleWindowEvent(SDL_Event& e);
 
-        vector<Option> options;
+        std::vector<Option> options;
 
         // The context menu attached to this menu, if any.
         ContextMenu* attached = nullptr;

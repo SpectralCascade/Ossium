@@ -90,6 +90,8 @@
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
 					<Add option="-lmingw32" />
+					<Add option="-lcomdlg32" />
+					<Add option="-lole32" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
 					<Add option="-lSDL2_image" />
@@ -137,6 +139,8 @@
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
 					<Add option="-lmingw32" />
+					<Add option="-lcomdlg32" />
+					<Add option="-lole32" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
 					<Add option="-lSDL2_image" />
@@ -241,6 +245,7 @@
 		<Unit filename="src/Core/delta.h" />
 		<Unit filename="src/Core/ecs.cpp" />
 		<Unit filename="src/Core/ecs.h" />
+		<Unit filename="src/Core/engineconstants.h" />
 		<Unit filename="src/Core/enginesystem.cpp" />
 		<Unit filename="src/Core/enginesystem.h" />
 		<Unit filename="src/Core/font.cpp" />
@@ -313,6 +318,11 @@
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
+		<Unit filename="src/Editor/Core/editorconstants.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
 		<Unit filename="src/Editor/Core/editorcontroller.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
@@ -363,6 +373,27 @@
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
+		<Unit filename="src/Editor/Core/project.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/project.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/tinyfiledialogs.c">
+			<Option compilerVar="CC" />
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Core/tinyfiledialogs.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
 		<Unit filename="src/Editor/Examples/demo_window_docking.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
@@ -409,6 +440,16 @@
 			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
 		<Unit filename="src/Editor/Windows/SceneHierarchy.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Windows/SceneView.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+		</Unit>
+		<Unit filename="src/Editor/Windows/SceneView.h">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />

@@ -2,6 +2,8 @@
 #include "../Core/editorstyle.h"
 #include <math.h>
 
+using namespace std;
+
 namespace Ossium::Editor
 {
 

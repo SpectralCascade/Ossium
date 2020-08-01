@@ -32,7 +32,7 @@ namespace Ossium
 
     protected:
         /// Path to the currently playing audio sample.
-        M(string, samplePath);
+        M(std::string, samplePath);
 
         /// Is the source looping forever?
         M(bool, looping) = false;

@@ -20,7 +20,7 @@ namespace Ossium::Editor
 
         M(float, mipBias) = 0.5f;
 
-        M(string, text) = "Hello!";
+        M(std::string, text) = "Hello!";
 
         M(float, width) = 580.0f;
         M(float, height) = 480.0f;

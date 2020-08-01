@@ -60,7 +60,7 @@ namespace Ossium
     class OSSIUM_EDL DebugText : public DebugGraphic
     {
     public:
-        DebugText(string str, Point position, Entity* entity, Font* font, Renderer& renderer, int fontSize = 24, SDL_Color color = Colors::RED, SDL_Color backgroundColor = Colors::TRANSPARENT);
+        DebugText(std::string str, Point position, Entity* entity, Font* font, Renderer& renderer, int fontSize = 24, SDL_Color color = Colors::RED, SDL_Color backgroundColor = Colors::TRANSPARENT);
         ~DebugText();
 
         void Draw(Renderer& renderer);
@@ -80,20 +80,20 @@ namespace Ossium
 
         /// Registers a graphic to be drawn
         template<typename T>
-        void Draw(string tag, T&& graphic)
+        void Draw(std::string tag, T&& graphic)
         {
             taggedGraphics[tag].push_back(new T(graphic));
         }
 
         /// Clears all registered graphics. Pass in a tag to clear all registered graphics with a matching tag.
-        void Clear(string tag = "");
+        void Clear(std::string tag = "");
 
         /// Used for debug drawing Box2D bits.
         DebugDrawBox2D* physics;
 
     private:
         /// Lookup table for graphics that are drawn on screen
-        map<string, vector<DebugGraphic*>> taggedGraphics;
+        std::map<std::string, std::vector<DebugGraphic*>> taggedGraphics;
 
     };
 

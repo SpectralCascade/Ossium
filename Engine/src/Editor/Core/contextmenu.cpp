@@ -1,5 +1,7 @@
 #include "contextmenu.h"
 
+using namespace std;
+
 namespace Ossium::Editor
 {
 

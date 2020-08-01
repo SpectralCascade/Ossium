@@ -63,7 +63,7 @@ namespace Ossium
                 services[i] = nullptr;
             }
             /// Now hook up the individual services
-            SetService(forward<Args>(args)...);
+            SetService(std::forward<Args>(args)...);
         }
 
         virtual ~ServicesProvider();
@@ -133,8 +133,8 @@ namespace Ossium
             /// Recursive step first so services are set in reverse.
             /// This means if the same service type is provided more than once,
             /// the first instance of that type is used and the other instances are discarded.
-            SetService(forward<Args>(args)...);
-            services[remove_pointer<T>::type::__services_entry.GetType()] = service;
+            SetService(std::forward<Args>(args)...);
+            services[std::remove_pointer<T>::type::__services_entry.GetType()] = service;
         }
 
     };
