@@ -41,7 +41,7 @@ namespace Ossium::Editor
 
                 const char* filters[1] = { "*.ossium" };
 
-                string path = tinyfd_openFileDialog(
+                const char* path = tinyfd_openFileDialog(
                     "Ossium | Open Project",
                     EDITOR_DEFAULT_DIRECTORY,
                     1,
@@ -50,7 +50,7 @@ namespace Ossium::Editor
                     0
                 );
 
-                if (!path.empty())
+                if (path)
                 {
                     GetEditorLayout()->GetEditorController()->OpenProject(path);
                 }
@@ -86,6 +86,12 @@ namespace Ossium::Editor
             },
             [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
         );
+
+        editor->AddCustomMenu("File/Close Project",
+            [&] () { GetEditorLayout()->GetEditorController()->CloseProject(); },
+            [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
+        );
+
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
 
         // TODO: edit menus
