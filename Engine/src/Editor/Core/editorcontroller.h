@@ -60,7 +60,7 @@ namespace Ossium::Editor
         void CloseProject();
 
         /// Adds a custom menu option to the tool bar. Optionally
-        void AddCustomMenu(std::string menuPath, std::function<void()> onClick, std::function<bool()> isEnabled = [&] () { return true; });
+        void AddCustomMenu(std::string menuPath, std::function<void()> onClick, std::function<bool()> isEnabled = [] () { return true; });
 
         /// Adds a custom menu option to the tool bar that opens a window.
         template<typename T>

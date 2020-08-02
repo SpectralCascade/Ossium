@@ -261,7 +261,7 @@ namespace Ossium
         entity_itr = data.find("Active");
         if (entity_itr != data.end())
         {
-            Utilities::FromString(active, entity_itr->second);
+            Utilities::FromString(active, (string)entity_itr->second);
         }
         else
         {
@@ -455,15 +455,14 @@ namespace Ossium
 
     bool Scene::Save(string directoryPath)
     {
-        if (directoryPath.empty() || (directoryPath[directoryPath.size() - 1] != '/' && directoryPath[directoryPath.size() - 1] != '\\'))
-        {
-            directoryPath += "/";
-        }
-        directoryPath += name + EngineConstants::SceneFileExtension;
         ofstream file(directoryPath);
-        file << ToString();
-        file.close();
-        return true;
+        if (file.is_open())
+        {
+            file << ToString();
+            file.close();
+            return true;
+        }
+        return false;
     }
 
     void Scene::SetName(string name)

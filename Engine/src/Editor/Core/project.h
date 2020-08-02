@@ -6,14 +6,16 @@
 namespace Ossium::Editor
 {
 
-    struct SceneHierarchyItem : public Schema<SceneHierarchyItem, 4>
+    struct ListedScene : public Schema<ListedScene, 4>
     {
-        DECLARE_BASE_SCHEMA(SceneHierarchyItem, 4);
+        DECLARE_BASE_SCHEMA(ListedScene, 4);
+
+        ListedScene(std::string name, std::string path, bool opened, bool loaded) : name(name), path(path), opened(opened), loaded(loaded) {}
 
         M(std::string, name);
         M(std::string, path);
-        M(bool, opened) = true;
-        M(bool, loaded) = true;
+        M(bool, opened);
+        M(bool, loaded);
     };
 
     struct ProjectSchema : public Schema<ProjectSchema, 20>
@@ -21,7 +23,7 @@ namespace Ossium::Editor
         DECLARE_BASE_SCHEMA(ProjectSchema, 20);
 
         // All opened scenes, whether loaded or not.
-        M(std::vector<SceneHierarchyItem>, openScenes);
+        M(std::vector<ListedScene>, openScenes);
 
     protected:
         // The name of the project.

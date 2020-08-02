@@ -3,20 +3,20 @@
 
 #include "../Core/tinyfiledialogs.h"
 
-using namespace std;
+#include <filesystem>
 
 namespace Ossium::Editor
 {
 
-    string Project::GetName()
+    std::string Project::GetName()
     {
         return name;
     }
 
-    void Project::SetName(string name)
+    void Project::SetName(std::string name)
     {
         // TODO: don't sanitise, just validate and fail if invalid.
-        string sanitised = Utilities::SanitiseFilename(name);
+        std::string sanitised = Utilities::SanitiseFilename(name);
         if (!sanitised.empty())
         {
             this->name = sanitised;
@@ -27,12 +27,12 @@ namespace Ossium::Editor
         }
     }
 
-    string Project::GetPath()
+    std::string Project::GetPath()
     {
         return path;
     }
 
-    void Project::SetPath(string path)
+    void Project::SetPath(std::string path)
     {
         // TODO: validate path
         this->path = path;
@@ -45,7 +45,7 @@ namespace Ossium::Editor
 
         dest = tinyfd_saveFileDialog(
             "Ossium | Save Project",
-            path.empty() ? EDITOR_DEFAULT_DIRECTORY : path.c_str(),
+            path.empty() ? EDITOR_DEFAULT_DIRECTORY : (path + name + ".ossium").c_str(),
             2,
             filters,
             "Ossium Project"
@@ -53,10 +53,27 @@ namespace Ossium::Editor
 
         if (dest)
         {
-            path = dest;
-            Log.Info("Saving project at '{0}'.", dest);
-            // Actually perform the save.
-            Save(string(dest));
+            std::filesystem::path projectPath = std::filesystem::path(std::string(dest));
+            name = projectPath.stem().string();
+            Log.Info("Saving project '{0}' at '{1}'.", name, dest);
+
+            // Now setup the assets folder
+            try
+            {
+                projectPath.remove_filename();
+                path = projectPath.string();
+                projectPath /= "Assets";
+                std::filesystem::create_directory(projectPath);
+            }
+            catch (std::exception& e)
+            {
+                Log.Error("Exception occurred while attempting to create the project Assets directory: {0}", e);
+                return false;
+            }
+
+            // Actually save the project.
+            Save(dest);
+
             return true;
         }
         else
@@ -66,9 +83,10 @@ namespace Ossium::Editor
         return false;
     }
 
-    string Project::GetAssetsPath()
+    std::string Project::GetAssetsPath()
     {
-        return path + string("Assets") + EDITOR_PATH_SEPARATOR;
+        std::filesystem::path assets = std::filesystem::path(path);
+        return (assets / std::string("Assets")).string();
     }
 
 }

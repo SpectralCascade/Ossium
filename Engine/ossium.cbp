@@ -16,32 +16,32 @@
 				<Compiler>
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib/libSDL2_image.dll.a" />
+					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
+					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
+					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
+					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
@@ -58,10 +58,10 @@
 				</Compiler>
 				<Linker>
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
-					<Add library="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib/libSDL2_image.dll.a" />
+					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
+					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
+					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
+					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
@@ -74,16 +74,16 @@
 				<Compiler>
 					<Add option="-std=c++1z" />
 					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
@@ -99,16 +99,16 @@
 					<Add option="-lSDL2_ttf" />
 					<Add option="-lSDL2_net" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib/libSDL2_image.dll.a" />
+					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
+					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
+					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
+					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
@@ -123,16 +123,16 @@
 					<Add option="-g" />
 					<Add option="-DOSSIUM_DEBUG" />
 					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
@@ -148,16 +148,16 @@
 					<Add option="-lSDL2_ttf" />
 					<Add option="-lSDL2_net" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib/libSDL2_image.dll.a" />
+					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
+					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
+					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
+					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
@@ -172,16 +172,16 @@
 					<Add option="-g" />
 					<Add option="-DOSSIUM_DEBUG" />
 					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="Box2D/" />
 				</Compiler>
 				<Linker>
@@ -194,11 +194,11 @@
 					<Add option="-lSDL2_ttf" />
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
 					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
+					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
 					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>

@@ -48,7 +48,7 @@ namespace Ossium
         ///
         /// FromString() functions
         ///
-
+        [[deprecated("FromString() reached the variadic sinkhole during SFINAE!")]]
         OSSIUM_EDL void FromString(...);
 
         template<typename T>
@@ -273,6 +273,7 @@ namespace Ossium
         }
 
         /// Sinkhole for types that ToString() is not implemented for.
+        [[deprecated("ToString() reached the variadic sinkhole during SFINAE!")]]
         OSSIUM_EDL std::string ToString(...);
 
         ///

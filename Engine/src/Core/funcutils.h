@@ -55,14 +55,19 @@ namespace Ossium
         /// Removes the filename from a path.
         OSSIUM_EDL std::string StripFilename(std::string path);
 
+        /// Returns the file name from a path.
+        OSSIUM_EDL std::string ExtractFilename(std::string path);
+
         /// Removes invalid characters from a given file name and strips it.
         OSSIUM_EDL std::string SanitiseFilename(std::string name);
 
         /// Splits a string at the first occurrence of the delimiter and returns the second half.
         /// If an error occurs, these functions return the string outputOnError, or the data string if using the default value for outputOnError.
-        OSSIUM_EDL std::string SplitRight(std::string data, char delimiter = ' ', std::string outputOnError = "%s");
+        /// You can optionally specify the direction that the string is searched; 1 for front to back, or -1 for back to front.
+        OSSIUM_EDL std::string SplitRight(std::string data, char delimiter = ' ', std::string outputOnError = "%s", int dir = 1);
         /// Ditto but returns the first half instead.
-        OSSIUM_EDL std::string SplitLeft(std::string data, char delimiter = ' ', std::string outputOnError = "%s");
+        OSSIUM_EDL std::string SplitLeft(std::string data, char delimiter = ' ', std::string outputOnError = "%s", int dir = 1);
+
         /// Splits a string up into smaller strings depending on the delimiter.
         OSSIUM_EDL std::vector<std::string> Split(std::string data, char delimited = ' ');
 

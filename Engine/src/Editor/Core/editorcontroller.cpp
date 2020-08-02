@@ -130,7 +130,7 @@ namespace Ossium::Editor
         CloseProject();
         loadedProject = new Project();
         loadedProject->Load(path);
-        for (SceneHierarchyItem& scene : loadedProject->openScenes)
+        for (ListedScene& scene : loadedProject->openScenes)
         {
             if (scene.loaded)
             {

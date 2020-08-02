@@ -135,12 +135,28 @@ namespace Ossium
 
         string StripFilename(string path)
         {
-            bool modified = false;
             for (int i = path.size() - 1; i >= 0; i--)
             {
-                if (i == '/' || i == '\\')
+                if (path[i] == '/' || path[i] == '\\')
                 {
                     path = path.substr(0, i + 1);
+                    break;
+                }
+            }
+            return path;
+        }
+
+        string ExtractFilename(string path)
+        {
+            for (int i = path.size() - 1; i >= 0; i--)
+            {
+                if (path[i] == '/' || path[i] == '\\')
+                {
+                    int index = i + 1;
+                    if (index < (int)path.size())
+                    {
+                        path = path.substr(index, path.size() - index);
+                    }
                     break;
                 }
             }
@@ -163,9 +179,9 @@ namespace Ossium
             return sanitised;
         }
 
-        string SplitRight(string data, char delimiter, string outputOnError)
+        string SplitRight(string data, char delimiter, string outputOnError, int dir)
         {
-            int index = data.find(delimiter);
+            int index = dir >= 0 ? data.find(delimiter) : data.rfind(delimiter);
             if (data[index] != delimiter)
             {
                 if (outputOnError == "%s")
@@ -177,9 +193,9 @@ namespace Ossium
             return data.substr(index + 1);
         }
 
-        string SplitLeft(string data, char delimiter, string outputOnError)
+        string SplitLeft(string data, char delimiter, string outputOnError, int dir)
         {
-            int index = data.find(delimiter);
+            int index = dir >= 0 ? data.find(delimiter) : data.rfind(delimiter);
             if (data[index] != delimiter)
             {
                 if (outputOnError == "%s")

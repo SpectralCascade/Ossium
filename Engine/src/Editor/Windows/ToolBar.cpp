@@ -7,8 +7,13 @@
 #include "../../Core/engineconstants.h"
 #include "../Core/editorconstants.h"
 #include "../Core/tinyfiledialogs.h"
+#include "../Core/project.h"
+#include "../../Core/ecs.h"
+
+#include <filesystem>
 
 using namespace std;
+using namespace Ossium;
 
 namespace Ossium::Editor
 {
@@ -20,6 +25,10 @@ namespace Ossium::Editor
         minDimensions.y = 16;
 
         EditorController* editor = GetEditorLayout()->GetEditorController();
+
+        //
+        // File
+        //
 
         editor->AddCustomMenu("File/New/Project", [&] () {
                 // Close the context menu before pausing the editor
@@ -36,6 +45,7 @@ namespace Ossium::Editor
 
             }
         );
+
         editor->AddCustomMenu("File/Open...", [&] () {
                 ContextMenu::GetMainInstance(resources)->Hide();
 
@@ -62,7 +72,15 @@ namespace Ossium::Editor
                 Project* project = GetEditorLayout()->GetEditorController()->GetProject();
                 if (project != nullptr)
                 {
-                    project->Save(project->GetPath());
+                    if (project->GetPath().empty())
+                    {
+                        // In theory this shouldn't happen, but just in case!
+                        project->SaveAs();
+                    }
+                    else
+                    {
+                        project->Save(project->GetPath());
+                    }
                 }
                 else
                 {
@@ -94,24 +112,62 @@ namespace Ossium::Editor
 
         editor->AddCustomMenu("File/Quit", [&] () { doQuit = true; });
 
+        //
+        // Edit
+        //
+
         // TODO: edit menus
         //editor->AddCustomMenu("Edit/Undo", [] () {});
         //editor->AddCustomMenu("Edit/Redo", [] () {});
+
+
+        //
+        // Create
+        //
 
         editor->AddCustomMenu("Create/Scene",
             [&] () {
                 Project* project = GetEditorLayout()->GetEditorController()->GetProject();
                 if (project != nullptr)
                 {
-                    Scene* newScene = new Scene();
-                    string path = project->GetAssetsPath() + "Untitled" + EngineConstants::SceneFileExtension;
-                    newScene->Save(path);
-                    delete newScene;
-                    resources->LoadAndInit<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices());
+                    Scene newScene = Scene();
+                    string path = (filesystem::path(project->GetAssetsPath()) / (string("NewScene") + EngineConstants::SceneFileExtension)).string();
+
+                    const char* filters[2] = { (string("*") + EngineConstants::SceneFileExtension).c_str(), "*" };
+
+                    const char* dest = tinyfd_saveFileDialog(
+                        "Ossium | Save Scene",
+                        path.c_str(),
+                        2,
+                        filters,
+                        "Ossium Scene (.rawr)"
+                    );
+
+                    if (dest)
+                    {
+                        newScene.SetName(filesystem::path(string(dest)).stem().string());
+                        if (newScene.Save(dest))
+                        {
+                            project->openScenes.push_back((ListedScene){
+                                .name = newScene.GetName(),
+                                .path = string(dest),
+                                .opened = true,
+                                .loaded = resources->LoadAndInit<Scene>(dest, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
+                            });
+                        }
+                        else
+                        {
+                            Log.Warning("Failed to save new scene at '{0}'!", dest);
+                        }
+                    }
                 }
             },
             [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
         );
+
+        //
+        // View
+        //
 
         editor->AddCustomMenu("View/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("View/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });

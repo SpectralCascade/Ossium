@@ -5,7 +5,7 @@ namespace Ossium
 {
     namespace EngineConstants
     {
-        const std::string SceneFileExtension = ".uwu";
+        const std::string SceneFileExtension = ".rawr";
     }
 }
 

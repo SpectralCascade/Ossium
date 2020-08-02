@@ -43,10 +43,12 @@ namespace Ossium::Editor
         }
     }
 
-    void SceneHierarchy::ListScene(SceneHierarchyItem& item, bool loaded)
+    void SceneHierarchy::ListScene(ListedScene& item, bool loaded)
     {
         if (IsVisible())
         {
+            BeginHorizontal();
+
             float arrowSize = 9.0f;
             Vector2 arrowPos = GetLayoutPosition() + Vector2(4, 4);
 
@@ -80,6 +82,9 @@ namespace Ossium::Editor
                 selectedScene = item.path;
                 TriggerUpdate();
             }
+
+            EndHorizontal();
+
         }
     }
 

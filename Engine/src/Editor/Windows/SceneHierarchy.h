@@ -22,7 +22,7 @@ namespace Ossium::Editor
         void OnGUI();
 
     protected:
-        void ListScene(SceneHierarchyItem& item, bool loaded);
+        void ListScene(ListedScene& item, bool loaded);
         void ListEntity(Entity* entity);
 
         // The selected entity, if any.
