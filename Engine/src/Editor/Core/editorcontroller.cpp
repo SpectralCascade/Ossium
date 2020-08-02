@@ -43,6 +43,26 @@ namespace Ossium::Editor
         customMenuTools.push_back(MenuTool(menuPath, onClick, isEnabled));
     }
 
+    Entity* EditorController::GetSelectedEntity()
+    {
+        return selectedEntity;
+    }
+
+    Scene* EditorController::GetSelectedScene()
+    {
+        return selectedScene;
+    }
+
+    void EditorController::SelectEntity(Entity* entity)
+    {
+        selectedEntity = entity;
+    }
+
+    void EditorController::SelectScene(Scene* scene)
+    {
+        selectedScene = scene;
+    }
+
     EditorLayout* EditorController::CreateLayout()
     {
         EditorLayout* layout = new EditorLayout(this, "Ossium Editor");

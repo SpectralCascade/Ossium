@@ -81,6 +81,22 @@ namespace Ossium::Editor
         /// Developer-defined menu tools.
         std::vector<MenuTool> customMenuTools;
 
+        //
+        // General editor usage
+        //
+
+        /// Returns the selected entity or nullptr if none is selected.
+        Entity* GetSelectedEntity();
+
+        /// Returns the selected scene or nullptr if none is selected.
+        Scene* GetSelectedScene();
+
+        /// Select an entity.
+        void SelectEntity(Entity* entity);
+
+        /// Select a scene.
+        void SelectScene(Scene* scene);
+
     private:
         // Helper method for a template
         EditorLayout* CreateLayout();
@@ -102,6 +118,12 @@ namespace Ossium::Editor
 
         /// The current project.
         Project* loadedProject = nullptr;
+
+        /// The entity that is currently selected.
+        Entity* selectedEntity = nullptr;
+
+        /// The opened scene that is currently selected.
+        Scene* selectedScene = nullptr;
 
     };
 

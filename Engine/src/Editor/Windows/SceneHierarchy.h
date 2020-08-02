@@ -25,9 +25,9 @@ namespace Ossium::Editor
         void ListScene(ListedScene& item, bool loaded);
         void ListEntity(Entity* entity);
 
-        // The selected entity, if any.
-        Entity* selectedEntity = nullptr;
-        std::string selectedScene;
+    private:
+        bool didSelectScene = false;
+        bool didSelectEntity = false;
 
     };
 

@@ -165,6 +165,56 @@ namespace Ossium::Editor
             [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
         );
 
+        editor->AddCustomMenu("Create/Entity",
+            [&] () {
+                EditorController* e = GetEditorLayout()->GetEditorController();
+                Project* project = e->GetProject();
+                if (project != nullptr)
+                {
+                    Entity* selectedEntity = e->GetSelectedEntity();
+                    if (selectedEntity != nullptr)
+                    {
+                        // Nest under this entity
+                        selectedEntity->CreateChild();
+                    }
+                    else
+                    {
+                        Scene* selectedScene = e->GetSelectedScene();
+                        if (selectedScene != nullptr)
+                        {
+                            // Add to end of the scene
+                            selectedScene->CreateEntity();
+                        }
+                        else
+                        {
+                            // Find any loaded scene and use that.
+                            for (auto& scene : project->openScenes)
+                            {
+                                if (scene.loaded)
+                                {
+                                    // Open the scene if not already
+                                    scene.opened = true;
+                                    Scene* insertScene = resources->Find<Scene>(scene.path);
+                                    if (insertScene != nullptr)
+                                    {
+                                        insertScene->CreateEntity();
+                                    }
+                                    else
+                                    {
+                                        Log.Warning("Failed to create entity! No scenes are loaded.");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            [&] () {
+                Project* p = GetEditorLayout()->GetEditorController()->GetProject();
+                return p != nullptr && Utilities::Pick<ListedScene>(p->openScenes, [] (ListedScene& scene) { return scene.loaded; }) != nullptr;
+            }
+        );
+
         //
         // View
         //
