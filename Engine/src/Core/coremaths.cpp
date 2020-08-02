@@ -145,7 +145,7 @@ namespace Ossium
         return "(" + Utilities::ToString(x) + ", " + Utilities::ToString(y) + ")";
     }
 
-    void Vector2::FromString(string str)
+    void Vector2::FromString(string& str)
     {
         unsigned int len = str.length();
         if (len > 4)
@@ -196,7 +196,7 @@ namespace Ossium
         Set(angle);
     }
 
-    void Rotation::FromString(string data)
+    void Rotation::FromString(string& data)
     {
         float degs;
         Utilities::FromString(degs, data);

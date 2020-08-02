@@ -142,7 +142,7 @@ namespace Ossium
 
         DETECT_METHOD(ToString);
 
-        DETECT_METHOD_P(FromString, std::string);
+        DETECT_METHOD_P(FromString, std::string&);
 
     }
 

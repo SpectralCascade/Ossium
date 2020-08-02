@@ -67,7 +67,7 @@ namespace Ossium::Editor
             }
             catch (std::exception& e)
             {
-                Log.Error("Exception occurred while attempting to create the project Assets directory: {0}", e);
+                Log.Error("Exception occurred while attempting to create the project Assets directory: {0}", e.what());
                 return false;
             }
 
