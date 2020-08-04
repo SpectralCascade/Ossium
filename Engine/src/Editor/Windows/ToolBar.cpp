@@ -46,7 +46,7 @@ namespace Ossium::Editor
             }
         );
 
-        editor->AddCustomMenu("File/Open...", [&] () {
+        editor->AddCustomMenu("File/Open/Project", [&] () {
                 ContextMenu::GetMainInstance(resources)->Hide();
 
                 const char* filters[1] = { "*.ossium" };
@@ -68,6 +68,48 @@ namespace Ossium::Editor
             }
         );
 
+        editor->AddCustomMenu("File/Open/Scene", [&] () {
+
+                Project* project = GetEditorLayout()->GetEditorController()->GetProject();
+
+                if (project != nullptr)
+                {
+                    ContextMenu::GetMainInstance(resources)->Hide();
+
+                    string filter = string("*") + EngineConstants::SceneFileExtension;
+                    const char* filters[1] = { filter.c_str() };
+
+                    const char* path = tinyfd_openFileDialog(
+                        "Ossium | Open Scene",
+                        EDITOR_DEFAULT_DIRECTORY,
+                        1,
+                        filters,
+                        "Ossium Scene",
+                        0
+                    );
+
+                    if (path)
+                    {
+                        if (Utilities::Pick<ListedScene>(project->openScenes, [&] (ListedScene& scene) { return scene.path == string(path); }) == nullptr)
+                        {
+                            project->openScenes.push_back((ListedScene){
+                                .name = filesystem::path(string(path)).stem().string(),
+                                .path = string(path),
+                                .opened = true,
+                                .loaded = resources->LoadAndInit<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    Log.Warning("Cannot open scene, no project is open!");
+                }
+
+            },
+            [&] () { return GetEditorLayout()->GetEditorController()->GetProject() != nullptr; }
+        );
+
         editor->AddCustomMenu("File/Save", [&] () {
                 Project* project = GetEditorLayout()->GetEditorController()->GetProject();
                 if (project != nullptr)
@@ -80,6 +122,20 @@ namespace Ossium::Editor
                     else
                     {
                         project->Save(project->GetPath());
+                    }
+                    if (!project->GetPath().empty())
+                    {
+                        for (auto& listedScene : project->openScenes)
+                        {
+                            if (listedScene.loaded)
+                            {
+                                Scene* scene = resources->Find<Scene>(listedScene.path);
+                                if (scene != nullptr)
+                                {
+                                    scene->Save(listedScene.path);
+                                }
+                            }
+                        }
                     }
                 }
                 else

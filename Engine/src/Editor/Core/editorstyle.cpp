@@ -145,21 +145,21 @@ namespace Ossium::Editor
             Color(250, 250, 250)
         );
         StyleClickable HierarchyScene = StyleClickable(
-            Color(250, 250, 250),
-            Color(100, 110, 150),
-            Color(100, 110, 150),
+            Color(210, 210, 210),
+            Color(230, 230, 230),
+            Color(110, 110, 110),
+            StandardText,
             StandardText,
             StandardTextWhite,
-            StandardTextWhite,
-            Color(250, 250, 250),
-            Color(250, 250, 250),
-            Color(250, 250, 250),
-            Color(250, 250, 250)
+            Color(40, 40, 40),
+            Color(40, 40, 40),
+            Color(40, 40, 40),
+            Color(40, 40, 40)
         );
         StyleClickable HierarchySceneSelected = StyleClickable(
-            Color(100, 110, 150),
-            Color(100, 110, 150),
-            Color(100, 110, 150),
+            Color(110, 110, 110),
+            Color(110, 110, 110),
+            Color(110, 110, 110),
             StandardTextWhite,
             StandardTextWhite,
             StandardTextWhite,
@@ -167,6 +167,30 @@ namespace Ossium::Editor
             Color(150, 150, 150),
             Color(150, 150, 150),
             Color(150, 150, 150)
+        );
+        StyleClickable HierarchyEntity = StyleClickable(
+            Color(210, 210, 210),
+            Color(230, 230, 230),
+            Color(180, 180, 180),
+            StandardText,
+            StandardText,
+            StandardTextWhite,
+            Color(40, 40, 40),
+            Color(40, 40, 40),
+            Color(40, 40, 40),
+            Color(40, 40, 40)
+        );
+        StyleClickable HierarchyEntitySelected = StyleClickable(
+            Color(180, 180, 180),
+            Color(180, 180, 180),
+            Color(180, 180, 180),
+            StandardText,
+            StandardText,
+            StandardText,
+            Color(110, 110, 110),
+            Color(180, 180, 180),
+            Color(180, 180, 180),
+            Color(180, 180, 180)
         );
     }
 

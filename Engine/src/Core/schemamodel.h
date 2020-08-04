@@ -103,7 +103,7 @@ namespace Ossium
             std::string data = Utilities::FileToString(file);
             if (!data.empty())
             {
-                FromString(data);
+                this->FromString(data);
                 file.close();
                 return true;
             }
@@ -116,10 +116,11 @@ namespace Ossium
             std::ofstream file(filePath);
             if (file.is_open())
             {
-                file << ToString();
+                file << this->ToString();
                 file.close();
                 return true;
             }
+            Log.Error("Failed to save schema at '{0}'!", filePath);
             return false;
         }
 
@@ -141,6 +142,7 @@ namespace Ossium
                 {
                     Log.Error("Could not get member '{0}' at index [{1}] during serialisation!", key, i);
                 }
+                //Log.Verbose("Serialise OUT member '{0}'.", key);
             }
         }
 

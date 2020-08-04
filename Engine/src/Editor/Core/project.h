@@ -6,11 +6,11 @@
 namespace Ossium::Editor
 {
 
-    struct ListedScene : public Schema<ListedScene, 4>
+    struct ListedScene : public Schema<ListedScene, 20>
     {
-        DECLARE_BASE_SCHEMA(ListedScene, 4);
+        DECLARE_BASE_SCHEMA(ListedScene, 20);
 
-        ListedScene(std::string name, std::string path, bool opened, bool loaded) : name(name), path(path), opened(opened), loaded(loaded) {}
+        ListedScene(std::string _name, std::string _path, bool _opened, bool _loaded);
 
         M(std::string, name);
         M(std::string, path);
@@ -29,8 +29,8 @@ namespace Ossium::Editor
         // The name of the project.
         M(std::string, name) = "Untitled";
 
-        // Where the project is located on disk, as an absolute path.
-        M(std::string, path);
+        // Where the project is located on disk, as an absolute path (initialised on open).
+        std::string path;
 
     };
 

@@ -163,7 +163,7 @@ namespace Ossium::Editor
                 resources->Free<Scene>(scene.path);
             }
         }
-        loadedProject->SetPath(Utilities::StripFilename(path));
+        loadedProject->SetPath(path);
         return loadedProject;
     }
 

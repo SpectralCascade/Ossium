@@ -87,6 +87,8 @@ namespace Ossium::Editor
         extern StyleClickable ToolBarButton;
         extern StyleClickable HierarchyScene;
         extern StyleClickable HierarchySceneSelected;
+        extern StyleClickable HierarchyEntity;
+        extern StyleClickable HierarchyEntitySelected;
     }
 
     /// A schema that defines how the editor should look.

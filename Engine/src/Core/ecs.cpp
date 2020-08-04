@@ -593,6 +593,7 @@ namespace Ossium
 
     string Scene::ToString()
     {
+        // TODO: maintain entity order
         JSON serialised;
         for (auto mappedEntity : entities)
         {

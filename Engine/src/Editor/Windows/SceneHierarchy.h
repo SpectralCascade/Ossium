@@ -25,10 +25,6 @@ namespace Ossium::Editor
         void ListScene(ListedScene& item, bool loaded);
         void ListEntity(Entity* entity);
 
-    private:
-        bool didSelectScene = false;
-        bool didSelectEntity = false;
-
     };
 
 }

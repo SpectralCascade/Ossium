@@ -8,6 +8,14 @@
 namespace Ossium::Editor
 {
 
+    ListedScene::ListedScene(std::string _name, std::string _path, bool _opened, bool _loaded)
+    {
+        name = _name;
+        path = _path;
+        opened = _opened;
+        loaded = _loaded;
+    }
+
     std::string Project::GetName()
     {
         return name;
@@ -54,6 +62,7 @@ namespace Ossium::Editor
         if (dest)
         {
             std::filesystem::path projectPath = std::filesystem::path(std::string(dest));
+            path = dest;
             name = projectPath.stem().string();
             Log.Info("Saving project '{0}' at '{1}'.", name, dest);
 
@@ -61,7 +70,6 @@ namespace Ossium::Editor
             try
             {
                 projectPath.remove_filename();
-                path = projectPath.string();
                 projectPath /= "Assets";
                 std::filesystem::create_directory(projectPath);
             }
@@ -86,6 +94,7 @@ namespace Ossium::Editor
     std::string Project::GetAssetsPath()
     {
         std::filesystem::path assets = std::filesystem::path(path);
+        assets.remove_filename();
         return (assets / std::string("Assets")).string();
     }
 

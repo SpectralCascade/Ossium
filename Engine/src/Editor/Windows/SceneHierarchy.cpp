@@ -16,10 +16,10 @@ namespace Ossium::Editor
 
     void SceneHierarchy::OnGUI()
     {
-        if (GetEditorLayout()->GetEditorController()->GetProject() != nullptr)
+        Project* project = GetEditorLayout()->GetEditorController()->GetProject();
+        if (project != nullptr)
         {
-            didSelectScene = false;
-            for (auto& scene : GetEditorLayout()->GetEditorController()->GetProject()->openScenes)
+            for (auto& scene : project->openScenes)
             {
                 if (!IsVisible())
                 {
@@ -46,18 +46,6 @@ namespace Ossium::Editor
                     }
                 }
             }
-
-            if (!didSelectScene && InputState.mouseWasPressed && !InputState.mousePressed)
-            {
-                // Must have clicked somewhere else in the window.
-                GetEditorLayout()->GetEditorController()->SelectScene(nullptr);
-            }
-            if (!didSelectEntity && !didSelectScene && InputState.mouseWasPressed && !InputState.mousePressed)
-            {
-                // Must have clicked somewhere else in the window.
-                GetEditorLayout()->GetEditorController()->SelectEntity(nullptr);
-            }
-
         }
     }
 
@@ -100,7 +88,6 @@ namespace Ossium::Editor
             {
                 // On press down, select this scene.
                 GetEditorLayout()->GetEditorController()->SelectScene(resources->Find<Scene>(item.path));
-                didSelectScene = true;
                 TriggerUpdate();
             }
 
@@ -116,12 +103,12 @@ namespace Ossium::Editor
             BeginHorizontal();
 
             bool hovered, pressed;
-            Button(entity->name, false ? EditorStyle::HierarchySceneSelected : EditorStyle::HierarchyScene, false, 2, 2, true, &hovered, &pressed);
+            Button(entity->name, false ? EditorStyle::HierarchyEntitySelected : EditorStyle::HierarchyEntity, false, 2, 2, true, &hovered, &pressed);
             if (hovered && pressed && !InputState.mouseWasPressed)
             {
                 // On press down, select this scene.
                 GetEditorLayout()->GetEditorController()->SelectEntity(entity);
-                didSelectEntity = true;
+                GetEditorLayout()->GetEditorController()->SelectScene(entity->GetScene());
                 TriggerUpdate();
             }
 
