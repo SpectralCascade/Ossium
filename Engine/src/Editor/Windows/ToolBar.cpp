@@ -96,7 +96,7 @@ namespace Ossium::Editor
                                 .name = filesystem::path(string(path)).stem().string(),
                                 .path = string(path),
                                 .opened = true,
-                                .loaded = resources->LoadAndInit<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
+                                .loaded = resources->Get<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
                             });
                         }
                     }
@@ -208,7 +208,7 @@ namespace Ossium::Editor
                                 .name = newScene.GetName(),
                                 .path = string(dest),
                                 .opened = true,
-                                .loaded = resources->LoadAndInit<Scene>(dest, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
+                                .loaded = resources->Get<Scene>(dest, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
                             });
                         }
                         else

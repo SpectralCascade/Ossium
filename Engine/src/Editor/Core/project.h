@@ -10,6 +10,8 @@ namespace Ossium::Editor
     {
         DECLARE_BASE_SCHEMA(ListedScene, 20);
 
+        ListedScene() = default;
+
         ListedScene(std::string _name, std::string _path, bool _opened, bool _loaded);
 
         M(std::string, name);

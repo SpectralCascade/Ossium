@@ -89,32 +89,45 @@ namespace Ossium
         /// Converts string version of an iterable object into said object (except for strings).
         template<typename T>
         typename std::enable_if<
-            !has_FromString<T>::value &&
+            !has_ToString<T>::value &&
             !is_insertable<T>::value &&
-            (is_insertable<typename T::value_type>::value || has_FromString<typename T::value_type>::value) &&
-            is_range_erasable<T>::value &&
+            (is_insertable<typename T::value_type>::value || has_ToString<typename T::value_type>::value) &&
             !std::is_base_of<std::string, T>::value,
         void>::type
         FromString(T& obj, std::string data)
         {
-            unsigned int index = 0;
-            JString jdata = JString(data);
-            for (auto itr = obj.begin(); itr != obj.end(); itr++)
+            std::vector<JString> jdata = JString(data).ToArray();
+            auto target = obj.begin();
+            for (auto itr = jdata.begin(); itr != jdata.end(); itr++)
             {
-                std::string strValue = "";
-                JString element = jdata.ToElement(index);
-                if (element == "\\!EB!\\" && ++itr != obj.end())
+                if (*itr == "\\!EB!\\")
                 {
-                    obj.erase(--itr, obj.end());
+                    // Early out on failed FromString for an element.
+                    if (target < obj.end())
+                    {
+                        obj.erase(target, obj.end());
+                    }
                     break;
                 }
-                FromString(*itr, element);
-                index++;
+                if (target >= obj.end())
+                {
+                    // This assumes there's a default public constructor available. If not, make it so.
+                    typename T::value_type converted;
+
+                    FromString(converted, *itr);
+                    obj.push_back(converted);
+                }
+                else
+                {
+                    // Serialise the pre-existing object.
+                    FromString(*target, *itr);
+                }
+                target++;
             }
         }
 
         /// Converts string version of a map into an actual map.
-        template<typename T>
+        /*template<typename T>
         typename std::enable_if<!has_FromString<T>::value && is_key_value_map<T>::value && is_range_erasable<T>::value && !std::is_base_of<std::string, T>::value, void>::type
         FromString(T& obj, std::string data)
         {
@@ -136,7 +149,7 @@ namespace Ossium
             {
                 Internal::__InternalLogWarn("Failed to parse data as JSON map!");
             }
-        }
+        }*/
 
         /// Get SDL_Color from string.
         template<typename T>
