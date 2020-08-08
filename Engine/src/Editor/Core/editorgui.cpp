@@ -840,7 +840,7 @@ namespace Ossium::Editor
         {
             menu.Add(names[i], [i, onSelectHandler, names] () { onSelectHandler(i); Log.Info("Option \"{0}\" [{1}] clicked.", names[i], i); });
         }
-        menu.Show(position);
+        menu.Show(position + Vector2(viewport.x, viewport.y));
     }
 
 }

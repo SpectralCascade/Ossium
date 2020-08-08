@@ -41,6 +41,11 @@ namespace Ossium
         return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetId(name);
     }
 
+    Uint32 GetTotalComponentTypes()
+    {
+        return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetTotalTypes();
+    }
+
     Entity::Entity(Scene* entity_system, Entity* parent)
     {
         controller = entity_system;
@@ -126,9 +131,34 @@ namespace Ossium
         controller->entities.erase(self->id);
     }
 
+    BaseComponent* Entity::AddComponent(ComponentType type)
+    {
+        return TypeSystem::TypeFactory<BaseComponent, ComponentType>::Create(type, (void*)this);
+    }
+
+    BaseComponent* Entity::AddComponentOnce(ComponentType type)
+    {
+        BaseComponent* component = GetComponent(type);
+        if (component == nullptr)
+        {
+            component = AddComponent(type);
+        }
+        return component;
+    }
+
+    BaseComponent* Entity::GetComponent(ComponentType type)
+    {
+        return components[type].empty() ? nullptr : components[type][0];
+    }
+
     vector<BaseComponent*>& Entity::GetComponents(ComponentType compType)
     {
         return components[compType];
+    }
+
+    std::unordered_map<ComponentType, std::vector<BaseComponent*>>& Entity::GetAllComponents()
+    {
+        return components;
     }
 
     const int Entity::GetID()
@@ -291,17 +321,13 @@ namespace Ossium
                     BaseComponent* comp = nullptr;
                     if (i >= totalComponents)
                     {
-                        comp = TypeSystem::TypeFactory<BaseComponent, ComponentType>::Create(compType, (void*)this);
+                        comp = AddComponent(compType);
                         if (comp == nullptr)
                         {
                             Log.Error("Failed to add component of type \"{0}\" [{1}] to entity during Entity::FromString()!", component.first, compType);
                             continue;
                         }
-                        else
-                        {
-                            //Log.Info("Created component of type \"{0}\" [{1}].", GetComponentName(comp->GetType()), comp->GetType());
-                            totalComponents++;
-                        }
+                        totalComponents++;
                     }
                     else
                     {

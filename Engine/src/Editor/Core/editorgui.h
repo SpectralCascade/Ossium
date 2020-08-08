@@ -278,16 +278,14 @@ namespace Ossium::Editor
             return currentReference;
         }
 
-        /// Displays a drop-down list of items when clicked. You must indicate which item is currently selected and provide a function to handle the dropdown selection.
-        /// Optionally, provide a list of names corresponding to the given values. By default Utilities::ToString() is used  to determine these names.
+        /// Dropdown that takes a custom function for opening the dropdown.
         template<typename T>
-        typename std::enable_if<!std::is_same<T, std::string>::value, void>::type
-        Dropdown(unsigned int selected, const std::vector<T>& values, std::function<void(unsigned int)> onSelectHandler)
+        void Dropdown(std::function<bool(void)> openDropdownCondition, const std::vector<T>& values, std::function<void(unsigned int)> onSelectHandler)
         {
             if (IsVisible())
             {
                 Vector2 oldPos = GetLayoutPosition();
-                if (Button(Utilities::ToString(values[selected])))
+                if (openDropdownCondition())
                 {
                     std::vector<std::string> converted;
                     for (auto& value : values)
@@ -301,6 +299,16 @@ namespace Ossium::Editor
                     );
                 }
             }
+        }
+
+
+        /// Displays a drop-down list of items when clicked. You must indicate which item is currently selected and provide a function to handle the dropdown selection.
+        /// Optionally, provide a list of names corresponding to the given values. By default Utilities::ToString() is used  to determine these names.
+        template<typename T>
+        typename std::enable_if<!std::is_same<T, std::string>::value, void>::type
+        Dropdown(unsigned int selected, const std::vector<T>& values, std::function<void(unsigned int)> onSelectHandler)
+        {
+            Dropdown([&] () { return Button(Utilities::ToString(values[selected])); }, values, onSelectHandler);
         }
 
         void Dropdown(unsigned int selected, std::vector<std::string>& values, std::function<void(unsigned int)> onSelectHandler);

@@ -265,9 +265,10 @@ namespace Ossium
                 }
                 else if (data[i] == '-')
                 {
+                    // TODO: Be more strict here maybe?
                     continue;
                 }
-                else if (data[i] == 'e' && isf && !exponent && i < counti - 1)
+                else if (data[i] == 'e' && isf && !exponent)
                 {
                     exponent = true;
                 }

@@ -83,14 +83,14 @@ namespace Ossium
             return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
-        void FromString(std::string& str)
+        virtual void FromString(std::string& str)
         {
             JSON data(str);
             SerialiseIn(data);
         }
 
         /// Creates a JSON string with all the schema members.
-        std::string ToString()
+        virtual std::string ToString()
         {
             JSON data;
             SerialiseOut(data);
@@ -125,7 +125,7 @@ namespace Ossium
         }
 
         /// Creates key-values pairs using all members of the local schema hierarchy with the provided JSON object.
-        void SerialiseOut(JSON& data)
+        virtual void SerialiseOut(JSON& data)
         {
             for (unsigned int i = 0; i < count; i++)
             {
@@ -147,7 +147,7 @@ namespace Ossium
         }
 
         /// Sets the values of all members in the local schema hierarchy using a JSON object representation of the schema
-        void SerialiseIn(JSON& data)
+        virtual void SerialiseIn(JSON& data)
         {
             for (unsigned int i = 0; i < count; i++)
             {

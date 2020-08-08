@@ -133,6 +133,11 @@ namespace Ossium::Editor
         return running;
     }
 
+    void EditorController::Quit()
+    {
+        running = false;
+    }
+
     Project* EditorController::GetProject()
     {
         return loadedProject;

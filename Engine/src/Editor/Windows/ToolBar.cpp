@@ -1,5 +1,6 @@
 #include "ToolBar.h"
 #include "SceneHierarchy.h"
+#include "EntityProperties.h"
 #include "../Examples/font_viewer.h"
 #include "../Core/contextmenu.h"
 #include "../Examples/demo_window_docking.h"
@@ -276,6 +277,7 @@ namespace Ossium::Editor
         //
 
         editor->AddCustomMenu("View/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
+        editor->AddCustomMenu("View/Add Window/Entity Properties", [&] () { GetEditorLayout()->Add<EntityProperties>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("View/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
         editor->AddToolWindow<FontViewer>("View/Fonts");
         editor->AddCustomMenu("View/Layout", [&] () {

@@ -71,7 +71,14 @@ namespace Ossium::Editor
         };
 
         native->OnCloseButton += [&] (Window& window) {
-            GetEditorController()->RemoveLayout(this);
+            if (GetEditorController()->GetMainLayout() == this)
+            {
+                GetEditorController()->Quit();
+            }
+            else
+            {
+                GetEditorController()->RemoveLayout(this);
+            }
         };
 
         // Provide access to basic services like the renderer and resources.

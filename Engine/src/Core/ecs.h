@@ -107,6 +107,7 @@ namespace Ossium
     /// Dynamic type checking
     OSSIUM_EDL ComponentType GetComponentType(std::string name);
     OSSIUM_EDL std::string GetComponentName(ComponentType id);
+    OSSIUM_EDL Uint32 GetTotalComponentTypes();
 
     /// Forward declarations for the controller class
     class Entity;
@@ -300,6 +301,9 @@ namespace Ossium
             return component;
         }
 
+        /// Instantiates and attaches a component to this entity of the specified type.
+        BaseComponent* AddComponent(ComponentType type);
+
         /// Adds a component if it hasn't been added already.
         template<class T>
         T* AddComponentOnce()
@@ -311,6 +315,8 @@ namespace Ossium
             }
             return component;
         }
+
+        BaseComponent* AddComponentOnce(ComponentType type);
 
         /// Destroys and removes first found instance of a component attached to this entity.
         template<class T>
@@ -364,6 +370,8 @@ namespace Ossium
             return nullptr;
         }
 
+        BaseComponent* GetComponent(ComponentType type);
+
         /// Returns a vector of pointers to all component instances of a given type
         /// attached to this entity. Also returns derivative type instances!
         template <class T>
@@ -390,6 +398,11 @@ namespace Ossium
         /// Faster than the GetComponents() template but doesn't do any type conversion.
         std::vector<BaseComponent*>& GetComponents(ComponentType compType);
 
+        /// Returns a reference to the mapping of components attached to this entity by type.
+        /// Generally not recommended to use or modify this, but it's there if needed.
+        std::unordered_map<ComponentType, std::vector<BaseComponent*>>& GetAllComponents();
+
+        /// Returns true if a component exists. If you need to use the component, just use GetComponent() instead.
         template <class T>
         bool HasComponent()
         {

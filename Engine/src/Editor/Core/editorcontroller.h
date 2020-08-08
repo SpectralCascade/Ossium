@@ -47,6 +47,9 @@ namespace Ossium::Editor
         /// Operates all editor logic. Returns true if the application should quit.
         bool Update();
 
+        /// Terminate the editor application.
+        void Quit();
+
         /// Returns the loaded project, or nullptr if no project is loaded.
         Project* GetProject();
 
