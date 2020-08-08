@@ -97,7 +97,7 @@ namespace Ossium::Editor
                                 .name = filesystem::path(string(path)).stem().string(),
                                 .path = string(path),
                                 .opened = true,
-                                .loaded = resources->Get<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
+                                .loaded = resources->Get<Scene>(path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices()) != nullptr
                             });
                         }
                     }
@@ -187,7 +187,7 @@ namespace Ossium::Editor
                 Project* project = GetEditorLayout()->GetEditorController()->GetProject();
                 if (project != nullptr)
                 {
-                    Scene newScene = Scene();
+                    Scene newScene = Scene(GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices());
                     string path = (filesystem::path(project->GetAssetsPath()) / (string("NewScene") + EngineConstants::SceneFileExtension)).string();
 
                     const char* filters[2] = { (string("*") + EngineConstants::SceneFileExtension).c_str(), "*" };
@@ -209,7 +209,7 @@ namespace Ossium::Editor
                                 .name = newScene.GetName(),
                                 .path = string(dest),
                                 .opened = true,
-                                .loaded = resources->Get<Scene>(dest, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices())
+                                .loaded = resources->Get<Scene>(dest, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices()) != nullptr
                             });
                         }
                         else

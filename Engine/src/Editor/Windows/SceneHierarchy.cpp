@@ -102,13 +102,37 @@ namespace Ossium::Editor
         {
             BeginHorizontal();
 
+            EditorController* editor = GetEditorLayout()->GetEditorController();
+
+            entity->SetActive(Toggle(entity->IsActiveLocally()));
+
+            StyleClickable style = editor->GetSelectedEntity() == entity ? EditorStyle::HierarchyEntitySelected : EditorStyle::HierarchyEntity;
+
+            std::string text = "";
+            for (int i = entity->GetDepth(); i >= 0; i--)
+            {
+                text += "  ";
+            }
+            text += entity->name;
+
+            TextLayout tlayout;
+            Vector2 layoutPos = GetLayoutPosition();
+            Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - 6, renderer->GetHeight() - 2);
+            tlayout.mainColor = style.normalStyleText.fg;
+            tlayout.mainStyle = style.normalStyleText.style;
+            tlayout.SetPointSize(12);
+            tlayout.SetBounds(limits);
+            tlayout.SetAlignment(Typographic::TextAlignment::LEFT_ALIGNED);
+            tlayout.SetText(*renderer, *editor->GetFont(), text, true);
+            tlayout.Update(*editor->GetFont());
+
             bool hovered, pressed;
-            Button(entity->name, false ? EditorStyle::HierarchyEntitySelected : EditorStyle::HierarchyEntity, false, 2, 2, true, &hovered, &pressed);
+            Button(text, tlayout, style, false, 4, 2, true, &hovered, &pressed);
             if (hovered && pressed && !InputState.mouseWasPressed)
             {
                 // On press down, select this scene.
-                GetEditorLayout()->GetEditorController()->SelectEntity(entity);
-                GetEditorLayout()->GetEditorController()->SelectScene(entity->GetScene());
+                editor->SelectEntity(entity);
+                editor->SelectScene(entity->GetScene());
                 TriggerUpdate();
             }
 

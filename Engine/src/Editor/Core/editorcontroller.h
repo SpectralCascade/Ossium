@@ -50,6 +50,9 @@ namespace Ossium::Editor
         /// Terminate the editor application.
         void Quit();
 
+        /// Returns the default editor font, or nullptr if it has not been loaded.
+        Font* GetFont();
+
         /// Returns the loaded project, or nullptr if no project is loaded.
         Project* GetProject();
 

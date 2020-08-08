@@ -1,6 +1,7 @@
 #include "font_viewer.h"
 #include "../Core/editorstyle.h"
 #include <math.h>
+#include <filesystem>
 
 using namespace std;
 
@@ -10,16 +11,12 @@ namespace Ossium::Editor
     void FontViewer::OnGUI()
     {
 
-        BeginHorizontal();
-        if (Button("Set Font"))
+        inputFontPath = FilePathField(inputFontPath);
+        filesystem::path selectedPath = filesystem::path(inputFontPath);
+        if (filesystem::exists(selectedPath))
         {
             currentFontPath = inputFontPath;
         }
-
-        Tab(20);
-
-        inputFontPath = TextField(inputFontPath);
-        EndHorizontal();
 
         Space(5);
 

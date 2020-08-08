@@ -93,19 +93,7 @@ namespace Ossium
             {
                 if (itr->second[i] != nullptr)
                 {
-                    vector<BaseComponent*>& ecs_components = controller->components[itr->second[i]->GetType()];
-                    for (auto j = ecs_components.begin(); j != ecs_components.end(); j++)
-                    {
-                        if (*j == itr->second[i])
-                        {
-                            ecs_components.erase(j);
-                            break;
-                        }
-                    }
-                    /// Now remove the component pointer from this entity's components hash and delete it
-                    itr->second[i]->OnDestroy();
                     delete itr->second[i];
-                    itr->second[i] = nullptr;
                 }
             }
             itr->second.clear();
@@ -370,6 +358,11 @@ namespace Ossium
         controller->DestroyEntity(this, immediate);
     }
 
+    int Entity::GetDepth()
+    {
+        return self->depth;
+    }
+
     Scene* Entity::GetScene()
     {
         return controller;
@@ -443,6 +436,11 @@ namespace Ossium
         return enabled && entity->IsActive();
     }
 
+    void BaseComponent::Destroy(bool immediate)
+    {
+        entity->GetScene()->DestroyComponent(this, immediate);
+    }
+
     ///
     /// Scene
     ///
@@ -476,7 +474,8 @@ namespace Ossium
 
     bool Scene::LoadAndInit(string guid_path, ServicesProvider* services)
     {
-        return Load(guid_path) && Init(services);
+        // Actually initialise before loading in this case; such that services are available to loaded entities.
+        return Init(services) && Load(guid_path);
     }
 
     bool Scene::Save(string directoryPath)
@@ -548,7 +547,7 @@ namespace Ossium
                 }
                 else
                 {
-                    pendingDestruction.push_back(entity);
+                    pendingDestruction.insert(entity);
                 }
             }
             else
@@ -562,10 +561,52 @@ namespace Ossium
         }
     }
 
+    void Scene::DestroyComponent(BaseComponent* component, bool immediate)
+    {
+        if (immediate)
+        {
+            auto itr = component->entity->GetAllComponents().find(component->GetType());
+            if (itr != component->entity->GetAllComponents().end() && !itr->second.empty() && itr->second[0] != nullptr)
+            {
+                std::vector<BaseComponent*>& ecs_components = components[component->GetType()];
+                /// First, remove the component pointer from the Scene
+                for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
+                {
+                    if (*i == component)
+                    {
+                        ecs_components.erase(i);
+                        break;
+                    }
+                }
+                /// Now remove the component pointer from the entity's components hash and delete the component.
+                component->OnDestroy();
+                itr->second.erase(itr->second.begin());
+                delete component;
+            }
+            else
+            {
+                // Must be destroyed already.
+                Log.Warning("Failed to locate component on entity '{0}' while attempting to manually destroy component. You should not call Destroy() more than once!", component->entity->name);
+            }
+        }
+        else
+        {
+            pendingDestructionComponents.insert(component);
+        }
+    }
+
     void Scene::DestroyPending()
     {
+        // Do components first.
+        for (auto component : pendingDestructionComponents)
+        {
+            DestroyComponent(component, true);
+        }
+        pendingDestructionComponents.clear();
+        // Now entities.
         for (auto entity : pendingDestruction)
         {
+            // Entities have a proper destructor.
             delete entity;
         }
         pendingDestruction.clear();

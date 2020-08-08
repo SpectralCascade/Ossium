@@ -212,13 +212,18 @@ namespace Ossium::Editor
         std::string TextField(std::string text);
         std::string TextField(std::string text, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
 
+        /// Similar to text fields, but an extra button allows you to pick a file path via the native file system dialogue.
+        std::string FilePathField(const std::string path);
+        std::string FilePathField(const std::string path, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
+        std::string FilePathField(const std::string path, StyleClickable style, StyleClickable findButtonStyle, std::string findButtonText = "...", SDL_Color cursorColor = Colors::BLACK);
+
         /// Dumps an image at the current layout position.
         void PlaceImage(Image* image);
 
         /// Displays a button that takes input. When a user activates the button, this returns true.
         bool Button(std::string text, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(std::string text, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
-        bool Button(std::string text, TextLayout& textLayout, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr);
+        bool Button(std::string text, TextLayout& textLayout, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool useMaxWidth = false, bool* isHovered = nullptr, bool* isPressed = nullptr, bool parseTags = true);
         bool Button(Image* image, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(Image* image, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, bool* isHovered = nullptr, bool* isPressed = nullptr);
         bool Button(int w, int h, StyleClickable style, bool invertOutline = true, Uint32 xpadding = 4, Uint32 ypadding = 4, Image* image = nullptr, bool* isHovered = nullptr, bool* isPressed = nullptr);

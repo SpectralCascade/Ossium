@@ -83,14 +83,14 @@ namespace Ossium
             return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
-        virtual void FromString(std::string& str)
+        void FromString(std::string& str)
         {
             JSON data(str);
             SerialiseIn(data);
         }
 
         /// Creates a JSON string with all the schema members.
-        virtual std::string ToString()
+        std::string ToString()
         {
             JSON data;
             SerialiseOut(data);
@@ -125,7 +125,7 @@ namespace Ossium
         }
 
         /// Creates key-values pairs using all members of the local schema hierarchy with the provided JSON object.
-        virtual void SerialiseOut(JSON& data)
+        void SerialiseOut(JSON& data)
         {
             for (unsigned int i = 0; i < count; i++)
             {
@@ -147,7 +147,7 @@ namespace Ossium
         }
 
         /// Sets the values of all members in the local schema hierarchy using a JSON object representation of the schema
-        virtual void SerialiseIn(JSON& data)
+        void SerialiseIn(JSON& data)
         {
             for (unsigned int i = 0; i < count; i++)
             {
@@ -305,6 +305,8 @@ namespace Ossium
         {
             return default_value;
         }
+
+        typedef Type value_type;
 
     private:
         static unsigned int index;
@@ -486,12 +488,12 @@ namespace Ossium
                 }                                                                                       \
                 return BASETYPE::GetMember(index);                                                      \
             }                                                                                           \
-            void SerialiseIn(JSON& data)                                                                \
+            virtual void SerialiseIn(JSON& data)                                                        \
             {                                                                                           \
                 SCHEMA_TYPE::SerialiseIn(data);                                                         \
                 BASETYPE::SerialiseIn(data);                                                            \
             }                                                                                           \
-            void SerialiseOut(JSON& data)                                                               \
+            virtual void SerialiseOut(JSON& data)                                                       \
             {                                                                                           \
                 BASETYPE::SerialiseOut(data);                                                           \
                 SCHEMA_TYPE::SerialiseOut(data);                                                        \

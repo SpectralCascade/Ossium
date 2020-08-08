@@ -210,6 +210,9 @@ namespace Ossium
         /// Also note that you should only ever call this once on an entity, or you'll end up crashing (as you would with multiple `delete` calls).
         void DestroyEntity(Entity* entity, bool immediate = false);
 
+        /// Destroys a single component. Note the component is destroyed at the end of the frame, prior to the entities destruction.
+        void DestroyComponent(BaseComponent* component, bool immediate = false);
+
         /// Actually deletes all entities pending destruction. This should only be called at the end of a frame once all components have been updated and/or rendered.
         void DestroyPending();
 
@@ -254,7 +257,11 @@ namespace Ossium
 
         /// All entities currently pending destruction. These will be destroyed at the end of the frame.
         /// They cannot be removed once added until they are destroyed.
-        std::vector<Entity*> pendingDestruction;
+        std::set<Entity*> pendingDestruction;
+
+        /// All components currently pending destruction. These will be destroyed at the end of the frame.
+        /// They cannot be removed once added until they are destroyed.
+        std::set<BaseComponent*> pendingDestructionComponents;
 
         /// Entity tree hierarchy (pure scene graph).
         Tree<Entity*> entityTree;
@@ -320,28 +327,14 @@ namespace Ossium
 
         /// Destroys and removes first found instance of a component attached to this entity.
         template<class T>
-        void RemoveComponent()
+        void RemoveComponent(bool immediate = false)
         {
             auto itr = components.find(GetComponentType<T>());
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
-                std::vector<BaseComponent*>& ecs_components = controller->components[GetComponentType<T>()];
-                /// First, remove the component pointer from the Scene
-                for (auto i = ecs_components.begin(); i != ecs_components.end(); i++)
-                {
-                    if (*i == itr->second[0])
-                    {
-                        ecs_components.erase(i);
-                        break;
-                    }
-                }
-                /// Now remove the component pointer from this entity's components hash and delete it
-                itr->second[0]->OnDestroy();
-                delete itr->second[0];
-                itr->second[0] = nullptr;
-                itr->second.erase(itr->second.begin());
+                BaseComponent* component = itr.second[0];
+                GetScene()->DestroyComponent(component, immediate);
             }
-            Log.Warning("(!) Could not find any component of type[{0}] attached to entity[{1}] with name '{2}'.", GetComponentType<T>(), self->id, name);
         }
 
         /// Returns a pointer to the first found instance of a component attached
@@ -489,7 +482,11 @@ namespace Ossium
         /// The name of this entity.
         std::string name;
 
+        /// Destroy the entity at the end of the frame, or immediately if desired.
         void Destroy(bool immediate = false);
+
+        /// Returns the depth of this entity in the hierarchy tree.
+        int GetDepth();
 
     private:
         /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
@@ -555,6 +552,9 @@ namespace Ossium
 
         /// Returns true only when enabled and the associated entity is active.
         bool IsActiveAndEnabled();
+
+        /// Destroy this specific component.
+        void Destroy(bool immediate = false);
 
     protected:
         /// These replace the constructor and destructor.

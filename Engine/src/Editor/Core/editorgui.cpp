@@ -16,6 +16,8 @@
 **/
 #include "editorgui.h"
 #include "contextmenu.h"
+#include "tinyfiledialogs.h"
+#include "editorconstants.h"
 #include "../../Core/textinput.h"
 #include "../../Core/mousecursor.h"
 
@@ -155,8 +157,8 @@ namespace Ossium::Editor
     {
         if (update || alwaysUpdate || forceUpdate)
         {
-            Refresh();
             update = false;
+            Refresh();
         }
     }
 
@@ -448,7 +450,7 @@ namespace Ossium::Editor
             }
 
             // Check if user clicks on the text field in this frame
-            if (Button(text, tlayout, style, false))
+            if (Button(text, tlayout, style, false, 4, 4, false, nullptr, nullptr, false))
             {
                 activeTextFieldId = textFieldCounter;
                 //Log.Info("Active text field set to {0}", activeTextFieldId);
@@ -474,6 +476,42 @@ namespace Ossium::Editor
         }
         textFieldCounter++;
         return text;
+    }
+
+    std::string EditorGUI::FilePathField(std::string path)
+    {
+        return FilePathField(path, EditorStyle::EDITOR_TEXTFIELD_STYLE);
+    }
+
+    std::string EditorGUI::FilePathField(std::string path, StyleClickable style, SDL_Color cursorColor)
+    {
+        return FilePathField(path, EditorStyle::EDITOR_TEXTFIELD_STYLE, EditorStyle::StandardButton);
+    }
+
+    std::string EditorGUI::FilePathField(std::string path, StyleClickable style, StyleClickable findButtonStyle, std::string findButtonText, SDL_Color cursorColor)
+    {
+        BeginHorizontal();
+        path = TextField(path, style, cursorColor);
+        if (Button(findButtonText, findButtonStyle, true, 8))
+        {
+            const char* result = tinyfd_openFileDialog(
+                "Ossium | Find File",
+                EDITOR_DEFAULT_DIRECTORY,
+                0,
+                nullptr,
+                "All Files",
+                0
+            );
+
+            if (result)
+            {
+                path = result;
+                TriggerUpdate();
+            }
+        }
+        EndHorizontal();
+
+        return path;
     }
 
     void EditorGUI::PlaceImage(Image* image)
@@ -508,7 +546,7 @@ namespace Ossium::Editor
         return false;
     }
 
-    bool EditorGUI::Button(string text, TextLayout& textLayout, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed)
+    bool EditorGUI::Button(string text, TextLayout& textLayout, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed, bool parseTags)
     {
         if (IsVisible())
         {
@@ -530,13 +568,13 @@ namespace Ossium::Editor
             {
                 textLayout.mainColor = style.hoverStyleText.fg;
                 textLayout.mainStyle = style.hoverStyleText.style;
-                textLayout.SetText(*renderer, font, text, true);
+                textLayout.SetText(*renderer, font, text, parseTags);
             }
             else if (*isPressed && (textLayout.mainColor != style.clickStyleText.fg || textLayout.mainStyle != style.clickStyleText.style))
             {
                 textLayout.mainColor = style.clickStyleText.fg;
                 textLayout.mainStyle = style.clickStyleText.style;
-                textLayout.SetText(*renderer, font, text, true);
+                textLayout.SetText(*renderer, font, text, parseTags);
             }
             textLayout.Update(font);
             textLayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));

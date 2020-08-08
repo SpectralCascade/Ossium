@@ -17,23 +17,30 @@ namespace Ossium::Editor
     {
         Entity* selected = GetEditorLayout()->GetEditorController()->GetSelectedEntity();
 
+        BeginHorizontal();
+
         if (selected != nullptr)
         {
+            TextLabel("Entity Name: ");
+            Tab(30);
             selected->name = TextField(selected->name);
+
+            Tab(76);
+
+            Space(4);
+
+            TextLabel("Active: ");
+            Tab(30);
+            bool result = Toggle(selected != nullptr ? selected->IsActiveLocally() : false);
+            if (selected != nullptr)
+            {
+                selected->SetActive(result);
+            }
+
         }
         else
         {
             TextLabel("<b>No entity selected.</b>");
-        }
-
-        BeginHorizontal();
-
-        TextLabel("Entity Active: ");
-        Tab(20);
-        bool result = Toggle(selected != nullptr ? selected->IsActive() : false);
-        if (selected != nullptr)
-        {
-            selected->SetActive(result);
         }
 
         EndHorizontal();
@@ -57,7 +64,26 @@ namespace Ossium::Editor
                         break;
                     }
 
+                    StyleClickable style = EditorStyle::StandardButton;
+                    style.hoverColor = Colors::RED;
+                    style.normalColor = Color(230, 0, 0);
+                    style.clickColor = Color(255, 80, 80);
+                    style.normalStyleText.fg = Colors::WHITE;
+                    style.hoverStyleText.fg = Colors::WHITE;
+                    style.clickStyleText.fg = Colors::WHITE;
+
+                    BeginHorizontal();
                     TextLabel(Utilities::Format("<b>{0}</b>", GetComponentName((ComponentType)component->GetType())));
+                    Tab(100);
+                    if (Button("Remove Component", style))
+                    {
+                        // Immediately destroy the component.
+                        component->Destroy(true);
+                        EndHorizontal();
+                        TriggerUpdate();
+                        continue;
+                    }
+                    EndHorizontal();
 
                     Space(4);
 
@@ -67,6 +93,10 @@ namespace Ossium::Editor
                     Property(data);
 
                     component->SerialiseIn(data);
+
+                    Space(2);
+                    Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Color(130, 130, 130));
+                    Space(2);
 
                 }
             }
@@ -106,8 +136,8 @@ namespace Ossium::Editor
 
             BeginHorizontal();
 
-            TextLabel(property.first + ": ");
-            Tab(20);
+            TextLabel(property.first + ": ", EditorStyle::StandardText);
+            Tab(100);
 
             PropertyValue(property.second);
 
