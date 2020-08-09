@@ -11,6 +11,8 @@ namespace Ossium::Editor
     public:
         void OnInit();
 
+        void OnGUI();
+
     };
 
 }

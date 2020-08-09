@@ -24,7 +24,7 @@ namespace Ossium::Editor
         // TODO: make this a method of the Window class
         SDL_SetWindowMinimumSize(native->GetWindowSDL(), (int)MIN_DIMENSIONS.x, (int)MIN_DIMENSIONS.y);
 
-        renderer = new Renderer(native);
+        renderer = new Renderer(native, 100);
         renderBuffer = SDL_CreateTexture(renderer->GetRendererSDL(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w <= 0 ? 1 : w, h <= 0 ? 1 : h);
 
         // Use breadth-first traversal to get the flat tree
@@ -244,6 +244,9 @@ namespace Ossium::Editor
         bool didUpdateViewports = updateViewports;
         updateViewports = false;
 
+        /// Update services before main logic update.
+        services->PreUpdate();
+
         // Second stage - logic and rendering.
         for (auto itr = flatTree.begin(); itr != endItr; itr++)
         {
@@ -256,6 +259,8 @@ namespace Ossium::Editor
             }
         }
 
+        services->PostUpdate();
+
         renderer->SetViewportRect({0, 0, native->GetWidth(), native->GetHeight()});
 
         // Change target back to the window and render the texture
@@ -263,6 +268,8 @@ namespace Ossium::Editor
         SDL_RenderClear(render);
         SDL_RenderCopy(render, renderBuffer, NULL, NULL);
         SDL_RenderPresent(renderer->GetRendererSDL());
+
+        services->PostRender();
 
         // Only remove windows when everything has finished updating.
         if (!toRemove.empty())

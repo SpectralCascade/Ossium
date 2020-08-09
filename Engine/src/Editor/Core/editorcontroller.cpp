@@ -53,6 +53,27 @@ namespace Ossium::Editor
         return selectedScene;
     }
 
+    vector<Scene*> EditorController::GetLoadedScenes()
+    {
+        vector<Scene*> result;
+        Project* project = GetProject();
+        if (project != nullptr)
+        {
+            for (auto scene : project->openScenes)
+            {
+                if (scene.loaded)
+                {
+                    Scene* loaded = resources->Get<Scene>(scene.path, GetMainLayout()->GetServices());
+                    if (loaded != nullptr)
+                    {
+                        result.push_back(loaded);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     void EditorController::SelectEntity(Entity* entity)
     {
         selectedEntity = entity;
@@ -93,6 +114,9 @@ namespace Ossium::Editor
 
     bool EditorController::Update()
     {
+        Timer timer;
+        timer.Start();
+
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0)
         {
@@ -124,6 +148,12 @@ namespace Ossium::Editor
         }
 
         ContextMenu::GetMainInstance(resources)->Update();
+
+        // Now delay about 16 ms to get ~60 FPS
+        if (timer.GetTicks() < 16)
+        {
+            SDL_Delay(16 - timer.GetTicks());
+        }
 
         if (toolbar->ShouldQuit())
         {

@@ -97,6 +97,9 @@ namespace Ossium::Editor
         /// Returns the selected scene or nullptr if none is selected.
         Scene* GetSelectedScene();
 
+        /// Returns all loaded scenes.
+        std::vector<Scene*> GetLoadedScenes();
+
         /// Select an entity.
         void SelectEntity(Entity* entity);
 
