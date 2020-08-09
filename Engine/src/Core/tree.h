@@ -56,50 +56,6 @@ namespace Ossium
         /// The index of this node in the parent node's array of children.
         unsigned int childIndex = 0;
 
-        /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
-        void SetParent(Node<T>* node, int index = -1)
-        {
-            Log.Info("\nInsert index = {0}, childIndex = {1}\n\n", index, childIndex);
-            if (parent != nullptr)
-            {
-                DEBUG_ASSERT(childIndex < parent->children.size(), "err");
-                // First, update the current parent of the node
-                parent->children.erase(parent->children.begin() + childIndex);
-                for (auto i = parent->children.begin() + childIndex, counti = parent->children.end(); i < counti; i++)
-                {
-                    // Update children
-                    (*i)->childIndex--;
-                }
-            }
-            // Now reassign the parent
-            parent = node;
-            if (parent != nullptr)
-            {
-                if (index >= 0)
-                {
-                    parent->children.insert(parent->children.begin() + index, this);
-                    childIndex = index;
-                    for (auto i = parent->children.begin() + childIndex + 1, counti = parent->children.end(); i < counti; i++)
-                    {
-                        // Update children
-                        (*i)->childIndex++;
-                    }
-                }
-                else
-                {
-                    childIndex = parent->children.size();
-                    parent->children.push_back(this);
-                }
-                depth = parent->depth + 1;
-            }
-            else
-            {
-                depth = 0;
-                childIndex = 0;
-                // TODO: roots!
-            }
-        }
-
     private:
         // Only the Tree class can instantiate nodes
         Node<T>() = default;
@@ -204,6 +160,59 @@ namespace Ossium
             /// Short circuit evalutation
             Node<T>* node = Find(predicate);
             return Remove(node);
+        }
+
+        /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
+        void SetParent(Node<T>* node, Node<T>* parent, int index = -1)
+        {
+            Log.Info("\nInsert index = {0}, childIndex = {1}\n\n", index, node->childIndex);
+            if (node->parent != nullptr)
+            {
+                DEBUG_ASSERT(node->childIndex < node->parent->children.size(), "err");
+                // First, update the current parent of the node
+                node->parent->children.erase(node->parent->children.begin() + node->childIndex);
+                for (auto i = node->parent->children.begin() + node->childIndex, counti = node->parent->children.end(); i < counti; i++)
+                {
+                    // Update children
+                    (*i)->childIndex--;
+                }
+            }
+            else
+            {
+                roots.erase(roots.begin() + node->childIndex);
+                for (auto i = roots.begin() + node->childIndex, counti = roots.end(); i < counti; i++)
+                {
+                    // Update children
+                    (*i)->childIndex--;
+                }
+            }
+            // Now reassign the parent
+            node->parent = parent;
+            if (node->parent != nullptr)
+            {
+                if (index >= 0)
+                {
+                    node->parent->children.insert(parent->children.begin() + index, node);
+                    node->childIndex = index;
+                    for (auto i = node->parent->children.begin() + node->childIndex + 1, counti = node->parent->children.end(); i < counti; i++)
+                    {
+                        // Update children
+                        (*i)->childIndex++;
+                    }
+                }
+                else
+                {
+                    node->childIndex = node->parent->children.size();
+                    node->parent->children.push_back(node);
+                }
+                node->depth = node->parent->depth + 1;
+            }
+            else
+            {
+                node->depth = 0;
+                node->childIndex = 0;
+                // TODO: roots!
+            }
         }
 
         /// Removes all nodes from the tree

@@ -437,7 +437,7 @@ namespace Ossium::Editor
                     sibling->parent->data.window = sibling->data.window;
                     for (auto child : sibling->children)
                     {
-                        child->SetParent(sibling->parent);
+                        layout.SetParent(child, sibling->parent);
                     }
                     layout.Remove(sibling);
                     //Log.Debug("Removed sibling, made it root.");
@@ -453,7 +453,7 @@ namespace Ossium::Editor
                     vector<Node<EditorRect>*> children = sibling->children;
                     for (auto child : children)
                     {
-                        child->SetParent(sibling->parent->parent, insertIndex);
+                        layout.SetParent(child, sibling->parent->parent, insertIndex);
                         //Log.Info("Inserted child at {0} (new depth = {1}, true child index = {2})", insertIndex, child->depth, child->childIndex);
                         insertIndex++;
                     }

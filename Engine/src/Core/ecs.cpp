@@ -249,7 +249,7 @@ namespace Ossium
 
     void Entity::SetParent(Entity* parent)
     {
-        self->SetParent(parent != nullptr ? parent->self : nullptr);
+        controller->entityTree.SetParent(self, parent != nullptr ? parent->self : nullptr);
     }
 
     void Entity::OnSceneLoaded()
