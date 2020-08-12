@@ -31,6 +31,7 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(TransformSchema, 4);
 
     protected:
+        /// TODO: use a matrix!
         /// Local/relative position to parent.
         M(Point, position) = Point(0, 0);
         /// Local/relative rotation to parent.
@@ -48,6 +49,7 @@ namespace Ossium
     {
     private:
         /// Cached world transform data. Only used if in 'relative' mode.
+        /// TODO: Use a matrix!
         Point worldPosition = Point(0, 0);
         Rotation worldRotation = Rotation(0);
         Vector2 worldScale = Vector2(1, 1);
@@ -55,11 +57,14 @@ namespace Ossium
         /// Does this transform follow the parent transform?
         bool dirty = true;
 
-        void SetDirty();
+        /// Refresh the world position data
+        void RefreshData();
 
     public:
         DECLARE_COMPONENT(BaseComponent, Transform);
         CONSTRUCT_SCHEMA(BaseComponent, TransformSchema);
+
+        void SetDirty();
 
         Point GetLocalPosition();
         Rotation GetLocalRotation();

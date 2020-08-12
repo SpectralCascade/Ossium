@@ -30,7 +30,7 @@ namespace Ossium
     void Texture::Render(Renderer& renderer)
     {
 
-        SDL_Rect dest = GetSDL(GetTransform()->GetWorldPosition());
+        SDL_Rect dest = GetSDL(GetTransform()->GetWorldPosition(), GetTransform()->GetWorldScale());
         if (source == nullptr || source->GetTexture() == NULL)
         {
             SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
@@ -38,7 +38,7 @@ namespace Ossium
             return;
         }
 
-        SDL_Point trueOrigin = {(int)(origin.x * width), (int)(origin.y * height)};
+        SDL_Point trueOrigin = {(int)(origin.x * width * GetTransform()->GetWorldScale().x), (int)(origin.y * height * GetTransform()->GetWorldScale().y)};
 
         /// Rendering time!
         if (clip.w > 0 && clip.h > 0)

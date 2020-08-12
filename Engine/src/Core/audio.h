@@ -521,7 +521,7 @@ namespace Ossium
             std::string ToString();
 
             /// Sets up specified audio buses.
-            void FromString(std::string& data);
+            void FromString(const std::string& data);
 
         private:
             /// All audio buses.

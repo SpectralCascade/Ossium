@@ -235,7 +235,7 @@ namespace Ossium
 
         /// Serialise everything
         std::string ToString();
-        void FromString(std::string& str);
+        void FromString(const std::string& str);
 
     private:
         /// Removes the entity from the inactiveEntities set.
@@ -476,7 +476,7 @@ namespace Ossium
         Scene* GetScene();
 
         /// String conversion methods get/set with the JSON representation of all attached components.
-        void FromString(std::string& str);
+        void FromString(const std::string& str);
         std::string ToString();
 
         /// The name of this entity.

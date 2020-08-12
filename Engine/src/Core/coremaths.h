@@ -100,7 +100,7 @@ namespace Ossium
 
         /// String conversion methods
         std::string ToString();
-        void FromString(std::string& str);
+        void FromString(const std::string& str);
 
         const static Vector2 Zero;
         const static Vector2 OneOne;
@@ -130,7 +130,7 @@ namespace Ossium
         void SetRadians(float radians);
 
         /// Convert rotation from a given string
-        void FromString(std::string& data);
+        void FromString(const std::string& data);
         /// Convert rotation to a string
         std::string ToString();
 
@@ -273,6 +273,9 @@ namespace Ossium
 
         /// Returns the SDL_Rect equivalent of this rect for convenience
         SDL_Rect SDL();
+
+        /// Converts a given string into a rect
+        void FromString(const std::string& str);
 
         /// Returns the string representation of this object.
         std::string ToString();

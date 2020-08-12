@@ -72,7 +72,7 @@ namespace Ossium
 
         /// Parses a string representing a JSON object and attempts to map the data.
         /// Note that calling this method does NOT clear any pre-existing data.
-        bool Parse(std::string& json, unsigned int startIndex = 0);
+        bool Parse(const std::string& json, unsigned int startIndex = 0);
 
         /// Converts this JSON object into a string format representation.
         std::string ToString(unsigned int indent_depth);
@@ -80,7 +80,7 @@ namespace Ossium
         std::string ToString();
 
         /// Same as Parse, but this one actually does clear the data first.
-        void FromString(std::string& str);
+        void FromString(const std::string& str);
 
     };
 

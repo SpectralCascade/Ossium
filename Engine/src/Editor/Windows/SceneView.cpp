@@ -19,6 +19,9 @@ namespace Ossium::Editor
         for (Scene* scene : loadedScenes)
         {
             scene->UpdateComponents();
+
+            // Hacky fix for updating transform positions. Rather slow, alternative maybe?
+            scene->WalkComponents<Transform>([] (Transform* t) { t->SetDirty(); });
         }
 
         // Draw to viewport

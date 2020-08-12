@@ -53,14 +53,14 @@ namespace Ossium
 
         template<typename T>
         typename std::enable_if<has_FromString<T>::value, void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
             obj.FromString(data);
         }
 
         template<typename T>
         typename std::enable_if<!has_FromString<T>::value && is_insertable<T>::value && !std::is_base_of<std::string, T>::value && !std::is_enum<T>::value, void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
             std::stringstream str;
             str.str("");
@@ -73,7 +73,7 @@ namespace Ossium
 
         template<typename T>
         typename std::enable_if<!has_FromString<T>::value && is_insertable<T>::value && !std::is_base_of<std::string, T>::value && std::is_enum<T>::value, void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
             FromString((int&)obj, data);
         }
@@ -81,7 +81,7 @@ namespace Ossium
         /// Overload for string types (insertion operator breaks up strings by spaces).
         template<typename T>
         typename std::enable_if<!has_FromString<T>::value && is_insertable<T>::value && std::is_base_of<std::string, T>::value, void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
             obj = data;
         }
@@ -94,7 +94,7 @@ namespace Ossium
             (is_insertable<typename T::value_type>::value || has_ToString<typename T::value_type>::value) &&
             !std::is_base_of<std::string, T>::value,
         void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
             std::vector<JString> jdata = JString(data).ToArray();
             auto target = obj.begin();
@@ -129,7 +129,7 @@ namespace Ossium
         /// Converts string version of a map into an actual map.
         /*template<typename T>
         typename std::enable_if<!has_FromString<T>::value && is_key_value_map<T>::value && is_range_erasable<T>::value && !std::is_base_of<std::string, T>::value, void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
             JSON jdata = JSON();
             if (jdata.Parse(data))
@@ -156,42 +156,30 @@ namespace Ossium
         typename std::enable_if<!has_FromString<T>::value && std::is_same<SDL_Color, T>::value, void>::type
         FromString(T& obj, std::string data)
         {
-            std::string value = "";
-            size_t index = 0;
-            for (auto c : data)
+            std::string stripped = Utilities::Strip(Utilities::Strip(data, '('), ')');
+            std::vector<std::string> split = Utilities::Split(stripped, ',');
+            if (split.size() >= 4)
             {
-                if (isdigit(c))
-                {
-                    value += c;
-                }
-                else if (c == ',')
-                {
-                    *((Uint8*)(((size_t)&obj) + index)) = (Uint8)ToInt(value);
-                    ++index;
-                    value = "";
-                }
+                obj.r = Utilities::ToInt(split[0]);
+                obj.g = Utilities::ToInt(split[1]);
+                obj.b = Utilities::ToInt(split[2]);
+                obj.a = Utilities::ToInt(split[3]);
             }
         }
 
         /// Get SDL_Rect from string.
         template<typename T>
         typename std::enable_if<!has_FromString<T>::value && std::is_same<SDL_Rect, T>::value, void>::type
-        FromString(T& obj, std::string data)
+        FromString(T& obj, const std::string& data)
         {
-            std::string value = "";
-            size_t index = 0;
-            for (auto c : data)
+            std::string stripped = Utilities::Strip(Utilities::Strip(data, '('), ')');
+            std::vector<std::string> split = Utilities::Split(stripped, ',');
+            if (split.size() >= 4)
             {
-                if (isdigit(c) || c == '-')
-                {
-                    value += c;
-                }
-                else if (c == ',')
-                {
-                    *((Sint32*)(((size_t)&obj) + index)) = (Sint32)ToInt(value);
-                    ++index;
-                    value = "";
-                }
+                obj.x = Utilities::ToInt(split[0]);
+                obj.y = Utilities::ToInt(split[1]);
+                obj.w = Utilities::ToInt(split[2]);
+                obj.h = Utilities::ToInt(split[3]);
             }
         }
 

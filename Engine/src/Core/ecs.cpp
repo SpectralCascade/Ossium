@@ -262,7 +262,7 @@ namespace Ossium
         }
     }
 
-    void Entity::FromString(string& str)
+    void Entity::FromString(const string& str)
     {
         JSON data(str);
 
@@ -673,7 +673,7 @@ namespace Ossium
         return serialised.ToString();
     }
 
-    void Scene::FromString(string& str)
+    void Scene::FromString(const string& str)
     {
         /// TODO: don't clear..?
         Clear();

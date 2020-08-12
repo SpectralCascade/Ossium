@@ -42,7 +42,7 @@ namespace Ossium
     {
     public:
         std::string ToString();
-        void FromString(std::string& data);
+        void FromString(const std::string& data);
     };
 
     struct OSSIUM_EDL StateSpriteSchema : public Schema<StateSpriteSchema>

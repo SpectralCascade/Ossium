@@ -83,7 +83,7 @@ namespace Ossium
             return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
-        void FromString(std::string& str)
+        void FromString(const std::string& str)
         {
             JSON data(str);
             SerialiseIn(data);
@@ -504,7 +504,7 @@ namespace Ossium
                 SerialiseOut(data);                                                                     \
                 return data.ToString();                                                                 \
             }                                                                                           \
-            virtual void FromString(std::string& str)                                                   \
+            virtual void FromString(const std::string& str)                                                   \
             {                                                                                           \
                 JSON data = JSON(str);                                                                  \
                 SerialiseIn(data);                                                                      \

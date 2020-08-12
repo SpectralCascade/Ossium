@@ -23,6 +23,27 @@ namespace Ossium
 
     REGISTER_COMPONENT(Transform);
 
+    void Transform::RefreshData()
+    {
+        if (dirty)
+        {
+            Entity* parent = entity->GetParent();
+            if (parent != nullptr)
+            {
+                worldPosition = position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
+                worldRotation = Rotation(b2Mul(rotation, parent->AddComponentOnce<Transform>()->GetWorldRotation()));
+                worldScale = scale * parent->AddComponentOnce<Transform>()->GetWorldScale();
+            }
+            else
+            {
+                worldPosition = position;
+                worldRotation = rotation;
+                worldScale = scale;
+            }
+            dirty = false;
+        }
+    }
+
     void Transform::SetDirty()
     {
         if (!dirty)
@@ -83,19 +104,7 @@ namespace Ossium
         {
             return position;
         }
-        if (dirty)
-        {
-            Entity* parent = entity->GetParent();
-            if (parent != nullptr)
-            {
-                worldPosition = position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
-            }
-            else
-            {
-                worldPosition = position;
-            }
-            dirty = false;
-        }
+        RefreshData();
         return worldPosition;
     }
 
@@ -105,19 +114,7 @@ namespace Ossium
         {
             return rotation;
         }
-        if (dirty)
-        {
-            Entity* parent = entity->GetParent();
-            if (parent != nullptr)
-            {
-                worldRotation = Rotation(b2Mul(rotation, parent->AddComponentOnce<Transform>()->GetWorldRotation()));
-            }
-            else
-            {
-                worldRotation = rotation;
-            }
-            dirty = false;
-        }
+        RefreshData();
         return worldRotation;
     }
 
@@ -127,19 +124,7 @@ namespace Ossium
         {
             return scale;
         }
-        if (dirty)
-        {
-            Entity* parent = entity->GetParent();
-            if (parent != nullptr)
-            {
-                worldScale = scale * parent->AddComponentOnce<Transform>()->GetWorldScale();
-            }
-            else
-            {
-                worldScale = scale;
-            }
-            dirty = false;
-        }
+        RefreshData();
         return worldScale;
     }
 

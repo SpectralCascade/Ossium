@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #ifndef METARECT_H
 #define METARECT_H
@@ -55,10 +55,12 @@ namespace Ossium
             origin.y = 0.5f;
         }
 
-        /// Returns the SDL_Rect equivalent of the rect
-        SDL_Rect GetSDL(const Point& position)
+        /// Returns the SDL_Rect equivalent of the rect (with rounding).
+        SDL_Rect GetSDL(const Point& position, Vector2 scale = Vector2::OneOne)
         {
-            SDL_Rect output = {(int)round(position.x - (width * 0.5f)), (int)round(position.y - (height * 0.5f)), (int)round(width), (int)round(height)};
+            float w = width * scale.x;
+            float h = height * scale.y;
+            SDL_Rect output = {(int)round(position.x - (w * 0.5f)), (int)round(position.y - (h * 0.5f)), (int)round(w), (int)round(h)};
             return output;
         }
 

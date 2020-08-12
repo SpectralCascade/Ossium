@@ -303,13 +303,13 @@ namespace Ossium
         return ToString(0);
     }
 
-    void JSON::FromString(string& str)
+    void JSON::FromString(const string& str)
     {
         clear();
         Parse(str);
     }
 
-    bool JSON::Parse(string& json, unsigned int startIndex)
+    bool JSON::Parse(const string& json, unsigned int startIndex)
     {
         bool open = false;
         bool keymode = false;

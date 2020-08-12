@@ -48,7 +48,7 @@ namespace Ossium
         return data.str();
     }
 
-    void StateSpriteTable::FromString(string& data)
+    void StateSpriteTable::FromString(const string& data)
     {
         bool keymode = false;
         string valueStr;

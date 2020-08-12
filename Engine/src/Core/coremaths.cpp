@@ -145,16 +145,16 @@ namespace Ossium
         return "(" + Utilities::ToString(x) + ", " + Utilities::ToString(y) + ")";
     }
 
-    void Vector2::FromString(string& str)
+    void Vector2::FromString(const string& str)
     {
         unsigned int len = str.length();
         if (len > 4)
         {
             /// Remove brackets
-            str = str.substr(1, len - 2);
+            string converted = str.substr(1, len - 2);
             /// Split and get the individual values
-            string xhalf = SplitLeft(str, ',');
-            string yhalf = SplitRight(str, ',');
+            string xhalf = SplitLeft(converted, ',');
+            string yhalf = SplitRight(converted, ',');
             x = ToFloat(xhalf);
             y = ToFloat(yhalf);
         }
@@ -196,7 +196,7 @@ namespace Ossium
         Set(angle);
     }
 
-    void Rotation::FromString(string& data)
+    void Rotation::FromString(const string& data)
     {
         float degs;
         Utilities::FromString(degs, data);
@@ -459,6 +459,19 @@ namespace Ossium
     SDL_Rect Rect::SDL()
     {
         return (SDL_Rect){(int)round(x), (int)round(y), (int)round(w), (int)round(h)};
+    }
+
+    void Rect::FromString(const string& str)
+    {
+        string stripped = Utilities::Strip(Utilities::Strip(str, '('), ')');
+        vector<string> split = Utilities::Split(stripped, ',');
+        if (split.size() >= 4)
+        {
+            x = Utilities::ToFloat(split[0]);
+            y = Utilities::ToFloat(split[1]);
+            w = Utilities::ToFloat(split[2]);
+            h = Utilities::ToFloat(split[3]);
+        }
     }
 
     string Rect::ToString()

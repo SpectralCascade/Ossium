@@ -697,7 +697,7 @@ namespace Ossium
             return mixer.ToString();
         }
 
-        void AudioMixer::FromString(string& data)
+        void AudioMixer::FromString(const string& data)
         {
             JSON mixer;
             if (mixer.Parse(data))
