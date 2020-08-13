@@ -42,7 +42,7 @@ namespace Ossium::Editor
                     {
                         loaded->WalkEntities([&] (Entity* entity) {
                             ListEntity(entity);
-                        });
+                        }, false);
                     }
                 }
             }

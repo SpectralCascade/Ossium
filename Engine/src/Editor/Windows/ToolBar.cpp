@@ -65,6 +65,13 @@ namespace Ossium::Editor
                 if (path)
                 {
                     GetEditorLayout()->GetEditorController()->OpenProject(path);
+
+                    // TODO: load previous window layout instead of hardcoding this
+                    SceneHierarchy* hierarchy = GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM);
+                    SceneView* view = GetEditorLayout()->Add<SceneView>(hierarchy, DockingMode::RIGHT);
+                    GetEditorLayout()->Add<EntityProperties>(view, DockingMode::RIGHT);
+                    viewport.h = minDimensions.y;
+                    GetEditorLayout()->Resize(this, Rect(viewport));
                 }
 
             }

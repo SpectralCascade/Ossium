@@ -13,6 +13,8 @@ namespace Ossium::Editor
 
     void SceneView::OnGUI()
     {
+        Rect(0, 0, viewport.w, viewport.h).DrawFilled(*renderer, Colors::WHITE);
+
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
         vector<Scene*> loadedScenes = editor->GetLoadedScenes();

@@ -93,7 +93,7 @@ namespace Ossium
             {
                 if (itr->second[i] != nullptr)
                 {
-                    delete itr->second[i];
+                    itr->second[i]->Destroy(true);
                 }
             }
             itr->second.clear();
@@ -543,7 +543,6 @@ namespace Ossium
                 if (immediate)
                 {
                     delete entity;
-                    // TODO: cleanup entity tree
                 }
                 else
                 {

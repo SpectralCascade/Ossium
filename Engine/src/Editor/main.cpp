@@ -22,10 +22,10 @@ int main(int argc, char* argv[])
         // Update until the editor stops running.
     }
 
+    resources.FreeAll();
+
     delete editor;
     editor = nullptr;
-
-    resources.FreeAll();
 
     TerminateOssium();
     return 0;
