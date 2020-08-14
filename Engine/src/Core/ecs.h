@@ -529,7 +529,7 @@ namespace Ossium
         ///
         /// Warning: extend max members before adding new members!
         ///
-        M(bool, enabled) = true;
+        SCHEMA_MEMBER(ATTRIBUTE_HIDDEN, bool, enabled) = true;
 
     };
 
