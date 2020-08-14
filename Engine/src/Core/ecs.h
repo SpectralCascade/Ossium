@@ -533,6 +533,10 @@ namespace Ossium
 
     };
 
+#ifdef OSSIUM_EDITOR
+    namespace Editor { class EntityProperties; }
+#endif // OSSIUM_EDITOR
+
     /// Base class for all components
     /// WARNING: INHERITANCE ORDER MUST NOT BE CHANGED as it affects the STRUCTURAL LAYOUT which schemas are dependant upon.
     class OSSIUM_EDL BaseComponent : public SchemaReferable, public ComponentSchema
@@ -542,6 +546,9 @@ namespace Ossium
 
         friend class Entity;
         friend class Scene;
+#ifdef OSSIUM_EDITOR
+        friend class Editor::EntityProperties;
+#endif // OSSIUM_EDITOR
 
         /// Returns a pointer to the entity this component is attached to.
         Entity* GetEntity();

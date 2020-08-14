@@ -23,7 +23,7 @@ namespace Ossium
             gui->BeginHorizontal();
             gui->TextLabel(string(name), EditorStyle::StandardText);
             gui->Tab(100);
-            string data = gui->TextField(property);
+            string data = attribute & ATTRIBUTE_FILEPATH ? gui->FilePathField(property) : gui->TextField(property);
             gui->EndHorizontal();
             return data;
         }

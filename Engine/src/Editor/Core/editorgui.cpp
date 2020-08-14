@@ -492,7 +492,7 @@ namespace Ossium::Editor
     {
         BeginHorizontal();
         path = TextField(path, style, cursorColor);
-        if (Button(findButtonText, findButtonStyle, true, 8))
+        if (Button(findButtonText, findButtonStyle, true, 12))
         {
             const char* result = tinyfd_openFileDialog(
                 "Ossium | Find File",

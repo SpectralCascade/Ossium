@@ -19,8 +19,8 @@ namespace Ossium
     enum EditorAttribute
     {
         ATTRIBUTE_NONE            = 0,        // Default value.
-        ATTRIBUTE_HIDDEN          = 1,        // Hides the property
-        ATTRIBUTE__RESERVED_02    = 2,        // Reserved for future use
+        ATTRIBUTE_HIDDEN          = 1,        // Hides the property (all types).
+        ATTRIBUTE_FILEPATH        = 2,        // Treat property as a file path (strings only).
         ATTRIBUTE__RESERVED_03    = 4,        // Reserved for future use
         ATTRIBUTE__RESERVED_04    = 8,        // Reserved for future use
         ATTRIBUTE__RESERVED_05    = 16,       // Reserved for future use

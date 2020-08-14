@@ -90,7 +90,10 @@ namespace Ossium::Editor
 
                     JSON data;
                     component->SerialiseOut(data, this);
+
+                    component->OnLoadStart();
                     component->SerialiseIn(data);
+                    component->OnLoadFinish();
 
                     Space(2);
                     Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Color(130, 130, 130));

@@ -59,7 +59,8 @@ namespace Ossium
             return;
         }
         /// Don't configure dimensions, they should be specified by the schema data.
-        SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()), false);
+        SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()), true);
+        /// Set clip to fit loaded image
         Log.Verbose("Loaded texture with source from \"{0}\"", imgPath);
     }
 

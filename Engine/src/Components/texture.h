@@ -36,7 +36,7 @@ namespace Ossium
         DECLARE_SCHEMA(TextureSchema, MetaRect);
 
         /// Path to the image file this texture should display
-        M(std::string, imgPath);
+        SCHEMA_MEMBER(ATTRIBUTE_FILEPATH, std::string, imgPath);
 
         /// The area of the source image that should be rendered
         M(SDL_Rect, clip) = {0, 0, 0, 0};
