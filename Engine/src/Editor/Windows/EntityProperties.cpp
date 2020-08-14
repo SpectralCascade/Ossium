@@ -11,6 +11,7 @@ namespace Ossium::Editor
 
     void EntityProperties::OnInit()
     {
+        _InitEditorSerializer(this);
     }
 
     void EntityProperties::OnGUI()
@@ -87,12 +88,16 @@ namespace Ossium::Editor
 
                     Space(4);
 
+                    /*
                     JSON data;
                     component->SerialiseOut(data);
 
                     Property(data);
 
                     component->SerialiseIn(data);
+                    */
+
+
 
                     Space(2);
                     Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Color(130, 130, 130));

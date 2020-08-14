@@ -23,6 +23,11 @@
 
 using namespace Ossium;
 
+namespace Ossium
+{
+    class EditorSerializer;
+}
+
 namespace Ossium::Editor
 {
 
@@ -50,6 +55,8 @@ namespace Ossium::Editor
     class EditorGUI : public EditorViewportSchema
     {
     private:
+        friend class Ossium::EditorSerializer;
+
         /// Used to determine how GUI elements are positioned.
         std::stack<Vector2> layoutStack;
 

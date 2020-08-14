@@ -23,10 +23,21 @@
 #include "../Core/editorgui.h"
 #include "../../Core/tree.h"
 
+namespace Ossium
+{
+    // Forward declaration
+    class EditorSerializer;
+}
+
 using namespace Ossium;
 
 namespace Ossium::Editor
 {
+
+    // Forward declarations
+    class EditorLayout;
+    class EditorRect;
+
 
     /// Contains layout data for an EditorWindow.
     struct EditorWindowSettings : public Schema<EditorWindowSettings, 20>
@@ -42,10 +53,6 @@ namespace Ossium::Editor
 
     };
 
-    // Forward declarations
-    class EditorLayout;
-    class EditorRect;
-
     /// A dockable window with support for custom Immediate-Mode GUI.
     /**
      * This is used to create custom editor windows (via inheritance).
@@ -60,6 +67,7 @@ namespace Ossium::Editor
 
     private:
         friend class EditorLayout;
+        friend class EditorSerializer;
 
         /// Settings defining the window title, dimensions etc.
         EditorWindowSettings settings;

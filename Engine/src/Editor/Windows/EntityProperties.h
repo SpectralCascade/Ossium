@@ -4,11 +4,12 @@
 #include "../../Core/jsondata.h"
 
 #include "../Core/editorwindow.h"
+#include "../Core/editorserializer.h"
 
 namespace Ossium::Editor
 {
 
-    class EntityProperties : public EditorWindow
+    class EntityProperties : public EditorWindow, public Ossium::EditorSerializer
     {
     public:
         void OnInit();

@@ -27,23 +27,43 @@ extern "C"
 #include "funcutils.h"
 #include "typefactory.h"
 #include "jsondata.h"
+#include "stringconvert.h"
 
 namespace Ossium
 {
+
+    /// Default serializer. Just does ToString(), nothing special.
+    class SimpleSerializer
+    {
+    public:
+        template<typename ...Args>
+        std::string SerializeProperty(Args&&... args)
+        {
+            return Utilities::ToString(std::forward<Args>(args)...);
+        }
+
+    };
 
     ///
     /// Schema
     ///
 
-    template<class BaseType, unsigned int MaximumMembers = 20>
+    template<class BaseType, unsigned int MaximumMembers = 20, class BaseSerializer = SimpleSerializer>
     struct OSSIUM_EDL Schema
     {
         const static unsigned int MaxMembers = MaximumMembers;
 
         typedef unsigned int MemberIdent;
+        typedef BaseSerializer Serializer;
 
-        static unsigned int AddMember(const char* type, const char* name, size_t mem_size, int mem_attribute,
-                                      std::function<bool(void*, const char*, std::string)> lambdaFromString, std::function<std::string(void*, const char*)> lambdaToString, const char* ultimate_name)
+        static unsigned int AddMember(const char* type,
+                                      const char* name,
+                                      size_t mem_size,
+                                      int mem_attribute,
+                                      std::function<bool(void*, const char*, std::string)> lambdaFromString,
+                                      std::function<std::string(void*, const char*)> lambdaToString,
+                                      std::function<std::string(Serializer*, void*)> lambdaSerializeProperty,
+                                      const char* ultimate_name)
         {
             DEBUG_ASSERT(count < MaximumMembers, "Exceeded maximum number of members. Please allocate a higher maximum in the Schema.");
             member_names[count] = name;
@@ -52,37 +72,49 @@ namespace Ossium
             member_byte_offsets[count] = mem_size;
             member_from_string[count] = lambdaFromString;
             member_to_string[count] = lambdaToString;
+            member_serializer[count] = lambdaSerializeProperty;
             schema_name = ultimate_name;
             count++;
             return count - 1;
         }
 
-        /// This root schema has no members of it's own.
         static unsigned int GetMemberCount()
         {
+            // This root schema has no members of it's own.
             return 0;
         }
 
+        /// Returns the type of a specified member as a string.
         static const char* GetMemberType(unsigned int index)
         {
             return member_types[index];
         }
 
+        /// Returns the name of a specified member.
         static const char* GetMemberName(unsigned int index)
         {
             return member_names[index];
         }
 
+        /// Returns the attribute value for the specified member.
         static int GetMemberAttribute(unsigned int index)
         {
             return member_attributes[index];
         }
 
+        /// Returns a void pointer to the specified member.
         void* GetMember(unsigned int index)
         {
             return (void*)((size_t)((void*)this) + member_byte_offsets[index]);
         }
 
+        /// Serializes the specified member using custom serialization methods available in the derived class.
+        static std::string SerializeMember(Serializer* serializer, unsigned int index)
+        {
+            return member_serializer[index](serializer, GetMember(index));
+        }
+
+        /// Initialises this schema instance from a JSON string.
         void FromString(const std::string& str)
         {
             JSON data(str);
@@ -97,6 +129,7 @@ namespace Ossium
             return data.ToString();
         }
 
+        /// Loads this schema instance from a specified JSON file.
         bool Load(std::string filePath)
         {
             std::ifstream file(filePath);
@@ -111,6 +144,7 @@ namespace Ossium
             return false;
         }
 
+        /// Saves this schema instance as a JSON file.
         bool Save(std::string filePath)
         {
             std::ofstream file(filePath);
@@ -185,6 +219,7 @@ namespace Ossium
     private:
         static std::function<bool(void*, const char*, std::string)> member_from_string[MaximumMembers];
         static std::function<std::string(void*, const char*)> member_to_string[MaximumMembers];
+        static std::function<std::string(Serializer*, void*)> member_serializer[MaximumMembers];
         /// Array of associated user attributes for each schema member
         static int member_attributes[MaximumMembers];
         /// Array of names for each schema member
@@ -198,29 +233,32 @@ namespace Ossium
 
     };
 
-    template<class BaseType, unsigned int MaximumMembers>
-    std::function<bool(void*, const char*, std::string)> Schema<BaseType, MaximumMembers>::member_from_string[MaximumMembers];
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    std::function<bool(void*, const char*, std::string)> Schema<BaseType, MaximumMembers, BaseSerializer>::member_from_string[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    std::function<std::string(void*, const char*)> Schema<BaseType, MaximumMembers>::member_to_string[MaximumMembers];
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    std::function<std::string(void*, const char*)> Schema<BaseType, MaximumMembers, BaseSerializer>::member_to_string[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    int Schema<BaseType, MaximumMembers>::member_attributes[MaximumMembers];
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    std::function<std::string(BaseSerializer*, void*)> Schema<BaseType, MaximumMembers, BaseSerializer>::member_serializer[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    size_t Schema<BaseType, MaximumMembers>::member_byte_offsets[MaximumMembers];
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    int Schema<BaseType, MaximumMembers, BaseSerializer>::member_attributes[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    const char* Schema<BaseType, MaximumMembers>::member_names[MaximumMembers];
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    size_t Schema<BaseType, MaximumMembers, BaseSerializer>::member_byte_offsets[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    const char* Schema<BaseType, MaximumMembers>::member_types[MaximumMembers];
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    const char* Schema<BaseType, MaximumMembers, BaseSerializer>::member_names[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    const char* Schema<BaseType, MaximumMembers>::schema_name = "";
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    const char* Schema<BaseType, MaximumMembers, BaseSerializer>::member_types[MaximumMembers];
 
-    template<class BaseType, unsigned int MaximumMembers>
-    unsigned int Schema<BaseType, MaximumMembers>::count = 0;
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    const char* Schema<BaseType, MaximumMembers, BaseSerializer>::schema_name = "";
+
+    template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
+    unsigned int Schema<BaseType, MaximumMembers, BaseSerializer>::count = 0;
 
     ///
     /// SchemaRoot
@@ -276,10 +314,17 @@ namespace Ossium
     template<typename SchemaType, typename Type, typename strType, typename strName>
     struct OSSIUM_EDL MemberInfo
     {
-        MemberInfo(unsigned int& m_count, std::function<bool(void*, const char*, std::string)> lambdaFromString, std::function<std::string(void*, const char*)> lambdaToString, const char* ultimate_name, size_t member_offset, int mem_attribute)
-        {
+        MemberInfo(
+            unsigned int& m_count,
+            std::function<bool(void*, const char*, std::string)> lambdaFromString,
+            std::function<std::string(void*, const char*)> lambdaToString,
+            std::function<std::string(typename SchemaType::Serializer*, void*)> lambdaSerializeProperty,
+            const char* ultimate_name,
+            size_t member_offset,
+            int mem_attribute
+        ) {
             ++m_count;
-            index = SchemaType::AddMember(strType::str, strName::str, member_offset, mem_attribute, lambdaFromString, lambdaToString, ultimate_name);
+            index = SchemaType::AddMember(strType::str, strName::str, member_offset, mem_attribute, lambdaFromString, lambdaToString, lambdaSerializeProperty, ultimate_name);
         }
 
         inline static const char* type = strType::str;
@@ -319,7 +364,7 @@ namespace Ossium
     template<typename SchemaType, typename Type, typename strType, typename strName>
     unsigned int MemberInfo<SchemaType, Type, strType, strName>::index = 0;
 
-    /// Types that can be referenced via pointers should inherit from this CRTP mix-in class.
+    /// Types that can be referenced via pointers should inherit from this mix-in class.
     class OSSIUM_EDL SchemaReferable
     {
     public:
@@ -434,17 +479,28 @@ namespace Ossium
         return std::string("null");                                                                         \
     }
 
+    /// TODO: pass in attribute?
+    #define CUSTOM_MEMBER_SERIALIZER(TYPE)                                                                  \
+    [](BaseSchemaType::Serializer* serializer, void* member)                                                \
+    {                                                                                                       \
+        return serializer->SerializeProperty(*reinterpret_cast<TYPE*>(member));                             \
+    }
+
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
     /// Also checks if the type is a pointer. If so, it gets the custom TO_STRING and FROM_STRING macros.
+    /// TODO: MemberInfo should take another lambda for custom properties, that accepts a CustomSerializer instance (e.g. EditorSerializer) and returns a string.
+    /// Make sure to do a #ifdef OSSIUM_EDITOR, if not defined then the lambda should return an empty string.
     #define SCHEMA_MEMBER(ATTRIBUTE, TYPE, NAME)                                                                                                                        \
             MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >& schema_m_##NAME()                                                                             \
             {                                                                                                                                                           \
                 static MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >* initialised_info = std::is_pointer<TYPE>::value ?                                  \
                     new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count,                                                                \
-                                    REFPTR_FROM_STRING( TYPE ), REFPTR_TO_STRING( TYPE ), schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME), ATTRIBUTE)  \
+                                    REFPTR_FROM_STRING( TYPE ), REFPTR_TO_STRING( TYPE ), CUSTOM_MEMBER_SERIALIZER( TYPE ),                                             \
+                                    schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME), ATTRIBUTE)                                                        \
                     :                                                                                                                                                   \
                     new MemberInfo<BaseSchemaType, TYPE , SID(#TYPE ), SID(#NAME ) >(schema_local_count,                                                                \
-                                    MEMBER_FROM_STRING( TYPE ), MEMBER_TO_STRING( TYPE ), schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME), ATTRIBUTE); \
+                                    MEMBER_FROM_STRING( TYPE ), MEMBER_TO_STRING( TYPE ), CUSTOM_MEMBER_SERIALIZER( TYPE ),                                             \
+                                    schema_local_typename, (size_t)((void*)&schema_layout_ref->NAME), ATTRIBUTE);                                                       \
                 return *initialised_info;                                                                                                                               \
             }                                                                                                                                                           \
             TYPE NAME = schema_m_##NAME()

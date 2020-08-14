@@ -25,8 +25,7 @@
 namespace Ossium
 {
 
-    /// Forward declarations
-    class Texture;
+    /// Forward declaration
     class TexturePack;
 
     /// This class wraps a single SDL_Surface (an image stored in RAM) and/or a single SDL_Texture (an image usually stored in GPU memory).

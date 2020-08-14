@@ -286,6 +286,7 @@
 		<Unit filename="src/Core/schemamodel.h" />
 		<Unit filename="src/Core/services.cpp" />
 		<Unit filename="src/Core/services.h" />
+		<Unit filename="src/Core/slotmap.h" />
 		<Unit filename="src/Core/stb_rect_pack.h" />
 		<Unit filename="src/Core/stringconvert.cpp" />
 		<Unit filename="src/Core/stringconvert.h" />
@@ -353,6 +354,8 @@
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />
 		</Unit>
+		<Unit filename="src/Editor/Core/editorserializer.cpp" />
+		<Unit filename="src/Editor/Core/editorserializer.h" />
 		<Unit filename="src/Editor/Core/editorstyle.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />

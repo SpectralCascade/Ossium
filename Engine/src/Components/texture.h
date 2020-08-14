@@ -33,7 +33,7 @@ namespace Ossium
     struct OSSIUM_EDL TextureSchema : public MetaRect
     {
     public:
-        DECLARE_SCHEMA(TextureSchema, Schema<MetaRectSchema>);
+        DECLARE_SCHEMA(TextureSchema, MetaRect);
 
         /// Path to the image file this texture should display
         M(std::string, imgPath);
