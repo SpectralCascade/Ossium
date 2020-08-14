@@ -88,16 +88,12 @@ namespace Ossium::Editor
 
                     Space(4);
 
-                    /*
                     JSON data;
-                    component->SerialiseOut(data);
+                    component->SerialiseOut(data, this);
 
-                    Property(data);
+                    Log.Info("Serialised to JSON:\n{0}", data.ToString());
 
                     component->SerialiseIn(data);
-                    */
-
-
 
                     Space(2);
                     Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Color(130, 130, 130));

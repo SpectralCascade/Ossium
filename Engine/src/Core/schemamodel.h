@@ -22,33 +22,24 @@ extern "C"
     #include <SDL2/SDL.h>
 }
 #include <fstream>
+#include <type_traits>
+#include <utility>
 
 #include "stringintern.h"
 #include "funcutils.h"
 #include "typefactory.h"
 #include "jsondata.h"
 #include "stringconvert.h"
+#include "../Editor/Core/editorserializer.h"
 
 namespace Ossium
 {
-
-    /// Default serializer. Just does ToString(), nothing special.
-    class SimpleSerializer
-    {
-    public:
-        template<typename ...Args>
-        std::string SerializeProperty(Args&&... args)
-        {
-            return Utilities::ToString(std::forward<Args>(args)...);
-        }
-
-    };
 
     ///
     /// Schema
     ///
 
-    template<class BaseType, unsigned int MaximumMembers = 20, class BaseSerializer = SimpleSerializer>
+    template<class BaseType, unsigned int MaximumMembers = 20, class BaseSerializer = EditorSerializer>
     struct OSSIUM_EDL Schema
     {
         const static unsigned int MaxMembers = MaximumMembers;
@@ -62,7 +53,7 @@ namespace Ossium
                                       int mem_attribute,
                                       std::function<bool(void*, const char*, std::string)> lambdaFromString,
                                       std::function<std::string(void*, const char*)> lambdaToString,
-                                      std::function<std::string(Serializer*, void*)> lambdaSerializeProperty,
+                                      std::function<std::string(Serializer*, const char*, const char*, int, void*)> lambdaSerializeProperty,
                                       const char* ultimate_name)
         {
             DEBUG_ASSERT(count < MaximumMembers, "Exceeded maximum number of members. Please allocate a higher maximum in the Schema.");
@@ -111,7 +102,7 @@ namespace Ossium
         /// Serializes the specified member using custom serialization methods available in the derived class.
         static std::string SerializeMember(Serializer* serializer, unsigned int index)
         {
-            return member_serializer[index](serializer, GetMember(index));
+            return member_serializer[index](serializer, GetMemberType(index), GetMemberName(index), GetMemberAttribute(index), GetMember(index));
         }
 
         /// Initialises this schema instance from a JSON string.
@@ -159,7 +150,7 @@ namespace Ossium
         }
 
         /// Creates key-values pairs using all members of the local schema hierarchy with the provided JSON object.
-        void SerialiseOut(JSON& data)
+        void SerialiseOut(JSON& data, Serializer* customSerializer = nullptr)
         {
             for (unsigned int i = 0; i < count; i++)
             {
@@ -170,7 +161,7 @@ namespace Ossium
                 if (member != nullptr)
                 {
                     /// Add the key-value pair to the JSON object
-                    data[key] = member_to_string[i](member, member_types[i]);
+                    data[key] = customSerializer != nullptr ? member_serializer[i](customSerializer, member_types[i], member_names[i], member_attributes[i], member) : member_to_string[i](member, member_types[i]);
                 }
                 else
                 {
@@ -219,7 +210,7 @@ namespace Ossium
     private:
         static std::function<bool(void*, const char*, std::string)> member_from_string[MaximumMembers];
         static std::function<std::string(void*, const char*)> member_to_string[MaximumMembers];
-        static std::function<std::string(Serializer*, void*)> member_serializer[MaximumMembers];
+        static std::function<std::string(Serializer*, const char*, const char*, int, void*)> member_serializer[MaximumMembers];
         /// Array of associated user attributes for each schema member
         static int member_attributes[MaximumMembers];
         /// Array of names for each schema member
@@ -240,7 +231,7 @@ namespace Ossium
     std::function<std::string(void*, const char*)> Schema<BaseType, MaximumMembers, BaseSerializer>::member_to_string[MaximumMembers];
 
     template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
-    std::function<std::string(BaseSerializer*, void*)> Schema<BaseType, MaximumMembers, BaseSerializer>::member_serializer[MaximumMembers];
+    std::function<std::string(BaseSerializer*, const char*, const char*, int, void*)> Schema<BaseType, MaximumMembers, BaseSerializer>::member_serializer[MaximumMembers];
 
     template<class BaseType, unsigned int MaximumMembers, class BaseSerializer>
     int Schema<BaseType, MaximumMembers, BaseSerializer>::member_attributes[MaximumMembers];
@@ -287,7 +278,7 @@ namespace Ossium
             return "(null)";
         }
 
-        static void SerialiseOut(JSON& data)
+        static void SerialiseOut(JSON& data, EditorSerializer* customSerializer = nullptr)
         {
         }
 
@@ -318,7 +309,7 @@ namespace Ossium
             unsigned int& m_count,
             std::function<bool(void*, const char*, std::string)> lambdaFromString,
             std::function<std::string(void*, const char*)> lambdaToString,
-            std::function<std::string(typename SchemaType::Serializer*, void*)> lambdaSerializeProperty,
+            std::function<std::string(typename SchemaType::Serializer*, const char*, const char*, int, void*)> lambdaSerializeProperty,
             const char* ultimate_name,
             size_t member_offset,
             int mem_attribute
@@ -479,11 +470,10 @@ namespace Ossium
         return std::string("null");                                                                         \
     }
 
-    /// TODO: pass in attribute?
-    #define CUSTOM_MEMBER_SERIALIZER(TYPE)                                                                  \
-    [](BaseSchemaType::Serializer* serializer, void* member)                                                \
-    {                                                                                                       \
-        return serializer->SerializeProperty(*reinterpret_cast<TYPE*>(member));                             \
+    #define CUSTOM_MEMBER_SERIALIZER(TYPE)                                                                      \
+    [](BaseSchemaType::Serializer* serializer, const char* type, const char* name, int attribute, void* member) \
+    {                                                                                                           \
+        return serializer->SerializeProperty(type, name, attribute, *reinterpret_cast<TYPE*>(member));          \
     }
 
     /// This uses the wonderful Construct On First Use idiom to ensure that the order of the members is always base class, then derived class
@@ -549,10 +539,10 @@ namespace Ossium
                 SCHEMA_TYPE::SerialiseIn(data);                                                         \
                 BASETYPE::SerialiseIn(data);                                                            \
             }                                                                                           \
-            virtual void SerialiseOut(JSON& data)                                                       \
+            virtual void SerialiseOut(JSON& data, EditorSerializer* serializer = nullptr)               \
             {                                                                                           \
-                BASETYPE::SerialiseOut(data);                                                           \
-                SCHEMA_TYPE::SerialiseOut(data);                                                        \
+                BASETYPE::SerialiseOut(data, serializer);                                               \
+                SCHEMA_TYPE::SerialiseOut(data, serializer);                                            \
             }                                                                                           \
             virtual std::string ToString()                                                              \
             {                                                                                           \
@@ -560,7 +550,7 @@ namespace Ossium
                 SerialiseOut(data);                                                                     \
                 return data.ToString();                                                                 \
             }                                                                                           \
-            virtual void FromString(const std::string& str)                                                   \
+            virtual void FromString(const std::string& str)                                             \
             {                                                                                           \
                 JSON data = JSON(str);                                                                  \
                 SerialiseIn(data);                                                                      \
