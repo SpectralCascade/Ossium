@@ -57,15 +57,12 @@ namespace Ossium
 
         if (font != nullptr)
         {
-            if (dirty)
-            {
-                dirty = false;
-                layout.SetText(renderer, *font, text, applyMarkup);
-            }
-
+            /// TODO: figure out why we have to update every frame! Maybe the font atlas glyph cache breaks?
+            layout.SetText(renderer, *font, text, applyMarkup);
             layout.Update(*font);
+
+            layout.Render(renderer, *font, GetTransform()->GetWorldPosition());
         }
-        layout.Render(renderer, *font, GetTransform()->GetWorldPosition());
     }
 
 }

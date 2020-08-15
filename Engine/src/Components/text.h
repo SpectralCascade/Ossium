@@ -72,11 +72,11 @@ namespace Ossium
         /// Graphic override
         void Render(Renderer& renderer);
 
+        bool dirty = true;
+
     private:
         /// Pointer to font
         Font* font = nullptr;
-
-        bool dirty = true;
 
     };
 
