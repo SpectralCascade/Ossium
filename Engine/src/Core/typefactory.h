@@ -93,6 +93,11 @@ namespace Ossium
                 static std::unordered_map<Uint32, const char*>* sifmap = new std::unordered_map<Uint32, const char*>();
                 return *sifmap;
             }
+            static std::unordered_map<Uint32, bool>& type_abstract_map()
+            {
+                static std::unordered_map<Uint32, bool>* sifmap = new std::unordered_map<Uint32, bool>();
+                return *sifmap;
+            }
             /// Map of base names to the names of all derivative types.
             static std::unordered_map<std::string, std::vector<IdType>>& derived_type_name_map()
             {
@@ -114,22 +119,24 @@ namespace Ossium
         public:
             TypeFactory() = delete;
 
-            TypeFactory(const char* name, FactoryFunc factory, std::string baseName)
+            TypeFactory(const char* name, FactoryFunc factory, std::string baseName, bool abstract_type = false)
             {
                 Log.Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
                 type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
                 type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;
+                type_abstract_map()[TypeRegistry<CoreType>::typeIdent] = abstract_type;
                 derived_type_name_map()[baseName].push_back(TypeRegistry<CoreType>::typeIdent);
                 key = name;
             }
 
-            TypeFactory(const char* name, FactoryFunc factory)
+            TypeFactory(const char* name, FactoryFunc factory, bool abstract_type = false)
             {
                 Log.Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
                 type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
                 type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;
+                type_abstract_map()[TypeRegistry<CoreType>::typeIdent] = abstract_type;
                 key = name;
             }
 
@@ -196,6 +203,16 @@ namespace Ossium
                     return itr->second;
                 }
                 return TypeRegistry<CoreType>::GetTotalTypes();
+            }
+
+            static bool IsAbstract(IdType ident)
+            {
+                auto itr = type_abstract_map().find(ident);
+                if (itr != type_abstract_map().end())
+                {
+                    return itr->second;
+                }
+                return false;
             }
 
             std::vector<IdType>& GetDerivedTypes()

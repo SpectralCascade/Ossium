@@ -107,6 +107,7 @@ namespace Ossium
     /// Dynamic type checking
     OSSIUM_EDL ComponentType GetComponentType(std::string name);
     OSSIUM_EDL std::string GetComponentName(ComponentType id);
+    OSSIUM_EDL bool IsAbstractComponent(ComponentType id);
     OSSIUM_EDL Uint32 GetTotalComponentTypes();
 
     /// Forward declarations for the controller class
@@ -607,7 +608,12 @@ namespace Ossium
 
     };
 
-    #define DECLARE_ABSTRACT_COMPONENT(TYPE)                                    \
+    #define DECLARE_ABSTRACT_COMPONENT(BASETYPE, TYPE)                          \
+        private:                                                                \
+            static BaseComponent* ComponentFactory(void* target_entity);        \
+            typedef BASETYPE ParentType;                                        \
+            inline static const char* parentTypeName = SID(#BASETYPE)::str;     \
+        public:                                                                 \
             TYPE();                                                             \
             virtual ~TYPE();                                                    \
                                                                                 \
@@ -625,17 +631,32 @@ namespace Ossium
                                                                                 \
             virtual Uint32 GetType() = 0;                                       \
                                                                                 \
-            static const bool is_abstract_component = true
+            static const bool is_abstract_component = true;                     \
+            /** Note: this factory is only used for checking derived types. */  \
+            static Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
 
-    #define REGISTER_ABSTRACT_COMPONENT(TYPE, BASETYPE)                 \
+    #define REGISTER_ABSTRACT_COMPONENT(TYPE)                           \
+        BaseComponent* TYPE::ComponentFactory(void* target_entity)      \
+        {                                                               \
+            return nullptr;                                             \
+        }                                                               \
         TYPE::TYPE() {}                                                 \
         TYPE::~TYPE() {}                                                \
-        void TYPE::OnCreate() { BASETYPE::OnCreate(); }                 \
-        void TYPE::OnDestroy() { BASETYPE::OnDestroy(); }               \
-        void TYPE::OnLoadStart() { BASETYPE::OnLoadStart(); }           \
-        void TYPE::OnLoadFinish() { BASETYPE::OnLoadFinish(); }         \
+        void TYPE::OnCreate() { ParentType::OnCreate(); }               \
+        void TYPE::OnDestroy() { ParentType::OnDestroy(); }             \
+        void TYPE::OnLoadStart() { ParentType::OnLoadStart(); }         \
+        void TYPE::OnLoadFinish() { ParentType::OnLoadFinish(); }       \
         void TYPE::OnClone(BaseComponent* src) {}                       \
-        void TYPE::Update(){}
+        void TYPE::Update(){}                                           \
+        Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                    \
+        ParentType::is_abstract_component ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(      \
+            SID( #TYPE )::str, ComponentFactory, true                                                           \
+        ) :                                                                                                     \
+        Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                          \
+            SID( #TYPE )::str, ComponentFactory, std::string(parentTypeName), true                              \
+        );
+
+
 
 }
 

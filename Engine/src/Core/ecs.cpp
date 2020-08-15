@@ -41,6 +41,11 @@ namespace Ossium
         return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetId(name);
     }
 
+    bool IsAbstractComponent(Uint32 id)
+    {
+        return TypeSystem::TypeFactory<BaseComponent, ComponentType>::IsAbstract(id);
+    }
+
     Uint32 GetTotalComponentTypes()
     {
         return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetTotalTypes();

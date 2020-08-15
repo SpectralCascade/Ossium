@@ -21,7 +21,7 @@ using namespace std;
 namespace Ossium
 {
 
-    REGISTER_ABSTRACT_COMPONENT(InteractableGUI, GraphicComponent);
+    REGISTER_ABSTRACT_COMPONENT(InteractableGUI);
 
     void InteractableGUI::OnHoverBegin()
     {
@@ -139,6 +139,16 @@ namespace Ossium
         keyboard->AddAction("switch_context_forward", [&] (const KeyboardInput& data) { return this->SwitchContextForward(data); }, SDLK_TAB);
         keyboard->AddAction("switch_context_back", [&] (const KeyboardInput& data) { return this->SwitchContextBack(data); }, SDLK_BACKQUOTE);
         keyboard->AddAction("go_back", [&] (const KeyboardInput& data) { return this->GoBack(data); }, SDLK_ESCAPE);
+    }
+
+    void InputGUI::OnLoadFinish()
+    {
+        RemoveContext(SID("OnLoadContext")::str);
+        vector<InteractableGUI*> interactables = entity->GetComponentsInChildren<InteractableGUI>();
+        for (auto interactable : interactables)
+        {
+            AddInteractable(SID("OnLoadContext")::str, *interactable);
+        }
     }
 
     void InputGUI::OnDestroy()

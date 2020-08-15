@@ -19,7 +19,7 @@
 namespace Ossium
 {
 
-    REGISTER_ABSTRACT_COMPONENT(Component, BaseComponent);
+    REGISTER_ABSTRACT_COMPONENT(Component);
 
     ///
     /// Component
@@ -104,5 +104,18 @@ namespace Ossium
     void GraphicComponent::Update()
     {
     }
+
+    BaseComponent* GraphicComponent::ComponentFactory(void* target_entity)
+    {
+        return nullptr;
+    }
+
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> GraphicComponent::__ecs_factory_ =
+    GraphicComponent::ParentType::is_abstract_component ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
+        SID( "GraphicComponent" )::str, ComponentFactory, true
+    ) :
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
+        SID( "GraphicComponent" )::str, ComponentFactory, std::string(GraphicComponent::parentTypeName), true
+    );
 
 }

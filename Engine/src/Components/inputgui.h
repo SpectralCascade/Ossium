@@ -45,7 +45,7 @@ namespace Ossium
         bool IsHovered();
 
     protected:
-        DECLARE_ABSTRACT_COMPONENT(InteractableGUI);
+        DECLARE_ABSTRACT_COMPONENT(GraphicComponent, InteractableGUI);
 
         /// This does nothing, but should be implemented in the child class.
         virtual void Render(Renderer& renderer) = 0;
@@ -84,6 +84,9 @@ namespace Ossium
 
         /// Sets up the input context and all bindings accordingly.
         void OnCreate();
+
+        /// Find interactables.
+        void OnLoadFinish();
 
         /// Cleans up actions
         void OnDestroy();

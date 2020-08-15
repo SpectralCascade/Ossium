@@ -20,6 +20,15 @@ namespace Ossium::Editor
 
         BeginHorizontal();
 
+
+        StyleClickable redStyle = EditorStyle::StandardButton;
+        redStyle.hoverColor = Colors::RED;
+        redStyle.normalColor = Color(230, 0, 0);
+        redStyle.clickColor = Color(255, 80, 80);
+        redStyle.normalStyleText.fg = Colors::WHITE;
+        redStyle.hoverStyleText.fg = Colors::WHITE;
+        redStyle.clickStyleText.fg = Colors::WHITE;
+
         if (selected != nullptr)
         {
             TextLabel("Entity Name: ");
@@ -36,6 +45,16 @@ namespace Ossium::Editor
             if (selected != nullptr)
             {
                 selected->SetActive(result);
+            }
+
+            Tab(30);
+
+            if (Button("Remove Entity", redStyle))
+            {
+                GetEditorLayout()->GetEditorController()->SelectEntity(nullptr);
+                selected->Destroy(true);
+                selected = nullptr;
+                TriggerUpdate();
             }
 
         }
@@ -65,18 +84,10 @@ namespace Ossium::Editor
                         break;
                     }
 
-                    StyleClickable style = EditorStyle::StandardButton;
-                    style.hoverColor = Colors::RED;
-                    style.normalColor = Color(230, 0, 0);
-                    style.clickColor = Color(255, 80, 80);
-                    style.normalStyleText.fg = Colors::WHITE;
-                    style.hoverStyleText.fg = Colors::WHITE;
-                    style.clickStyleText.fg = Colors::WHITE;
-
                     BeginHorizontal();
                     TextLabel(Utilities::Format("<b>{0}</b>", GetComponentName((ComponentType)component->GetType())));
                     Tab(100);
-                    if (Button("Remove Component", style))
+                    if (Button("Remove Component", redStyle))
                     {
                         // Immediately destroy the component.
                         component->Destroy(true);
@@ -111,7 +122,10 @@ namespace Ossium::Editor
             data.reserve(counti);
             for (Uint32 i = 0; i < counti; i++)
             {
-                data.push_back(GetComponentName((ComponentType)i));
+                if (!IsAbstractComponent((ComponentType)i))
+                {
+                    data.push_back(GetComponentName((ComponentType)i));
+                }
             }
             Dropdown<string>(
                 [&] () { return Button("Add Component", true, 4, 4, true); },

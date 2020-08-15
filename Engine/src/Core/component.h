@@ -25,7 +25,7 @@ namespace Ossium
     class OSSIUM_EDL Component : public BaseComponent
     {
     public:
-        DECLARE_ABSTRACT_COMPONENT(Component);
+        DECLARE_ABSTRACT_COMPONENT(BaseComponent, Component);
 
         Transform* GetTransform();
 
@@ -54,7 +54,7 @@ namespace Ossium
         int GetRenderLayer();
 
     protected:
-        DECLARE_ABSTRACT_COMPONENT(GraphicComponent);
+        DECLARE_ABSTRACT_COMPONENT(Component, GraphicComponent);
 
         virtual void Render(Renderer& renderer) = 0;
 
