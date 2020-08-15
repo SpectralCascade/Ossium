@@ -141,16 +141,6 @@ namespace Ossium
         keyboard->AddAction("go_back", [&] (const KeyboardInput& data) { return this->GoBack(data); }, SDLK_ESCAPE);
     }
 
-    void InputGUI::OnLoadFinish()
-    {
-        RemoveContext(SID("OnLoadContext")::str);
-        vector<InteractableGUI*> interactables = entity->GetComponentsInChildren<InteractableGUI>();
-        for (auto interactable : interactables)
-        {
-            AddInteractable(SID("OnLoadContext")::str, *interactable);
-        }
-    }
-
     void InputGUI::OnDestroy()
     {
         GetHandler<MouseHandler>()->RemoveBindlessAction(mouseActionId);

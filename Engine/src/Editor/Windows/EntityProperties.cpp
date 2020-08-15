@@ -20,7 +20,6 @@ namespace Ossium::Editor
 
         BeginHorizontal();
 
-
         StyleClickable redStyle = EditorStyle::StandardButton;
         redStyle.hoverColor = Colors::RED;
         redStyle.normalColor = Color(230, 0, 0);
@@ -106,12 +105,20 @@ namespace Ossium::Editor
 
                     component->OnLoadStart();
                     component->SerialiseIn(data);
-                    component->OnLoadFinish();
 
                     Space(2);
                     Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Color(130, 130, 130));
                     Space(2);
 
+                }
+            }
+
+            // Loading complete, update all components.
+            for (auto itr : selected->GetAllComponents())
+            {
+                for (BaseComponent* component : itr.second)
+                {
+                    component->OnLoadFinish();
                 }
             }
 
@@ -130,11 +137,11 @@ namespace Ossium::Editor
             Dropdown<string>(
                 [&] () { return Button("Add Component", true, 4, 4, true); },
                 data,
-                [selected] (unsigned int i) {
-                    BaseComponent* component = selected->AddComponent((ComponentType)i);
+                [selected, data] (unsigned int i) {
+                    BaseComponent* component = selected->AddComponent(GetComponentType(data[i]));
                     if (component == nullptr)
                     {
-                        Log.Warning("Failed to add component of type '{0}' to entity '{1}'!", GetComponentName((ComponentType)i), selected->name);
+                        Log.Warning("Failed to add component of type '{0}' to entity '{1}'!", GetComponentType(data[i]), selected->name);
                     }
                 }
             );

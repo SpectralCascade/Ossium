@@ -40,7 +40,6 @@ namespace Ossium
         {
             if (itr->second.first != nullptr)
             {
-                /// TODO: proper pointer serialisation
                 data << itr->first << " [" << itr->second.first->GetPathName() << ", " << itr->second.second << "]," << endl;
             }
         }
@@ -73,8 +72,7 @@ namespace Ossium
             {
                 if (data[i] == ',')
                 {
-                    /// TODO: serialise pointer references rather than pathname and actually grab or load the image.
-                    Image* loadedImage = nullptr;
+                    Image* loadedImage = resources->Get<Image>(valueStr, *renderer);
                     value.first = loadedImage;
                 }
                 else
@@ -92,6 +90,12 @@ namespace Ossium
     ///
 
     REGISTER_COMPONENT(StateSprite);
+
+    void StateSprite::OnCreate()
+    {
+        states.renderer = GetService<Renderer>();
+        states.resources = GetService<ResourceController>();
+    }
 
     bool StateSprite::AddState(string state, Image* image, Uint16 clipData)
     {

@@ -80,7 +80,6 @@ namespace Ossium
         {
             return itr->second;
         }
-        Log.Warning("Failed to retrieve context {0} from input controller.", name);
         return nullptr;
     }
 

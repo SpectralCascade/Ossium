@@ -13,6 +13,7 @@ namespace Ossium::Editor
     {
         this->resources = resources;
         input = new InputController();
+        sceneInput = new InputController();
         mainLayout = new EditorLayout(this, "Ossium Editor");
         toolbar = mainLayout->Add<ToolBar>(DockingMode::TOP);
         mainLayout->GetNativeWindow()->OnCloseButton += [&] (Window& caller) {
@@ -28,6 +29,7 @@ namespace Ossium::Editor
         }
         layouts.clear();
         delete mainLayout;
+        delete sceneInput;
         delete input;
     }
 
@@ -112,6 +114,11 @@ namespace Ossium::Editor
         }
     }
 
+    InputController* EditorController::GetSceneInput()
+    {
+        return sceneInput;
+    }
+
     bool EditorController::Update()
     {
         Timer timer;
@@ -138,6 +145,10 @@ namespace Ossium::Editor
 
             // Handle standard input events.
             input->HandleEvent(e);
+
+            // Finally, handle scene inputs.
+            GetSceneInput()->HandleEvent(e);
+
         }
 
         // Update the GUI

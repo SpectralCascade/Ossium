@@ -629,9 +629,11 @@ namespace Ossium
                                                                                 \
             virtual TYPE* Clone() = 0;                                          \
                                                                                 \
-            virtual Uint32 GetType() = 0;                                       \
-                                                                                \
             static const bool is_abstract_component = true;                     \
+            Uint32 GetType()                                                    \
+            {                                                                   \
+                return __ecs_factory_.GetType();                                \
+            }                                                                   \
             /** Note: this factory is only used for checking derived types. */  \
             static Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
 

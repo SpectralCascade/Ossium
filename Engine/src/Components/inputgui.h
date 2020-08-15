@@ -85,9 +85,6 @@ namespace Ossium
         /// Sets up the input context and all bindings accordingly.
         void OnCreate();
 
-        /// Find interactables.
-        void OnLoadFinish();
-
         /// Cleans up actions
         void OnDestroy();
 

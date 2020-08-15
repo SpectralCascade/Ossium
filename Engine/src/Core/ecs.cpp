@@ -110,7 +110,7 @@ namespace Ossium
         {
             if (node->data != nullptr)
             {
-                delete node->data;
+                controller->DestroyEntity(node->data, true);
             }
         }
 
@@ -349,7 +349,10 @@ namespace Ossium
             {
                 component_array.push_back(itr.second[i]->ToString());
             }
-            json_components[GetComponentName((ComponentType)itr.first)] = Utilities::ToString(component_array);
+            if (!component_array.empty())
+            {
+                json_components[GetComponentName((ComponentType)itr.first)] = Utilities::ToString(component_array);
+            }
         }
         data["Name"] = name;
         data["Active"] = Utilities::ToString(active);
@@ -547,6 +550,11 @@ namespace Ossium
             {
                 if (immediate)
                 {
+                    // Entity could be pending destruction already
+                    if (pendingDestruction.find(entity) != pendingDestruction.end())
+                    {
+                        pendingDestruction.erase(entity);
+                    }
                     delete entity;
                 }
                 else
@@ -569,6 +577,12 @@ namespace Ossium
     {
         if (immediate)
         {
+            // May already have listed component for destruction
+            if (pendingDestructionComponents.find(component) != pendingDestructionComponents.end())
+            {
+                pendingDestructionComponents.erase(component);
+            }
+
             auto itr = component->entity->GetAllComponents().find(component->GetType());
             if (itr != component->entity->GetAllComponents().end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
@@ -679,7 +693,6 @@ namespace Ossium
 
     void Scene::FromString(const string& str)
     {
-        /// TODO: don't clear..?
         Clear();
         JSON serialised(str);
         /// Map of entities that need to be nested under a parent entity
@@ -708,9 +721,9 @@ namespace Ossium
             entity->FromString(itr.second);
             JSON serialisedEntity(itr.second);
             auto parentItr = serialisedEntity.find("Parent");
-            int ident = IsInt(parentItr->second) ? ToInt(parentItr->second) : -1;
             if (parentItr != serialisedEntity.end())
             {
+                int ident = IsInt(parentItr->second) ? ToInt(parentItr->second) : -1;
                 if (ident >= 0)
                 {
                     pair<Entity*, int> parentPair(entity, ToInt(parentItr->second));

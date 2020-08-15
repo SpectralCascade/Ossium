@@ -180,7 +180,7 @@ namespace Ossium
             else
             {
                 roots.erase(roots.begin() + node->childIndex);
-                for (auto i = roots.begin() + node->childIndex, counti = roots.end(); i < counti; i++)
+                for (auto i = roots.begin() + node->childIndex, counti = roots.end(); i != counti; i++)
                 {
                     // Update children
                     (*i)->childIndex--;
@@ -206,12 +206,29 @@ namespace Ossium
                     node->parent->children.push_back(node);
                 }
                 node->depth = node->parent->depth + 1;
+                // Update depths
+                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; } }, node);
             }
             else
             {
                 node->depth = 0;
-                node->childIndex = 0;
-                // TODO: roots!
+                // Update depths
+                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; } }, node);
+                if (index >= 0)
+                {
+                    roots.insert(roots.begin() + index, node);
+                    node->childIndex = index;
+                    for (auto i = roots.begin() + node->childIndex + 1, counti = roots.end(); i < counti; i++)
+                    {
+                        // Update children
+                        (*i)->childIndex++;
+                    }
+                }
+                else
+                {
+                    node->childIndex = roots.size();
+                    roots.push_back(node);
+                }
             }
         }
 

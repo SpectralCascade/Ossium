@@ -43,6 +43,9 @@ namespace Ossium
     public:
         std::string ToString();
         void FromString(const std::string& data);
+
+        Renderer* renderer = nullptr;
+        ResourceController* resources = nullptr;
     };
 
     struct OSSIUM_EDL StateSpriteSchema : public Schema<StateSpriteSchema>
@@ -70,8 +73,11 @@ namespace Ossium
     class OSSIUM_EDL StateSprite : public Texture, protected StateSpriteSchema
     {
     public:
+        CONSTRUCT_SCHEMA(Texture, StateSpriteSchema);
         DECLARE_COMPONENT(Texture, StateSprite);
-        CONSTRUCT_SCHEMA(SchemaRoot, StateSpriteSchema);
+
+        /// Initialise states table
+        void OnCreate();
 
         /// Adds a state to the sprite; horizontal specifies whether the image should be sliced horizontally or vertically,
         /// and segments specifies how many substates the image should be sliced up into.

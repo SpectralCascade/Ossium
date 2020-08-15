@@ -106,12 +106,16 @@ namespace Ossium::Editor
         /// Select a scene.
         void SelectScene(Scene* scene);
 
+        /// Returns the input controller instance for scenes.
+        InputController* GetSceneInput();
+
     private:
         // Helper method for a template
         EditorLayout* CreateLayout();
 
         ResourceController* resources = nullptr;
         InputController* input = nullptr;
+        InputController* sceneInput = nullptr;
 
         /// This is the main editor window, where the tool bar resides and the user can quit the program from this window.
         EditorLayout* mainLayout = nullptr;
