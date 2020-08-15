@@ -452,6 +452,12 @@ namespace Ossium
         GlyphLocation location;
         location.valid = true;
 
+        if (glyphs.empty())
+        {
+            location.valid = false;
+            return location;
+        }
+
         // First, deal with y coordinate by finding the corresponding line
         int lineIndex = -1;
         for (unsigned int i = 0, counti = lines.size(); i < counti; i++)

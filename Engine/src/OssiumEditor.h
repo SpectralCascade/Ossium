@@ -22,5 +22,7 @@
 #include "Editor/Core/editorcontroller.h"
 #include "Editor/Core/project.h"
 #include "Editor/Core/contextmenu.h"
+#include "Editor/Core/editorserializer.h"
+#include "Editor/Core/editorstyle.h"
 
 #endif // OSSIUMEDITOR_H

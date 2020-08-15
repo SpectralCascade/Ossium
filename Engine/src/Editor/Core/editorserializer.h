@@ -16,6 +16,8 @@ namespace Ossium::Editor
 namespace Ossium
 {
 
+    class Vector2;
+
     enum EditorAttribute
     {
         ATTRIBUTE_NONE            = 0,        // Default value.
@@ -57,6 +59,9 @@ namespace Ossium
 
         /// Serialize a boolean. Defaults to a toggle.
         std::string SerializeProperty(const char* type, const char* name, int attribute, bool& property);
+
+        /// Serialize a Vector2.
+        std::string SerializeProperty(const char* type, const char* name, int attribute, Vector2& property);
 
     private:
         Ossium::Editor::EditorWindow* gui = nullptr;

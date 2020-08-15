@@ -1,18 +1,18 @@
 /** COPYRIGHT NOTICE
- *  
+ *
  *  Ossium Engine
  *  Copyright (c) 2018-2020 Tim Lane
- *  
+ *
  *  This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
- *  
+ *
  *  Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
- *  
+ *
  *  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- *  
+ *
  *  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- *  
+ *
  *  3. This notice may not be removed or altered from any source distribution.
- *  
+ *
 **/
 #include <string>
 #include <algorithm>
@@ -24,26 +24,37 @@
 namespace Ossium
 {
 
-    /// TODO: font rendering
-
     REGISTER_COMPONENT(Text);
+
+    void Text::OnLoadFinish()
+    {
+        font = GetService<ResourceController>()->Get<Font>(font_guid, 72, 0, 0, 2048);
+        dirty = true;
+    }
 
     void Text::Render(Renderer& renderer)
     {
-        /*
         if (boxed)
         {
-            // TODO: get rendered text dimensions
-            SDL_Rect boxDest = GetSDL(GetTransform()->GetWorldPosition());
-            boxDest.x -= boxPaddingWidth;
-            boxDest.y -= boxPaddingHeight;
-            boxDest.w = GetWidth();
-            boxDest.h = GetHeight();
-            SDL_SetRenderDrawColor(renderer.GetRendererSDL(), bgColor.r, bgColor.g, bgColor.b, bgColor.a);
-            SDL_RenderFillRect(renderer.GetRendererSDL(), &boxDest);
+            Rect boxDest = Rect(
+                GetTransform()->GetWorldPosition().x - boxPaddingWidth,
+                GetTransform()->GetWorldPosition().y - boxPaddingHeight,
+                layout.GetBounds().x + boxPaddingWidth,
+                layout.GetBounds().y + boxPaddingHeight
+            );
+            boxDest.DrawFilled(renderer, backgroundColor);
         }
-        */
-        // TODO: render text using font
+
+        if (font != nullptr)
+        {
+            if (dirty)
+            {
+                layout.Update(*font);
+                dirty = false;
+            }
+
+            layout.Render(renderer, *font, GetTransform()->GetWorldPosition());
+        }
     }
 
 }

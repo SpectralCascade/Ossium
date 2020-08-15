@@ -19,64 +19,67 @@
 
 #include <string>
 
-#include "../Core/font.h"
 #include "../Core/component.h"
 #include "../Core/helpermacros.h"
+#include "../Core/textlayout.h"
 
 namespace Ossium
 {
 
-    class OSSIUM_EDL Text : public GraphicComponent
+    struct TextSchema : public Schema<TextSchema, 20>
+    {
+        DECLARE_BASE_SCHEMA(TextSchema, 20);
+
+        /// The text string
+        M(std::string, text) = "";
+
+        M(bool, applyMarkup) = true;
+
+        /// GUID of font to use:
+        SCHEMA_MEMBER(ATTRIBUTE_FILEPATH, std::string, font_guid) = "";
+
+        M(TextLayout, layout);
+
+        /// If true, render box behind text in the background color
+        M(bool, boxed) = false;
+
+        /// Box padding, in pixels
+        M(int, boxPaddingWidth) = 4;
+        M(int, boxPaddingHeight) = 2;
+
+        /// Bounds of this text.
+        M(Vector2, bounds);
+
+        /// Background colour for outlines or shaded rendering box
+        M(SDL_Color, backgroundColor) = {0x00, 0x00, 0x00, 0xFF};
+
+        /// Text outline thickness in pixels
+        M(int, outline) = 0;
+
+        /// Font hinting, e.g. monospace
+        M(int, hinting) = TTF_HINTING_NORMAL;
+
+        /// Solid, shaded or blended (alpha)
+        M(int, renderMode) = RENDERTEXT_SOLID;
+
+    };
+
+    class OSSIUM_EDL Text : public GraphicComponent, public TextSchema
     {
     public:
+        CONSTRUCT_SCHEMA(GraphicComponent, TextSchema);
         DECLARE_COMPONENT(GraphicComponent, Text);
+
+        void OnLoadFinish();
 
         /// Graphic override
         void Render(Renderer& renderer);
-
-        /// Returns the dimensions of the text, or the dimensions of the box
-        /// if the box is enabled
-        /// TODO
-        //int GetWidth();
-        //int GetHeight();
-
-        /// If true, render box behind text in the background color
-        bool boxed = false;
-
-        /// Box padding, in pixels
-        int boxPaddingWidth = 4;
-        int boxPaddingHeight = 2;
-
-        /// The text string
-        std::string text = "";
-
-        /// Text colour
-        SDL_Color color = {0xFF, 0xFF, 0xFF, 0xFF};
-
-        /// Background colour for outlines or shaded rendering box
-        SDL_Color backgroundColor = {0x00, 0x00, 0x00, 0xFF};
-
-        /// Text outline thickness in pixels
-        int outline = 0;
-
-        /// General text style, e.g. bold, italics etc.
-        int style = TTF_STYLE_NORMAL;
-
-        /// Whether or not kerning should be enabled
-        bool kerning = true;
-
-        /// Font hinting, e.g. monospace
-        int hinting = TTF_HINTING_NORMAL;
-
-        /// Solid, shaded or blended (alpha)
-        int renderMode = RENDERTEXT_SOLID;
 
     private:
         /// Pointer to font
         Font* font = nullptr;
 
-        /// GUID of font to use:
-        std::string font_guid;
+        bool dirty = true;
 
     };
 
