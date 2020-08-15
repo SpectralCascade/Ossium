@@ -247,6 +247,9 @@ namespace Ossium
         /// The dimensions of the computed text layout.
         Vector2 size = Vector2::Zero;
 
+        /// The last font to be used. If this changes, we must update the layout.
+        Font* lastFont = nullptr;
+
     };
 
 }

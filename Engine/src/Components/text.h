@@ -47,9 +47,6 @@ namespace Ossium
         M(int, boxPaddingWidth) = 4;
         M(int, boxPaddingHeight) = 2;
 
-        /// Bounds of this text.
-        M(Vector2, bounds);
-
         /// Background colour for outlines or shaded rendering box
         M(SDL_Color, backgroundColor) = {0x00, 0x00, 0x00, 0xFF};
 

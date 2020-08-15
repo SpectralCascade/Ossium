@@ -16,6 +16,7 @@
 **/
 #include <string>
 #include <algorithm>
+#include <filesystem>
 
 #include "text.h"
 #include "../Core/renderer.h"
@@ -28,7 +29,16 @@ namespace Ossium
 
     void Text::OnLoadFinish()
     {
-        font = GetService<ResourceController>()->Get<Font>(font_guid, 72, 0, 0, 2048);
+        GraphicComponent::OnLoadFinish();
+        // Check if the path is valid
+        if (std::filesystem::exists(std::filesystem::path(font_guid)))
+        {
+            font = GetService<ResourceController>()->Get<Font>(font_guid, 72, 0, 0, 2048);
+        }
+        else
+        {
+            font = nullptr;
+        }
         dirty = true;
     }
 
@@ -49,12 +59,13 @@ namespace Ossium
         {
             if (dirty)
             {
-                layout.Update(*font);
                 dirty = false;
+                layout.SetText(renderer, *font, text, applyMarkup);
             }
 
-            layout.Render(renderer, *font, GetTransform()->GetWorldPosition());
+            layout.Update(*font);
         }
+        layout.Render(renderer, *font, GetTransform()->GetWorldPosition());
     }
 
 }

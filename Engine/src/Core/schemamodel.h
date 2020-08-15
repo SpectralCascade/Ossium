@@ -31,6 +31,7 @@ extern "C"
 #include "jsondata.h"
 #include "stringconvert.h"
 #include "../Editor/Core/editorserializer.h"
+#include "schematype.h"
 
 namespace Ossium
 {
@@ -40,7 +41,7 @@ namespace Ossium
     ///
 
     template<class BaseType, unsigned int MaximumMembers = 20, class BaseSerializer = EditorSerializer>
-    struct OSSIUM_EDL Schema
+    struct OSSIUM_EDL Schema : public SchemaType
     {
         const static unsigned int MaxMembers = MaximumMembers;
 

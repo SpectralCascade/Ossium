@@ -332,6 +332,7 @@
 		<Unit filename="src/Core/resourcecontroller.h" />
 		<Unit filename="src/Core/schemamodel.cpp" />
 		<Unit filename="src/Core/schemamodel.h" />
+		<Unit filename="src/Core/schematype.h" />
 		<Unit filename="src/Core/services.cpp" />
 		<Unit filename="src/Core/services.h" />
 		<Unit filename="src/Core/slotmap.h" />

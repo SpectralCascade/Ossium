@@ -2,6 +2,8 @@
 #define EDITORSERIALIZER_H
 
 #include "../../Core/stringconvert.h"
+#include "../../Core/schematype.h"
+#include "../../Core/jsondata.h"
 
 namespace Ossium::Editor
 {
@@ -62,6 +64,17 @@ namespace Ossium
 
         /// Serialize a Vector2.
         std::string SerializeProperty(const char* type, const char* name, int attribute, Vector2& property);
+
+        /// Serialize a schema derived type.
+        template<typename T>
+        typename std::enable_if<std::is_base_of<SchemaType, T>::value && !std::is_same<SchemaType, T>::value, std::string>::type
+        SerializeProperty(const char* type, const char* name, int attribute, T& property)
+        {
+            // Serialize inline
+            JSON data;
+            property.SerialiseOut(data, this);
+            return data.ToString();
+        }
 
     private:
         Ossium::Editor::EditorWindow* gui = nullptr;

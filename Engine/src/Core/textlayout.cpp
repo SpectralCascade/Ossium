@@ -179,6 +179,11 @@ namespace Ossium
 
     void TextLayout::ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters)
     {
+        if (&font != lastFont)
+        {
+            lastFont = &font;
+            updateFlags = UPDATE_ALL;
+        }
         if (!(updateFlags & UPDATE_ALL))
         {
             // Early out
@@ -396,6 +401,11 @@ namespace Ossium
 
     void TextLayout::Update(Font& font)
     {
+        if (lastFont != &font)
+        {
+            lastFont = &font;
+            updateFlags = UPDATE_ALL;
+        }
         if (updateFlags & UPDATE_LAYOUT)
         {
             TextLine startLine = (TextLine){Vector2::Zero, Vector2(0, font.GetLineDifference(pointSize)), 0};

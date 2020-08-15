@@ -91,6 +91,8 @@ namespace Ossium::Editor
                     JSON data;
                     component->SerialiseOut(data, this);
 
+                    //Log.Info("Serialized out to:\n" + data.ToString());
+
                     component->OnLoadStart();
                     component->SerialiseIn(data);
                     component->OnLoadFinish();
