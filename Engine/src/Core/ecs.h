@@ -170,6 +170,9 @@ namespace Ossium
         /// and replace with an override that only calls Update() on component types that use it.
         void UpdateComponents();
 
+        /// Find an entity by name. TODO: remove me when component references are working again, this should *never* be required and it's more efficient to hook up in the scene.
+        Entity* Find(std::string name);
+
         /// SFINAE case, where type T is not a valid component type.
         template<typename T>
         typename std::enable_if<!is_component<T>::value, void>::type
