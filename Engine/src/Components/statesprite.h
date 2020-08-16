@@ -65,7 +65,7 @@ namespace Ossium
         M(Uint16, totalCurrentSegments) = 1;
 
         /// Multiple states, multiple textures
-        M(StateSpriteTable, states);
+        StateSpriteTable states;
 
     };
 

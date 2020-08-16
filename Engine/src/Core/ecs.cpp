@@ -530,9 +530,9 @@ namespace Ossium
         }
     }
 
-    Entity* Scene::Find(std::string name)
+    Entity* Scene::Find(std::string entityName)
     {
-        Node<Entity*>* node = entityTree.Find([&](Node<Entity*>* n){ return n->data->name == name; });
+        Node<Entity*>* node = entityTree.Find([&entityName](Node<Entity*>* n){ return n->data->name == entityName; });
         return node != nullptr ? node->data : nullptr;
     }
 

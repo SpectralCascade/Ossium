@@ -171,10 +171,11 @@ namespace Ossium
         void UpdateComponents();
 
         /// Find an entity by name. TODO: remove me when component references are working again, this should *never* be required and it's more efficient to hook up in the scene.
-        Entity* Find(std::string name);
+        Entity* Find(std::string entityName);
 
         /// SFINAE case, where type T is not a valid component type.
         template<typename T>
+        [[deprecated("SFINAE attempting to walk ECS components!")]]
         typename std::enable_if<!is_component<T>::value, void>::type
         WalkComponents(std::function<void(T*)> operation)
         {

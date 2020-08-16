@@ -70,6 +70,7 @@ namespace Ossium
 
     void Texture::SetSource(Image* src, bool configureDimensions)
     {
+        GraphicComponent::OnLoadStart();
         source = src;
         if (configureDimensions)
         {
@@ -90,6 +91,10 @@ namespace Ossium
                 clip.w = 0;
                 clip.h = 0;
             }
+        }
+        if (source != nullptr)
+        {
+            imgPath = source->GetPathName();
         }
         if (GetRenderLayer() < 0)
         {
