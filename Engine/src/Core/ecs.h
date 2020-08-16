@@ -203,12 +203,9 @@ namespace Ossium
         /// Set breadthFirst to false to walk the entity tree depth-first.
         void WalkEntities(std::function<void(Entity*)> walkFunc, bool breadthFirst = true);
 
-        /// Creates a new entity within this system and returns a reference to it.
-        Entity* CreateEntity();
-
         /// Overload that accepts a parent entity reference, and if the parent exists within this system,
         /// the new entity will be added as a child of the parent.
-        Entity* CreateEntity(Entity* parent);
+        Entity* CreateEntity(Entity* parent = nullptr);
 
         /// Destroys a single entity and all it's components. Logs a warning if the entity does not exist within this system.
         /// Note that the entity is destroyed at the end of a frame, prior to a RenderPresent call if 'immediate' is left false.
@@ -496,7 +493,7 @@ namespace Ossium
     private:
         /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
         /// or by calling CreateEntity() on an Scene instance
-        Entity(Scene* entity_system, Entity* parent = nullptr);
+        Entity(Scene* entity_system, Node<Entity*>* node);
         ~Entity();
 
         /// Direct copying of entities is not permitted! Use Clone() if a copy is necessary

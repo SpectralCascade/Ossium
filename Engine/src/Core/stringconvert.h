@@ -67,7 +67,7 @@ namespace Ossium
             str.str(data);
             if (!(str >> obj))
             {
-                Internal::__InternalLogWarn("Failed to convert string '" + data + "' to object data.");
+                //Internal::__InternalLogWarn("Failed to convert string '" + data + "' to object data.");
             }
         }
 
@@ -202,7 +202,7 @@ namespace Ossium
             str.str("");
             if (!(str << obj))
             {
-                Internal::__InternalLogWarn("Failed to convert string to data.");
+                //Internal::__InternalLogWarn("Failed to convert string to data.");
             }
             return str.str();
         }

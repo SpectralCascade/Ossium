@@ -3,6 +3,7 @@
 #include "../Core/editorstyle.h"
 
 #include "../../Core/ecs.h"
+#include "../Core/contextmenu.h"
 
 using namespace Ossium;
 
@@ -16,6 +17,7 @@ namespace Ossium::Editor
 
     void SceneHierarchy::OnGUI()
     {
+        rightPressed = input->GetHandler<MouseHandler>()->RightPressed();
         Project* project = GetEditorLayout()->GetEditorController()->GetProject();
         if (project != nullptr)
         {
@@ -47,6 +49,7 @@ namespace Ossium::Editor
                 }
             }
         }
+        rightWasPressed = rightPressed;
     }
 
     void SceneHierarchy::ListScene(ListedScene& item, bool loaded)
@@ -84,11 +87,56 @@ namespace Ossium::Editor
 
             bool hovered, pressed;
             Button(item.name, selectedScene != nullptr && item.name == selectedScene->GetName() ? EditorStyle::HierarchySceneSelected : EditorStyle::HierarchyScene, false, 2, 2, true, &hovered, &pressed);
-            if (hovered && pressed && !InputState.mouseWasPressed && item.loaded)
+            if (hovered && ((pressed && !InputState.mouseWasPressed) || (rightPressed && !rightWasPressed)))
             {
-                // On press down, select this scene.
-                GetEditorLayout()->GetEditorController()->SelectScene(resources->Find<Scene>(item.path));
-                TriggerUpdate();
+                if (item.loaded)
+                {
+                    // On press down, select this scene.
+                    GetEditorLayout()->GetEditorController()->SelectScene(resources->Find<Scene>(item.path));
+                    TriggerUpdate();
+                }
+                if (rightPressed && !rightWasPressed)
+                {
+                    ContextMenu* cmenu = ContextMenu::GetMainInstance(resources);
+                    Project* project = GetEditorLayout()->GetEditorController()->GetProject();
+                    cmenu->ClearOptions();
+
+                    cmenu->Add(item.loaded ? "Unload Scene" : "Load Scene", [&, project] () {
+                        if (item.loaded)
+                        {
+                            resources->Free<Scene>(item.path);
+                            item.loaded = false;
+                            GetEditorLayout()->GetEditorController()->SelectScene(nullptr);
+                            GetEditorLayout()->GetEditorController()->SelectEntity(nullptr);
+                        }
+                        else
+                        {
+                            item.loaded = resources->Get<Scene>(item.path, GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices()) != nullptr;
+                        }
+                    });
+
+                    cmenu->Add("Remove Scene", [&, project] () {
+                        if (item.loaded)
+                        {
+                            resources->Free<Scene>(item.path);
+                            item.loaded = false;
+                        }
+                        // Remove from the open project scenes
+                        for (auto itr = project->openScenes.begin(); itr != project->openScenes.end(); itr++)
+                        {
+                            if (&(*itr) == &item)
+                            {
+                                project->openScenes.erase(itr);
+                                break;
+                            }
+                        }
+                        GetEditorLayout()->GetEditorController()->SelectScene(nullptr);
+                        GetEditorLayout()->GetEditorController()->SelectEntity(nullptr);
+                    });
+
+                    Rect vport = renderer->GetViewportRect();
+                    cmenu->Show(InputState.mousePos + renderer->GetWindow()->GetPosition() + Vector2(vport.x, vport.y));
+                }
             }
 
             EndHorizontal();

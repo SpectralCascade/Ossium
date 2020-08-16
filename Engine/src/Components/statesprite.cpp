@@ -97,6 +97,12 @@ namespace Ossium
         states.resources = GetService<ResourceController>();
     }
 
+    void StateSprite::OnLoadFinish()
+    {
+        // Skip texture OnLoadFinish() because the state should be setup manually
+        GraphicComponent::OnLoadFinish();
+    }
+
     bool StateSprite::AddState(string state, Image* image, Uint16 clipData)
     {
         if (image != nullptr)

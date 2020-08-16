@@ -29,7 +29,7 @@ namespace Ossium::Editor
         // Draw to viewport
         renderer->RenderPresent(true);
 
-        for (Scene* scene : loadedScenes)
+        for (Scene* scene : editor->GetLoadedScenes())
         {
             scene->DestroyPending();
         }

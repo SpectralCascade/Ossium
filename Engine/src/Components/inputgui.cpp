@@ -125,6 +125,13 @@ namespace Ossium
 
     void InputGUI::OnCreate()
     {
+        Component::OnCreate();
+        string context = Utilities::Format("InputGUI:{0}", this);
+        if (GetService<InputController>()->GetContext(context) == nullptr)
+        {
+            GetService<InputController>()->AddContext(context, this);
+        }
+
         /// TODO: Use a generic input handler that takes touch input as well as mouse input.
         /// Mouse actions setup
         pointer = AddHandler<MouseHandler>();
@@ -143,7 +150,12 @@ namespace Ossium
 
     void InputGUI::OnDestroy()
     {
-        GetHandler<MouseHandler>()->RemoveBindlessAction(mouseActionId);
+        Component::OnDestroy();
+        string context = Utilities::Format("InputGUI:{0}", this);
+        if (GetService<InputController>()->GetContext(context) != nullptr)
+        {
+            GetService<InputController>()->RemoveContext(context);
+        }
     }
 
     void InputGUI::AddInteractable(StrID context, InteractableGUI& element)

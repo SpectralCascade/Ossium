@@ -79,6 +79,9 @@ namespace Ossium
         /// Initialise states table
         void OnCreate();
 
+        /// Switch to primary state.
+        void OnLoadFinish();
+
         /// Adds a state to the sprite; horizontal specifies whether the image should be sliced horizontally or vertically,
         /// and segments specifies how many substates the image should be sliced up into.
         bool AddState(std::string state, Image* image, bool horizontal = true, Uint16 segments = 1);

@@ -100,6 +100,7 @@ namespace Ossium
 
     void AudioListener::OnDestroy()
     {
+        Component::OnDestroy();
         if (mainListener == this)
         {
             mainListener = nullptr;

@@ -77,10 +77,10 @@ namespace Ossium
     };
 
     /// Handles inputs for all attached or registered UI elements, such as buttons and sliders.
-    class OSSIUM_EDL InputGUI : public BaseComponent, public InputContext
+    class OSSIUM_EDL InputGUI : public Component, public InputContext
     {
     public:
-        DECLARE_COMPONENT(BaseComponent, InputGUI);
+        DECLARE_COMPONENT(Component, InputGUI);
 
         /// Sets up the input context and all bindings accordingly.
         void OnCreate();

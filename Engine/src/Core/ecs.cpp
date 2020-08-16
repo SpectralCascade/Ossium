@@ -51,25 +51,17 @@ namespace Ossium
         return TypeSystem::TypeFactory<BaseComponent, ComponentType>::GetTotalTypes();
     }
 
-    Entity::Entity(Scene* entity_system, Entity* parent)
+    Entity::Entity(Scene* entity_system, Node<Entity*>* node)
     {
         controller = entity_system;
-        if (parent != nullptr)
-        {
-            self = controller->entityTree.Insert(this, parent->self);
-        }
-        else
-        {
-            self = controller->entityTree.Insert(this);
-        }
-        controller->entities[self->id] = self;
+        self = node;
         /// Set the name again, using the generated id
         name = "Entity[" + Ossium::ToString(self->id) + "]";
     }
 
     Entity* Entity::Clone()
     {
-        Entity* entityCopy = new Entity(controller, self->parent != nullptr ? self->parent->data : nullptr);
+        Entity* entityCopy = controller->CreateEntity(self->parent != nullptr ? self->parent->data : nullptr);
         entityCopy->name = name + " (copy)";
         for (auto i = components.begin(); i != components.end(); i++)
         {
@@ -104,24 +96,6 @@ namespace Ossium
             itr->second.clear();
         }
         components.clear();
-
-        /// Clean up all children
-        for (auto node : self->children)
-        {
-            if (node->data != nullptr)
-            {
-                controller->DestroyEntity(node->data, true);
-            }
-        }
-
-        controller->entityTree.Remove(self);
-        /// Remove this instance from inactive set and the entities map
-        auto itr = controller->inactiveEntities.find(this);
-        if (itr != controller->inactiveEntities.end())
-        {
-            controller->inactiveEntities.erase(itr);
-        }
-        controller->entities.erase(self->id);
     }
 
     BaseComponent* Entity::AddComponent(ComponentType type)
@@ -536,15 +510,20 @@ namespace Ossium
         return node != nullptr ? node->data : nullptr;
     }
 
-    Entity* Scene::CreateEntity()
-    {
-        Entity* created = new Entity(this);
-        return created;
-    }
-
     Entity* Scene::CreateEntity(Entity* parent)
     {
-        Entity* created = new Entity(this, parent);
+        Node<Entity*>* node = nullptr;
+        if (parent != nullptr)
+        {
+            node = entityTree.Insert(nullptr, parent->self);
+        }
+        else
+        {
+            node = entityTree.Insert(nullptr);
+        }
+        Entity* created = new Entity(this, node);
+        node->data = created;
+        entities[node->id] = node;
         return created;
     }
 
@@ -561,7 +540,29 @@ namespace Ossium
                     {
                         pendingDestruction.erase(entity);
                     }
+                    // Clean up all children first
+                    for (auto node : entity->self->children)
+                    {
+                        if (node->data != nullptr)
+                        {
+                            DestroyEntity(node->data, true);
+                        }
+                    }
+
+                    auto node = entity->self;
+
+                    // Destroy the entity
                     delete entity;
+
+                    auto itr = inactiveEntities.find(entity);
+                    if (itr != inactiveEntities.end())
+                    {
+                        inactiveEntities.erase(itr);
+                    }
+                    entities.erase(node->id);
+
+                    // Cleanup tree last of all.
+                    entityTree.Remove(node);
                 }
                 else
                 {
@@ -638,9 +639,10 @@ namespace Ossium
 
     void Scene::Clear()
     {
+        entities.clear();
         /// Delete all entities
-        vector<Node<Entity*>*>& entities = entityTree.GetFlatTree();
-        for (auto i = entities.begin(); i != entities.end(); i++)
+        vector<Node<Entity*>*>& allEntities = entityTree.GetFlatTree();
+        for (auto i = allEntities.begin(); i != allEntities.end(); i++)
         {
             if (*i != nullptr && (*i)->data != nullptr)
             {
@@ -877,14 +879,7 @@ namespace Ossium
 
     Scene::~Scene()
     {
-
-        entityTree.Walk([&] (auto node) { }, [&] (auto node) { if (node->data != nullptr) { node->data->Destroy(); } });
-        DestroyPending();
-
-        for (Uint32 i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
-        {
-            components[i].clear();
-        }
+        Clear();
         delete[] components;
         components = nullptr;
     }

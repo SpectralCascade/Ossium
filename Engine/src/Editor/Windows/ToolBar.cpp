@@ -101,7 +101,7 @@ namespace Ossium::Editor
                     {
                         if (Utilities::Pick<ListedScene>(project->openScenes, [&] (ListedScene& scene) { return scene.path == string(path); }) == nullptr)
                         {
-                            project->openScenes.push_back((ListedScene){
+                            project->openScenes.push_back((ListedScene) {
                                 .name = filesystem::path(string(path)).stem().string(),
                                 .path = string(path),
                                 .opened = true,

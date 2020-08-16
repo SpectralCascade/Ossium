@@ -165,7 +165,7 @@ namespace Ossium
         /// Repositions this node in the tree. Specifying a child index greater than zero will insert this at the index position rather than just appending to the new parent's children.
         void SetParent(Node<T>* node, Node<T>* parent, int index = -1)
         {
-            Log.Info("\nInsert index = {0}, childIndex = {1}\n\n", index, node->childIndex);
+            //Log.Info("\nInsert index = {0}, childIndex = {1}\n\n", index, node->childIndex);
             if (node->parent != nullptr)
             {
                 DEBUG_ASSERT(node->childIndex < node->parent->children.size(), "err");

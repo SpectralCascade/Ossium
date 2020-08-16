@@ -303,7 +303,7 @@ namespace Ossium
             int value = 0;
             if (!(str >> value))
             {
-                Log.Warning("Failed to convert string '{0}' to integer!", data);
+                //Log.Warning("Failed to convert string '{0}' to integer!", data);
             }
             return value;
         }
@@ -328,7 +328,7 @@ namespace Ossium
                 }
                 else
                 {
-                    Log.Warning("Failed to convert string '{0}' to integer from hexadecimal!", data);
+                    //Log.Warning("Failed to convert string '{0}' to integer from hexadecimal!", data);
                     break;
                 }
             }
@@ -343,7 +343,7 @@ namespace Ossium
             float value = 0;
             if (!(str >> value))
             {
-                Log.Warning("Failed to convert string '{0}' to float!", data);
+                //Log.Warning("Failed to convert string '{0}' to float!", data);
             }
             return value;
         }
