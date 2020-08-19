@@ -7,12 +7,8 @@
 
 namespace Ossium::Editor
 {
-#ifdef OSSIUM_EDITOR
     // Forward declaration
     class EditorWindow;
-#else
-    typedef void EditorWindow;
-#endif // OSSIUM_EDITOR
 }
 
 namespace Ossium

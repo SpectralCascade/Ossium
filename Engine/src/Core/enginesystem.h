@@ -20,6 +20,7 @@
 #include "input.h"
 #include "delta.h"
 #include "component.h"
+#include "config.h"
 
 namespace Ossium
 {
@@ -30,59 +31,41 @@ namespace Ossium
         friend class Scene;
 
         template<typename ...Args>
-        EngineSystem(ServicesProvider* engineServices, JSON& configData)
+        EngineSystem(const Config& config = {}, Args ...serviceList) :
+            window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags),
+            renderer(&window, config.totalRenderLayers, (config.vsync ? SDL_RENDERER_PRESENTVSYNC : 0) | (config.hardwareAcceleration ? SDL_RENDERER_ACCELERATED : 0)),
+            services(&renderer, &resources, std::forward<Args>(serviceList)...)
         {
-            services = engineServices;
-            ecs = new Scene(services);
-            Init(configData);
+            Init(config);
         }
 
-        template<typename ...Args>
-        EngineSystem(ServicesProvider* engineServices, std::string configFilePath = "")
-        {
-            services = engineServices;
-            ecs = new Scene(services);
-            if (!configFilePath.empty())
-            {
-                Init(configFilePath);
-            }
-        }
-
-        ~EngineSystem();
-
-        /// Destroys all entities in the scene.
-        void ClearScene();
-
-        /// Configures the engine with a JSON file.
-        void Init(std::string configFilePath);
-        /// Configures the engine with a JSON object.
-        void Init(JSON& configData);
+        /// Configures the engine.
+        void Init(const Config& config);
 
         /// Executes the main game loop, including input handling and rendering.
         /// Returns false when the game should stop, otherwise returns true.
         bool Update();
 
-        /// Loads a game scene into the entity component system.
-        bool LoadScene(std::string path);
-
-        /// Returns the ECS instance.
-        Scene* GetScene();
-
-        /// Returns the services provider.
-        ServicesProvider* GetServices();
-
+        /// Indicates that the engine should return false on the next Update() call.
         void Exit();
 
     private:
         NOCOPY(EngineSystem);
 
+        /// Should the engine return false at the end of the next Update() call?
         bool doExit = false;
 
-        /// The core entity-component system.
-        Scene* ecs = nullptr;
+        /// Native window.
+        Window window;
 
-        /// Services available to this engine system instance.
-        ServicesProvider* services = nullptr;
+        /// Main renderer associated with the window.
+        Renderer renderer;
+
+        /// Services available to this engine system instance. Always provides a renderer at the very least.
+        ServicesProvider services;
+
+        /// Resource controller for all resources used by the game, including scenes, images, sounds etc.
+        ResourceController resources;
 
         /// SDL_Event for input handling.
         SDL_Event currentEvent;

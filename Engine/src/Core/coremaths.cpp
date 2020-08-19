@@ -173,7 +173,7 @@ namespace Ossium
     /// Rotation
     ///
 
-    Rotation::Rotation(b2Rot rot)
+    Rotation::Rotation(const b2Rot& rot)
     {
         s = rot.s;
         c = rot.c;

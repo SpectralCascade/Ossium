@@ -109,6 +109,9 @@ namespace Ossium::Editor
         /// Returns the input controller instance for scenes.
         InputController* GetSceneInput();
 
+        /// Returns a pointer to the physics world instance.
+        Physics::PhysicsWorld* GetPhysicsWorld();
+
     private:
         // Helper method for a template
         EditorLayout* CreateLayout();
@@ -137,6 +140,9 @@ namespace Ossium::Editor
 
         /// The opened scene that is currently selected.
         Scene* selectedScene = nullptr;
+
+        /// Physics world
+        Physics::PhysicsWorld* world = nullptr;
 
     };
 

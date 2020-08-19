@@ -82,7 +82,7 @@ namespace Ossium::Editor
         };
 
         // Provide access to basic services like the renderer and resources.
-        services = new ServicesProvider(resources, renderer, GetEditorController()->GetSceneInput());
+        services = new ServicesProvider(resources, renderer, GetEditorController()->GetSceneInput(), GetEditorController()->GetPhysicsWorld());
 
     }
 

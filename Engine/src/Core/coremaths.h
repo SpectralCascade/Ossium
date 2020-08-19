@@ -40,7 +40,7 @@ namespace Ossium
     {
         Vector2() = default;
         Vector2(float _x, float _y);
-        Vector2(b2Vec2& vec) { *this = vec; };
+        Vector2(const b2Vec2& vec) { *this = vec; };
 
         /// Dot product of this and another vector
         float Dot(Vector2 vec);
@@ -116,9 +116,9 @@ namespace Ossium
     struct OSSIUM_EDL Rotation : public b2Rot
     {
         Rotation() = default;
-        Rotation(b2Rot rot);
+        Rotation(const b2Rot& rot);
         Rotation(float angle) : b2Rot(angle) {};
-        Rotation(Vector2& direction) : b2Rot(direction.RotationRad()) {};
+        Rotation(Vector2&& direction) : b2Rot(direction.RotationRad()) {};
 
         /// Returns the angle in degrees.
         float GetDegrees();

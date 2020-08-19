@@ -177,7 +177,7 @@ namespace Ossium
             return reinterpret_cast<T*>(found->second);
         };
 
-        /// Returns a vector of all loaded resources of the specified type.
+        /// Returns the map of all loaded resources of the specified type.
         template<typename T>
         std::unordered_map<std::string, Resource*>& GetAll()
         {

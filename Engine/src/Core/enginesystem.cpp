@@ -16,123 +16,78 @@
 **/
 #include "window.h"
 #include "enginesystem.h"
+#include "ecs.h"
 
 namespace Ossium
 {
 
-    EngineSystem::~EngineSystem()
+    void EngineSystem::Init(const Config& config)
     {
-        if (ecs != nullptr)
+        delta.Init(config.fpscap);
+        if (!config.startScene.empty())
         {
-            delete ecs;
-            ecs = nullptr;
+            if (!resources.LoadAndInit<Scene>(config.startScene, &services))
+            {
+                Log.Warning("Failed to load start scene \"{0}\"!", config.startScene);
+            }
         }
-    }
-
-    void EngineSystem::ClearScene()
-    {
-        if (ecs != nullptr)
-        {
-            delete ecs;
-            ecs = nullptr;
-        }
-        ecs = new Scene(services);
-    }
-
-    void EngineSystem::Init(JSON& configData)
-    {
-        /// Set flags here to configure how the engine operates.
-    }
-
-    void EngineSystem::Init(std::string configFilePath)
-    {
-        /// Load the configuration file into a JSON object
-        JSON data;
-        if (!data.Import(configFilePath))
-        {
-            Log.Warning("Failed to load EngineSystem initialisation file '{0}'!", configFilePath);
-            return;
-        }
-        /// Initialise as normal
-        Init(data);
     }
 
     bool EngineSystem::Update()
     {
         bool quit = doExit;
-        if (doExit)
+        if (quit)
         {
             return false;
         }
 
-        Renderer* renderer = services->GetService<Renderer>();
-
-        /// Input handling phase
+        // Input handling phase
         while (SDL_PollEvent(&currentEvent) != 0)
         {
             if (currentEvent.type == SDL_QUIT
-                #ifdef OSSIUM_DEBUG
-                || (currentEvent.type == SDL_KEYUP && currentEvent.key.keysym.sym == SDLK_ESCAPE)
-                #endif // DEBUG
+#ifdef OSSIUM_DEBUG
+                || (SDL_GetModState() == KMOD_LALT && (currentEvent.type == SDL_KEYDOWN && currentEvent.key.keysym.sym == SDLK_F4))
+#endif // DEBUG
             ) {
                 quit = true;
                 break;
             }
-            InputController* input = services->GetService<InputController>();
+            window.HandleEvent(currentEvent);
+            InputController* input = services.GetService<InputController>();
             if (input != nullptr)
             {
                 input->HandleEvent(currentEvent);
             }
         }
 
-        /// Update services before main logic update.
-        services->PreUpdate();
+        // Update services before main logic update.
+        services.PreUpdate();
 
-        /// General game logic update
-        ecs->UpdateComponents();
-
-        /// Update services after the main logic update.
-        services->PostUpdate();
-
-        if (renderer != nullptr)
+        // Update game logic in loaded scenes
+        for (auto itr : resources.GetAll<Scene>())
         {
-            /// Render everything
-            renderer->RenderPresent();
+            ((Scene*)itr.second)->UpdateComponents();
         }
 
-        /// Destroy entities and components that are pending destruction
-        /// now we've finished rendering.
-        ecs->DestroyPending();
+        // Update services after the main logic update.
+        services.PostUpdate();
 
-        /// Update services post-render
-        services->PostRender();
+        // Render everything
+        renderer.RenderPresent();
 
-        /// Update the engine time.
+        // Destroy entities and components pending destruction.
+        for (auto itr : resources.GetAll<Scene>())
+        {
+            ((Scene*)itr.second)->DestroyPending();
+        }
+
+        // Update services post-render
+        services.PostRender();
+
+        // Update the engine time.
         delta.Update();
 
         return !quit;
-    }
-
-    bool EngineSystem::LoadScene(std::string path)
-    {
-        JSON raw;
-        if (raw.Import(path))
-        {
-            std::string data = raw.ToString();
-            ecs->FromString(data);
-            return true;
-        }
-        return false;
-    }
-
-    Scene* EngineSystem::GetScene()
-    {
-        return ecs;
-    }
-
-    ServicesProvider* EngineSystem::GetServices()
-    {
-        return services;
     }
 
     void EngineSystem::Exit()

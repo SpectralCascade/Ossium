@@ -53,29 +53,15 @@ namespace Ossium
         previousTicks = SDL_GetTicks();
     }
 
-    void Delta::Init(JSON& config)
+    void Delta::Init(float fpsCap)
     {
-        /// If the fps cap has a value of <= 0, no capping is applied
-        string& data = config["FPS Cap"];
-        fpscap = IsFloat(data) ? ToFloat(data) : 0;
-        Init();
-    }
-
-    void Delta::Init()
-    {
+        fpscap = fpsCap;
         previousTicks = SDL_GetTicks();
     }
 
     void Delta::Reset()
     {
         previousTicks = SDL_GetTicks();
-    }
-
-    inline namespace Global
-    {
-
-        Delta delta;
-
     }
 
 }

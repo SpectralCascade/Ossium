@@ -15,6 +15,7 @@ namespace Ossium::Editor
         input = new InputController();
         sceneInput = new InputController();
         mainLayout = new EditorLayout(this, "Ossium Editor");
+        world = new Physics::PhysicsWorld(Vector2::Zero);
         toolbar = mainLayout->Add<ToolBar>(DockingMode::TOP);
         mainLayout->GetNativeWindow()->OnCloseButton += [&] (Window& caller) {
             running = false;
@@ -28,6 +29,7 @@ namespace Ossium::Editor
             delete layout;
         }
         layouts.clear();
+        delete world;
         delete mainLayout;
         delete sceneInput;
         delete input;
@@ -240,6 +242,11 @@ namespace Ossium::Editor
     EditorLayout* EditorController::GetMainLayout()
     {
         return mainLayout;
+    }
+
+    Physics::PhysicsWorld* EditorController::GetPhysicsWorld()
+    {
+        return world;
     }
 
 }

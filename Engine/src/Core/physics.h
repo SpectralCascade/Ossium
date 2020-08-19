@@ -21,6 +21,7 @@
 #include <functional>
 
 #include "coremaths.h"
+#include "services.h"
 
 namespace Ossium
 {
@@ -43,7 +44,7 @@ namespace Ossium
             RayHitCallback onRayHit;
         };
 
-        class OSSIUM_EDL PhysicsWorld : public b2World
+        class OSSIUM_EDL PhysicsWorld : public b2World, public Service<PhysicsWorld>
         {
         public:
             PhysicsWorld() : b2World({0.0f, -9.81f}) {};
@@ -53,6 +54,13 @@ namespace Ossium
             void RayCast(const Ray& ray, b2RayCastCallback* callback, float distance = 100.0f);
             void RayCast(const Ray& ray, OnRayHit callback, float distance = 100.0f);
             void RayCast(const Point& origin, const Point& endPoint, OnRayHit callback);
+
+            /// BaseService::PostUpdate() override, updates physics after the scenes have been updated.
+            void PostUpdate();
+
+            float timeStep = 1.0f / 60.0f;
+            int velocityIterations = 6;
+            int positionIterations = 2;
 
         };
 

@@ -24,15 +24,22 @@ namespace Ossium
 {
 
     /// General configuration information for Ossium
-    struct OSSIUM_EDL Config : public Schema<Config, 5>
+    struct OSSIUM_EDL Config : public Schema<Config, 20>
     {
-        DECLARE_BASE_SCHEMA(Config, 5);
+        DECLARE_BASE_SCHEMA(Config, 20);
 
+        M(std::string, windowTitle) = "Ossium Engine";
+        M(int, windowWidth) = 640;
+        M(int, windowHeight) = 480;
+        M(int, windowFlags) = SDL_WINDOW_SHOWN;
         M(bool, fullscreen) = false;
         M(bool, vsync) = true;
+        M(bool, hardwareAcceleration) = true;
+        M(int, totalRenderLayers) = 100;
         M(float, fpscap) = 0;
         M(char, filtering) = '1';
         M(unsigned int, mastervolume) = 100;
+        M(std::string, startScene) = "";
 
     };
 
