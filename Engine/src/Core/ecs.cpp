@@ -490,6 +490,16 @@ namespace Ossium
         return name;
     }
 
+    void Scene::LoadSafe(string guid_path)
+    {
+        toLoad = guid_path;
+    }
+
+    void Scene::ClearSafe()
+    {
+        clearPostUpdate = true;
+    }
+
     void Scene::UpdateComponents()
     {
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
@@ -501,6 +511,17 @@ namespace Ossium
                     (*j)->Update();
                 }
             }
+        }
+        // Should be safe to clean up components now. Assuming they clean up after themselves!
+        if (!toLoad.empty())
+        {
+            Load(toLoad);
+            clearPostUpdate = false;
+            toLoad = "";
+        }
+        else if (clearPostUpdate)
+        {
+            Clear();
         }
     }
 

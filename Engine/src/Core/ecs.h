@@ -148,21 +148,22 @@ namespace Ossium
 
         Scene(ServicesProvider* services = nullptr);
 
-        // Resource loading methods
-        bool Load(std::string guid_path);
-        bool Init(ServicesProvider* services);
-        bool LoadAndInit(std::string guid_path, ServicesProvider* services);
+        /// Attempts to load this scene safely after updating.
+        void LoadSafe(std::string guid_path);
 
-        // Save the scene at a specified directory.
+        /// Save the scene at a specified directory.
         bool Save(std::string directoryPath);
 
-        // Sets the name of this scene.
+        /// Attempts to clear this scene safely after updating.
+        void ClearSafe();
+
+        /// Sets the name of this scene.
         void SetName(std::string name);
 
-        // Returns the name of this scene
+        /// Returns the name of this scene
         std::string GetName();
 
-        // Clean up the scene once finished.
+        /// Clean up the scene once finished.
         ~Scene();
 
         /// Iterates through all components that implement the Update() method and calls it for each one
@@ -218,9 +219,6 @@ namespace Ossium
         /// Actually deletes all entities pending destruction. This should only be called at the end of a frame once all components have been updated and/or rendered.
         void DestroyPending();
 
-        /// Destroys ALL entities and their components
-        void Clear();
-
         /// Returns the total number of entities
         unsigned int GetTotalEntities();
 
@@ -240,6 +238,20 @@ namespace Ossium
         void FromString(const std::string& str);
 
     private:
+        /// Destroys ALL entities and their components
+        void Clear();
+
+        /// Should this scene be cleared at the end of the Update() call?
+        bool clearPostUpdate = false;
+
+        /// The next scene file to load at the end of the update call. If empty, does nothing.
+        std::string toLoad = "";
+
+        // Resource loading methods
+        bool Load(std::string guid_path);
+        bool Init(ServicesProvider* services);
+        bool LoadAndInit(std::string guid_path, ServicesProvider* services);
+
         /// Removes the entity from the inactiveEntities set.
         void SetActive(Entity* entity);
 
