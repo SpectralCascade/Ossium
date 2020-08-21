@@ -22,12 +22,31 @@
 namespace Ossium
 {
 
+    EngineSystem::EngineSystem(const Config& config)
+    {
+        window = new Window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags);
+        renderer = new Renderer(window, config.totalRenderLayers, (config.vsync ? SDL_RENDERER_PRESENTVSYNC : 0) | (config.hardwareAcceleration ? SDL_RENDERER_ACCELERATED : 0));
+        physWorld = new Physics::PhysicsWorld(Vector2::Zero);
+        input = new InputController();
+        services = new ServicesProvider(renderer, &resources, physWorld, input);
+        Init(config);
+    }
+
+    EngineSystem::~EngineSystem()
+    {
+        delete services;
+        delete input;
+        delete physWorld;
+        delete renderer;
+        delete window;
+    }
+
     void EngineSystem::Init(const Config& config)
     {
         delta.Init(config.fpscap);
         if (!config.startScene.empty())
         {
-            if (!resources.LoadAndInit<Scene>(config.startScene, &services))
+            if (!resources.LoadAndInit<Scene>(config.startScene, services))
             {
                 Log.Warning("Failed to load start scene \"{0}\"!", config.startScene);
             }
@@ -50,16 +69,12 @@ namespace Ossium
                 quit = true;
                 break;
             }
-            window.HandleEvent(currentEvent);
-            InputController* input = services.GetService<InputController>();
-            if (input != nullptr)
-            {
-                input->HandleEvent(currentEvent);
-            }
+            window->HandleEvent(currentEvent);
+            input->HandleEvent(currentEvent);
         }
 
         // Update services before main logic update.
-        services.PreUpdate();
+        services->PreUpdate();
 
         // Update game logic in loaded scenes
         for (auto itr : resources.GetAll<Scene>())
@@ -68,7 +83,7 @@ namespace Ossium
         }
 
         // Update services after the main logic update.
-        services.PostUpdate();
+        services->PostUpdate();
 
         // TODO: Optimise this? Perhaps there's a way transforms can point directly to the physics world transform when a physics body is associated.
         // Once the physics world has updated, update all the transforms associated with physics bodies.
@@ -78,7 +93,7 @@ namespace Ossium
         }
 
         // Render everything
-        renderer.RenderPresent();
+        renderer->RenderPresent();
 
         // Destroy entities and components pending destruction.
         for (auto itr : resources.GetAll<Scene>())
@@ -87,7 +102,7 @@ namespace Ossium
         }
 
         // Update services post-render
-        services.PostRender();
+        services->PostRender();
 
         // Update the engine time.
         delta.Update();
