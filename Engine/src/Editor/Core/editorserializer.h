@@ -8,7 +8,11 @@
 namespace Ossium::Editor
 {
     // Forward declaration
-    class EditorWindow;
+    class EditorWindow
+    #ifndef OSSIUM_EDITOR
+    {}
+    #endif // OSSIUM_EDITOR
+    ;
 }
 
 namespace Ossium

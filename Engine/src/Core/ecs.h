@@ -30,11 +30,13 @@
 #include "stringintern.h"
 #include "schemamodel.h"
 #include "services.h"
-#include "resourcecontroller.h"
+#include "resource.h"
 
 namespace Ossium
 {
     typedef Uint32 ComponentType;
+
+    class ResourceController;
 
     /// Declares a component type, declares a virtual copy method and constructor
     /// Add this to the end of any class you wish to register as a component
@@ -233,6 +235,9 @@ namespace Ossium
             return servicesProvider->GetService<T>();
         }
 
+        /// Return pointer to the services this scene uses.
+        ServicesProvider* GetServices();
+
         /// Serialise everything
         std::string ToString();
         void FromString(const std::string& str);
@@ -305,7 +310,6 @@ namespace Ossium
         {
             T* component = new T();
             component->entity = this;
-            component->OnCreate();
             auto itr = components.find(GetComponentType<T>());
             if (itr != components.end())
             {
@@ -319,6 +323,7 @@ namespace Ossium
             }
             /// Add the component to the ECS controller
             controller->components[GetComponentType<T>()].push_back(component);
+            component->OnCreate();
             return component;
         }
 

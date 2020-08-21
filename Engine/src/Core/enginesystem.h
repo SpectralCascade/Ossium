@@ -21,6 +21,7 @@
 #include "delta.h"
 #include "component.h"
 #include "config.h"
+#include "resourcecontroller.h"
 
 namespace Ossium
 {
@@ -61,11 +62,11 @@ namespace Ossium
         /// Main renderer associated with the window.
         Renderer renderer;
 
-        /// Services available to this engine system instance. Always provides a renderer at the very least.
-        ServicesProvider services;
-
         /// Resource controller for all resources used by the game, including scenes, images, sounds etc.
         ResourceController resources;
+
+        /// Services available to this engine system instance. Always provides a renderer at the very least.
+        ServicesProvider services;
 
         /// SDL_Event for input handling.
         SDL_Event currentEvent;

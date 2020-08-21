@@ -25,6 +25,7 @@
 #include "ecs.h"
 #include "delta.h"
 #include "engineconstants.h"
+#include "resourcecontroller.h"
 
 using namespace std;
 
@@ -867,6 +868,11 @@ namespace Ossium
             roots.push_back(node->data);
         }
         return roots;
+    }
+
+    ServicesProvider* Scene::GetServices()
+    {
+        return servicesProvider;
     }
 
     void Scene::WalkEntities(function<void(Entity*)> walkFunc, bool breadthFirst)

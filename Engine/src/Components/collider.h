@@ -64,19 +64,10 @@ namespace Ossium
 
     };
 
-    class Collider : public
-    #ifdef OSSIUM_EDITOR
-    GraphicComponent
-    #else
-    Component
-    #endif // OSSIUM_EDITOR
+    class Collider : public GraphicComponent
     {
     public:
-    #ifdef OSSIUM_EDITOR
         DECLARE_ABSTRACT_COMPONENT(GraphicComponent, Collider);
-    #else
-        DECLARE_ABSTRACT_COMPONENT(Component, Collider);
-    #endif // OSSIUM_EDITOR
 
         virtual const b2Shape& GetShape() = 0;
 

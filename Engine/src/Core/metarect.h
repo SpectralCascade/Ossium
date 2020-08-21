@@ -22,14 +22,13 @@
 #include "schemamodel.h"
 #include "coremaths.h"
 #include "ecs.h"
-#include "../Editor/Core/editorserializer.h"
 
 namespace Ossium
 {
 
     struct MetaRectSchema;
 
-    typedef Schema<MetaRectSchema, 20, Ossium::EditorSerializer> MetaRectSchemaBase;
+    typedef Schema<MetaRectSchema, 20> MetaRectSchemaBase;
 
     struct OSSIUM_EDL MetaRectSchema : public MetaRectSchemaBase
     {

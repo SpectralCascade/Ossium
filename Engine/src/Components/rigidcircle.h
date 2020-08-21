@@ -6,9 +6,9 @@
 namespace Ossium
 {
 
-    struct CircleColliderSchema : public Schema<CircleColliderSchema, 1>
+    struct CircleColliderSchema : public Schema<CircleColliderSchema, 20>
     {
-        DECLARE_BASE_SCHEMA(CircleColliderSchema, 1);
+        DECLARE_BASE_SCHEMA(CircleColliderSchema, 20);
 
         M(float, radius) = 1.0f;
 

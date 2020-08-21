@@ -45,11 +45,8 @@ namespace Ossium
         // Input handling phase
         while (SDL_PollEvent(&currentEvent) != 0)
         {
-            if (currentEvent.type == SDL_QUIT
-#ifdef OSSIUM_DEBUG
-                || (SDL_GetModState() == KMOD_LALT && (currentEvent.type == SDL_KEYDOWN && currentEvent.key.keysym.sym == SDLK_F4))
-#endif // DEBUG
-            ) {
+            if (currentEvent.type == SDL_QUIT || (SDL_GetModState() == KMOD_LALT && (currentEvent.type == SDL_KEYDOWN && currentEvent.key.keysym.sym == SDLK_F4)))
+            {
                 quit = true;
                 break;
             }

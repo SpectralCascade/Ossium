@@ -44,7 +44,7 @@ namespace Ossium
             return data ? "1" : "0";
         }
 #endif // OSSIUM_EDITOR
-        return property ? "1" : "0";
+        return Utilities::ToString(property);
     }
 
     string EditorSerializer::SerializeProperty(const char* type, const char* name, int attribute, Vector2& property)

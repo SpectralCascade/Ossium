@@ -17,6 +17,8 @@
 #ifndef OSSIUMEDITOR_H
 #define OSSIUMEDITOR_H
 
+#ifdef OSSIUM_EDITOR
+
 #include "Editor/Core/editorwindow.h"
 #include "Editor/Core/editorlayout.h"
 #include "Editor/Core/editorcontroller.h"
@@ -24,5 +26,7 @@
 #include "Editor/Core/contextmenu.h"
 #include "Editor/Core/editorserializer.h"
 #include "Editor/Core/editorstyle.h"
+
+#endif // OSSIUM_EDITOR
 
 #endif // OSSIUMEDITOR_H
