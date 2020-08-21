@@ -479,9 +479,7 @@ namespace Ossium
         Entity* Clone();
 
         /// Returns pointer to first found instance of an entity
-        Entity* Find(std::string name);
-        /// Ditto, but searches only for entities below the parent
-        Entity* Find(std::string name, Entity* parent);
+        Entity* Find(std::string entityName, Entity* parent = nullptr);
 
         /// Creates a child entity of this entity
         Entity* CreateChild();

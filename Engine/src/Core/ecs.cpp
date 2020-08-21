@@ -212,10 +212,10 @@ namespace Ossium
         }
     }
 
-    Entity* Entity::Find(string targetName, Entity* parent = nullptr)
+    Entity* Entity::Find(string entityName, Entity* parent)
     {
         Node<Entity*>* node = controller->entityTree.Find(
-            [targetName] (Node<Entity*>* n) { return n->data->name == targetName; },
+            [entityName] (Node<Entity*>* n) { return n->data->name == entityName; },
             parent != nullptr ? parent->self : nullptr
         );
         return node != nullptr ? node->data : nullptr;
@@ -523,12 +523,6 @@ namespace Ossium
         {
             Clear();
         }
-    }
-
-    Entity* Scene::Find(std::string entityName)
-    {
-        Node<Entity*>* node = entityTree.Find([&entityName](Node<Entity*>* n){ return n->data->name == entityName; });
-        return node != nullptr ? node->data : nullptr;
     }
 
     Entity* Scene::CreateEntity(Entity* parent)

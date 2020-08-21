@@ -20,8 +20,7 @@ namespace Ossium::Editor
         vector<Scene*> loadedScenes = editor->GetLoadedScenes();
         for (Scene* scene : loadedScenes)
         {
-            scene->UpdateComponents();
-
+            //scene->UpdateComponents();
             // Hacky fix for updating transform positions. Rather slow, alternative maybe?
             scene->WalkComponents<Transform>([] (Transform* t) { t->SetDirty(); });
         }
