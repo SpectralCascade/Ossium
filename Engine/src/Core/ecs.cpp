@@ -892,6 +892,16 @@ namespace Ossium
 
     }
 
+    Entity* Scene::Find(string entityName, Entity* parent)
+    {
+        if (parent == nullptr)
+        {
+            auto found = entityTree.Find([=] (Node<Entity*>* n) { return n->data->name == entityName; }, parent != nullptr ? parent->self : nullptr);
+            return found != nullptr ? found->data : nullptr;
+        }
+        return parent->Find(entityName);
+    }
+
     Scene::~Scene()
     {
         Clear();

@@ -29,8 +29,15 @@ namespace Ossium
 
     void Texture::Render(Renderer& renderer)
     {
+        if (width <= 0 || height <= 0)
+        {
+            // Early out
+            return;
+        }
 
-        SDL_Rect dest = GetSDL(GetTransform()->GetWorldPosition(), GetTransform()->GetWorldScale());
+        Transform* trans = GetTransform();
+
+        SDL_Rect dest = GetSDL(trans->GetWorldPosition(), trans->GetWorldScale());
         if (source == nullptr || source->GetTexture() == NULL)
         {
             SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
@@ -38,16 +45,59 @@ namespace Ossium
             return;
         }
 
-        SDL_Point trueOrigin = {(int)(origin.x * width * GetTransform()->GetWorldScale().x), (int)(origin.y * height * GetTransform()->GetWorldScale().y)};
-
-        /// Rendering time!
-        if (clip.w > 0 && clip.h > 0)
+        if (!tiled)
         {
-            source->Render(renderer.GetRendererSDL(), dest, &clip, &trueOrigin, GetTransform()->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+            SDL_Point trueOrigin = {(int)(origin.x * width * trans->GetWorldScale().x), (int)(origin.y * height * trans->GetWorldScale().y)};
+
+            /// Rendering time!
+            if (clip.w > 0 && clip.h > 0)
+            {
+                source->Render(renderer.GetRendererSDL(), dest, &clip, &trueOrigin, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+            }
+            else
+            {
+                source->Render(renderer.GetRendererSDL(), dest, NULL, &trueOrigin, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+            }
         }
         else
         {
-            source->Render(renderer.GetRendererSDL(), dest, NULL, &trueOrigin, GetTransform()->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+            SDL_Rect texClip = clip;
+            SDL_Rect trueClip = clip;
+            if (texClip.w <= 0 || texClip.h <= 0)
+            {
+                texClip.w = source->GetWidth();
+                texClip.h = source->GetHeight();
+                trueClip.w = texClip.w;
+                trueClip.h = texClip.h;
+            }
+            // Texture 'clip' is also scaled
+            texClip.w *= trans->GetWorldScale().x;
+            texClip.h *= trans->GetWorldScale().y;
+
+            float sWidth = width * trans->GetWorldScale().x;
+            float sHeight = height * trans->GetWorldScale().y;
+
+            Vector2 minPos = trans->GetWorldPosition() - Vector2(sWidth / 2.0f, sHeight / 2.0f);
+
+            Vector2 screenOrigin = Vector2::Zero;
+            SDL_Point converted;
+            for (unsigned int row = 0, rows = sHeight / texClip.h; row < rows; row++)
+            {
+                for (unsigned int col = 0, cols = sWidth / texClip.w; col < cols; col++)
+                {
+                    // Compute destination rect
+                    dest = { (int)(minPos.x + (texClip.w * col)), (int)(minPos.y + (texClip.h * row)), texClip.w, texClip.h };
+
+                    // Compute true origin for rotating this tile
+                    screenOrigin = (Vector2(origin.x * sWidth, origin.y * sHeight) + Vector2((-sWidth) + dest.x, (-sHeight) + dest.y)).Rotation90Clockwise().Rotation90Clockwise();
+
+                    converted.x = (int)screenOrigin.x;
+                    converted.y = (int)screenOrigin.y;
+
+                    // Render a tile
+                    source->Render(renderer.GetRendererSDL(), dest, &trueClip, &converted, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+                }
+            }
         }
     }
 
@@ -58,8 +108,8 @@ namespace Ossium
         {
             return;
         }
-        /// Don't configure dimensions, they should be specified by the schema data.
-        SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()), true);
+        /// Don't configure dimensions unless the width and height are zero, they should be specified by the schema data.
+        SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()), width == 0 || height == 0);
         /// Set clip to fit loaded image
         Log.Verbose("Loaded texture with source from \"{0}\"", imgPath);
     }

@@ -176,12 +176,30 @@ namespace Ossium::Editor
 
             bool hovered, pressed;
             Button(text, tlayout, style, false, 4, 2, true, &hovered, &pressed);
-            if (hovered && pressed && !InputState.mouseWasPressed)
+            if (hovered && ((pressed && !InputState.mouseWasPressed) || (rightPressed && !rightWasPressed)))
             {
                 // On press down, select this scene.
                 editor->SelectEntity(entity);
                 editor->SelectScene(entity->GetScene());
                 TriggerUpdate();
+
+                if (rightPressed && !rightWasPressed)
+                {
+                    ContextMenu* cmenu = ContextMenu::GetMainInstance(resources);
+                    cmenu->ClearOptions();
+
+                    cmenu->Add("Clone Entity", [&, entity] () {
+                        GetEditorLayout()->GetEditorController()->SelectEntity(entity->Clone());
+                    });
+
+                    cmenu->Add("Delete Entity", [&, entity] () {
+                        entity->Destroy(true);
+                        GetEditorLayout()->GetEditorController()->SelectEntity(nullptr);
+                    });
+
+                    Rect vport = renderer->GetViewportRect();
+                    cmenu->Show(InputState.mousePos + renderer->GetWindow()->GetPosition() + Vector2(vport.x, vport.y));
+                }
             }
 
             EndHorizontal();

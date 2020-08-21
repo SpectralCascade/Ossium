@@ -17,6 +17,7 @@
 #include "window.h"
 #include "enginesystem.h"
 #include "ecs.h"
+#include "../Components/collider.h"
 
 namespace Ossium
 {
@@ -71,6 +72,13 @@ namespace Ossium
 
         // Update services after the main logic update.
         services.PostUpdate();
+
+        // TODO: Optimise this? Perhaps there's a way transforms can point directly to the physics world transform when a physics body is associated.
+        // Once the physics world has updated, update all the transforms associated with physics bodies.
+        for (auto itr : resources.GetAll<Scene>())
+        {
+            ((Scene*)itr.second)->WalkComponents<PhysicsBody>([](PhysicsBody* body){ body->UpdatePhysics(); });
+        }
 
         // Render everything
         renderer.RenderPresent();

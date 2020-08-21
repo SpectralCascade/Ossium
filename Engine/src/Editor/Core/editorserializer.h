@@ -52,6 +52,10 @@ namespace Ossium
             return SerializeProperty(type, name, attribute, data);
         }
 
+        //
+        // TODO: Serialize enums as dropdowns!
+        //
+
         /// Serialize a string value. This is the default implementation.
         std::string SerializeProperty(const char* type, const char* name, int attribute, std::string& property);
 

@@ -26,6 +26,16 @@
 namespace Ossium
 {
 
+    inline float PTM(float pixels)
+    {
+        return pixels * 0.02f;
+    }
+
+    inline float MTP(float metres)
+    {
+        return metres * (1.0f / 0.02f);
+    }
+
     inline namespace Physics
     {
 

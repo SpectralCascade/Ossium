@@ -48,7 +48,7 @@ namespace Ossium::Editor
 
             Tab(30);
 
-            if (Button("Remove Entity", redStyle))
+            if (Button("Delete Entity", redStyle))
             {
                 GetEditorLayout()->GetEditorController()->SelectEntity(nullptr);
                 selected->Destroy(true);

@@ -41,6 +41,9 @@ namespace Ossium
         /// The area of the source image that should be rendered
         M(SDL_Rect, clip) = {0, 0, 0, 0};
 
+        /// Should this texture be tiled?
+        M(bool, tiled) = false;
+
         /// Should this texture be flipped vertically, horizontally, or not at all?
         M(SDL_RendererFlip, flip) = SDL_FLIP_NONE;
 
