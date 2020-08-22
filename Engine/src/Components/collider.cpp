@@ -10,6 +10,7 @@ namespace Ossium
     {
         ParentType::OnLoadFinish();
 
+#ifndef OSSIUM_EDITOR
         Physics::PhysicsWorld* world = entity->GetService<Physics::PhysicsWorld>();
         DEBUG_ASSERT(world != nullptr, "Physics world cannot be NULL");
         Collider* collider = entity->GetComponent<Collider>();
@@ -42,6 +43,7 @@ namespace Ossium
             fixture = body->CreateFixture(&fixDef);
         }
         // TODO: update properties if body and fixture are already created.
+#endif // OSSIUM_EDITOR
     }
 
     void PhysicsBody::OnDestroy()
