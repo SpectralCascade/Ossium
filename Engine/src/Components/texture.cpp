@@ -86,13 +86,13 @@ namespace Ossium
                 for (unsigned int col = 0, cols = sWidth / texClip.w; col < cols; col++)
                 {
                     // Compute destination rect
-                    dest = { (int)(minPos.x + (texClip.w * col)), (int)(minPos.y + (texClip.h * row)), texClip.w, texClip.h };
+                    dest = { (int)round(minPos.x + (texClip.w * col)), (int)round(minPos.y + (texClip.h * row)), texClip.w, texClip.h };
 
                     // Compute true origin for rotating this tile
                     screenOrigin = (Vector2(origin.x * sWidth, origin.y * sHeight) + Vector2((-sWidth) + dest.x, (-sHeight) + dest.y)).Rotation90Clockwise().Rotation90Clockwise();
 
-                    converted.x = (int)screenOrigin.x;
-                    converted.y = (int)screenOrigin.y;
+                    converted.x = (int)round(screenOrigin.x);
+                    converted.y = (int)round(screenOrigin.y);
 
                     // Render a tile
                     source->Render(renderer.GetRendererSDL(), dest, &trueClip, &converted, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);

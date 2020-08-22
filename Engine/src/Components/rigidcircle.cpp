@@ -22,12 +22,14 @@ namespace Ossium
 
     void CircleCollider::Render(Renderer& renderer)
     {
+#ifndef OSSIUM_EDITOR
         Ossium::Circle c = {
             .x = GetTransform()->GetWorldPosition().x,
             .y = GetTransform()->GetWorldPosition().y,
             .r = radius
         };
         c.Draw(renderer, Ossium::Colors::GREEN);
+#endif // OSSIUM_EDITOR
     }
 
 }

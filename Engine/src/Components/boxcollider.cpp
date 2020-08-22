@@ -22,6 +22,7 @@ namespace Ossium
 
     void BoxCollider::Render(Renderer& renderer)
     {
+#ifndef OSSIUM_EDITOR
         Ossium::Rect box = {
             .x = GetTransform()->GetWorldPosition().x - (width / 2),
             .y = GetTransform()->GetWorldPosition().y - (height / 2),
@@ -29,6 +30,7 @@ namespace Ossium
             .h = height
         };
         box.Draw(renderer, Ossium::Colors::GREEN);
+#endif // OSSIUM_EDITOR
     }
 
 /* TODO: rebuild physics body
