@@ -62,9 +62,19 @@ namespace Ossium
 
     };
 
-    class Collider : public GraphicComponent
+
+    struct ColliderSchema : public Schema<ColliderSchema, 1>
+    {
+        DECLARE_BASE_SCHEMA(ColliderSchema, 1);
+
+        M(Vector2, offset) = Vector2::Zero;
+
+    };
+
+    class Collider : public GraphicComponent, public ColliderSchema
     {
     public:
+        CONSTRUCT_SCHEMA(GraphicComponent, ColliderSchema);
         DECLARE_ABSTRACT_COMPONENT(GraphicComponent, Collider);
 
         virtual const b2Shape& GetShape() = 0;

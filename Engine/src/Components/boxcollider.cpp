@@ -8,6 +8,7 @@ namespace Ossium
     void BoxCollider::SetupShape()
     {
         shape.SetAsBox(PTM(width / 2.0f), PTM(height / 2.0f));
+        shape.m_centroid = offset;
     }
 
     const b2Shape& BoxCollider::GetShape()
@@ -22,10 +23,10 @@ namespace Ossium
 
     void BoxCollider::Render(Renderer& renderer)
     {
-#ifndef OSSIUM_EDITOR
+#ifdef OSSIUM_EDITOR
         Ossium::Rect box = {
-            .x = GetTransform()->GetWorldPosition().x - (width / 2),
-            .y = GetTransform()->GetWorldPosition().y - (height / 2),
+            .x = (GetTransform()->GetWorldPosition().x - (width / 2)) + offset.x,
+            .y = (GetTransform()->GetWorldPosition().y - (height / 2)) + offset.y,
             .w = width,
             .h = height
         };
