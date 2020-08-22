@@ -23,18 +23,18 @@ namespace Ossium
         CONSTRUCT_SCHEMA(Collider, BoxColliderSchema);
         DECLARE_COMPONENT(Collider, BoxCollider);
 
-        void OnLoadFinish();
+        void SetupShape();
 
         const b2Shape& GetShape();
 
         const b2PolygonShape& GetPolygonShape();
-
+/*
         void SetWidth(float width);
         void SetHeight(float height);
 
         float GetWidth();
         float GetHeight();
-
+*/
         void Render(Renderer& renderer);
 
     private:

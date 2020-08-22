@@ -5,6 +5,11 @@ namespace Ossium
 
     REGISTER_COMPONENT(CircleCollider);
 
+    void CircleCollider::SetupShape()
+    {
+        shape.m_radius = PTM(radius);
+    }
+
     const b2Shape& CircleCollider::GetShape()
     {
         return shape;

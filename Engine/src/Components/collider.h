@@ -51,6 +51,9 @@ namespace Ossium
         /// Updates position and rotation transform based on the Box2D body.
         void UpdatePhysics();
 
+        /// Rebuilds the rigid body; necessary if parameters are changed, such as the shape.
+        void RebuildBody();
+
         // TODO: Make private, add getters and setters?
         b2Body* body = nullptr;
 
@@ -65,6 +68,8 @@ namespace Ossium
         DECLARE_ABSTRACT_COMPONENT(GraphicComponent, Collider);
 
         virtual const b2Shape& GetShape() = 0;
+
+        virtual void SetupShape() = 0;
 
     };
 

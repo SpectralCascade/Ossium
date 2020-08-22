@@ -68,9 +68,16 @@ namespace Ossium
             /// BaseService::PostUpdate() override, updates physics after the scenes have been updated.
             void PostUpdate();
 
+            /// Freeze or unfreeze the physics world.
+            void SetFrozen(bool freeze);
+            bool IsFrozen();
+
             float timeStep = 1.0f / 60.0f;
             int velocityIterations = 6;
             int positionIterations = 2;
+
+        private:
+            bool frozen = false;
 
         };
 

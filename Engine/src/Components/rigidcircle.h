@@ -20,6 +20,9 @@ namespace Ossium
         CONSTRUCT_SCHEMA(Collider, CircleColliderSchema);
         DECLARE_COMPONENT(Collider, CircleCollider);
 
+        /// Setup the shape.
+        void SetupShape();
+
         /// Return an immutable reference to the shape.
         const b2Shape& GetShape();
 

@@ -5,9 +5,8 @@ namespace Ossium
 
     REGISTER_COMPONENT(BoxCollider);
 
-    void BoxCollider::OnLoadFinish()
+    void BoxCollider::SetupShape()
     {
-        ParentType::OnLoadFinish();
         shape.SetAsBox(PTM(width / 2.0f), PTM(height / 2.0f));
     }
 
@@ -32,6 +31,7 @@ namespace Ossium
         box.Draw(renderer, Ossium::Colors::GREEN);
     }
 
+/* TODO: rebuild physics body
     void BoxCollider::SetWidth(float width)
     {
         this->width = width;
@@ -51,5 +51,5 @@ namespace Ossium
     {
         return height;
     }
-
+*/
 }

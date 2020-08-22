@@ -54,7 +54,20 @@ namespace Ossium
 
     void PhysicsWorld::PostUpdate()
     {
-        Step(timeStep, velocityIterations, positionIterations);
+        if (!frozen)
+        {
+            Step(timeStep, velocityIterations, positionIterations);
+        }
+    }
+
+    void PhysicsWorld::SetFrozen(bool freeze)
+    {
+        frozen = freeze;
+    }
+
+    bool PhysicsWorld::IsFrozen()
+    {
+        return frozen;
     }
 
 }
