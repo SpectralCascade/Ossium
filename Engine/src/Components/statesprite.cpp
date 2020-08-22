@@ -100,7 +100,7 @@ namespace Ossium
     void StateSprite::OnLoadFinish()
     {
         // Skip texture OnLoadFinish() because the state should be setup manually
-        GraphicComponent::OnLoadFinish();
+        ParentType::OnLoadFinish();
     }
 
     bool StateSprite::AddState(string state, Image* image, Uint16 clipData)

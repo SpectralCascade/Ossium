@@ -103,7 +103,7 @@ namespace Ossium
 
     void Texture::OnLoadFinish()
     {
-        GraphicComponent::OnLoadFinish();
+        ParentType::OnLoadFinish();
         if (source != nullptr && source->Initialised() && imgPath == source->GetPathName())
         {
             return;
@@ -120,7 +120,9 @@ namespace Ossium
 
     void Texture::SetSource(Image* src, bool configureDimensions)
     {
-        GraphicComponent::OnLoadStart();
+        int targetLayer = GetRenderLayer();
+        // De-register from the renderer.
+        ParentType::OnLoadStart();
         source = src;
         if (configureDimensions)
         {
@@ -146,11 +148,8 @@ namespace Ossium
         {
             imgPath = source->GetPathName();
         }
-        if (GetRenderLayer() < 0)
-        {
-            /// Now we have an image loaded, register the texture instance so it can be rendered.
-            GraphicComponent::OnLoadFinish();
-        }
+        /// Now we have an image loaded, register the texture instance so it can be rendered.
+        SetRenderLayer(targetLayer);
     }
     void Texture::SetBlendMode(SDL_BlendMode blend)
     {

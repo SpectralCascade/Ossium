@@ -851,10 +851,14 @@ namespace Ossium
         /// Notify all components that the scene has finished loading
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
+            //Log.Info("Loading components of type {0}", GetComponentName(i));
+            int total = 0;
             for (auto component : components[i])
             {
                 component->OnLoadFinish();
+                total++;
             }
+            //Log.Info("Loaded {0} component(s) of type {1}", total, GetComponentName(i));
         }
 
         DEBUG_ASSERT(entities.size() == serialised.size(), "Input entities != created entities!");

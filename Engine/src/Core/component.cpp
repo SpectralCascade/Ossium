@@ -77,14 +77,8 @@ namespace Ossium
     void GraphicComponent::OnLoadFinish()
     {
         Component::OnLoadFinish();
-        if (GetService<Renderer>() != nullptr)
-        {
-            if (renderLayer < 0)
-            {
-                renderLayer = 0;
-            }
-            renderLayer = GetService<Renderer>()->Register(this, renderLayer);
-        }
+        //Log.Info("Loaded graphic component at render layer {0} (entity '{1}')", renderLayer, entity->name);
+        SetRenderLayer(renderLayer);
     }
 
     void GraphicComponent::OnDestroy()
@@ -111,7 +105,7 @@ namespace Ossium
     }
 
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> GraphicComponent::__ecs_factory_ =
-    GraphicComponent::ParentType::is_abstract_component ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
+    std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
         SID( "GraphicComponent" )::str, ComponentFactory, true
     ) :
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(

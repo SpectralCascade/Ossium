@@ -57,11 +57,6 @@ namespace Ossium
         // TODO: list of fixtures perhaps, or a dedicated component?
         b2Fixture* fixture = nullptr;
 
-    private:
-    #ifdef OSSIUM_EDITOR
-        b2BodyType _editor_oldBodyType = b2_dynamicBody;
-    #endif // OSSIUM_EDITOR
-
     };
 
     class Collider : public GraphicComponent

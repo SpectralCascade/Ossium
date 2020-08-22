@@ -145,6 +145,10 @@ namespace Ossium
             {
                 if (!initialised)
                 {
+                    for (auto itr : derived_type_name_map())
+                    {
+                        Log.Info("Found type {0} with {1} derived type(s).", itr.first, itr.second.size());
+                    }
                     /// Get all base types
                     for (auto itr : derived_type_name_map())
                     {

@@ -81,7 +81,7 @@ namespace Ossium
     }                                                                                                       \
                                                                                                             \
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                    \
-    ParentType::is_abstract_component ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(      \
+    std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(      \
         SID( #TYPE )::str, ComponentFactory                                                                 \
     ) :                                                                                                     \
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                          \
@@ -666,12 +666,12 @@ namespace Ossium
         void TYPE::OnLoadFinish() { ParentType::OnLoadFinish(); }       \
         void TYPE::OnClone(BaseComponent* src) {}                       \
         void TYPE::Update(){}                                           \
-        Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                    \
-        ParentType::is_abstract_component ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(      \
-            SID( #TYPE )::str, ComponentFactory, true                                                           \
-        ) :                                                                                                     \
-        Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                          \
-            SID( #TYPE )::str, ComponentFactory, std::string(parentTypeName), true                              \
+        Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                                            \
+        std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                 \
+            SID( #TYPE )::str, ComponentFactory                                                                                         \
+        ) :                                                                                                                             \
+        Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                                                  \
+            SID( #TYPE )::str, ComponentFactory, std::string(parentTypeName), true                                                      \
         );
 
 

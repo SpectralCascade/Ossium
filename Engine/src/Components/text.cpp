@@ -29,7 +29,7 @@ namespace Ossium
 
     void Text::OnLoadFinish()
     {
-        GraphicComponent::OnLoadFinish();
+        ParentType::OnLoadFinish();
         // Check if the path is valid
         if (std::filesystem::exists(std::filesystem::path(font_guid)))
         {
