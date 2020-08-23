@@ -87,6 +87,7 @@ namespace Ossium
         // Define the fixture
         b2FixtureDef fixDef;
         fixDef.shape = &collider->GetShape();
+        fixDef.userData = (void*)collider;
         fixDef.density = density;
         fixDef.friction = friction;
         fixDef.isSensor = sensor;

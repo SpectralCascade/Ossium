@@ -42,7 +42,7 @@ namespace Ossium
         class OSSIUM_EDL OnRayHit : public b2RayCastCallback
         {
         public:
-            typedef std::function<float32(b2Fixture*, const Vector2&, const Vector2&, float32)> RayHitCallback;
+            typedef std::function<float32(b2Fixture*, const b2Vec2&, const b2Vec2&, float32)> RayHitCallback;
 
             OnRayHit(RayHitCallback callback);
 

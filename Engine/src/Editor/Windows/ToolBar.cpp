@@ -12,6 +12,7 @@
 #include "../Core/project.h"
 #include "../../Core/ecs.h"
 
+#include <cstdlib>
 #include <filesystem>
 
 using namespace std;
@@ -284,7 +285,7 @@ namespace Ossium::Editor
         // View
         //
 
-        editor->AddCustomMenu("View/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
+        /*editor->AddCustomMenu("View/Add Window/Scene Hierarchy", [&] () { GetEditorLayout()->Add<SceneHierarchy>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("View/Add Window/Entity Properties", [&] () { GetEditorLayout()->Add<EntityProperties>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("View/Add Window/Scene View", [&] () { GetEditorLayout()->Add<SceneView>(this, DockingMode::BOTTOM); });
         editor->AddCustomMenu("View/Add Window/Docking Demo", [&] () { GetEditorLayout()->Add<DemoDockingWindow>(this, DockingMode::BOTTOM); });
@@ -293,6 +294,22 @@ namespace Ossium::Editor
                 EditorLayout* layout = GetEditorLayout()->GetEditorController()->AddLayout<LayoutDiagram>();
                 // This is safe because we know there's only one window in the layout at this point.
                 ((LayoutDiagram*)layout->GetLayout()->GetRoots()[0]->data.window)->target = GetEditorLayout();
+            }
+        );*/
+
+        editor->AddCustomMenu("Play in-game!", [&] () {
+                string command = "ossium.exe ";
+                for (auto scene : GetEditorLayout()->GetEditorController()->GetProject()->openScenes)
+                {
+                    if (scene.loaded)
+                    {
+                        command += Utilities::Format("\"{0}\" ", scene.path);
+                    }
+                }
+                system(command.c_str());
+            },
+            [&] () {
+                return GetEditorLayout()->GetEditorController()->GetProject() != nullptr && !GetEditorLayout()->GetEditorController()->GetProject()->openScenes.empty();
             }
         );
 
@@ -317,11 +334,6 @@ namespace Ossium::Editor
         for (auto tool : editor->customMenuTools)
         {
             vector<string> path = Utilities::Split(tool.path, '/');
-            if (path.size() < 2)
-            {
-                Log.Warning("Cannot add custom menu button at path '{0}' because it does not specify a dropdown option.", tool.path);
-                continue;
-            }
 
             Node<FuncPath>* previous = nullptr;
             for (auto i = path.begin(); i != path.end(); i++)
@@ -351,9 +363,18 @@ namespace Ossium::Editor
         for (Node<FuncPath>* menuRoot : roots)
         {
             oldPos = GetLayoutPosition();
-            // TODO: once the context menu is open, you should be able to hover other buttons to show the appropriate menu without clicking.
-            if (Button(menuRoot->data.id, EditorStyle::ToolBarButton, false, 6, 4))
+            if (menuRoot->children.empty())
             {
+                // Regular button
+                if (menuRoot->data.isEnabled() && Button(menuRoot->data.id, EditorStyle::StandardButton, true, 6, 4))
+                {
+                    // Call the function
+                    menuRoot->data.func();
+                }
+            }
+            else if (Button(menuRoot->data.id, EditorStyle::ToolBarButton, false, 6, 4))
+            {
+                // TODO: once the context menu is open, you should be able to hover other buttons to show the appropriate menu without clicking.
                 // Always clear previous options
                 menu.ClearOptions();
 

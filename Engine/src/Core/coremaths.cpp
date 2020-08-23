@@ -35,6 +35,12 @@ namespace Ossium
         y = _y;
     }
 
+    Vector2::Vector2(const b2Vec2& vec)
+    {
+        x = vec.x;
+        y = vec.y;
+    }
+
     float Vector2::Dot(Vector2 vec)
     {
         return (x * vec.x) + (y * vec.y);

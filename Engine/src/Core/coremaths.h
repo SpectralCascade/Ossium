@@ -40,7 +40,7 @@ namespace Ossium
     {
         Vector2() = default;
         Vector2(float _x, float _y);
-        Vector2(const b2Vec2& vec) { *this = vec; };
+        Vector2(const b2Vec2& vec);
 
         /// Dot product of this and another vector
         float Dot(Vector2 vec);
