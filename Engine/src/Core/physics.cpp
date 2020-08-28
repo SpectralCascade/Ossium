@@ -36,14 +36,14 @@ namespace Ossium
         b2World::RayCast(callback, ray.p, endPoint);
     }
 
-    void PhysicsWorld::RayCast(const Ray& ray, OnRayHit callback, float distance)
+    void PhysicsWorld::RayCast(const Ray& ray, OnRayHit* callback, float distance)
     {
-        RayCast(ray, &callback, distance);
+        RayCast(ray, callback, distance);
     }
 
-    void PhysicsWorld::RayCast(const Point& origin, const Point& endPoint, OnRayHit callback)
+    void PhysicsWorld::RayCast(const Point& origin, const Point& endPoint, OnRayHit* callback)
     {
-        b2World::RayCast(&callback, origin, endPoint);
+        b2World::RayCast(callback, origin, endPoint);
     }
 
     void PhysicsWorld::PostUpdate()
@@ -56,6 +56,11 @@ namespace Ossium
 
     void PhysicsWorld::SetFrozen(bool freeze)
     {
+        if (!freeze && frozen)
+        {
+            // Clear all forces
+            ClearForces();
+        }
         frozen = freeze;
     }
 

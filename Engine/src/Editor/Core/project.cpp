@@ -66,19 +66,6 @@ namespace Ossium::Editor
             name = projectPath.stem().string();
             Log.Info("Saving project '{0}' at '{1}'.", name, dest);
 
-            // Now setup the assets folder
-            try
-            {
-                projectPath.remove_filename();
-                projectPath /= "Assets";
-                std::filesystem::create_directory(projectPath);
-            }
-            catch (std::exception& e)
-            {
-                Log.Error("Exception occurred while attempting to create the project Assets directory: {0}", e.what());
-                return false;
-            }
-
             // Actually save the project.
             Save(dest);
 
@@ -89,13 +76,6 @@ namespace Ossium::Editor
             Log.Warning("Failed to get file destination (default path: '{0}').", path.empty() ? EDITOR_DEFAULT_DIRECTORY : path.c_str());
         }
         return false;
-    }
-
-    std::string Project::GetAssetsPath()
-    {
-        std::filesystem::path assets = std::filesystem::path(path);
-        assets.remove_filename();
-        return (assets / std::string("Assets")).string();
     }
 
 }

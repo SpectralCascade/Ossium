@@ -197,7 +197,7 @@ namespace Ossium::Editor
                 if (project != nullptr)
                 {
                     Scene newScene = Scene(GetEditorLayout()->GetEditorController()->GetMainLayout()->GetServices());
-                    string path = (filesystem::path(project->GetAssetsPath()) / (string("NewScene") + EngineConstants::SceneFileExtension)).string();
+                    string path = (filesystem::path(project->GetPath()) / (string("NewScene") + EngineConstants::SceneFileExtension)).string();
 
                     const char* filters[2] = { (string("*") + EngineConstants::SceneFileExtension).c_str(), "*" };
 

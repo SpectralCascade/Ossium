@@ -44,11 +44,11 @@ namespace Ossium
     void EngineSystem::Init(const Config& config)
     {
         delta.Init(config.fpscap);
-        if (!config.startScene.empty())
+        for (std::string scenePath : config.startScenes)
         {
-            if (!resources.LoadAndInit<Scene>(config.startScene, services))
+            if (!resources.LoadAndInit<Scene>(scenePath, services))
             {
-                Log.Warning("Failed to load start scene \"{0}\"!", config.startScene);
+                Log.Warning("Failed to load start scene \"{0}\"!", scenePath);
             }
         }
     }

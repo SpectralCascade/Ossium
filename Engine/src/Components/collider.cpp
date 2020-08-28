@@ -38,13 +38,13 @@ namespace Ossium
 
     void PhysicsBody::UpdatePhysics()
     {
-        if (body != nullptr)
+        if (body != nullptr && bodyType != b2BodyType::b2_staticBody)
         {
             // Update location and rotation in-game.
             const b2Transform& b2t = body->GetTransform();
             Transform* t = GetTransform();
-            t->SetWorldPosition(Vector2(MTP(b2t.p.x), MTP(b2t.p.y)));
-            t->SetWorldRotation(Rotation(b2t.q));
+            t->SetLocalPosition(Vector2(MTP(b2t.p.x), MTP(b2t.p.y)));
+            t->SetLocalRotation(Rotation(b2t.q));
         }
     }
 

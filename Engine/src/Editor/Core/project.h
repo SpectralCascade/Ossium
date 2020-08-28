@@ -52,9 +52,6 @@ namespace Ossium::Editor
         // Saves the project with a native file dialog for the user to configure. Returns false if the user cancels.
         bool SaveAs();
 
-        // Returns the assets path for the project.
-        std::string GetAssetsPath();
-
     };
 
 }

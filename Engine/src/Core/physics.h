@@ -36,6 +36,16 @@ namespace Ossium
         return metres * (1.0f / 0.02f);
     }
 
+    inline Vector2 PTM(const Vector2& vecPixels)
+    {
+        return Vector2(PTM(vecPixels.x), PTM(vecPixels.y));
+    }
+
+    inline Vector2 MTP(const Vector2& vecMetres)
+    {
+        return Vector2(MTP(vecMetres.x), MTP(vecMetres.y));
+    }
+
     inline namespace Physics
     {
 
@@ -62,8 +72,8 @@ namespace Ossium
 
             /// Overloads that make it easier to perform raycasting and allow for use of Lambdas.
             void RayCast(const Ray& ray, b2RayCastCallback* callback, float distance = 100.0f);
-            void RayCast(const Ray& ray, OnRayHit callback, float distance = 100.0f);
-            void RayCast(const Point& origin, const Point& endPoint, OnRayHit callback);
+            void RayCast(const Ray& ray, OnRayHit* callback, float distance = 100.0f);
+            void RayCast(const Point& origin, const Point& endPoint, OnRayHit* callback);
 
             /// BaseService::PostUpdate() override, updates physics after the scenes have been updated.
             void PostUpdate();

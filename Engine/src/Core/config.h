@@ -39,7 +39,7 @@ namespace Ossium
         M(float, fpscap) = 0;
         M(char, filtering) = '1';
         M(unsigned int, mastervolume) = 100;
-        M(std::string, startScene) = "";
+        M(std::vector<std::string>, startScenes) = {};
 
     };
 
