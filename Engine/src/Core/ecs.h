@@ -165,6 +165,9 @@ namespace Ossium
         /// Returns the name of this scene
         std::string GetName();
 
+        /// Returns the guid_path used to load this scene.
+        std::string GetFilePath();
+
         /// Clean up the scene once finished.
         ~Scene();
 
@@ -251,6 +254,8 @@ namespace Ossium
 
         /// The next scene file to load at the end of the update call. If empty, does nothing.
         std::string toLoad = "";
+        /// The current scene file that is loaded.
+        std::string guid_path = "";
 
         // Resource loading methods
         bool Load(std::string guid_path);

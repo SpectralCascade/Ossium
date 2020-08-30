@@ -445,6 +445,7 @@ namespace Ossium
         {
             return false;
         }
+        this->guid_path = guid_path;
         FromString(toParse);
         return true;
     }
@@ -489,6 +490,11 @@ namespace Ossium
     string Scene::GetName()
     {
         return name;
+    }
+
+    string Scene::GetFilePath()
+    {
+        return guid_path;
     }
 
     void Scene::LoadSafe(string guid_path)
