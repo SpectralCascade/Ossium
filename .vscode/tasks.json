@@ -1,0 +1,82 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Make All",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Make Static Lib",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+				"ossium"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Make Editor (Debug)",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+				"ossiumeditor__debug_"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Make Editor (Release)",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+				"ossiumeditor"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Clean Project",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+				"clean"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}

@@ -1,0 +1,131 @@
+{
+    "configurations": [
+        {
+            "name": "Debug",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+				"${workspaceFolder}/../Ossium/Engine/Box2D"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "OSSIUM_DEBUG"
+            ],
+            "windowsSdkVersion": "10.0.16299.0",
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+                    "${workspaceFolder}/../Ossium/Engine/Box2D"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Release",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+				"${workspaceFolder}/../Ossium/Engine/Box2D"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.16299.0",
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+                    "${workspaceFolder}/../Ossium/Engine/Box2D"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "Debug Editor",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+				"${workspaceFolder}/../Ossium/Engine/Box2D"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "OSSIUM_DEBUG",
+                "OSSIUM_EDITOR"
+            ],
+            "windowsSdkVersion": "10.0.16299.0",
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+                    "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+				    "${workspaceFolder}/../Ossium/Engine/Box2D"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
