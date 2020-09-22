@@ -29,8 +29,7 @@ If building from scratch, you will need to build Box2D as a static lib and have 
 I have a rough [todo list](https://github.com/SpectralCascade/Ossium/wiki/Todo) that details what I'm working on currently.
 
 # Additional notes
-I'm developing this project using Code::Blocks 17.12 on Windows 10 64-bit currently (and sometimes on (arm) Linux 64-bit)
-with the GNU GCC/G++ compiler. The engine should work fine on Linux (tested) and Mac (untested as of yet), and it should be possible to make mobile builds for Android or iOS (both untested as of yet).
+I'm developing this project using Visual Studio Code and Make with the GNU GCC/G++ compiler. The engine should work fine on Linux (tested) and Mac (untested as of yet), and it should be possible to make mobile builds for Android or iOS (both untested as of yet).
 
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
 
