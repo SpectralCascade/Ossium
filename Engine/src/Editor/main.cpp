@@ -1,7 +1,4 @@
 #include "../Ossium.h"
-#include "Examples/simple_demo_window.h"
-#include "Examples/demo_window_docking.h"
-#include "Examples/layout_diagram.h"
 #include "Core/editorcontroller.h"
 
 using namespace Ossium;

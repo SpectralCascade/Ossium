@@ -3,6 +3,24 @@
 	"tasks": [
 		{
 			"type": "shell",
+			"label": "Generate Makefile",
+			"command": "./cbp2make.exe",
+			"args": [
+				"-in",
+				"ossium.cbp",
+				"-out",
+				"makefile.mak"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
 			"label": "Make All",
 			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
 			"args": [
@@ -13,7 +31,8 @@
 			"problemMatcher": [
 				"$gcc"
 			],
-			"group": "build"
+			"group": "build",
+			"dependsOn": "Generate Makefile"
 		},
 		{
 			"type": "shell",
@@ -28,7 +47,8 @@
 			"problemMatcher": [
 				"$gcc"
 			],
-			"group": "build"
+			"group": "build",
+			"dependsOn": "Generate Makefile"
 		},
 		{
 			"type": "shell",
@@ -46,7 +66,8 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"dependsOn": "Generate Makefile"
 		},
 		{
 			"type": "shell",
@@ -61,14 +82,17 @@
 			"problemMatcher": [
 				"$gcc"
 			],
-			"group": "build"
+			"group": "build",
+			"dependsOn": "Generate Makefile"
 		},
 		{
 			"type": "shell",
 			"label": "Clean Project",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"command": "rm",
 			"args": [
-				"clean"
+				"-r",
+				"-Force",
+				"obj"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"

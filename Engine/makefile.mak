@@ -12,10 +12,10 @@ LD = g++.exe
 WINDRES = windres.exe
 
 INC = -IBox2D
-CFLAGS = -Wall -fexceptions -std=c++1z
+CFLAGS = -Wall -std=c++1z
 RESINC = 
 LIBDIR = -LBox2D\\bin\\Release
-LIB = -LC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib
+LIB = 
 LDFLAGS = 
 
 INC_OSSIUM = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
@@ -49,7 +49,7 @@ LIB_OSSIUMEDITOR = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a
 LDFLAGS_OSSIUMEDITOR = $(LDFLAGS) -static-libstdc++ -static-libgcc -lmingw32 -lcomdlg32 -lole32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
 OBJDIR_OSSIUMEDITOR = .objs
 DEP_OSSIUMEDITOR = 
-OUT_OSSIUMEDITOR = bin\\OssiumEditor\\OssiumEditor.exe
+OUT_OSSIUMEDITOR = bin\\OssiumEditor\\Ossium.exe
 
 INC_OSSIUMEDITOR__DEBUG_ = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_OSSIUMEDITOR__DEBUG_ = $(CFLAGS) -std=c++1z -g -DOSSIUM_DEBUG -DOSSIUM_EDITOR
@@ -60,7 +60,7 @@ LIB_OSSIUMEDITOR__DEBUG_ = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSD
 LDFLAGS_OSSIUMEDITOR__DEBUG_ = $(LDFLAGS) -static-libstdc++ -static-libgcc -lmingw32 -lcomdlg32 -lole32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
 OBJDIR_OSSIUMEDITOR__DEBUG_ = .objs
 DEP_OSSIUMEDITOR__DEBUG_ = 
-OUT_OSSIUMEDITOR__DEBUG_ = bin\\OssiumEditorDebug\\OssiumEditor.exe
+OUT_OSSIUMEDITOR__DEBUG_ = bin\\OssiumEditorDebug\\Ossium.exe
 
 INC_OSSIUMEDITOR__DEBUG_LINUX_ = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_ = $(CFLAGS) -std=c++1z -g -DOSSIUM_DEBUG -DOSSIUM_EDITOR
@@ -71,7 +71,7 @@ LIB_OSSIUMEDITOR__DEBUG_LINUX_ = $(LIB)Box2D\bin\Release\libBox2D.a
 LDFLAGS_OSSIUMEDITOR__DEBUG_LINUX_ = $(LDFLAGS) -static-libstdc++ -static-libgcc -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
 OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_ = .objs
 DEP_OSSIUMEDITOR__DEBUG_LINUX_ = 
-OUT_OSSIUMEDITOR__DEBUG_LINUX_ = bin\\OssiumEditor\\OssiumEditor.exe
+OUT_OSSIUMEDITOR__DEBUG_LINUX_ = bin\\OssiumEditor\\Ossium.exe
 
 INC_LIBOSSIUMEDITOR = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_LIBOSSIUMEDITOR = $(CFLAGS) -g -std=c++1z -DOSSIUM_DEBUG -DOSSIUM_EDITOR
