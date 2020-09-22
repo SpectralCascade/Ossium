@@ -26,7 +26,7 @@
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D/" />
+					<Add directory="Box2D" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -54,7 +54,7 @@
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-DOSSIUM_EXPORT_DLL" />
-					<Add directory="Box2D/" />
+					<Add directory="Box2D" />
 				</Compiler>
 				<Linker>
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
@@ -84,7 +84,7 @@
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D/" />
+					<Add directory="Box2D" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -133,7 +133,7 @@
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D/" />
+					<Add directory="Box2D" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -182,7 +182,7 @@
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D/" />
+					<Add directory="Box2D" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -223,7 +223,7 @@
 					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
 					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D/" />
+					<Add directory="Box2D" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -255,7 +255,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-std=c++1z" />
-			<Add directory="Box2D/" />
+			<Add directory="Box2D" />
 		</Compiler>
 		<Linker>
 			<Add directory="Box2D/bin/Release" />
