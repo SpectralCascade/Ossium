@@ -50,7 +50,7 @@ namespace Ossium
 
     ViewCard* TabView::GetCurrentTabCard()
     {
-        return (currentTab < cards.size() ? cards[currentTab] : nullptr);
+        return currentTab < cards.size() ? cards[currentTab] : nullptr;
     }
 
 }

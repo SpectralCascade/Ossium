@@ -52,6 +52,22 @@
 		},
 		{
 			"type": "shell",
+			"label": "Make Static Lib (Editor)",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+				"libossiumeditor"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"dependsOn": "Generate Makefile"
+		},
+		{
+			"type": "shell",
 			"label": "Make Editor (Debug)",
 			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
 			"args": [
