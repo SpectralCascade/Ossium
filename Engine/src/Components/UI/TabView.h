@@ -1,3 +1,6 @@
+#ifndef TABVIEW_H
+#define TABVIEW_H
+
 #include "../../Core/component.h"
 
 using namespace std;
@@ -39,3 +42,6 @@ namespace Ossium
     };
 
 }
+
+
+#endif // TABVIEW_H

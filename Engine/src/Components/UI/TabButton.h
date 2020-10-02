@@ -1,3 +1,6 @@
+#ifndef TABBUTTON_H
+#define TABBUTTON_H
+
 #include "../button.h"
 
 namespace Ossium
@@ -33,3 +36,6 @@ namespace Ossium
     };
 
 }
+
+
+#endif // TABBUTTON_H

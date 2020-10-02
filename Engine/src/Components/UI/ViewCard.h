@@ -1,3 +1,6 @@
+#ifndef VIEWCARD_H
+#define VIEWCARD_H
+
 #include "../../Core/component.h"
 
 namespace Ossium
@@ -17,3 +20,6 @@ namespace Ossium
     };
 
 }
+
+
+#endif // VIEWCARD_H

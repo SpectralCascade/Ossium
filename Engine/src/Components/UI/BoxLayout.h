@@ -1,5 +1,7 @@
-#include "LayoutComponent.h"
+#ifndef BOXLAYOUT_H
+#define BOXLAYOUT_H
 
+#include "LayoutComponent.h"
 
 namespace Ossium
 {
@@ -64,3 +66,6 @@ namespace Ossium
     };
 
 }
+
+
+#endif // BOXLAYOUT_H

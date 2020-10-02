@@ -1,3 +1,6 @@
+#ifndef LAYOUTSURFACE_H
+#define LAYOUTSURFACE_H
+
 #include "../../Core/component.h"
 
 namespace Ossium
@@ -21,3 +24,5 @@ namespace Ossium
     };
 
 }
+
+#endif // LAYOUTSURFACE_H
