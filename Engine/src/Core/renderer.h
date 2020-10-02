@@ -31,11 +31,11 @@ extern "C"
 
 namespace Ossium
 {
+    // Forward declarations
 
     class Window;
-
-    /// Forward declaration
     class Renderer;
+    struct Vector2;
 
     /// Anything that can be rendered should inherit from this interface and implement the Render method
     class OSSIUM_EDL Graphic

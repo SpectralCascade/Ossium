@@ -457,6 +457,26 @@ namespace Ossium
             return output;
         }
 
+        /// Returns a pointer to the first found instance of a component of type T attached
+        /// to any node above this entity (exclusive). If one is not found, checks for derived types and
+        /// returns a valid pointer if it can find a derived type instance. Otherwise returns nullptr.
+        template <class T>
+        T* GetAncestor()
+        {
+            T* ancestor = nullptr;
+            Entity* parent = GetParent();
+            if (parent != nullptr)
+            {
+                ancestor = parent->GetComponent<T>();
+                if (ancestor == nullptr)
+                {
+                    // Recurse up the tree.
+                    ancestor = parent->GetAncestor<T>();
+                }
+            }
+            return ancestor;
+        }
+
         /// Attempt to get an instance of a specific service type.
         template<typename T>
         T* GetService()

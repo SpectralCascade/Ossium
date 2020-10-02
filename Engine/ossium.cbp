@@ -260,7 +260,6 @@
 		<Linker>
 			<Add directory="Box2D/bin/Release" />
 		</Linker>
-		<Unit filename="src/Components/UI/panel.h" />
 		<Unit filename="src/Components/audioextensions.cpp" />
 		<Unit filename="src/Components/audioextensions.h" />
 		<Unit filename="src/Components/boxcollider.cpp" />
@@ -282,6 +281,18 @@
 		<Unit filename="src/Components/text.h" />
 		<Unit filename="src/Components/texture.cpp" />
 		<Unit filename="src/Components/texture.h" />
+		<Unit filename="src/Components/UI/LayoutComponent.cpp" />
+		<Unit filename="src/Components/UI/LayoutComponent.h" />
+		<Unit filename="src/Components/UI/LayoutSurface.cpp" />
+		<Unit filename="src/Components/UI/LayoutSurface.h" />
+		<Unit filename="src/Components/UI/BoxLayout.cpp" />
+		<Unit filename="src/Components/UI/BoxLayout.h" />
+		<Unit filename="src/Components/UI/ViewCard.cpp" />
+		<Unit filename="src/Components/UI/ViewCard.h" />
+		<Unit filename="src/Components/UI/TabView.cpp" />
+		<Unit filename="src/Components/UI/TabView.h" />
+		<Unit filename="src/Components/UI/TabButton.cpp" />
+		<Unit filename="src/Components/UI/TabButton.h" />
 		<Unit filename="src/Core/audio.cpp" />
 		<Unit filename="src/Core/audio.h" />
 		<Unit filename="src/Core/callback.h" />

@@ -1,7 +1,8 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include "../Ossium.h"
+#include "inputgui.h"
+#include "statesprite.h"
 
 namespace Ossium
 {

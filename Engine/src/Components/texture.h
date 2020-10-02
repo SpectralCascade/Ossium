@@ -30,6 +30,15 @@
 namespace Ossium
 {
 
+    enum TextureLayoutMode
+    {
+        NONE = 0,
+        FIT_X,
+        FIT_Y,
+        FIT_XY,
+        FIT_ASPECT
+    };
+
     struct OSSIUM_EDL TextureSchema : public MetaRect
     {
     public:
@@ -52,6 +61,10 @@ namespace Ossium
 
         /// The blending mode for this texture. Applied whenever the Render() method is called
         M(SDL_BlendMode, blending) = SDL_BLENDMODE_BLEND;
+
+        // Whether the texture should stretch x, y, x and y, aspect-fit or ignore a BoxLayout. 
+        // By default the image simply stretches to fit x and y.
+        M(TextureLayoutMode, fitLayout) = FIT_XY;
 
     };
 

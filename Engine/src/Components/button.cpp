@@ -1,4 +1,5 @@
 #include "button.h"
+#include "statesprite.h"
 
 namespace Ossium
 {

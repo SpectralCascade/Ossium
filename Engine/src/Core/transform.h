@@ -54,7 +54,7 @@ namespace Ossium
         Rotation worldRotation = Rotation(0);
         Vector2 worldScale = Vector2(1, 1);
 
-        /// Does this transform follow the parent transform?
+        /// Has this transform been modified?
         bool dirty = true;
 
         /// Refresh the world position data

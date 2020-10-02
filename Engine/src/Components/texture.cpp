@@ -18,6 +18,7 @@
 #include <string>
 
 #include "texture.h"
+#include "UI/BoxLayout.h"
 #include "../Core/colors.h"
 
 using namespace std;
@@ -36,6 +37,31 @@ namespace Ossium
         }
 
         Transform* trans = GetTransform();
+
+        BoxLayout* boxLayout = entity->GetComponent<BoxLayout>();
+        if (boxLayout != nullptr)
+        {
+            Vector2 dimensions = boxLayout->GetInnerDimensions();
+            switch (fitLayout)
+            {
+            case FIT_XY:
+                SetRenderWidth(dimensions.x);
+                SetRenderHeight(dimensions.y);
+                break;
+            case FIT_X:
+                SetRenderWidth(dimensions.x);
+                break;
+            case FIT_Y:
+                SetRenderHeight(dimensions.y);
+                break;
+            case FIT_ASPECT:
+                // TODO
+                break;
+            case NONE:
+            default:
+                break;
+            }
+        }
 
         SDL_Rect dest = GetSDL(trans->GetWorldPosition(), trans->GetWorldScale());
         if (source == nullptr || source->GetTexture() == NULL)

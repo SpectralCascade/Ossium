@@ -130,31 +130,29 @@ namespace Ossium
 
     void Transform::SetWorldPosition(Point p)
     {
-        position = p;// - GetWorldPosition();
+        position += p - GetWorldPosition();
         SetDirty();
     }
 
     void Transform::SetWorldRotation(Rotation r)
     {
-        /// TODO
+        // TODO
         rotation = r;
         SetDirty();
     }
 
     void Transform::SetWorldScale(Vector2 s)
     {
-        /// TODO
-        scale = s;
+        scale += s - GetWorldScale();
         SetDirty();
     }
 
     void Transform::SetWorld(Point p, Rotation r, Vector2 s)
     {
-        position = p;
-        rotation = r;
-        scale = s;
+        position += p - GetWorldPosition();
+        rotation = r; // TODO
+        scale += s - GetWorldScale();
         SetDirty();
-        /// TODO
     }
 
 }
