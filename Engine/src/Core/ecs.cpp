@@ -899,7 +899,7 @@ namespace Ossium
                     return walkFunc(node->data);
                 }
                 return true;
-            }, startEntity->self);
+            }, startEntity != nullptr ? startEntity->self : nullptr);
         }
         else
         {
@@ -909,7 +909,7 @@ namespace Ossium
                     return walkFunc(node->data);
                 }
                 return true;
-            }, startEntity->self);
+            }, startEntity != nullptr ? startEntity->self : nullptr);
         }
 
     }

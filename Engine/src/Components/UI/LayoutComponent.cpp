@@ -34,7 +34,7 @@ namespace Ossium
             if (!layoutSurface)
             {
                 // Automagically add one.
-                entity->AddComponent<LayoutSurface>();
+                layoutSurface = entity->AddComponent<LayoutSurface>();
             }
         }
     }
@@ -43,6 +43,10 @@ namespace Ossium
     {
         // Mark the layout dirty.
         layoutSurface->SetDirty();
+#ifdef OSSIUM_EDITOR
+        // Update immediately
+        layoutSurface->LayoutUpdate();
+#endif
     }
 
 }

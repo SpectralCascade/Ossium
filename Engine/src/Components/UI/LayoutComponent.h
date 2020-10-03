@@ -17,15 +17,12 @@ namespace Ossium
 
         // When called, the implementation should refresh the layout.
         virtual void LayoutRefresh() = 0;
-
-        // Override that gets a reference to the LayoutSurface instance.
-        void OnLoadFinish();
-
+        
         // Override that forces the layout surface to update.
-        void OnEditorPropertyChanged();
+        virtual void OnEditorPropertyChanged();
 
     private:
-        // Reference to the LayoutSurface.
+        // Reference to the LayoutSurface. Should never be null once the component is loaded.
         LayoutSurface* layoutSurface = nullptr;
 
     };

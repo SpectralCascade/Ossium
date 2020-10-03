@@ -207,13 +207,26 @@ namespace Ossium
                 }
                 node->depth = node->parent->depth + 1;
                 // Update depths
-                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; return true; } }, node);
+                Walk([] (Node<T>* n) {
+                    if (n->parent != nullptr)
+                    {
+                        n->depth = n->parent->depth + 1;
+                    }
+                    return true;
+                }, node);
             }
             else
             {
                 node->depth = 0;
                 // Update depths
-                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; return true; } }, node);
+                Walk([] (Node<T>* n) {
+                    if (n->parent != nullptr)
+                    {
+                        n->depth = n->parent->depth + 1;
+                    }
+                    return true;
+                }, node);
+
                 if (index >= 0)
                 {
                     roots.insert(roots.begin() + index, node);

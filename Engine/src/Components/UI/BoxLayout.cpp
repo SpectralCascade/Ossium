@@ -33,6 +33,7 @@ namespace Ossium
             anchorMaxCached = anchorMax;
         }    
         t->SetWorldPosition(anchorMinCached * renderDimensions);
+        Log.Info("BoxLayout refresh!");
     }
 
 

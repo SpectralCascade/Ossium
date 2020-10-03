@@ -26,7 +26,7 @@ namespace Ossium
                     return false;
                 }
                 LayoutSurface* group = child->GetComponent<LayoutSurface>();
-                if (!group->IsDirty())
+                if (group != nullptr && !group->IsDirty())
                 {
                     // If another LayoutSurface is encountered which is not dirty, skip it.
                     return false;
@@ -70,7 +70,16 @@ namespace Ossium
             vector<LayoutComponent*> layoutObjs = target->GetComponents<LayoutComponent>();
             for (auto component : layoutObjs)
             {
-                component->layoutSurface = nullptr;
+                Log.Warning(
+                    "Removed LayoutSurface instance that a child LayoutComponent depended upon! Locating ancestor replacement."
+                );
+                component->layoutSurface = entity->GetAncestor<LayoutSurface>();
+                if (!component->layoutSurface)
+                {
+                    // Force add it, all layout components must have a LayoutSurface.
+                    component->layoutSurface = entity->AddComponentOnce<LayoutSurface>();
+                    Log.Warning("LayoutComponent has no ancestor LayoutSurface, replacement has been added.");
+                }
             }
             return true;
         });
