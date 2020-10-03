@@ -31,8 +31,10 @@ namespace Ossium
         {
             anchorMinCached = anchorMin;
             anchorMaxCached = anchorMax;
-        }    
-        t->SetWorldPosition(anchorMinCached * renderDimensions);
+        }
+        Vector2 minPos = anchorMinCached * renderDimensions;
+        // Position at origin, based upon the absolute anchor positions.
+        t->SetWorldPosition(minPos + (origin * ((anchorMaxCached * renderDimensions) - minPos)));
         Log.Info("BoxLayout refresh!");
     }
 

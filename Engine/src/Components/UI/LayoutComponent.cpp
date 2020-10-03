@@ -43,10 +43,6 @@ namespace Ossium
     {
         // Mark the layout dirty.
         layoutSurface->SetDirty();
-#ifdef OSSIUM_EDITOR
-        // Update immediately
-        layoutSurface->LayoutUpdate();
-#endif
     }
 
 }

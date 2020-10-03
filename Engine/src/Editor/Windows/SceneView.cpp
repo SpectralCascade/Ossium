@@ -23,7 +23,23 @@ namespace Ossium::Editor
             //scene->UpdateComponents();
             // Hacky fix for updating transform positions. Rather slow, alternative maybe?
             scene->WalkComponents<Transform>([] (Transform* t) { t->SetDirty(); });
+            
+            // Update all layouts
+            scene->WalkEntities([] (Entity* entity) {
+                if (entity->IsActive())
+                {
+                    LayoutSurface* layoutSurface = entity->GetComponent<LayoutSurface>();
+                    if (layoutSurface && layoutSurface->enabled)
+                    {
+                        layoutSurface->LayoutUpdate();
+                    }
+                    return true;
+                }
+                return false;
+            });
         }
+
+
 
         // Draw to viewport
         renderer->RenderPresent(true);
