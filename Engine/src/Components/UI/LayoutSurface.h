@@ -21,7 +21,9 @@ namespace Ossium
         
         void OnLoadFinish();
 
-        // Calls LayoutRefresh() for all LayoutComponents beneath this LayoutSurface (breadth-first order).
+        // Calls LayoutRefresh() for all active and enabled LayoutComponents beneath this LayoutSurface
+        // (breadth-first order). Ignores LayoutComponents on and below entities with LayoutSurfaces which
+        // are not marked dirty.
         void LayoutUpdate();
 
         // Is the layout dirty?
@@ -29,6 +31,9 @@ namespace Ossium
 
         // Mark the layout dirty.
         void SetDirty();
+
+        // Cleans up LayoutComponents on and below this layout's entity, if any. 
+        void OnDestroy();
 
     private:
         // Is the layout dirty?

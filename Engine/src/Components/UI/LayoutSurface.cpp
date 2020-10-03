@@ -57,4 +57,24 @@ namespace Ossium
         dirty = true;
     }
 
+    void LayoutSurface::OnDestroy()
+    {
+#ifdef OSSIUM_EDITOR
+        entity->GetScene()->WalkEntities([&] (Entity* target) {
+            LayoutSurface* layout = target->GetComponent<LayoutSurface>();
+            if (layout != this)
+            {
+                // Sub-layouts manage their own LayoutComponents.
+                return false;
+            }
+            vector<LayoutComponent*> layoutObjs = target->GetComponents<LayoutComponent>();
+            for (auto component : layoutObjs)
+            {
+                component->layoutSurface = nullptr;
+            }
+            return true;
+        });
+#endif
+    }
+
 }

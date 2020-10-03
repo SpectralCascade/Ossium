@@ -379,6 +379,10 @@ namespace Ossium
     {
     }
 
+    void BaseComponent::OnEditorPropertyChanged()
+    {
+    }
+
     void BaseComponent::Update()
     {
     }

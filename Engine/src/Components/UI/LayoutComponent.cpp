@@ -39,4 +39,10 @@ namespace Ossium
         }
     }
 
+    void LayoutComponent::OnEditorPropertyChanged()
+    {
+        // Mark the layout dirty.
+        layoutSurface->SetDirty();
+    }
+
 }

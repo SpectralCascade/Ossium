@@ -79,9 +79,19 @@ namespace Ossium
             property.SerialiseOut(data, this);
             return data.ToString();
         }
+        
+        // Resets the dirty flag that indicates whether any previous SerializeProperty() calls
+        // modified a property value.
+        void ClearDirtyFlag();
+
+        // Returns true if any properties have been modified since the last ClearDirtyFlag() call.
+        bool IsDirty();
 
     private:
         Ossium::Editor::EditorWindow* gui = nullptr;
+
+        // Whether any property has been modified or not.
+        bool dirty = false;
 
     };
 

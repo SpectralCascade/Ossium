@@ -25,6 +25,7 @@ namespace Ossium
             gui->Tab(100);
             string data = attribute & ATTRIBUTE_FILEPATH ? gui->FilePathField(property) : gui->TextField(property);
             gui->EndHorizontal();
+            dirty |= data != property;
             return data;
         }
 #endif // OSSIUM_EDITOR
@@ -41,6 +42,7 @@ namespace Ossium
             gui->Tab(100);
             bool data = gui->Toggle(property);
             gui->EndHorizontal();
+            dirty |= data != property;
             return data ? "1" : "0";
         }
 #endif // OSSIUM_EDITOR
@@ -59,9 +61,22 @@ namespace Ossium
             gui->Tab(50);
             data.y = Utilities::ToFloat(gui->TextField(Utilities::ToString(property.y)));
             gui->EndHorizontal();
+            dirty |= data != property;
             return Utilities::ToString(data);
         }
 #endif // OSSIUM_EDITOR
         return Utilities::ToString(property);
     }
+
+    void EditorSerializer::ClearDirtyFlag()
+    {
+        dirty = false;
+    }
+
+    // Returns true if any properties have been modified since the last ClearDirtyFlag() call.
+    bool EditorSerializer::IsDirty()
+    {
+        return dirty;
+    }
+
 }

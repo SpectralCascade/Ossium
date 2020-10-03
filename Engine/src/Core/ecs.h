@@ -621,6 +621,9 @@ namespace Ossium
         /// Called when this component is copied; replaces the copy constructor
         virtual void OnClone(BaseComponent* src);
 
+        /// Called when this component's properties are modified in editor.
+        virtual void OnEditorPropertyChanged();
+
         /// Each frame this method is called
         virtual void Update();
 

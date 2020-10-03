@@ -70,6 +70,7 @@ namespace Ossium::Editor
 
         if (selected != nullptr)
         {
+            vector<BaseComponent*> modified;
             for (auto itr : selected->GetAllComponents())
             {
                 if (!IsVisible())
@@ -98,13 +99,23 @@ namespace Ossium::Editor
 
                     Space(4);
 
+                    // Clear the dirty flag so we can check for changes
+                    ClearDirtyFlag();
+
                     JSON data;
                     component->SerialiseOut(data, this);
 
                     //Log.Info("Serialized out to:\n" + data.ToString());
 
-                    component->OnLoadStart();
-                    component->SerialiseIn(data);
+                    // Check if any properties changed during serialization.
+                    if (IsDirty())
+                    {
+                        // Reload the component.
+                        modified.push_back(component);
+                        component->OnLoadStart();
+                        component->SerialiseIn(data);
+                        ClearDirtyFlag();
+                    }
 
                     Space(2);
                     Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Color(130, 130, 130));
@@ -113,13 +124,14 @@ namespace Ossium::Editor
                 }
             }
 
-            // Loading complete, update all components.
-            for (auto itr : selected->GetAllComponents())
+            // Loading complete, update all modified components.
+            for (auto component : modified)
             {
-                for (BaseComponent* component : itr.second)
-                {
-                    component->OnLoadFinish();
-                }
+                component->OnLoadFinish();
+                // Inform the component of the modification;
+                // this is separate to OnLoadFinish() as that is also called
+                // when the scene is first loaded.
+                component->OnEditorPropertyChanged();
             }
 
             Space(4);
