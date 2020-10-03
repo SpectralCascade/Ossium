@@ -207,13 +207,13 @@ namespace Ossium
                 }
                 node->depth = node->parent->depth + 1;
                 // Update depths
-                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; } }, node);
+                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; return true; } }, node);
             }
             else
             {
                 node->depth = 0;
                 // Update depths
-                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; } }, node);
+                Walk([](Node<T>* n){ if (n->parent != nullptr) { n->depth = n->parent->depth + 1; return true; } }, node);
                 if (index >= 0)
                 {
                     roots.insert(roots.begin() + index, node);
@@ -247,7 +247,7 @@ namespace Ossium
             flatTree.clear();
         }
 
-        typedef std::function<void(Node<T>*)> NodeOp;
+        typedef std::function<bool(Node<T>*)> NodeOp;
 
         /// Depth-first tree traversal
         void Walk(NodeOp walkFunc, Node<T>* fromNode = nullptr)
@@ -282,19 +282,29 @@ namespace Ossium
         }
 
         /// Breadth-first tree traversal
-        void WalkBreadth(NodeOp walkFunc)
+        void WalkBreadth(NodeOp walkFunc, Node<T>* fromNode = nullptr)
         {
             std::queue<Node<T>*> nodes;
-            for (auto node : roots)
+            if (fromNode)
             {
-                nodes.push(node);
+                nodes.push(fromNode);
+            }
+            else
+            {
+                for (auto node : roots)
+                {
+                    nodes.push(node);
+                }
             }
             while (!nodes.empty())
             {
-                walkFunc(nodes.front());
-                for (auto child : nodes.front()->children)
+                if (walkFunc(nodes.front()))
                 {
-                    nodes.push(child);
+                    // Only traverse children if function returned true.
+                    for (auto child : nodes.front()->children)
+                    {
+                        nodes.push(child);
+                    }
                 }
                 nodes.pop();
             }
@@ -443,12 +453,14 @@ namespace Ossium
                 {
                     Walk([&] (Node<T>* node) {
                         flatTree.push_back(node);
+                        return true;
                     });
                 }
                 else
                 {
                     WalkBreadth([&] (Node<T>* node) {
                         flatTree.push_back(node);
+                        return true;
                     });
                 }
 
@@ -513,10 +525,13 @@ namespace Ossium
         /// Walks recursively through the tree and operates on all nodes, depth first.
         void RecursiveWalk(NodeOp& nodeOp, Node<T>* node)
         {
-            nodeOp(node);
-            for (auto child : node->children)
+            if (nodeOp(node))
             {
-                RecursiveWalk(nodeOp, child);
+                // Only traverse children if walkDown returned true.
+                for (auto child : node->children)
+                {
+                    RecursiveWalk(nodeOp, child);
+                }
             }
         }
 
@@ -524,11 +539,15 @@ namespace Ossium
         /// but also operates on all the nodes on the walk back up the tree with the second function.
         void RecursiveWalk(NodeOp& walkDown, NodeOp& walkUp, Node<T>* node)
         {
-            walkDown(node);
-            for (auto child : node->children)
+            if (walkDown(node))
             {
-                RecursiveWalk(walkDown, walkUp, child);
+                // Only traverse children if walkDown returned true.
+                for (auto child : node->children)
+                {
+                    RecursiveWalk(walkDown, walkUp, child);
+                }
             }
+            // Doesn't matter what value this returns.
             walkUp(node);
         }
 

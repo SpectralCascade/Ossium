@@ -388,6 +388,7 @@ namespace Ossium::Editor
                             // On the walk down, add expansion menus
                             expansions.push(expansions.top()->AddPopoutMenu(n->data.id));
                         }
+                        return true;
                     },
                     [&] (auto n) {
                         if (!expansions.empty())
@@ -402,6 +403,7 @@ namespace Ossium::Editor
                                 expansions.top()->Add(n->data.id, n->data.func, nullptr, n->data.isEnabled());
                             }
                         }
+                        return true;
                     },
                     menuRoot
                 );

@@ -20,6 +20,19 @@ namespace Ossium
         DECLARE_COMPONENT(Component, LayoutSurface);
         
         void OnLoadFinish();
+
+        // Calls LayoutRefresh() for all LayoutComponents beneath this LayoutSurface (breadth-first order).
+        void LayoutUpdate();
+
+        // Is the layout dirty?
+        bool IsDirty();
+
+        // Mark the layout dirty.
+        void SetDirty();
+
+    private:
+        // Is the layout dirty?
+        bool dirty = false;
         
     };
 

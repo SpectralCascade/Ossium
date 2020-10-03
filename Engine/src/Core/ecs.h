@@ -206,8 +206,11 @@ namespace Ossium
         }
 
         /// Walks over all entities and calls the provided function, passing in each entity.
+        /// The function must return a boolean value; true indicates that traversal should include
+        /// children of the current entity argument, false indicates that it's children should be ignored.
         /// Set breadthFirst to false to walk the entity tree depth-first.
-        void WalkEntities(std::function<void(Entity*)> walkFunc, bool breadthFirst = true);
+        /// Set startEntity to a valid entity in the scene to walk from, otherwise just walks all entities in the scene.
+        void WalkEntities(std::function<bool(Entity*)> walkFunc, bool breadthFirst = true, Entity* startEntity = nullptr);
 
         /// Overload that accepts a parent entity reference, and if the parent exists within this system,
         /// the new entity will be added as a child of the parent.

@@ -885,25 +885,27 @@ namespace Ossium
         return servicesProvider;
     }
 
-    void Scene::WalkEntities(function<void(Entity*)> walkFunc, bool breadthFirst)
+    void Scene::WalkEntities(function<bool(Entity*)> walkFunc, bool breadthFirst, Entity* startEntity)
     {
         if (breadthFirst)
         {
             entityTree.WalkBreadth([&walkFunc] (Node<Entity*>* node) {
                 if (node->data != nullptr)
                 {
-                    walkFunc(node->data);
+                    return walkFunc(node->data);
                 }
-            });
+                return true;
+            }, startEntity->self);
         }
         else
         {
             entityTree.Walk([&walkFunc] (Node<Entity*>* node) {
                 if (node->data != nullptr)
                 {
-                    walkFunc(node->data);
+                    return walkFunc(node->data);
                 }
-            });
+                return true;
+            }, startEntity->self);
         }
 
     }

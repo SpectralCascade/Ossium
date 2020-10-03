@@ -1,13 +1,15 @@
 #include "LayoutComponent.h"
 #include "LayoutSurface.h"
 
+using namespace std;
+
 namespace Ossium
 {
 
-    BaseComponent* LayoutComponent::ComponentFactory(void* target_entity)      
-    {                                                               
-        return nullptr;                                             
-    }                                                               
+    BaseComponent* LayoutComponent::ComponentFactory(void* target_entity)
+    {
+        return nullptr;
+    }
     LayoutComponent::LayoutComponent() {}
     LayoutComponent::~LayoutComponent() {}
     void LayoutComponent::OnCreate() { ParentType::OnCreate(); }
@@ -32,32 +34,8 @@ namespace Ossium
             if (!layoutSurface)
             {
                 // Automagically add one.
-                layoutSurface = entity->AddComponent<LayoutSurface>();
+                entity->AddComponent<LayoutSurface>();
             }
-        }
-    }
-
-    void LayoutComponent::LayoutSetDirty()
-    {
-        layoutDirty = true;
-    }
-
-    bool LayoutComponent::LayoutIsDirty()
-    {
-        return layoutDirty;
-    }
-
-    void LayoutComponent::LayoutUpdate()
-    {
-        if (layoutDirty)
-        {
-            layoutDirty = false;
-        }
-        LayoutRefresh();
-        auto children = entity->GetComponentsInChildren<LayoutComponent>();
-        for (auto child : children)
-        {
-            child->LayoutUpdate();
         }
     }
 
