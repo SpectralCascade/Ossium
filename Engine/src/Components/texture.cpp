@@ -44,22 +44,46 @@ namespace Ossium
             Vector2 dimensions = boxLayout->GetInnerDimensions();
             switch (fitLayout)
             {
-            case FIT_XY:
-                width = dimensions.x;
-                height = dimensions.y;
-                break;
-            case FIT_X:
-                width = dimensions.x;
-                break;
-            case FIT_Y:
-                height = dimensions.y;
-                break;
-            case FIT_ASPECT:
-                // TODO
-                break;
-            case NONE:
-            default:
-                break;
+                case FIT_XY:
+                {
+                    width = dimensions.x;
+                    height = dimensions.y;
+                    break;
+                }
+                case FIT_X:
+                {
+                    width = dimensions.x;
+                    break;
+                }
+                case FIT_Y:
+                {
+                    height = dimensions.y;
+                    break;
+                }
+                case FIT_ASPECT:
+                {
+                    float aspect = GetSourceWidth() / GetSourceHeight();
+                    if (aspect < dimensions.x / dimensions.y)
+                    {
+                        // Limiting factor is height, as it's less than the width.
+                        width = dimensions.y * (aspect > 1.0f ? (1.0f / aspect) : aspect);
+                        height = dimensions.y;
+                    }
+                    else
+                    {
+                        // Limiting factor is width, as it's less than the height.
+                        width = dimensions.x;
+                        height = dimensions.x * (aspect > 1.0f ? (1.0f / aspect) : aspect);
+                    }      
+                    break;
+                }
+                case NONE:
+                {
+                }
+                default:
+                {
+                    break;
+                }
             }
         }
 
