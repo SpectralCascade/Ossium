@@ -155,6 +155,12 @@ namespace Ossium::Editor
                     {
                         Log.Warning("Failed to add component of type '{0}' to entity '{1}'!", GetComponentType(data[i]), selected->name);
                     }
+                    else
+                    {
+                        // Pretend the component is loaded.
+                        component->OnLoadStart();
+                        component->OnLoadFinish();
+                    }
                 }
             );
         }
