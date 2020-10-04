@@ -45,14 +45,14 @@ namespace Ossium
             switch (fitLayout)
             {
             case FIT_XY:
-                SetRenderWidth(dimensions.x);
-                SetRenderHeight(dimensions.y);
+                width = dimensions.x;
+                height = dimensions.y;
                 break;
             case FIT_X:
-                SetRenderWidth(dimensions.x);
+                width = dimensions.x;
                 break;
             case FIT_Y:
-                SetRenderHeight(dimensions.y);
+                height = dimensions.y;
                 break;
             case FIT_ASPECT:
                 // TODO

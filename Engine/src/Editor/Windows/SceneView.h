@@ -13,6 +13,9 @@ namespace Ossium::Editor
 
         void OnGUI();
 
+    private:
+        Vector2 previousDimensions = Vector2::Zero;
+
     };
 
 }

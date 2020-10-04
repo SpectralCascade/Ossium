@@ -17,6 +17,8 @@ namespace Ossium::Editor
 
         EditorController* editor = GetEditorLayout()->GetEditorController();
 
+        Vector2 dimensions = Vector2(renderer->GetWidth(), renderer->GetHeight());
+
         vector<Scene*> loadedScenes = editor->GetLoadedScenes();
         for (Scene* scene : loadedScenes)
         {
@@ -25,12 +27,16 @@ namespace Ossium::Editor
             scene->WalkComponents<Transform>([] (Transform* t) { t->SetDirty(); });
             
             // Update all layouts
-            scene->WalkEntities([] (Entity* entity) {
+            scene->WalkEntities([=] (Entity* entity) {
                 if (entity->IsActive())
                 {
                     LayoutSurface* layoutSurface = entity->GetComponent<LayoutSurface>();
                     if (layoutSurface && layoutSurface->enabled)
                     {
+                        if (previousDimensions != dimensions)
+                        {
+                            layoutSurface->SetDirty();
+                        }
                         layoutSurface->LayoutUpdate();
                     }
                     return true;
@@ -39,7 +45,8 @@ namespace Ossium::Editor
             });
         }
 
-
+        // Keep track of last rendering dimensions
+        previousDimensions = dimensions;
 
         // Draw to viewport
         renderer->RenderPresent(true);
