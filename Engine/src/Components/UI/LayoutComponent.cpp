@@ -37,6 +37,8 @@ namespace Ossium
                 layoutSurface = entity->AddComponent<LayoutSurface>();
             }
         }
+        // After loading, make sure the LayoutSurface is marked dirty!
+        layoutSurface->SetDirty();
     }
 
     void LayoutComponent::OnEditorPropertyChanged()
