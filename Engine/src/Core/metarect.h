@@ -28,7 +28,7 @@ namespace Ossium
 
     struct MetaRectSchema;
 
-    typedef Schema<MetaRectSchema, 20> MetaRectSchemaBase;
+    typedef Schema<MetaRectSchema, 50> MetaRectSchemaBase;
 
     struct OSSIUM_EDL MetaRectSchema : public MetaRectSchemaBase
     {

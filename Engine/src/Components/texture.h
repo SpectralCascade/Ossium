@@ -66,6 +66,11 @@ namespace Ossium
         // By default the image simply stretches to fit x and y.
         M(TextureLayoutMode, fitLayout) = FIT_XY;
 
+        // 9-slicing support.
+        // Defines vertical and horizontal slices which can be stretched, the rest of the source image
+        // is never stretched.
+        M(SDL_Rect, stretchArea) = {0, 0, 0, 0};
+
     };
 
     /// This class is used for rendering an image

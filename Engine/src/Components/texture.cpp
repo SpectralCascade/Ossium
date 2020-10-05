@@ -87,7 +87,9 @@ namespace Ossium
             }
         }
 
-        SDL_Rect dest = GetSDL(trans->GetWorldPosition(), trans->GetWorldScale());
+        Vector2 worldPos = trans->GetWorldPosition();
+        Vector2 worldScale = trans->GetWorldScale();
+        SDL_Rect dest = GetSDL(worldPos, worldScale);
         if (source == nullptr || source->GetTexture() == NULL)
         {
             SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
@@ -97,16 +99,77 @@ namespace Ossium
 
         if (!tiled)
         {
-            SDL_Point trueOrigin = {(int)(origin.x * width * trans->GetWorldScale().x), (int)(origin.y * height * trans->GetWorldScale().y)};
+            SDL_Point trueOrigin = {
+                (int)(origin.x * width * trans->GetWorldScale().x),
+                (int)(origin.y * height * trans->GetWorldScale().y)
+            };
+
+            SDL_Rect srcClip = clip.w > 0 && clip.h > 0 ? 
+                clip : (SDL_Rect) {0, 0, GetSourceWidth(), GetSourceHeight()};
 
             /// Rendering time!
-            if (clip.w > 0 && clip.h > 0)
+            if (stretchArea.y > 0 && stretchArea.h > 0)
             {
-                source->Render(renderer.GetRendererSDL(), dest, &clip, &trueOrigin, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+                // Simple 9-slice support, left-to-right row by row clips of the source image.
+                SDL_Rect slices[9];
+                int xmax = stretchArea.x + stretchArea.w;
+                int ymax = stretchArea.y + stretchArea.h;
+                int lastWidth = srcClip.w - xmax;
+                int lastHeight = srcClip.h - ymax;
+                
+                // Top row
+                slices[0] = { 0, 0, stretchArea.x, stretchArea.y };
+                slices[1] = { stretchArea.x, 0, stretchArea.w, stretchArea.y };
+                slices[2] = { xmax, 0, lastWidth, stretchArea.y };
+
+                // Middle row
+                slices[3] = { 0, stretchArea.y, stretchArea.x, stretchArea.h };
+                slices[4] = stretchArea;
+                slices[5] = { xmax, stretchArea.y, lastWidth, stretchArea.h };
+
+                // Bottom row
+                slices[6] = { 0, ymax, stretchArea.x, lastHeight };
+                slices[7] = { stretchArea.x, stretchArea.y, stretchArea.w, lastHeight };
+                slices[8] = { xmax, ymax, lastWidth, lastHeight };
+
+                Vector2 scaleFactor = Vector2(
+                    ((float)width / (float)srcClip.w) * worldScale.x,
+                    ((float)height / (float)srcClip.h) * worldScale.y
+                );
+
+                for (unsigned int i = 0; i < 9; i++)
+                {
+                    if (slices[i].w > 0 && slices[i].h > 0)
+                    {
+                        SDL_Rect sliceDest = {
+                            dest.x + (int)((float)slices[i].x * scaleFactor.x),
+                            dest.y + (int)((float)slices[i].y * scaleFactor.y),
+                        };
+                        source->Render(
+                            renderer.GetRendererSDL(),
+                            sliceDest,
+                            &slices[i],
+                            &trueOrigin,
+                            trans->GetWorldRotation().GetDegrees(),
+                            modulation,
+                            blending,
+                            flip
+                        );
+                    }
+                }
             }
             else
             {
-                source->Render(renderer.GetRendererSDL(), dest, NULL, &trueOrigin, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+                source->Render(
+                    renderer.GetRendererSDL(),
+                    dest,
+                    &srcClip,
+                    &trueOrigin,
+                    trans->GetWorldRotation().GetDegrees(),
+                    modulation,
+                    blending,
+                    flip
+                );
             }
         }
         else
@@ -145,7 +208,16 @@ namespace Ossium
                     converted.y = (int)round(screenOrigin.y);
 
                     // Render a tile
-                    source->Render(renderer.GetRendererSDL(), dest, &trueClip, &converted, trans->GetWorldRotation().GetDegrees(), modulation, blending, flip);
+                    source->Render(
+                        renderer.GetRendererSDL(),
+                        dest,
+                        &trueClip,
+                        &converted,
+                        trans->GetWorldRotation().GetDegrees(),
+                        modulation,
+                        blending,
+                        flip
+                    );
                 }
             }
         }
@@ -159,7 +231,10 @@ namespace Ossium
             return;
         }
         /// Don't configure dimensions unless the width and height are zero, they should be specified by the schema data.
-        SetSource(GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()), width == 0 || height == 0);
+        SetSource(
+            GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()),
+            width == 0 || height == 0
+        );
         /// Set clip to fit loaded image
         Log.Verbose("Loaded texture with source from \"{0}\"", imgPath);
     }
