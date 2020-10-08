@@ -129,22 +129,72 @@ namespace Ossium
 
                 // Bottom row
                 slices[6] = { 0, ymax, stretchArea.x, lastHeight };
-                slices[7] = { stretchArea.x, stretchArea.y, stretchArea.w, lastHeight };
+                slices[7] = { stretchArea.x, ymax, stretchArea.w, lastHeight };
                 slices[8] = { xmax, ymax, lastWidth, lastHeight };
-
-                Vector2 scaleFactor = Vector2(
-                    ((float)width / (float)srcClip.w) * worldScale.x,
-                    ((float)height / (float)srcClip.h) * worldScale.y
-                );
 
                 for (unsigned int i = 0; i < 9; i++)
                 {
                     if (slices[i].w > 0 && slices[i].h > 0)
                     {
-                        SDL_Rect sliceDest = {
-                            dest.x + (int)((float)slices[i].x * scaleFactor.x),
-                            dest.y + (int)((float)slices[i].y * scaleFactor.y),
-                        };
+                        // NOTE: sliceDest only supports scaling UP at present
+                        SDL_Rect sliceDest = dest;
+                        switch (i)
+                        {
+                            case 2: // Corners
+                            {
+                            }
+                            case 8:
+                            {
+                                sliceDest.x += max(0, dest.w - slices[i].w);
+                            }
+                            case 6:
+                            {
+                                if (i != 2)
+                                {
+                                    sliceDest.y += max(0, dest.h - slices[i].h);
+                                }
+                            }
+                            case 0:
+                            {
+                                sliceDest.w = slices[i].w;
+                                sliceDest.h = slices[i].h;
+                                break;
+                            }
+                            case 5: // Sides
+                            {
+                                sliceDest.x += dest.w - slices[i].w;
+                            }
+                            case 3:
+                            {
+                                sliceDest.y += slices[0].h;
+                                sliceDest.w = slices[i].w;
+                                sliceDest.h = max(0, (dest.h - slices[0].h) - slices[6].h);
+                                break;
+                            }
+                            case 7: // Top and bottom
+                            {
+                                sliceDest.y += max(0, dest.h - slices[6].h);
+                            }
+                            case 1:
+                            {
+                                sliceDest.x += slices[0].w;
+                                sliceDest.w = max(0, (dest.w - slices[0].w) - slices[2].w);
+                                sliceDest.h = slices[i].h;
+                                break;
+                            }
+                            default:
+                            {
+                            }
+                            case 4: // Centre
+                            {
+                                sliceDest.x += slices[0].w;
+                                sliceDest.y += slices[0].h;
+                                sliceDest.w = max(0, (dest.w - slices[0].w) - slices[2].w);
+                                sliceDest.h = max(0, (dest.h - slices[0].h) - slices[6].h);
+                                break;
+                            }
+                        }
+
                         source->Render(
                             renderer.GetRendererSDL(),
                             sliceDest,
@@ -183,7 +233,7 @@ namespace Ossium
                 trueClip.w = texClip.w;
                 trueClip.h = texClip.h;
             }
-            // Texture 'clip' is also scaled
+            // Texture 'clip' is also scaled (not actually used as a clip rect)
             texClip.w *= trans->GetWorldScale().x;
             texClip.h *= trans->GetWorldScale().y;
 

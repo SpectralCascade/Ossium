@@ -865,6 +865,7 @@ namespace Ossium
             int total = 0;
             for (auto component : components[i])
             {
+                Log.Debug("Finished loading \"{0}\" component on entity \"{1}\"", GetComponentName(component->GetType()), component->entity->name);
                 component->OnLoadFinish();
                 total++;
             }

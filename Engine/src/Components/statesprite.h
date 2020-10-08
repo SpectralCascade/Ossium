@@ -64,9 +64,6 @@ namespace Ossium
         /// Current number of segments
         M(Uint16, totalCurrentSegments) = 1;
 
-        /// Multiple states, multiple textures
-        StateSpriteTable states;
-
     };
 
     /// Can be switched between different textures/texture clips
@@ -100,6 +97,9 @@ namespace Ossium
 
         /// Returns the current substate clip rect
         SDL_Rect GetCurrentClip();
+
+        /// Multiple states, multiple textures
+        StateSpriteTable states;
 
     protected:
         /// Original addState method - this one does worry about bit masks, hence why it's abstracted away

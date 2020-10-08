@@ -64,7 +64,7 @@ namespace Ossium
 
         // Whether the texture should stretch x, y, x and y, aspect-fit or ignore a BoxLayout. 
         // By default the image simply stretches to fit x and y.
-        M(TextureLayoutMode, fitLayout) = FIT_XY;
+        M(int, fitLayout) = FIT_XY;
 
         // 9-slicing support.
         // Defines vertical and horizontal slices which can be stretched, the rest of the source image
