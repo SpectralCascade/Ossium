@@ -695,16 +695,11 @@ namespace Ossium
     {
         entities.clear();
         /// Delete all entities
-        vector<Node<Entity*>*>& allEntities = entityTree.GetFlatTree();
-        for (auto i = allEntities.begin(); i != allEntities.end(); i++)
-        {
-            if (*i != nullptr && (*i)->data != nullptr)
-            {
-
-                delete (*i)->data;
-                (*i)->data = nullptr;
-            }
-        }
+        WalkEntities([&] (Entity* entity) {
+            DestroyEntity(entity, false);
+            return false;
+        });
+        DestroyPending();
         /// Now we can safely remove all nodes from the tree and remove all components
         entityTree.Clear();
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
