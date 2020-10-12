@@ -295,8 +295,6 @@ namespace Ossium
 
     void Texture::SetSource(Image* src, bool configureDimensions)
     {
-        int targetLayer = GetRenderLayer();
-        // De-register from the renderer.
         ParentType::OnLoadStart();
         source = src;
         if (configureDimensions)
@@ -323,8 +321,6 @@ namespace Ossium
         {
             imgPath = source->GetPathName();
         }
-        /// Now we have an image loaded, register the texture instance so it can be rendered.
-        SetRenderLayer(targetLayer);
     }
     void Texture::SetBlendMode(SDL_BlendMode blend)
     {

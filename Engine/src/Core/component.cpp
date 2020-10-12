@@ -19,11 +19,11 @@
 namespace Ossium
 {
 
-    REGISTER_ABSTRACT_COMPONENT(Component);
-
     ///
     /// Component
     ///
+
+    REGISTER_ABSTRACT_COMPONENT(Component);
 
     Transform* Component::GetTransform()
     {
@@ -34,82 +34,6 @@ namespace Ossium
     /// GraphicComponent
     ///
 
-    void GraphicComponent::SetRenderLayer(int layer)
-    {
-        if (GetService<Renderer>() != nullptr)
-        {
-            if (renderLayer >= 0)
-            {
-                GetService<Renderer>()->Unregister(this, renderLayer);
-            }
-            renderLayer = GetService<Renderer>()->Register(this, layer);
-        }
-    }
-
-    int GraphicComponent::GetRenderLayer()
-    {
-        return renderLayer;
-    }
-
-    GraphicComponent::GraphicComponent()
-    {
-    }
-
-    GraphicComponent::~GraphicComponent()
-    {
-    }
-
-    void GraphicComponent::OnCreate()
-    {
-        Component::OnCreate();
-    }
-
-    void GraphicComponent::OnLoadStart()
-    {
-        Component::OnLoadStart();
-        if (GetService<Renderer>() != nullptr && renderLayer >= 0)
-        {
-            GetService<Renderer>()->Unregister(this, renderLayer);
-            renderLayer = -1;
-        }
-    }
-
-    void GraphicComponent::OnLoadFinish()
-    {
-        Component::OnLoadFinish();
-        //Log.Info("Loaded graphic component at render layer {0} (entity '{1}')", renderLayer, entity->name);
-        SetRenderLayer(renderLayer);
-    }
-
-    void GraphicComponent::OnDestroy()
-    {
-        Component::OnDestroy();
-        if (GetService<Renderer>() != nullptr && renderLayer >= 0)
-        {
-            GetService<Renderer>()->Unregister(this, renderLayer);
-            renderLayer = -1;
-        }
-    }
-
-    void GraphicComponent::OnClone(BaseComponent* src)
-    {
-    }
-
-    void GraphicComponent::Update()
-    {
-    }
-
-    BaseComponent* GraphicComponent::ComponentFactory(void* target_entity)
-    {
-        return nullptr;
-    }
-
-    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> GraphicComponent::__ecs_factory_ =
-    std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
-        SID( "GraphicComponent" )::str, ComponentFactory, true
-    ) :
-    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
-        SID( "GraphicComponent" )::str, ComponentFactory, std::string(GraphicComponent::parentTypeName), true
-    );
+    REGISTER_ABSTRACT_COMPONENT(GraphicComponent);
 
 }

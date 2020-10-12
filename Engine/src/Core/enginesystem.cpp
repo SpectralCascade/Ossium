@@ -88,13 +88,18 @@ namespace Ossium
 
         for (auto itr : resources.GetAll<Scene>())
         {
+            Scene* scene = (Scene*)itr.second;
             // TODO: Optimise this? Perhaps there's a way transforms can point directly to the physics world transform when a physics body is associated.
             // Once the physics world has updated, update all the transforms associated with physics bodies.
-            ((Scene*)itr.second)->WalkComponents<PhysicsBody>([](PhysicsBody* body){ body->UpdatePhysics(); });
+            scene->WalkComponents<PhysicsBody>([] (PhysicsBody* body) {
+                body->UpdatePhysics();
+            });
             // Update all layouts now everything has moved.
-            ((Scene*)itr.second)->WalkComponents<LayoutSurface>([](LayoutSurface* layout) {
+            scene->WalkComponents<LayoutSurface>([] (LayoutSurface* layout) {
                 layout->LayoutUpdate();
             });
+            // Finally, render the scene.
+            scene->Render();
         }
 
         // Render everything

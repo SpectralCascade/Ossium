@@ -37,7 +37,7 @@ namespace Ossium
         {
         protected:
             static Uint32 nextTypeIdent;
-            Uint32 typeIdent;
+            Uint32 typeIdent; // The unique identifier for this type
 
         public:
             TypeRegistry()
@@ -119,14 +119,31 @@ namespace Ossium
         public:
             TypeFactory() = delete;
 
-            TypeFactory(const char* name, FactoryFunc factory, std::string baseName, bool abstract_type = false)
+            TypeFactory(const char* name, FactoryFunc factory, std::string baseNames, bool abstract_type = false)
             {
                 Log.Info("Type factory instantiated for type \"{0}\" [{1}].", name, TypeRegistry<CoreType>::typeIdent);
                 gen_map()[TypeRegistry<CoreType>::typeIdent] = factory;
                 type_name_map()[name] = TypeRegistry<CoreType>::typeIdent;
                 type_id_map()[TypeRegistry<CoreType>::typeIdent] = name;
                 type_abstract_map()[TypeRegistry<CoreType>::typeIdent] = abstract_type;
-                derived_type_name_map()[baseName].push_back(TypeRegistry<CoreType>::typeIdent);
+                std::string baseName;
+                for (auto c : baseNames)
+                {
+                    if (c == ',')
+                    {
+                        derived_type_name_map()[baseName].push_back(TypeRegistry<CoreType>::typeIdent);
+                        baseName.clear();
+                    }
+                    else
+                    {
+                        baseName += c;
+                    }
+                    
+                }
+                if (!baseName.empty())
+                {
+                    derived_type_name_map()[baseName].push_back(TypeRegistry<CoreType>::typeIdent);
+                }
                 key = name;
             }
 

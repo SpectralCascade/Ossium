@@ -58,6 +58,8 @@ namespace Ossium
                                                                                         \
         inline static const char* parentTypeName = SID(#BASETYPE)::str;                 \
                                                                                         \
+        static std::string GetBaseTypeNames();                                          \
+                                                                                        \
     private:                                                                            \
         static BaseComponent* ComponentFactory(void* target_entity);                    \
                                                                                         \
@@ -79,13 +81,18 @@ namespace Ossium
     {                                                                                                       \
         entity->MapReference(identdata, member);                                                            \
     }                                                                                                       \
+    std::string TYPE::GetBaseTypeNames()                                                                    \
+    {                                                                                                       \
+        return std::is_same<BaseComponent, ParentType>::value ?                                             \
+            std::string("") : std::string(parentTypeName) + "," + ParentType::GetBaseTypeNames();           \
+    }                                                                                                       \
                                                                                                             \
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                    \
     std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(      \
         SID( #TYPE )::str, ComponentFactory                                                                 \
     ) :                                                                                                     \
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                          \
-        SID( #TYPE )::str, ComponentFactory, std::string(parentTypeName)                                    \
+        SID( #TYPE )::str, ComponentFactory, GetBaseTypeNames()                                             \
     );                                                                                                      \
                                                                                                             \
     TYPE* TYPE::Clone()                                                                                     \
@@ -175,6 +182,9 @@ namespace Ossium
         /// Note: as a minor optimisation, rather than calling this you could inherit from this class
         /// and replace with an override that only calls Update() on component types that use it.
         void UpdateComponents();
+
+        /// Renders the scene.
+        void Render();
 
         /// Find an entity by name. If you can setup references in the scene do that instead.
         Entity* Find(std::string entityName, Entity* parent = nullptr);
@@ -414,8 +424,9 @@ namespace Ossium
             return retComponents;
         }
 
-        /// Returns a reference to the Component* array of a specified type.
-        /// Faster than the GetComponents() template but doesn't do any type conversion.
+        /// Returns a reference to the BaseComponent* array of a specified type.
+        /// Faster than the GetComponents() template but doesn't do any type conversion,
+        /// also does not support derivative types.
         std::vector<BaseComponent*>& GetComponents(ComponentType compType);
 
         /// Returns a reference to the mapping of components attached to this entity by type.
@@ -634,6 +645,9 @@ namespace Ossium
             return entity->GetService<T>();
         }
 
+        // Returns an empty string as there are no further base types.
+        static std::string GetBaseTypeNames();
+
         /// Pointer to the entity that this component is attached to
         Entity* entity = nullptr;
 
@@ -681,6 +695,9 @@ namespace Ossium
             {                                                                   \
                 return __ecs_factory_.GetType();                                \
             }                                                                   \
+        protected:                                                              \
+            static std::string GetBaseTypeNames();                              \
+        public:                                                                 \
             /** Note: this factory is only used for checking derived types. */  \
             static Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> __ecs_factory_
 
@@ -697,14 +714,19 @@ namespace Ossium
         void TYPE::OnLoadFinish() { ParentType::OnLoadFinish(); }       \
         void TYPE::OnClone(BaseComponent* src) {}                       \
         void TYPE::Update(){}                                           \
+        std::string TYPE::GetBaseTypeNames()                            \
+        {                                                               \
+            return std::is_same<BaseComponent, ParentType>::value ?                                                                     \
+                std::string("") : std::string(parentTypeName) + "," + ParentType::GetBaseTypeNames();                                   \
+        }                                                                                                                               \
         Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> TYPE::__ecs_factory_ =                                            \
         std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                 \
             SID( #TYPE )::str, ComponentFactory                                                                                         \
         ) :                                                                                                                             \
         Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(                                                                  \
-            SID( #TYPE )::str, ComponentFactory, std::string(parentTypeName), true                                                      \
+            SID( #TYPE )::str, ComponentFactory, GetBaseTypeNames(), true                                                               \
         );
-
+        
 
 
 }

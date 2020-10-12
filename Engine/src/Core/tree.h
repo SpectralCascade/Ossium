@@ -260,6 +260,7 @@ namespace Ossium
             flatTree.clear();
         }
 
+        /// Function that operates on a node. Return true if the node's children should be traversed.
         typedef std::function<bool(Node<T>*)> NodeOp;
 
         /// Depth-first tree traversal

@@ -26,6 +26,7 @@
 #include "delta.h"
 #include "engineconstants.h"
 #include "resourcecontroller.h"
+#include "component.h"
 
 using namespace std;
 
@@ -168,9 +169,7 @@ namespace Ossium
 
     void Entity::SetActiveInScene()
     {
-        /// If LOCALLY active... otherwise short circuit out,
-        /// we shouldn't set this or it's children active in the scene.
-        if (active)
+        if (!controller->IsActive(this))
         {
             controller->SetActive(this);
             for (auto child : self->children)
@@ -182,9 +181,7 @@ namespace Ossium
 
     void Entity::SetInactiveInScene()
     {
-        /// If LOCALLY active... otherwise short circuit out,
-        /// we must already be inactive in the scene, so no need to go on.
-        if (active)
+        if (controller->IsActive(this))
         {
             controller->SetInactive(this);
             for (auto child : self->children)
@@ -387,6 +384,11 @@ namespace Ossium
     {
     }
 
+    string BaseComponent::GetBaseTypeNames()
+    {
+        return string();
+    }
+
     BaseComponent::BaseComponent()
     {
     }
@@ -533,6 +535,32 @@ namespace Ossium
         else if (clearPostUpdate)
         {
             Clear();
+        }
+    }
+
+    void Scene::Render()
+    {
+        Renderer* renderer = GetService<Renderer>();
+        if (renderer != nullptr)
+        {
+            entityTree.WalkBreadth(
+                [&] (Node<Entity*>* node) {
+                    if (!node->data->IsActive())
+                    {
+                        return false;
+                    }
+                    vector<GraphicComponent*> graphics = node->data->GetComponents<GraphicComponent>();
+                    for (auto graphic : graphics)
+                    {
+                        if (graphic->enabled)
+                        {
+                            // Only render active and enabled graphics
+                            graphic->Render(*renderer);
+                        }
+                    }
+                    return true;
+                }
+            );
         }
     }
 

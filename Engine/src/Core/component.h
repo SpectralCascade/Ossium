@@ -31,35 +31,12 @@ namespace Ossium
 
     };
 
-    struct OSSIUM_EDL GraphicComponentSchema : public Schema<GraphicComponentSchema, 1>
+    class OSSIUM_EDL GraphicComponent : public Graphic, public Component
     {
-    public:
-        DECLARE_BASE_SCHEMA(GraphicComponentSchema, 1);
-
-    protected:
-        M(int, renderLayer) = -1;
-
-    };
-
-    class OSSIUM_EDL GraphicComponent : public Graphic, public Component, public GraphicComponentSchema
-    {
-    public:
-        CONSTRUCT_SCHEMA(Component, GraphicComponentSchema);
-
-        /// Attempts to set the rendering layer of this graphic component. Note that you probably shouldn't call this
-        /// too frequently as it attempts a removal from one set and insertion into another set within the renderer.
-        void SetRenderLayer(int layer);
-
-        /// Returns the layer this component is being rendered on.
-        int GetRenderLayer();
-
     protected:
         DECLARE_ABSTRACT_COMPONENT(Component, GraphicComponent);
 
         virtual void Render(Renderer& renderer) = 0;
-
-    private:
-        using GraphicComponentSchema::renderLayer;
 
     };
 

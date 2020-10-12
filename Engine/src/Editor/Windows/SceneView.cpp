@@ -43,6 +43,9 @@ namespace Ossium::Editor
                 }
                 return false;
             });
+
+            // Finally, render the scene
+            scene->Render();
         }
 
         // Keep track of last rendering dimensions

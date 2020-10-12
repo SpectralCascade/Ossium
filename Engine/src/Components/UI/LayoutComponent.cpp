@@ -17,6 +17,11 @@ namespace Ossium
     void LayoutComponent::OnLoadStart() { ParentType::OnLoadStart(); }
     void LayoutComponent::OnClone(BaseComponent* src) {}
     void LayoutComponent::Update(){}
+    std::string LayoutComponent::GetBaseTypeNames()
+    {
+        return std::is_same<BaseComponent, ParentType>::value ?
+            std::string("") : std::string(parentTypeName) + "," + ParentType::GetBaseTypeNames();
+    }
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> LayoutComponent::__ecs_factory_ = 
     std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
         SID( "LayoutComponent" )::str, ComponentFactory
