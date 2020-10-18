@@ -19,8 +19,8 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
 
+#include "ordered_map.h"
 #include "helpermacros.h"
 
 namespace Ossium
@@ -58,7 +58,10 @@ namespace Ossium
 
     };
 
-    class OSSIUM_EDL JSON : public std::unordered_map<std::string, JString>
+    /// Represents a JSON object as a map of key-value string pairs.
+    /// Note, this implementation uses an ordered_map which maintains the order of insertion,
+    /// see https://github.com/Tessil/ordered-map
+    class OSSIUM_EDL JSON : public tsl::ordered_map<std::string, JString>
     {
     public:
         JSON();

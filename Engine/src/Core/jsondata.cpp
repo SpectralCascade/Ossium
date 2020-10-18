@@ -261,27 +261,27 @@ namespace Ossium
                 {
                     jsonStream << "    ";
                 }
-                jsonStream << "\"" << itr->first << "\"" << " : ";
-                if (itr->second.IsString())
+                jsonStream << "\"" << itr.key() << "\"" << " : ";
+                if (itr.value().IsString())
                 {
-                     jsonStream << "\"" << itr->second << "\"";
+                     jsonStream << "\"" << itr.value() << "\"";
                 }
-                else if (itr->second.IsJSON())
+                else if (itr.value().IsJSON())
                 {
                     /// Add indents
-                    for (unsigned int i = 0; i < itr->second.length(); i++)
+                    for (unsigned int i = 0; i < itr.value().length(); i++)
                     {
-                        if (itr->second[i] == '\n')
+                        if (itr.value()[i] == '\n')
                         {
-                            itr->second.insert(i + 1, string("    "));
+                            itr.value().insert(i + 1, string("    "));
                             i += 4;
                         }
                     }
-                    jsonStream << itr->second;
+                    jsonStream << itr.value();
                 }
                 else
                 {
-                    jsonStream << itr->second;
+                    jsonStream << itr.value();
                 }
                 if (++itr != end())
                 {

@@ -85,7 +85,7 @@ namespace Ossium
 
     Entity::~Entity()
     {
-        /// Destroy all components
+        /// Destroy all components 
         for (auto itr = components.begin(); itr != components.end(); itr++)
         {
             for (unsigned int i = 0, counti = itr->second.empty() ? 0 : itr->second.size(); i < counti; i++)
@@ -583,55 +583,48 @@ namespace Ossium
 
     void Scene::DestroyEntity(Entity* entity, bool immediate)
     {
-        if (entity != nullptr)
+        if (entity == nullptr)
         {
-            if (entity->controller == this)
-            {
-                if (immediate)
-                {
+            Log.Warning("Attempted to destroy entity but it was already destroyed.");
+        }
+        else if (entity->controller != this)
+        {
+            Log.Warning("Attempted to destroy entity but it is not managed by this scene instance!");
+        }
+        else if (immediate)
+        {
+            // Clean up all children first; only delete entities on way back up the tree
+            // so the parent hierarchy is not broken during destruction.
+            entityTree.Walk(
+                [] (Node<Entity*>* node) {
+                    return true;
+                },
+                [&] (Node<Entity*>* node) {
                     // Entity could be pending destruction already
-                    if (pendingDestruction.find(entity) != pendingDestruction.end())
+                    if (pendingDestruction.find(node->data) != pendingDestruction.end())
                     {
-                        pendingDestruction.erase(entity);
+                        pendingDestruction.erase(node->data);
                     }
-                    // Clean up all children first
-                    for (auto node : entity->self->children)
-                    {
-                        if (node->data != nullptr)
-                        {
-                            DestroyEntity(node->data, true);
-                        }
-                    }
-
-                    auto node = entity->self;
-
-                    // Destroy the entity
-                    delete entity;
-
-                    auto itr = inactiveEntities.find(entity);
+                    Log.Info("Deleting entity at {0}", node->data);
+                    Log.Info("Entity name: {0}", node->data->name);
+                    delete node->data;
+                    auto itr = inactiveEntities.find(node->data);
                     if (itr != inactiveEntities.end())
                     {
                         inactiveEntities.erase(itr);
                     }
                     entities.erase(node->id);
-
-                    // Cleanup tree last of all.
                     entityTree.Remove(node);
-                }
-                else
-                {
-                    pendingDestruction.insert(entity);
-                }
-            }
-            else
-            {
-                Log.Warning("Attempted to destroy entity but it is not managed by this entity component system instance!");
-            }
+                    return false;
+                },
+                entity->self
+            );
         }
         else
         {
-            Log.Warning("Attempted to destroy entity but it was already destroyed.");
+            pendingDestruction.insert(entity);
         }
+        
     }
 
     void Scene::DestroyComponent(BaseComponent* component, bool immediate)
@@ -657,8 +650,8 @@ namespace Ossium
                         break;
                     }
                 }
-                /// Now remove the component pointer from the entity's components hash and delete the component.
                 component->OnDestroy();
+                /// Now remove the component pointer from the entity's components hash and delete the component.
                 itr->second.erase(itr->second.begin());
                 delete component;
             }
@@ -685,22 +678,22 @@ namespace Ossium
         // Now entities.
         for (auto entity : pendingDestruction)
         {
-            // Entities have a proper destructor.
-            delete entity;
+            DestroyEntity(entity, true);
         }
         pendingDestruction.clear();
     }
 
     void Scene::Clear()
     {
-        entities.clear();
         /// Delete all entities
         WalkEntities([&] (Entity* entity) {
             DestroyEntity(entity, false);
+            // Only do the root entities; all their children are automagically destroyed.
             return false;
         });
         DestroyPending();
         /// Now we can safely remove all nodes from the tree and remove all components
+        entities.clear();
         entityTree.Clear();
         for (unsigned int i = 0, counti = TypeSystem::TypeRegistry<BaseComponent>::GetTotalTypes(); i < counti; i++)
         {
@@ -735,16 +728,17 @@ namespace Ossium
 
     string Scene::ToString()
     {
-        // TODO: maintain entity order
         JSON serialised;
-        for (auto mappedEntity : entities)
-        {
-            Node<Entity*>* entity = mappedEntity.second;
-            if (entity != nullptr && entity->data != nullptr)
-            {
-                serialised[Utilities::ToString(entity->id)] = entity->data->ToString();
+        // Walk through the entity tree
+        WalkEntities(
+            [&] (Entity* entity) {
+                if (entity != nullptr)
+                {
+                    serialised[Utilities::ToString(entity->self->id)] = entity->ToString();
+                }
+                return true;
             }
-        }
+        );
         return serialised.ToString();
     }
 

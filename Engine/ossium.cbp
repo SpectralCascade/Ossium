@@ -339,6 +339,9 @@
 		<Unit filename="src/Core/mouse.h" />
 		<Unit filename="src/Core/mousecursor.cpp" />
 		<Unit filename="src/Core/mousecursor.h" />
+        <Unit filename="src/Core/ordered_hash.h" />
+		<Unit filename="src/Core/ordered_map.h" />
+		<Unit filename="src/Core/ordered_set.h" />
 		<Unit filename="src/Core/physics.cpp" />
 		<Unit filename="src/Core/physics.h" />
 		<Unit filename="src/Core/pixeleffects.cpp" />
@@ -354,7 +357,6 @@
 		<Unit filename="src/Core/schematype.h" />
 		<Unit filename="src/Core/services.cpp" />
 		<Unit filename="src/Core/services.h" />
-		<Unit filename="src/Core/slotmap.h" />
 		<Unit filename="src/Core/stb_rect_pack.h" />
 		<Unit filename="src/Core/stringconvert.cpp" />
 		<Unit filename="src/Core/stringconvert.h" />

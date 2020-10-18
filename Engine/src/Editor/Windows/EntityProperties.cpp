@@ -169,7 +169,7 @@ namespace Ossium::Editor
 
     void EntityProperties::Property(JSON& data)
     {
-        for (auto& property : data)
+        for (auto propertyItr = data.begin(); propertyItr != data.end(); propertyItr++)
         {
             if (!IsVisible())
             {
@@ -178,10 +178,10 @@ namespace Ossium::Editor
 
             BeginHorizontal();
 
-            TextLabel(property.first + ": ", EditorStyle::StandardText);
+            TextLabel(propertyItr.key() + ": ", EditorStyle::StandardText);
             Tab(100);
 
-            PropertyValue(property.second);
+            PropertyValue(propertyItr.value());
 
             EndHorizontal();
         }
