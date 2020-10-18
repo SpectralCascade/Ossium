@@ -102,6 +102,11 @@ namespace Ossium
 
     BaseComponent* Entity::AddComponent(ComponentType type)
     {
+        if (WillBeDestroyed())
+        {
+            Log.Warning("Failed to add component! You cannot add a component to an entity that is being destroyed.");
+            return nullptr;
+        }
         return TypeSystem::TypeFactory<BaseComponent, ComponentType>::Create(type, (void*)this);
     }
 
@@ -341,6 +346,11 @@ namespace Ossium
     int Entity::GetDepth()
     {
         return self->depth;
+    }
+
+    bool Entity::WillBeDestroyed()
+    {
+        return controller->pendingDestruction.find(this) != controller->pendingDestruction.end();
     }
 
     Scene* Entity::GetScene()
@@ -596,18 +606,23 @@ namespace Ossium
             // Clean up all children first; only delete entities on way back up the tree
             // so the parent hierarchy is not broken during destruction.
             entityTree.Walk(
-                [] (Node<Entity*>* node) {
+                [&] (Node<Entity*>* node) {
+                    // Just in case
+                    pendingDestruction.insert(node->data);
                     return true;
                 },
                 [&] (Node<Entity*>* node) {
-                    // Entity could be pending destruction already
+                    Log.Debug("Deleting entity at {0}", node->data);
+                    Log.Debug("Entity name: {0}", node->data->name);
+
+                    delete node->data;
+
+                    // Cleanup pending destruction
                     if (pendingDestruction.find(node->data) != pendingDestruction.end())
                     {
                         pendingDestruction.erase(node->data);
                     }
-                    Log.Info("Deleting entity at {0}", node->data);
-                    Log.Info("Entity name: {0}", node->data->name);
-                    delete node->data;
+
                     auto itr = inactiveEntities.find(node->data);
                     if (itr != inactiveEntities.end())
                     {

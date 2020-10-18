@@ -206,7 +206,7 @@ namespace Ossium::Editor
                         path.c_str(),
                         2,
                         filters,
-                        "Ossium Scene (.rawr)"
+                        "Ossium Scene (.json)"
                     );
 
                     if (dest)

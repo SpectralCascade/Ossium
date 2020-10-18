@@ -61,8 +61,14 @@ namespace Ossium
     {
 #ifdef OSSIUM_EDITOR
         entity->GetScene()->WalkEntities([&] (Entity* target) {
+            if (target->WillBeDestroyed())
+            {
+                // Early out
+                return false;
+            }
+
             LayoutSurface* layout = target->GetComponent<LayoutSurface>();
-            if (layout != this)
+            if (layout != nullptr && layout != this)
             {
                 // Sub-layouts manage their own LayoutComponents.
                 return false;
@@ -70,19 +76,16 @@ namespace Ossium
             vector<LayoutComponent*> layoutObjs = target->GetComponents<LayoutComponent>();
             for (auto component : layoutObjs)
             {
-                Log.Warning(
-                    "Removed LayoutSurface instance that a child LayoutComponent depended upon! Locating ancestor replacement."
-                );
                 component->layoutSurface = entity->GetAncestor<LayoutSurface>();
                 if (!component->layoutSurface)
                 {
-                    // Force add it, all layout components must have a LayoutSurface.
-                    component->layoutSurface = entity->AddComponentOnce<LayoutSurface>();
-                    Log.Warning("LayoutComponent has no ancestor LayoutSurface, replacement has been added.");
+                    // Force add it if the target entity is not being destroyed, all layout components must have a LayoutSurface.
+                    Log.Warning("LayoutComponent has no ancestor LayoutSurface, attempting to add replacement.");
+                    component->layoutSurface = target->AddComponentOnce<LayoutSurface>();
                 }
             }
             return true;
-        });
+        }, true, entity);
 #endif
     }
 

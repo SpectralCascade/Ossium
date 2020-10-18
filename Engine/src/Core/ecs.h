@@ -326,6 +326,12 @@ namespace Ossium
         template<class T>
         T* AddComponent()
         {
+            if (WillBeDestroyed())
+            {
+                // Disallow creation of components while entity is pending destruction.
+                Log.Warning("Failed to add component! You cannot add a component to an entity that is being destroyed.");
+                return nullptr;
+            }
             T* component = new T();
             component->entity = this;
             auto itr = components.find(GetComponentType<T>());
@@ -543,6 +549,9 @@ namespace Ossium
 
         /// Returns the depth of this entity in the hierarchy tree.
         int GetDepth();
+
+        /// Returns true if this entity will be destroyed at the end of the frame.
+        bool WillBeDestroyed();
 
     private:
         /// Direct creation of entities is not permitted; you can only create new entities via the Clone() method,
