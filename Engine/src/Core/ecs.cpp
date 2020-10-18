@@ -603,18 +603,25 @@ namespace Ossium
         }
         else if (immediate)
         {
+            auto rootNode = entity->self;
             // Clean up all children first; only delete entities on way back up the tree
             // so the parent hierarchy is not broken during destruction.
             entityTree.Walk(
                 [&] (Node<Entity*>* node) {
-                    // Just in case
+                    // Indicate that entities are in the process of being destroyed
                     pendingDestruction.insert(node->data);
                     return true;
                 },
                 [&] (Node<Entity*>* node) {
-                    Log.Debug("Deleting entity at {0}", node->data);
+                    if (node->data == nullptr)
+                    {
+                        Log.Error("Invalid entity in scene! Node [{0}] at depth {1}", node, node->depth);
+                    }
+
+                    Log.Debug("Deleting entity at {0} node [{1}]", node->data, node);
                     Log.Debug("Entity name: {0}", node->data->name);
 
+                    // Destroy the entity and it's components.
                     delete node->data;
 
                     // Cleanup pending destruction
@@ -623,17 +630,19 @@ namespace Ossium
                         pendingDestruction.erase(node->data);
                     }
 
+                    // Cleanup everything else
                     auto itr = inactiveEntities.find(node->data);
                     if (itr != inactiveEntities.end())
                     {
                         inactiveEntities.erase(itr);
                     }
                     entities.erase(node->id);
-                    entityTree.Remove(node);
-                    return false;
+                    node->data = nullptr;
+                    return true;
                 },
                 entity->self
             );
+            entityTree.Remove(rootNode);
         }
         else
         {
