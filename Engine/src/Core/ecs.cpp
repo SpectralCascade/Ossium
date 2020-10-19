@@ -181,6 +181,7 @@ namespace Ossium
             {
                 child->data->SetActiveInScene();
             }
+            OnSetActive(true);
         }
     }
 
@@ -192,6 +193,18 @@ namespace Ossium
             for (auto child : self->children)
             {
                 child->data->SetInactiveInScene();
+            }
+            OnSetActive(false);
+        }
+    }
+
+    void Entity::OnSetActive(bool active)
+    {
+        for (auto itr : components)
+        {
+            for (auto component : itr.second)
+            {
+                component->OnSetActive(active);
             }
         }
     }
@@ -374,6 +387,14 @@ namespace Ossium
     {
     }
 
+    void BaseComponent::OnSetActive(bool active)
+    {
+    }
+
+    void BaseComponent::OnSetEnabled(bool active)
+    {
+    }
+
     void BaseComponent::OnLoadStart()
     {
     }
@@ -432,7 +453,20 @@ namespace Ossium
 
     bool BaseComponent::IsActiveAndEnabled()
     {
-        return enabled && entity->IsActive();
+        return IsEnabled() && entity->IsActive();
+    }
+
+    bool BaseComponent::IsEnabled()
+    {
+        // Use reflection to get the private "enabled" member.
+        return *((bool*)GetMember(0));
+    }
+
+    void BaseComponent::SetEnabled(bool enable)
+    {
+        // Use reflection to get the private "enabled" member and set it.
+        *((bool*)GetMember(0)) = enable;
+        OnSetEnabled(enable);
     }
 
     void BaseComponent::Destroy(bool immediate)
@@ -562,7 +596,7 @@ namespace Ossium
                     vector<GraphicComponent*> graphics = node->data->GetComponents<GraphicComponent>();
                     for (auto graphic : graphics)
                     {
-                        if (graphic->enabled)
+                        if (graphic->IsEnabled())
                         {
                             // Only render active and enabled graphics
                             graphic->Render(*renderer);
@@ -693,16 +727,16 @@ namespace Ossium
 
     void Scene::DestroyPending()
     {
-        // Do components first.
-        for (auto component : pendingDestructionComponents)
+        // Do components first. Use this looping style to ensure the iterator is not invalidated.
+        for (auto itr = pendingDestructionComponents.begin(); itr != pendingDestructionComponents.end(); itr = pendingDestructionComponents.begin())
         {
-            DestroyComponent(component, true);
+            DestroyComponent(*itr, true);
         }
         pendingDestructionComponents.clear();
-        // Now entities.
-        for (auto entity : pendingDestruction)
+        // Now entities, same looping style for same reason.
+        for (auto itr = pendingDestruction.begin(); itr != pendingDestruction.end(); itr = pendingDestruction.begin())
         {
-            DestroyEntity(entity, true);
+            DestroyEntity(*itr, true);
         }
         pendingDestruction.clear();
     }
@@ -711,11 +745,10 @@ namespace Ossium
     {
         /// Delete all entities
         WalkEntities([&] (Entity* entity) {
-            DestroyEntity(entity, false);
-            // Only do the root entities; all their children are automagically destroyed.
+            DestroyEntity(entity, true);
+            // Only destroy the root entities; all their children are automagically destroyed.
             return false;
         });
-        DestroyPending();
         /// Now we can safely remove all nodes from the tree and remove all components
         entities.clear();
         entityTree.Clear();

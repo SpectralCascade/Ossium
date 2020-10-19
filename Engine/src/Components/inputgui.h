@@ -74,6 +74,8 @@ namespace Ossium
         bool pressed = false;
         bool hovered = false;
 
+        InputGUI* input = nullptr;
+
     };
 
     /// Handles inputs for all attached or registered UI elements, such as buttons and sliders.
@@ -85,27 +87,26 @@ namespace Ossium
         /// Sets up the input context and all bindings accordingly.
         void OnCreate();
 
+        /// Locates all InteractableGUI components on or below the entity and adds them on, breadth-first.
+        void OnLoadFinish();
+
+        /// Override enables/disables the input context.
+        void OnSetActive(bool active);
+        
+        /// Override enables/disables the input context.
+        void OnSetEnabled(bool enable);
+
         /// Cleans up actions
         void OnDestroy();
 
         /// Adds an interactable GUI element to a context.
-        void AddInteractable(StrID context, InteractableGUI& element);
+        void AddInteractable(InteractableGUI* element);
 
         /// Removes a specific interactable GUI element. Returns true if the element exists in the specified context and is removed successfully.
-        bool RemoveInteractable(StrID context, InteractableGUI& element);
+        bool RemoveInteractable(InteractableGUI* element);
 
-        /// Removes an entire GUI context. Returns true if the context exists and is removed successfully.
-        bool RemoveContext(StrID context);
-
-        /// Returns array of references to all the GUI elements in a particular context.
-        /// Returns null if the context does not exist.
-        std::vector<InteractableGUI*>* GetContext(StrID context);
-
-        /// Returns the current context.
-        std::vector<InteractableGUI*>* GetCurrentContext();
-
-        /// Removes all contexts from the lookup table.
-        void RemoveAll();
+        /// Removes all interactables.
+        void Clear();
 
         /// Called when the GoBack() action is called (useful for things like the Android back button).
         Callback<InputGUI> OnBack;
@@ -121,25 +122,19 @@ namespace Ossium
         ActionOutcome ConfirmSelection(const KeyboardInput& data);
         ActionOutcome SelectRight(const KeyboardInput& data);
         ActionOutcome SelectLeft(const KeyboardInput& data);
-        /// TODO: Add true directional navigation support, possibly via Lambdas or a 2D array
+        /// TODO: Add true directional navigation support based on the entity position in the hierarchy
         ActionOutcome SelectUp(const KeyboardInput& data);
         ActionOutcome SelectDown(const KeyboardInput& data);
-        ActionOutcome SwitchContextForward(const KeyboardInput& data);
-        ActionOutcome SwitchContextBack(const KeyboardInput& data);
         ActionOutcome GoBack(const KeyboardInput& data);
 
         /// The current GUI context
-        StrID currentContext = nullptr;
-        unsigned int currentContextIndex = 0;
+        unsigned int currentIndex = 0;
 
         /// Handle for the bindless mouse action
         int mouseActionId;
 
-        /// Lookup table for GUI elements in different GUI contexts.
-        /// Uses string interning for fast key hashing.
-        std::map<StrID, std::pair<std::vector<InteractableGUI*>, unsigned int>> contextLookup;
-        /// Used to maintain GUI context order, where contexts added later are further down the navigation chain.
-        std::vector<StrID> contextOrder;
+        /// All interactables.
+        std::vector<InteractableGUI*> interactables;
 
     };
 

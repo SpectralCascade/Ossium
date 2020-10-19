@@ -86,6 +86,8 @@ namespace Ossium
         // Update services after the main logic update.
         services->PostUpdate();
 
+        SDL_RenderClear(renderer->GetRendererSDL());
+
         for (auto itr : resources.GetAll<Scene>())
         {
             Scene* scene = (Scene*)itr.second;
@@ -95,15 +97,26 @@ namespace Ossium
                 body->UpdatePhysics();
             });
             // Update all layouts now everything has moved.
-            scene->WalkComponents<LayoutSurface>([] (LayoutSurface* layout) {
-                layout->LayoutUpdate();
+            scene->WalkEntities([=] (Entity* entity) {
+                if (entity->IsActive())
+                {
+                    LayoutSurface* layoutSurface = entity->GetComponent<LayoutSurface>();
+                    if (layoutSurface && layoutSurface->IsEnabled())
+                    {
+                        layoutSurface->LayoutUpdate();
+                    }
+                    return true;
+                }
+                return false;
             });
+
             // Finally, render the scene.
             scene->Render();
         }
 
         // Render everything
-        renderer->RenderPresent();
+        renderer->RenderPresent(true);
+        SDL_RenderPresent(renderer->GetRendererSDL());
 
         // Destroy entities and components pending destruction.
         for (auto itr : resources.GetAll<Scene>())

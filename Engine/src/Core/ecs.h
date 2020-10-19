@@ -572,6 +572,9 @@ namespace Ossium
         /// Set inactive in the scene
         void SetInactiveInScene();
 
+        /// Calls OnSetActive() for all attached components.
+        void OnSetActive(bool activeInScene);
+
         /// Hashtable of components attached to this entity by type
         /// TODO: optimise this! Not necessarily the best data structure for the job.
         std::unordered_map<ComponentType, std::vector<BaseComponent*>> components;
@@ -591,6 +594,7 @@ namespace Ossium
     {
         DECLARE_BASE_SCHEMA(ComponentSchema, 1);
 
+    private:
         ///
         /// Warning: extend max members before adding new members!
         ///
@@ -625,6 +629,12 @@ namespace Ossium
         /// Returns true only when enabled and the associated entity is active.
         bool IsActiveAndEnabled();
 
+        /// Enable or disable this component.
+        void SetEnabled(bool enable);
+
+        /// Is this component enabled?
+        bool IsEnabled();
+
         /// Destroy this specific component.
         void Destroy(bool immediate = false);
 
@@ -632,6 +642,12 @@ namespace Ossium
         /// These replace the constructor and destructor.
         virtual void OnCreate();
         virtual void OnDestroy();
+
+        /// Called when the entity is set active or inactive.
+        virtual void OnSetActive(bool active);
+
+        /// Called when the component is enabled or disabled.
+        virtual void OnSetEnabled(bool enabled);
 
         /// Called just before the component is serialised.
         virtual void OnLoadStart();
@@ -644,7 +660,7 @@ namespace Ossium
         /// Called when this component's properties are modified in editor.
         virtual void OnEditorPropertyChanged();
 
-        /// Each frame this method is called
+        /// Each frame this method is called.
         virtual void Update();
 
         /// Attempt to get an instance of a specific service type.
@@ -690,6 +706,9 @@ namespace Ossium
             virtual void OnCreate();                                            \
             virtual void OnDestroy();                                           \
                                                                                 \
+            virtual void OnSetActive(bool active);                              \
+            virtual void OnSetEnabled(bool enable);                             \
+                                                                                \
             virtual void OnLoadStart();                                         \
             virtual void OnLoadFinish();                                        \
                                                                                 \
@@ -721,6 +740,8 @@ namespace Ossium
         void TYPE::OnDestroy() { ParentType::OnDestroy(); }             \
         void TYPE::OnLoadStart() { ParentType::OnLoadStart(); }         \
         void TYPE::OnLoadFinish() { ParentType::OnLoadFinish(); }       \
+        void TYPE::OnSetActive(bool active) { ParentType::OnSetActive(active); }    \
+        void TYPE::OnSetEnabled(bool enable) { ParentType::OnSetEnabled(enable); }  \
         void TYPE::OnClone(BaseComponent* src) {}                       \
         void TYPE::Update(){}                                           \
         std::string TYPE::GetBaseTypeNames()                            \

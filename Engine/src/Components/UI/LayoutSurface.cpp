@@ -34,7 +34,7 @@ namespace Ossium
                 vector<LayoutComponent*> layouts = child->GetComponents<LayoutComponent>();
                 for (auto layout : layouts)
                 {
-                    if (layout->enabled)
+                    if (layout->IsEnabled())
                     {
                         // Only refresh enabled layout components
                         layout->LayoutRefresh();

@@ -31,7 +31,7 @@ namespace Ossium::Editor
                 if (entity->IsActive())
                 {
                     LayoutSurface* layoutSurface = entity->GetComponent<LayoutSurface>();
-                    if (layoutSurface && layoutSurface->enabled)
+                    if (layoutSurface && layoutSurface->IsEnabled())
                     {
                         if (previousDimensions != dimensions)
                         {

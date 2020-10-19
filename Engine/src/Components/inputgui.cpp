@@ -21,7 +21,39 @@ using namespace std;
 namespace Ossium
 {
 
-    REGISTER_ABSTRACT_COMPONENT(InteractableGUI);
+    BaseComponent* InteractableGUI::ComponentFactory(void* target_entity)
+    {
+        return nullptr;
+    }
+    InteractableGUI::InteractableGUI() {}
+    InteractableGUI::~InteractableGUI() {}
+    void InteractableGUI::OnCreate() { ParentType::OnCreate(); }
+    void InteractableGUI::OnSetActive(bool active) { ParentType::OnSetActive(active); }
+    void InteractableGUI::OnSetEnabled(bool enable) { ParentType::OnSetEnabled(enable); }
+    void InteractableGUI::OnLoadStart() { ParentType::OnLoadStart(); }
+    void InteractableGUI::OnLoadFinish() { ParentType::OnLoadFinish(); }
+    void InteractableGUI::OnClone(BaseComponent* src) {}
+    void InteractableGUI::Update(){}
+    std::string InteractableGUI::GetBaseTypeNames()
+    {
+        return std::is_same<BaseComponent, ParentType>::value ?
+            std::string("") : std::string(parentTypeName) + "," + ParentType::GetBaseTypeNames();
+    }
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType> InteractableGUI::__ecs_factory_ = 
+    std::is_same<ParentType, BaseComponent>::value ? Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
+        SID( "InteractableGUI" )::str, ComponentFactory
+    ) :
+    Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
+        SID( "InteractableGUI" )::str, ComponentFactory, std::string(parentTypeName), true
+    );
+
+    void InteractableGUI::OnDestroy()
+    {
+        if (input != nullptr)
+        {
+            input->RemoveInteractable(this);
+        }
+    }
 
     void InteractableGUI::OnHoverBegin()
     {
@@ -143,9 +175,56 @@ namespace Ossium
         keyboard->AddAction("select_left", [&] (const KeyboardInput& data) { return this->SelectLeft(data); }, SDLK_LEFT);
         keyboard->AddAction("select_up", [&] (const KeyboardInput& data) { return this->SelectUp(data); }, SDLK_UP);
         keyboard->AddAction("select_down", [&] (const KeyboardInput& data) { return this->SelectDown(data); }, SDLK_DOWN);
-        keyboard->AddAction("switch_context_forward", [&] (const KeyboardInput& data) { return this->SwitchContextForward(data); }, SDLK_TAB);
-        keyboard->AddAction("switch_context_back", [&] (const KeyboardInput& data) { return this->SwitchContextBack(data); }, SDLK_BACKQUOTE);
         keyboard->AddAction("go_back", [&] (const KeyboardInput& data) { return this->GoBack(data); }, SDLK_ESCAPE);
+    }
+    
+    void InputGUI::OnLoadFinish()
+    {
+#ifndef OSSIUM_EDITOR
+        entity->GetScene()->WalkEntities(
+            [&] (Entity* target) {
+                InputGUI* inputGUI = target->GetComponent<InputGUI>();
+                if (inputGUI != nullptr && inputGUI != this)
+                {
+                    // Don't manage sub instances.
+                    return false;
+                }
+                auto components = target->GetComponents<InteractableGUI>();
+                for (auto component : components)
+                {
+                    AddInteractable(component);
+                    component->input = this;
+                }
+                return true;
+            },
+            true,
+            entity
+        );
+#endif // OSSIUM_EDITOR
+    }
+
+    void InputGUI::OnSetActive(bool active)
+    {
+        if (active && IsEnabled())
+        {
+            SetActive(active);
+        }
+        else
+        {
+            SetActive(false);
+        }
+    }
+
+    void InputGUI::OnSetEnabled(bool enable)
+    {
+        if (IsActive() && enable)
+        {
+            SetActive(enable);
+        }
+        else
+        {
+            SetActive(false);
+        }
     }
 
     void InputGUI::OnDestroy()
@@ -158,103 +237,37 @@ namespace Ossium
         }
     }
 
-    void InputGUI::AddInteractable(StrID context, InteractableGUI& element)
+    void InputGUI::AddInteractable(InteractableGUI* element)
     {
-        auto itr = contextLookup.find(context);
-        if (itr == contextLookup.end())
-        {
-            /// Add a new context
-            contextOrder.push_back(context);
-        }
-        contextLookup[context].first.push_back(&element);
-        if (currentContext == nullptr)
-        {
-            /// Set as the default context
-            currentContext = context;
-            contextLookup[context].second = 0;
-        }
+        interactables.push_back(element);
     }
 
-    bool InputGUI::RemoveInteractable(StrID context, InteractableGUI& element)
+    bool InputGUI::RemoveInteractable(InteractableGUI* element)
     {
-        auto itr = contextLookup.find(context);
-        if (itr != contextLookup.end())
+        for (auto interactable : interactables)
         {
-            for (auto item : itr->second.first)
+            /// Check if it's the same instance
+            if (interactable == element)
             {
-                /// Check if it's the same instance
-                if (item == &element)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
     }
 
-    bool InputGUI::RemoveContext(StrID context)
+    void InputGUI::Clear()
     {
-        auto itr = contextLookup.find(context);
-        if (itr != contextLookup.end())
-        {
-            contextLookup.erase(itr);
-            for (auto i = contextOrder.begin(); i != contextOrder.end(); i++)
-            {
-                if (*i == context)
-                {
-                    contextOrder.erase(i);
-                    break;
-                }
-            }
-            if (currentContext == context)
-            {
-                /// Move to a different context
-                KeyboardInput junkData;
-                junkData.state = true;
-                SwitchContextBack(junkData);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    void InputGUI::RemoveAll()
-    {
-        contextLookup.clear();
-        contextOrder.clear();
-        currentContext = nullptr;
-        currentContextIndex = 0;
-    }
-
-    vector<InteractableGUI*>* InputGUI::GetContext(StrID context)
-    {
-        auto i = contextLookup.find(context);
-        if (i != contextLookup.end())
-        {
-            return &(i->second.first);
-        }
-        return nullptr;
-    }
-
-    vector<InteractableGUI*>* InputGUI::GetCurrentContext()
-    {
-        if (currentContext != nullptr)
-        {
-            return GetContext(currentContext);
-        }
-        return nullptr;
+        currentIndex = 0;
+        interactables.clear();
     }
 
     ActionOutcome InputGUI::HandlePointer(const MouseInput& data)
     {
         if (data.type != MOUSE_UNKNOWN)
         {
-            for (auto i : contextLookup)
+            for (auto interactable : interactables)
             {
-                for (auto element : i.second.first)
-                {
-                    element->OnPointerEvent(data);
-                }
+                interactable->OnPointerEvent(data);
             }
         }
         /// Ignored as this is a bindless action.
@@ -265,26 +278,21 @@ namespace Ossium
     {
         if (data.state)
         {
-            /// This effectively fakes a click event for the currently selected GUI element
-            auto itr = contextLookup.find(currentContext);
-            if (itr != contextLookup.end())
+            // This effectively fakes a click event for the currently selected GUI element
+            if (!interactables.empty() && currentIndex < interactables.size())
             {
-                unsigned int index = itr->second.second;
-                if (!itr->second.first.empty() && index < itr->second.first.size())
+                if (interactables[currentIndex]->IsHovered())
                 {
-                    if (itr->second.first[index]->IsHovered())
-                    {
-                        itr->second.first[index]->OnClick();
-                    }
-                    else
-                    {
-                        /// Highlight the selected GUI element before actually carrying out the OnClick() action,
-                        /// to indicate which element is selected.
-                        itr->second.first[index]->hovered = true;
-                        itr->second.first[index]->OnHoverBegin();
-                    }
-                    return ClaimContext;
+                    interactables[currentIndex]->OnClick();
                 }
+                else
+                {
+                    /// Highlight the selected GUI element before actually carrying out the OnClick() action,
+                    /// to indicate which element is selected.
+                    interactables[currentIndex]->hovered = true;
+                    interactables[currentIndex]->OnHoverBegin();
+                }
+                return ClaimContext;
             }
         }
         return Ignore;
@@ -294,21 +302,17 @@ namespace Ossium
     {
         if (data.state)
         {
-            auto itr = contextLookup.find(currentContext);
-            if (itr != contextLookup.end())
+            if (!interactables.empty())
             {
-                if (!itr->second.first.empty())
+                /// TODO: wrapping support?
+                if (interactables[currentIndex]->IsHovered())
                 {
-                    /// TODO: wrapping support?
-                    if (itr->second.first[itr->second.second]->IsHovered())
-                    {
-                        itr->second.first[itr->second.second]->OnHoverEnd();
-                        itr->second.second = Clamp(itr->second.second + 1, 0, itr->second.first.size() - 1);
-                    }
-                    itr->second.first[itr->second.second]->OnHoverBegin();
-                    itr->second.first[itr->second.second]->hovered = true;
-                    return ClaimContext;
+                    interactables[currentIndex]->OnHoverEnd();
+                    currentIndex = Clamp(currentIndex + 1, 0, interactables.size() - 1);
                 }
+                interactables[currentIndex]->OnHoverBegin();
+                interactables[currentIndex]->hovered = true;
+                return ClaimContext;
             }
         }
         return Ignore;
@@ -318,20 +322,16 @@ namespace Ossium
     {
         if (data.state)
         {
-            auto itr = contextLookup.find(currentContext);
-            if (itr != contextLookup.end())
+            if (!interactables.empty())
             {
-                if (!itr->second.first.empty())
+                if (interactables[currentIndex]->IsHovered())
                 {
-                    if (itr->second.first[itr->second.second]->IsHovered())
-                    {
-                        itr->second.first[itr->second.second]->OnHoverEnd();
-                        itr->second.second = Clamp(itr->second.second - 1, 0, itr->second.first.size() - 1);
-                    }
-                    itr->second.first[itr->second.second]->OnHoverBegin();
-                    itr->second.first[itr->second.second]->hovered = true;
-                    return ClaimContext;
+                    interactables[currentIndex]->OnHoverEnd();
+                    currentIndex = Clamp(currentIndex - 1, 0, interactables.size() - 1);
                 }
+                interactables[currentIndex]->OnHoverBegin();
+                interactables[currentIndex]->hovered = true;
+                return ClaimContext;
             }
         }
         return Ignore;
@@ -345,34 +345,6 @@ namespace Ossium
     ActionOutcome InputGUI::SelectDown(const KeyboardInput& data)
     {
         return SelectRight(data);
-    }
-
-    ActionOutcome InputGUI::SwitchContextForward(const KeyboardInput& data)
-    {
-        if (data.state)
-        {
-            if (contextOrder.empty())
-            {
-                currentContextIndex = Wrap(currentContextIndex, 1, 0, contextOrder.size() - 1);
-                currentContext = contextOrder[currentContextIndex];
-                return ClaimContext;
-            }
-        }
-        return Ignore;
-    }
-
-    ActionOutcome InputGUI::SwitchContextBack(const KeyboardInput& data)
-    {
-        if (data.state)
-        {
-            if (!contextOrder.empty())
-            {
-                currentContextIndex = Wrap(currentContextIndex, -1, 0, !contextOrder.size() - 1);
-                currentContext = contextOrder[currentContextIndex];
-                return ClaimContext;
-            }
-        }
-        return Ignore;
     }
 
     ActionOutcome InputGUI::GoBack(const KeyboardInput& data)
