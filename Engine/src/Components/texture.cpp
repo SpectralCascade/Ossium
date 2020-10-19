@@ -195,10 +195,11 @@ namespace Ossium
                             }
                         }
 
+                        SDL_Rect finalClip = { clip.x + slices[i].x, clip.y + slices[i].y, slices[i].w, slices[i].h };
                         source->Render(
                             renderer.GetRendererSDL(),
                             sliceDest,
-                            &slices[i],
+                            &finalClip,
                             &trueOrigin,
                             trans->GetWorldRotation().GetDegrees(),
                             modulation,
