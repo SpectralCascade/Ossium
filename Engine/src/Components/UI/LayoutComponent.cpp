@@ -14,7 +14,6 @@ namespace Ossium
     LayoutComponent::~LayoutComponent() {}
     void LayoutComponent::OnCreate() { ParentType::OnCreate(); }
     void LayoutComponent::OnDestroy() { ParentType::OnDestroy(); }
-    void LayoutComponent::OnSetActive(bool active) { ParentType::OnSetActive(active); }
     void LayoutComponent::OnSetEnabled(bool enable) { ParentType::OnSetEnabled(enable); }
     void LayoutComponent::OnLoadStart() { ParentType::OnLoadStart(); }
     void LayoutComponent::OnClone(BaseComponent* src) {}
@@ -52,6 +51,14 @@ namespace Ossium
     {
         // Mark the layout dirty.
         layoutSurface->SetDirty();
+    }
+
+    void LayoutComponent::OnSetActive(bool active)
+    {
+        if (active)
+        {
+            layoutSurface->SetDirty();
+        }
     }
 
 }
