@@ -24,6 +24,8 @@ namespace Ossium
     void TabButton::OnPointerDown()
     {
         sprite->ChangeSubState(2);
+        // Behave as though the button is clicked for immediate effect.
+        OnClicked(*this);
     }
 
     void TabButton::OnPointerUp()
@@ -36,7 +38,7 @@ namespace Ossium
 
     void TabButton::OnClick()
     {
-        OnClicked(*this);
+        // Don't do anything here; tabs are activated on pointer down.
     }
 
     bool TabButton::IsSelected()

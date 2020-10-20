@@ -283,6 +283,8 @@ namespace Ossium
             {
                 if (interactables[currentIndex]->IsHovered())
                 {
+                    interactables[currentIndex]->OnPointerDown();
+                    interactables[currentIndex]->OnPointerUp();
                     interactables[currentIndex]->OnClick();
                 }
                 else
