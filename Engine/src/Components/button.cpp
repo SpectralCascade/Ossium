@@ -6,9 +6,9 @@ namespace Ossium
 
     REGISTER_COMPONENT(Button);
 
-    void Button::OnCreate()
+    void Button::OnLoadFinish()
     {
-        GraphicComponent::OnCreate();
+        GraphicComponent::OnLoadFinish();
         /// We can't inherit from StateSprite as we already inherit indirectly from GraphicComponent,
         /// but we can add our own instance to the ECS.
         sprite = entity->AddComponentOnce<StateSprite>();

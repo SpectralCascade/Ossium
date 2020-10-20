@@ -3,16 +3,26 @@
 namespace Ossium
 {
 
-    REGISTER_ABSTRACT_COMPONENT(ViewCard);
+    REGISTER_COMPONENT(ViewCard);
 
     void ViewCard::Show()
     {
-        // TODO
+        if (!entity->IsActiveLocally())
+        {
+            OnShow(*this);
+            entity->SetActive(true);
+            OnShown(*this);
+        }
     }
 
     void ViewCard::Hide()
     {
-        // TODO
+        if (entity->IsActiveLocally())
+        {
+            OnHide(*this);
+            entity->SetActive(false);
+            OnHidden(*this);
+        }
     }
 
 }

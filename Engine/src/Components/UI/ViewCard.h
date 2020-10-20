@@ -2,6 +2,7 @@
 #define VIEWCARD_H
 
 #include "../../Core/component.h"
+#include "../../Core/callback.h"
 
 namespace Ossium
 {
@@ -9,13 +10,25 @@ namespace Ossium
     class ViewCard : public Component
     {
     public:
-        DECLARE_ABSTRACT_COMPONENT(Component, ViewCard);
-
-        /// Hides the view
-        void Show();
+        DECLARE_COMPONENT(Component, ViewCard);
 
         /// Shows the view
-        void Hide();
+        virtual void Show();
+
+        /// Hides the view
+        virtual void Hide();
+
+        /// Called when Show() is called.
+        Callback<ViewCard> OnShow;
+
+        /// Called when this view is fully shown.
+        Callback<ViewCard> OnShown;
+
+        /// Called when Hide() is called.
+        Callback<ViewCard> OnHide;
+
+        /// Called when this view is fully hidden.
+        Callback<ViewCard> OnHidden;
         
     };
 

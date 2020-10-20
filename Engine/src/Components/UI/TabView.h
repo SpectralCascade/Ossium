@@ -3,8 +3,6 @@
 
 #include "../../Core/component.h"
 
-using namespace std;
-
 namespace Ossium
 {
 
@@ -31,13 +29,13 @@ namespace Ossium
 
     private:
         // TODO: Serialise me when editor supports component serialisation
-        vector<ViewCard*> cards;
+        std::vector<ViewCard*> cards;
 
         // Current tab
         unsigned int currentTab = 0;
 
         // Associated tab buttons
-        vector<TabButton*> tabButtons;
+        std::vector<TabButton*> tabButtons;
 
     };
 

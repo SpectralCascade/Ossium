@@ -156,6 +156,12 @@ namespace Ossium
 
     void StateSprite::ChangeSubState(Uint16 substate, bool forceChange)
     {
+        if (source == nullptr)
+        {
+            // Early out
+            Log.Debug("StateSprite could not change sub state to {0} because the source is null.", substate);
+            return;
+        }
         if (substate >= totalCurrentSegments)
         {
             substate = 0;

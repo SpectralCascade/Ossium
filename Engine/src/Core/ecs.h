@@ -461,7 +461,7 @@ namespace Ossium
             return nullptr;
         }
 
-        /// Returns ALL matching components in this entity's children
+        /// Returns ALL matching components in this entity's children.
         template<class T>
         std::vector<T*> GetComponentsInChildren()
         {

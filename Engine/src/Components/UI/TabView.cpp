@@ -2,6 +2,8 @@
 #include "TabView.h"
 #include "TabButton.h"
 
+using namespace std;
+
 namespace Ossium
 {
 
@@ -11,7 +13,19 @@ namespace Ossium
     {
     #ifndef OSSIUM_EDITOR
         // TODO: serialise in scene instead when possible.
+        cards = entity->GetComponentsInChildren<ViewCard>();
+        for (unsigned int i = 0; i < cards.size(); i++)
+        {
+            i == currentTab ? cards[i]->Show() : cards[i]->Hide();
+        }
         tabButtons = entity->GetComponentsInChildren<TabButton>();
+        for (unsigned int i = 0; i < tabButtons.size(); i++)
+        {
+            // Call OnLoadFinish() early to ensure the texture is loaded.
+            tabButtons[i]->sprite->OnLoadFinish();
+            tabButtons[i]->SetSelected(i == currentTab);
+            tabButtons[i]->OnClicked += [=] (Button& button) { this->SwitchTo(i); };
+        }
     #endif
     }
 

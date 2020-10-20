@@ -13,7 +13,7 @@ namespace Ossium
         DECLARE_COMPONENT(InteractableGUI, Button);
 
         /// Adds a sprite component and sets up a reference to it.
-        void OnCreate();
+        void OnLoadFinish();
 
         /// Does nothing because we have a separate sprite component for the actual graphics.
         void Render(Renderer& renderer);
