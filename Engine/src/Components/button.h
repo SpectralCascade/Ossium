@@ -15,9 +15,6 @@ namespace Ossium
         /// Adds a sprite component and sets up a reference to it.
         void OnLoadFinish();
 
-        /// Does nothing because we have a separate sprite component for the actual graphics.
-        void Render(Renderer& renderer);
-
         /// Override to use sprite rect.
         bool ContainsPointer(Point position);
 

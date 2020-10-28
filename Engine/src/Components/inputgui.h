@@ -31,7 +31,7 @@ namespace Ossium
     class InputGUI;
 
     /// GUI elements that can be clicked on can implement this interface
-    class OSSIUM_EDL InteractableGUI : public GraphicComponent
+    class OSSIUM_EDL InteractableGUI : public Component
     {
     public:
         friend class InputGUI;
@@ -45,10 +45,7 @@ namespace Ossium
         bool IsHovered();
 
     protected:
-        DECLARE_ABSTRACT_COMPONENT(GraphicComponent, InteractableGUI);
-
-        /// This does nothing, but should be implemented in the child class.
-        virtual void Render(Renderer& renderer) = 0;
+        DECLARE_ABSTRACT_COMPONENT(Component, InteractableGUI);
 
         /// All GUI elements must implement OnClick() which is called after OnPointerUp() if this element is hovered over.
         virtual void OnClick() = 0;

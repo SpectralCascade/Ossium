@@ -158,17 +158,14 @@ namespace Ossium
     void Entity::SetActive(bool activate)
     {
         /// Only bother setting stuff if there is an actual change.
-        if (active != activate)
+        active = activate;
+        if (active)
         {
-            active = activate;
-            if (active)
-            {
-                SetActiveInScene();
-            }
-            else
-            {
-                SetInactiveInScene();
-            }
+            SetActiveInScene();
+        }
+        else
+        {
+            SetInactiveInScene();
         }
     }
 
