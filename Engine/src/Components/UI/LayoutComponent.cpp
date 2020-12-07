@@ -55,7 +55,7 @@ namespace Ossium
 
     void LayoutComponent::OnSetActive(bool active)
     {
-        if (active)
+        if (active && layoutSurface)
         {
             layoutSurface->SetDirty();
         }

@@ -13,6 +13,9 @@ namespace Ossium
     void BoxLayout::LayoutRefresh()
     {
         Transform* t = GetTransform();
+
+        // BoxLayout overrides the transform, position is based on the layout and render dimensions.
+        t->SetRelativeToParent(false);
         
         Renderer* renderer = GetService<Renderer>();
         Vector2 renderDimensions = Vector2(renderer->GetWidth(), renderer->GetHeight());
@@ -21,11 +24,11 @@ namespace Ossium
         if (parent != nullptr)
         {
             // This is the relative box, including padding
-            Vector2 diff = (parent->anchorMinCached - parent->anchorMinCached);
-            //                Start with total anchor |  Add this anchor   | Add padding
-            anchorMinCached = parent->anchorMinCached + (diff * anchorMin) + (diff * parent->paddingMin);
-            //                Ditto                   |  Sub this anchor   | Sub padding
-            anchorMaxCached = parent->anchorMaxCached - (diff * anchorMax) - (diff * parent->paddingMax);
+            Vector2 diff = (parent->anchorMaxCached - parent->anchorMinCached);
+            //                Start with total anchor |  Add this anchor   | TODO: Add padding
+            anchorMinCached = parent->anchorMinCached + (diff * anchorMin);// + (diff * parent->paddingMin);
+            //                Ditto                   |  Add this anchor   | TODO: Sub padding
+            anchorMaxCached = parent->anchorMinCached + (diff * anchorMax);// - (diff * parent->paddingMax);
         }
         else
         {

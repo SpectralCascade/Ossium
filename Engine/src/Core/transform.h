@@ -64,6 +64,9 @@ namespace Ossium
         DECLARE_COMPONENT(BaseComponent, Transform);
         CONSTRUCT_SCHEMA(BaseComponent, TransformSchema);
 
+        /// Set relative to the parent transform.
+        void SetRelativeToParent(bool setRelative);
+
         void SetDirty();
 
         Point GetLocalPosition();

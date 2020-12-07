@@ -44,6 +44,15 @@ namespace Ossium
         }
     }
 
+    void Transform::SetRelativeToParent(bool setRelative)
+    {
+        if (relative != setRelative)
+        {
+            relative = setRelative;
+            SetDirty();
+        }
+    }
+
     void Transform::SetDirty()
     {
         if (!dirty)
