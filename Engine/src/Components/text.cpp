@@ -48,7 +48,9 @@ namespace Ossium
         BoxLayout* boxLayout = entity->GetComponent<BoxLayout>();
         if (boxLayout != nullptr)
         {
-            bounds = boxLayout->GetInnerDimensions();
+            // TODO: account for padding?
+            Vector2 dimensions = boxLayout->GetInnerDimensions();
+            bounds = dimensions - (boxLayout->origin * dimensions * 2.0f);
         }
 
         // Only bother updating layout if bounds actually change.
