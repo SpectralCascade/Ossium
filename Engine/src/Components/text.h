@@ -40,7 +40,10 @@ namespace Ossium
 
         M(TextLayout, layout);
 
-        /// If true, render box behind text in the background color
+        /// Bounds of the text area. Used for text wrapping and the background box.
+        M(Vector2, bounds);
+
+        /// If true, render box behind text in the background color.
         M(bool, boxed) = false;
 
         /// Box padding, in pixels

@@ -19,6 +19,7 @@
 #include <filesystem>
 
 #include "text.h"
+#include "UI/BoxLayout.h"
 #include "../Core/renderer.h"
 #include "../Core/ecs.h"
 
@@ -44,13 +45,25 @@ namespace Ossium
 
     void Text::Render(Renderer& renderer)
     {
+        BoxLayout* boxLayout = entity->GetComponent<BoxLayout>();
+        if (boxLayout != nullptr)
+        {
+            bounds = boxLayout->GetInnerDimensions();
+        }
+
+        // Only bother updating layout if bounds actually change.
+        if (layout.GetBounds() != bounds)
+        {
+            layout.SetBounds(bounds);
+        }
+
         if (boxed)
         {
             Rect boxDest = Rect(
                 GetTransform()->GetWorldPosition().x - boxPaddingWidth,
                 GetTransform()->GetWorldPosition().y - boxPaddingHeight,
-                layout.GetBounds().x + boxPaddingWidth,
-                layout.GetBounds().y + boxPaddingHeight
+                bounds.x + boxPaddingWidth,
+                bounds.y + boxPaddingHeight
             );
             boxDest.DrawFilled(renderer, backgroundColor);
         }
