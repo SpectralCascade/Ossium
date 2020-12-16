@@ -31,29 +31,32 @@ namespace Ossium
 
     void TabView::SwitchTo(unsigned int tab)
     {
-        if (tab < cards.size())
+        if (currentTab != tab)
         {
-            if (currentTab != tab)
+            if (tab < tabButtons.size())
             {
-                if (tab < tabButtons.size())
+                tabButtons[tab]->SetSelected(true);
+                if (currentTab < tabButtons.size())
                 {
-                    tabButtons[tab]->SetSelected(true);
-                    if (currentTab < tabButtons.size())
-                    {
-                        tabButtons[currentTab]->SetSelected(false);
-                    }
+                    tabButtons[currentTab]->SetSelected(false);
                 }
-                if (currentTab < cards.size())
-                {
-                    cards[currentTab]->Hide();
-                }
-                cards[tab]->Show();
-                currentTab = tab;
             }
-        }
-        else
-        {
-            Log.Warning("Tab index out of range, failed to switch to tab {0}.", tab);
+            else
+            {
+                Log.Warning("Tab index {0} is out of range.", tab);
+            }
+            
+            if (currentTab < cards.size())
+            {
+                cards[currentTab]->Hide();
+            }
+            if (tab < cards.size())
+            {
+                cards[tab]->Show();
+            }
+            
+            currentTab = tab;
+            OnSwitchTab(*this);
         }
     }
 

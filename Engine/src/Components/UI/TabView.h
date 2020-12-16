@@ -24,8 +24,11 @@ namespace Ossium
         /// Returns the current tab index. Defaults to 0.
         unsigned int GetCurrentTab();
 
-        /// Returns a pointer to the current view card. Return nullptr if there is no current tab.
+        /// Returns a pointer to the current view card. Return nullptr if there is no associated card.
         ViewCard* GetCurrentTabCard();
+
+        /// Called when the current tab is switched.
+        Callback<TabView> OnSwitchTab;
 
     private:
         // TODO: Serialise me when editor supports component serialisation
