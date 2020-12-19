@@ -21,25 +21,37 @@ namespace Ossium
 
     void Button::OnClick()
     {
-        sprite->ChangeSubState(1);
-        OnClicked(*this);
+        if (IsEnabled())
+        {
+            sprite->ChangeSubState(1);
+            OnClicked(*this);
+        }
     }
 
     void Button::OnPointerDown()
     {
-        sprite->ChangeSubState(2);
+        if (IsEnabled())
+        {
+            sprite->ChangeSubState(2);
+        }
     }
 
     void Button::OnPointerUp()
     {
-        sprite->ChangeSubState(0);
+        if (IsEnabled())
+        {
+            sprite->ChangeSubState(0);
+        }
     }
 
     void Button::OnHoverBegin()
     {
-        if (!IsPressed())
+        if (IsEnabled())
         {
-            sprite->ChangeSubState(1);
+            if (!IsPressed())
+            {
+                sprite->ChangeSubState(1);
+            }
         }
     }
 
