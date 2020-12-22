@@ -57,6 +57,9 @@ namespace Ossium
         // Returns the difference between the absolute paddingMin position and the absolute paddingMax position.
         Vector2 GetInnerDimensions();
 
+        // Returns true if the layout contains a given world point.
+        bool Contains(Vector2 worldPoint, bool innerDimensions = false);
+
     private:
         // Cached percent of anchorMin.
         Vector2 anchorMinCached;

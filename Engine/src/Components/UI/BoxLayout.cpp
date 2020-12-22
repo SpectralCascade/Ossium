@@ -76,4 +76,12 @@ namespace Ossium
         return diff - ((diff * paddingMin) + (diff * paddingMax));
     }
 
+    bool BoxLayout::Contains(Vector2 worldPoint, bool innerDimensions)
+    {
+        Vector2 dimensions = innerDimensions ? GetInnerDimensions() : GetDimensions();
+        Vector2 pos = GetTransform()->GetWorldPosition();
+        Rect boxRect = Rect(pos.x - (dimensions.x / 2), pos.y - (dimensions.y / 2), dimensions.x, dimensions.y);
+        return boxRect.Contains(worldPoint);
+    }
+
 }
