@@ -57,16 +57,23 @@ namespace Ossium
         virtual void OnPointerDown();
         /// Called once when this GUI element stops being pressed, even if not hovered.
         virtual void OnPointerUp();
-        /// Called whenever the pointer moves while this element is pressed.
-        virtual void OnDrag(const MouseInput& data);
+        /// Called whenever the pointer moves.
+        virtual void OnPointerMove();
         /// Called when the mouse is scrolled, regardless of whether this element is currently hovered.
-        virtual void OnScroll(const MouseInput& data);
+        virtual void OnScroll();
 
         /// Method that detects whether the pointer is touching this GUI element.
         virtual bool ContainsPointer(Point position);
 
+        // Virtual :D
+        virtual void OnPointerEvent(const MouseInput& data);
+
+        // Returns the last handled MouseInput event.
+        Vector2 GetLastMousePosition();
+
     private:
-        void OnPointerEvent(const MouseInput& data);
+        // The last handled mouse input event.
+        Vector2 lastMousePos;
 
         bool pressed = false;
         bool hovered = false;

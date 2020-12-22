@@ -67,10 +67,10 @@ namespace Ossium
     void InteractableGUI::OnPointerUp()
     {
     }
-    void InteractableGUI::OnDrag(const MouseInput& data)
+    void InteractableGUI::OnPointerMove()
     {
     }
-    void InteractableGUI::OnScroll(const MouseInput& data)
+    void InteractableGUI::OnScroll()
     {
     }
 
@@ -102,6 +102,7 @@ namespace Ossium
         {
             mpos = Point((float)data.x, (float)data.y);
         }
+        lastMousePos = mpos;
         if (ContainsPointer(mpos))
         {
            if (!hovered)
@@ -140,17 +141,19 @@ namespace Ossium
             }
             break;
         case MOUSE_WHEEL:
-            OnScroll(data);
+            OnScroll();
             break;
         case MOUSE_MOTION:
-            if (pressed)
-            {
-                OnDrag(data);
-            }
+            OnPointerMove();
             break;
         default:
             break;
         }
+    }
+
+    Vector2 InteractableGUI::GetLastMousePosition()
+    {
+        return lastMousePos;
     }
 
     REGISTER_COMPONENT(InputGUI);

@@ -57,7 +57,10 @@ namespace Ossium
                                       std::function<std::string(Serializer*, const char*, const char*, int, void*)> lambdaSerializeProperty,
                                       const char* ultimate_name)
         {
-            DEBUG_ASSERT(count < MaximumMembers, "Exceeded maximum number of members. Please allocate a higher maximum in the Schema.");
+#ifdef OSSIUM_DEBUG
+            std::string errorMessage = Utilities::Format("Exceeded maximum number of members on member '{0} {1}' in schema '{2}'. Please allocate a higher maximum.", type, name, ultimate_name);
+            DEBUG_ASSERT(count < MaximumMembers, errorMessage);
+#endif
             member_names[count] = name;
             member_types[count] = type;
             member_attributes[count] = mem_attribute;
