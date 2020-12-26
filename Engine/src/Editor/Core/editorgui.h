@@ -48,6 +48,9 @@ namespace Ossium::Editor
         M(StyleText, styleButtonText);
         M(SDL_Color, backgroundColor) = Color(200, 200, 200);
         M(SDL_Rect, viewport) = {0, 0, 0, 0};
+        // Should the viewport add a scroll bar automatically when it gets too full?
+        M(bool, autoScrollVertical) = true;
+        M(bool, autoScrollHorizontal) = false;
 
     };
 
@@ -92,6 +95,9 @@ namespace Ossium::Editor
 
         /// The current scrolled position of the GUI view.
         Vector2 scrollPos = Vector2::Zero;
+
+        /// The dimensions of the viewport contents.
+        Vector2 contentBounds = Vector2::Zero;
 
         /// Contains input state information
         struct EditorInputState : public Schema<EditorInputState, 7>
@@ -262,7 +268,10 @@ namespace Ossium::Editor
              StyleClickable style = EditorStyle::EDITOR_SLIDER_STYLE,
              bool invertOutline = false,
              Uint32 xpadding = 4,
-             Uint32 ypadding = 4
+             Uint32 ypadding = 8,
+             Uint32 slotThickness = 4,
+             bool fullSlot = false,
+             bool showTextValue = true
         );
 
         /// A drag-and-drop field that allows dragging and dropping of strings.

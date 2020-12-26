@@ -202,6 +202,32 @@ namespace Ossium::Editor
         // Immediate-mode GUI i/o
         OnGUI();
 
+        /*
+        // Reset layout position
+        layoutStack.top() = Vector2(0, 0);
+
+        // Add scroll bars if necessary.
+        if (autoScrollVertical && contentBounds.y > viewport.h)
+        {
+            BeginHorizontal();
+
+            const int barWidth = 8;
+            int barHeight = max((float)barWidth, (float)viewport.h / (float)contentBounds.y);
+
+            Space(viewport.w - barWidth);
+
+            BeginVertical();
+            Slider(scrollPos.y, 0, contentBounds.y - viewport.h, max(0, viewport.h - barHeight), barWidth, barHeight, EditorStyle::EDITOR_SCROLLBAR_STYLE);
+            EndVertical();
+
+            EndHorizontal();
+        }
+        if (autoScrollHorizontal && contentBounds.x > viewport.w)
+        {
+            // TODO
+        }
+        */
+
     }
 
     void EditorGUI::Begin()
@@ -224,6 +250,7 @@ namespace Ossium::Editor
         layoutStack.top() = Vector2(0, 0);
         // Reset the text field id generator
         textFieldCounter = 1;
+        contentBounds = Vector2::Zero;
     }
 
     void EditorGUI::BeginLayout(int direction)
@@ -235,6 +262,12 @@ namespace Ossium::Editor
 
     void EditorGUI::EndLayout()
     {
+        // Check if the layout position is out of the viewport (without scrolling).
+        Vector2 lpos = GetLayoutPosition();
+        contentBounds.x = max(lpos.x, contentBounds.x);
+        contentBounds.y = max(lpos.y, contentBounds.y);
+
+        // Now tidy up the layout stack.
         if (layoutStack.size() > 1)
         {
             layoutStack.pop();
@@ -262,7 +295,8 @@ namespace Ossium::Editor
 
     bool EditorGUI::IsVisible()
     {
-        return GetLayoutPosition().x < renderer->GetWidth() + scrollPos.x && GetLayoutPosition().y < renderer->GetHeight() + scrollPos.y;
+        Vector2 lpos = GetLayoutPosition();
+        return lpos.x < renderer->GetWidth() + scrollPos.x && lpos.y < renderer->GetHeight() + scrollPos.y;
     }
 
     void EditorGUI::Move(Vector2 amount)
@@ -720,16 +754,18 @@ namespace Ossium::Editor
         return toggleValue;
     }
 
-    float EditorGUI::Slider(float sliderValue, float minValue, float maxValue, int length, int buttonWidth, int buttonHeight, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding)
+    float EditorGUI::Slider(float sliderValue, float minValue, float maxValue, int length, int buttonWidth, int buttonHeight, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Uint32 slotThickness, bool fullSlot, bool showTextValue)
     {
         if (IsVisible())
         {
+            bool vertical = GetLayoutDirection() == EditorLayoutDirection::EDITOR_LAYOUT_VERTICAL;
+
             // Draw the slot first
             Rect slotDest = Rect(
-                GetLayoutPosition().x + (xpadding / 2) + (buttonWidth / 2),
-                GetLayoutPosition().y + ypadding + (buttonHeight / 4),
+                GetLayoutPosition().x + (xpadding / 2) + (vertical ? (slotThickness - buttonWidth) / 2 : (fullSlot ? 0 : (buttonWidth / 2))),
+                GetLayoutPosition().y + (ypadding / 2) + (vertical ? (fullSlot ? 0 : (buttonHeight / 2)) : (slotThickness - buttonHeight) / 2),
                 (float)length,
-                buttonHeight / 2
+                (float)slotThickness
             );
 
             // Render the slider slot
@@ -748,8 +784,8 @@ namespace Ossium::Editor
 
             // Get the current button rect and last mouse state data
             SDL_Rect dest;
-            dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
-            dest.y = GetLayoutPosition().y + ypadding;
+            dest.x = GetLayoutPosition().x + (xpadding / 2) + vertical ? 0 : (((sliderValue - minValue) / (maxValue - minValue)) * (float)length);
+            dest.y = GetLayoutPosition().y + (ypadding / 2) + vertical ? (((sliderValue - minValue) / (maxValue - minValue)) * (float)length) : 0;
             dest.w = buttonWidth;
             dest.h = buttonHeight;
 
@@ -768,13 +804,20 @@ namespace Ossium::Editor
             {
                 // Move directly to mouse x
                 sliderValue = Utilities::Clamp(
-                    ((((InputState.mousePos.x - slotDest.x) / (float)length)) * (maxValue - minValue)) + minValue,
+                    ((((vertical ? (InputState.mousePos.y - slotDest.y) : (InputState.mousePos.x - slotDest.x)) / (float)length)) * (maxValue - minValue)) + minValue,
                     minValue,
                     maxValue
                 );
 
                 // Update the button rect
-                dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
+                if (vertical)
+                {
+                    dest.y = GetLayoutPosition().y + (ypadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
+                }
+                else
+                {
+                    dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
+                }
             }
 
             Rect buttonDest = Rect(dest);
@@ -802,26 +845,33 @@ namespace Ossium::Editor
             line.a = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
 
-            // Draw float value
-            Image valueText;
-            valueText.SetSurface(
-                resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize)->GenerateFromText(
-                    Utilities::ToString(sliderValue), style.normalStyleText, (Uint32)renderer->GetWidth()
-                )
-            );
-            valueText.PushGPU(*renderer);
-            SDL_Rect textDest;
-            textDest.w = valueText.GetWidth();
-            textDest.h = valueText.GetHeight();
-            textDest.x = slotDest.x + slotDest.w + buttonDest.w + 2;
-            textDest.y = slotDest.y - (textDest.h / 2) + (slotDest.h / 2);
+            int extraSpace = 0;
+            if (showTextValue)
+            {
+                // Draw float value
+                Image valueText;
+                valueText.SetSurface(
+                    resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize)->GenerateFromText(
+                        Utilities::ToString(sliderValue), style.normalStyleText, (Uint32)renderer->GetWidth()
+                    )
+                );
+                valueText.PushGPU(*renderer);
+                SDL_Rect textDest;
+                textDest.w = valueText.GetWidth();
+                textDest.h = valueText.GetHeight();
+                // CONFIRM: check vertical actually positions the text somewhere sensible.
+                textDest.x = vertical ? slotDest.x + max(slotDest.w, buttonDest.w) + 2 : slotDest.x + slotDest.w + (fullSlot ? 0 : buttonDest.w) + 2;
+                textDest.y = vertical ? slotDest.y + (slotDest.h / 2) + 2 : slotDest.y - (textDest.h / 2) + (slotDest.h / 2);
 
-            valueText.Render(renderer->GetRendererSDL(), textDest);
+                valueText.Render(renderer->GetRendererSDL(), textDest);
+
+                extraSpace = textDest.w;
+            }
 
             // Move along
             Move(Vector2(
-                GetLayoutDirection() == EDITOR_LAYOUT_HORIZONTAL ? slotDest.w + xpadding * 2 + valueText.GetWidth() + 4 : buttonDest.w + xpadding,
-                buttonDest.h + ypadding * 2
+                slotDest.w + (vertical && fullSlot ? 0 : buttonDest.w) + xpadding + extraSpace + 4,
+                slotDest.h + (vertical && fullSlot ? 0 : buttonDest.h) + ypadding
             ));
 
         }

@@ -76,6 +76,10 @@ namespace Ossium::Editor
             Color(0, 255, 255),
             StandardText
         );
+        StyleClickable EDITOR_SCROLLBAR_STYLE = StyleClickable(
+            Color(100, 200, 200),
+            StandardText
+        );
         StyleClickable EDITOR_TEXTFIELD_STYLE = StyleClickable(
             Color(205, 205, 205) - 40,
             Color(205, 205, 205),

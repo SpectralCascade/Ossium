@@ -79,6 +79,7 @@ namespace Ossium::Editor
         extern StyleText EDITOR_TEXT_INVERSE_CENTERED_STYLE;
         extern StyleClickable StandardButton;
         extern StyleClickable EDITOR_SLIDER_STYLE;
+        extern StyleClickable EDITOR_SCROLLBAR_STYLE;
         extern StyleClickable EDITOR_DROPDOWN_ITEM_STYLE;
         extern StyleClickable EDITOR_TEXTFIELD_STYLE;
         extern StyleClickable EDITOR_CHECKBOX_STYLE;
