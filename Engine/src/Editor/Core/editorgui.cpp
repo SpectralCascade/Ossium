@@ -169,8 +169,22 @@ namespace Ossium::Editor
 
     void EditorGUI::Refresh()
     {
+        fullViewportDimensions = Vector2(viewport.w, viewport.h);
+
+        // If last recorded content bounds are bigger than the current viewport,
+        // trim viewport to allow for scrollbar(s).
+        if (autoScrollVertical && viewport.w < contentBounds.x)
+        {
+            viewport.w -= scrollBarThickness;
+        }
+        if (autoScrollHorizontal && viewport.h < contentBounds.y)
+        {
+            viewport.h -= scrollBarThickness;
+        }
+
         // Set the current viewport
         renderer->SetViewportRect(viewport);
+
         if (input->HasHandler<MouseHandler>())
         {
             // Setup mouse input based on the current viewport
@@ -200,24 +214,62 @@ namespace Ossium::Editor
         // Reset state
         Begin();
         // Immediate-mode GUI i/o
+        layoutWithScrollOffset = true;
         OnGUI();
+        layoutWithScrollOffset = false;
 
-        /*
-        // Reset layout position
+        // Restore viewport in case it was changed.
+        viewport.w = fullViewportDimensions.x;
+        viewport.h = fullViewportDimensions.y;
+        renderer->SetViewportRect(viewport);
+
+        Vector2 oldLayoutPosition = layoutStack.top();
+
+        // Update content bounds
+        contentBounds.x = max(oldLayoutPosition.x, contentBounds.x);
+        contentBounds.y = max(oldLayoutPosition.y, contentBounds.y);
+
+        // Reset layout position temporarily
         layoutStack.top() = Vector2(0, 0);
 
         // Add scroll bars if necessary.
+        Vector2 oldScrollPos = scrollPos;
         if (autoScrollVertical && contentBounds.y > viewport.h)
         {
             BeginHorizontal();
 
-            const int barWidth = 8;
-            int barHeight = max((float)barWidth, (float)viewport.h / (float)contentBounds.y);
-
-            Space(viewport.w - barWidth);
+            Space(viewport.w - scrollBarThickness);
 
             BeginVertical();
-            Slider(scrollPos.y, 0, contentBounds.y - viewport.h, max(0, viewport.h - barHeight), barWidth, barHeight, EditorStyle::EDITOR_SCROLLBAR_STYLE);
+
+            int buttonHeight = (int)layoutStack.top().y;
+
+            scrollPos.y = max(0.0f, scrollPos.y - (Button("^", true, 4, 4, true) ? (viewport.h / 8) : 0));
+
+            // Compute up button height
+            buttonHeight = (int)layoutStack.top().y - buttonHeight;
+
+            // Compute height of the bar
+            int barHeight = max((float)scrollBarThickness, (viewport.h - buttonHeight - buttonHeight) * ((float)viewport.h / (float)contentBounds.y));
+
+            scrollPos.y = Slider(
+                scrollPos.y,
+                0,
+                contentBounds.y - viewport.h,
+                viewport.h - buttonHeight - buttonHeight,
+                scrollBarThickness,
+                barHeight,
+                EditorStyle::EDITOR_SCROLLBAR_STYLE,
+                false,
+                0,
+                0,
+                scrollBarThickness,
+                true,
+                false
+            );
+
+            scrollPos.y = max(0.0f, scrollPos.y + (Button("v", true, 4, 4, true) ? (viewport.h / 8) : 0));
+
             EndVertical();
 
             EndHorizontal();
@@ -226,7 +278,14 @@ namespace Ossium::Editor
         {
             // TODO
         }
-        */
+        
+        if (oldScrollPos != scrollPos)
+        {
+            TriggerUpdate();
+        }
+
+        // Restore layout position
+        layoutStack.top() = oldLayoutPosition;
 
     }
 
@@ -250,12 +309,17 @@ namespace Ossium::Editor
         layoutStack.top() = Vector2(0, 0);
         // Reset the text field id generator
         textFieldCounter = 1;
+
         contentBounds = Vector2::Zero;
     }
 
     void EditorGUI::BeginLayout(int direction)
     {
+        // Make sure scroll offset isn't applied to raw layout stack.
+        bool wasUsingScrollOffset = layoutWithScrollOffset;
+        layoutWithScrollOffset = false;
         layoutStack.push(GetLayoutPosition());
+        layoutWithScrollOffset = wasUsingScrollOffset;
         layoutDirection.push(direction);
         layoutDifference.push(0);
     }
@@ -334,7 +398,7 @@ namespace Ossium::Editor
 
     Vector2 EditorGUI::GetLayoutPosition()
     {
-        return layoutStack.top();
+        return layoutStack.top() - (layoutWithScrollOffset ? scrollPos : Vector2::Zero);
     }
 
     int EditorGUI::GetLayoutDirection()
@@ -378,23 +442,24 @@ namespace Ossium::Editor
 
     void EditorGUI::TextLabel(string text, StyleText style)
     {
+        Font& font = *resources->Get<Font>(style.fontPath, style.ptsize);
+        Vector2 layoutPos = GetLayoutPosition();
+        TextLayout tlayout;
+        Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
+        tlayout.SetPointSize(style.ptsize);
+        tlayout.SetBounds(limits);
+        tlayout.mainColor = style.fg;
+        tlayout.mainStyle = style.style;
+        tlayout.SetText(*renderer, font, text, true);
+        tlayout.Update(font);
+
         if (IsVisible())
         {
-            Font& font = *resources->Get<Font>(style.fontPath, style.ptsize);
-            Vector2 layoutPos = GetLayoutPosition();
-            TextLayout tlayout;
-            Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
-            tlayout.SetPointSize(style.ptsize);
-            tlayout.SetBounds(limits);
-            tlayout.mainColor = style.fg;
-            tlayout.mainStyle = style.style;
-            tlayout.SetText(*renderer, font, text, true);
-            tlayout.Update(font);
             tlayout.Render(*renderer, font, layoutPos);
-
-            // Move along
-            Move(tlayout.GetSize());
         }
+
+        // Move along
+        Move(tlayout.GetSize());
     }
 
     string EditorGUI::TextField(string text)
@@ -404,110 +469,107 @@ namespace Ossium::Editor
 
     string EditorGUI::TextField(string text, StyleClickable style, SDL_Color cursorColor)
     {
-        if (IsVisible())
+        TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
+        //MouseHandler* mouse = input->GetHandler<MouseHandler>();
+        if (activeTextFieldId == textFieldCounter)
         {
-            TextInputHandler* textinput = input->GetHandler<TextInputHandler>();
-            //MouseHandler* mouse = input->GetHandler<MouseHandler>();
-            if (activeTextFieldId == textFieldCounter)
-            {
-                // Accept text input
-                text = textinput->GetText();
-            }
+            // Accept text input
+            text = textinput->GetText();
+        }
 
-            Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
-            TextLayout tlayout;
-            Vector2 layoutPos = GetLayoutPosition();
-            Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - 4, renderer->GetHeight() - 4);
-            tlayout.SetPointSize(style.normalStyleText.ptsize);
-            tlayout.SetBounds(limits);
-            tlayout.mainColor = style.normalStyleText.fg;
-            tlayout.mainStyle = style.normalStyleText.style;
-            tlayout.SetText(*renderer, font, text, false);
-            // Compute layout
-            tlayout.Update(font);
+        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+        TextLayout tlayout;
+        Vector2 layoutPos = GetLayoutPosition();
+        Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - 4, renderer->GetHeight() - 4);
+        tlayout.SetPointSize(style.normalStyleText.ptsize);
+        tlayout.SetBounds(limits);
+        tlayout.mainColor = style.normalStyleText.fg;
+        tlayout.mainStyle = style.normalStyleText.style;
+        tlayout.SetText(*renderer, font, text, false);
+        // Compute layout
+        tlayout.Update(font);
 
-            // Now compute the cursor position
-            if (activeTextFieldId == textFieldCounter)
+        // Now compute the cursor position
+        if (activeTextFieldId == textFieldCounter)
+        {
+            if (verticalCursorPosChange != 0)
             {
-                if (verticalCursorPosChange != 0)
-                {
-                    // Recompute the position of the cursor rect and the corresponding text index.
-                    lastGlyphLocation = lastGlyphLocation.valid ? lastGlyphLocation : tlayout.LocateGlyph(textinput->GetCursorIndex());
-                    if (lastGlyphLocation.valid)
-                    {
-                        lastGlyphLocation = tlayout.LocateGlyph(lastGlyphLocation.position + Vector2(0, verticalCursorPosChange * font.GetLineDifference(tlayout.GetPointSize())));
-                    }
-                    if (lastGlyphLocation.valid)
-                    {
-                        textinput->SetCursorIndex(lastGlyphLocation.index);
-                        textFieldCursor = Rect(
-                            lastGlyphLocation.position.x + layoutPos.x + 2,
-                            lastGlyphLocation.position.y + layoutPos.y + 2,
-                            1,
-                            lastGlyphLocation.line.size.y
-                        );
-                    }
-                    else
-                    {
-                        textFieldCursor.x = layoutPos.x + 2;
-                        textFieldCursor.y = layoutPos.y + 2;
-                    }
-                    verticalCursorPosChange = 0;
-                }
-                else if (lastTextFieldCursorPos != textinput->GetCursorIndex())
-                {
-                    lastGlyphLocation = textinput->GetCursorIndex() < tlayout.GetTotalGlyphs() ? tlayout.LocateGlyph(textinput->GetCursorIndex()) : tlayout.LocateGlyph(textinput->GetCursorIndex() - 1);
-                    if (lastGlyphLocation.valid)
-                    {
-                        textFieldCursor = Rect(
-                            lastGlyphLocation.position.x + layoutPos.x + 2 + (textinput->GetCursorIndex() < tlayout.GetTotalGlyphs() ? 0 : lastGlyphLocation.glyph.GetAdvance(tlayout.GetPointSize())),
-                            lastGlyphLocation.position.y + layoutPos.y + 2,
-                            1,
-                            lastGlyphLocation.line.size.y
-                        );
-                    }
-                    else
-                    {
-                        textFieldCursor.x = layoutPos.x + 2;
-                        textFieldCursor.y = layoutPos.y + 2;
-                    }
-                    lastTextFieldCursorPos = textinput->GetCursorIndex();
-                }
-            }
-
-            // Check if mouse is hovering over the button, if so change the cursor to an I beam.
-            Vector2 layoutSize = tlayout.GetSize();
-            Rect buttonRect = GetButtonRect(layoutSize.x, layoutSize.y);
-            if (buttonRect.Contains(InputState.mousePos))
-            {
-                input_state.textFieldHovered = true;
-            }
-
-            // Check if user clicks on the text field in this frame
-            if (Button(text, tlayout, style, false, 4, 4, false, nullptr, nullptr, false))
-            {
-                activeTextFieldId = textFieldCounter;
-                //Log.Info("Active text field set to {0}", activeTextFieldId);
-                textinput->StartListening();
-                textinput->SetText(text);
-                // Locate the closest glyph to the mouse
-                lastGlyphLocation = tlayout.LocateGlyph(InputState.mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
+                // Recompute the position of the cursor rect and the corresponding text index.
+                lastGlyphLocation = lastGlyphLocation.valid ? lastGlyphLocation : tlayout.LocateGlyph(textinput->GetCursorIndex());
                 if (lastGlyphLocation.valid)
                 {
-                    textFieldCursor = Rect(lastGlyphLocation.position.x + layoutPos.x + 2, lastGlyphLocation.position.y + layoutPos.y + 2, 1, lastGlyphLocation.line.size.y);
-                    textinput->SetCursorIndex(lastGlyphLocation.index);
+                    lastGlyphLocation = tlayout.LocateGlyph(lastGlyphLocation.position + Vector2(0, verticalCursorPosChange * font.GetLineDifference(tlayout.GetPointSize())));
                 }
+                if (lastGlyphLocation.valid)
+                {
+                    textinput->SetCursorIndex(lastGlyphLocation.index);
+                    textFieldCursor = Rect(
+                        lastGlyphLocation.position.x + layoutPos.x + 2,
+                        lastGlyphLocation.position.y + layoutPos.y + 2,
+                        1,
+                        lastGlyphLocation.line.size.y
+                    );
+                }
+                else
+                {
+                    textFieldCursor.x = layoutPos.x + 2;
+                    textFieldCursor.y = layoutPos.y + 2;
+                }
+                verticalCursorPosChange = 0;
             }
-
-            //TextLabel(Utilities::Format("Cursor Index = {0}", textinput->GetCursorIndex()));
-
-            if (activeTextFieldId == textFieldCounter)
+            else if (lastTextFieldCursorPos != textinput->GetCursorIndex())
             {
-                // Draw the cursor
-                textFieldCursor.DrawFilled(*renderer, cursorColor);
+                lastGlyphLocation = textinput->GetCursorIndex() < tlayout.GetTotalGlyphs() ? tlayout.LocateGlyph(textinput->GetCursorIndex()) : tlayout.LocateGlyph(textinput->GetCursorIndex() - 1);
+                if (lastGlyphLocation.valid)
+                {
+                    textFieldCursor = Rect(
+                        lastGlyphLocation.position.x + layoutPos.x + 2 + (textinput->GetCursorIndex() < tlayout.GetTotalGlyphs() ? 0 : lastGlyphLocation.glyph.GetAdvance(tlayout.GetPointSize())),
+                        lastGlyphLocation.position.y + layoutPos.y + 2,
+                        1,
+                        lastGlyphLocation.line.size.y
+                    );
+                }
+                else
+                {
+                    textFieldCursor.x = layoutPos.x + 2;
+                    textFieldCursor.y = layoutPos.y + 2;
+                }
+                lastTextFieldCursorPos = textinput->GetCursorIndex();
             }
-
         }
+
+        // Check if mouse is hovering over the button, if so change the cursor to an I beam.
+        Vector2 layoutSize = tlayout.GetSize();
+        Rect buttonRect = GetButtonRect(layoutSize.x, layoutSize.y);
+        if (buttonRect.Contains(InputState.mousePos))
+        {
+            input_state.textFieldHovered = true;
+        }
+
+        // Check if user clicks on the text field in this frame
+        if (Button(text, tlayout, style, false, 4, 4, false, nullptr, nullptr, false))
+        {
+            activeTextFieldId = textFieldCounter;
+            //Log.Info("Active text field set to {0}", activeTextFieldId);
+            textinput->StartListening();
+            textinput->SetText(text);
+            // Locate the closest glyph to the mouse
+            lastGlyphLocation = tlayout.LocateGlyph(InputState.mousePos - (layoutPos + /* account for default padding */ Vector2(2, 2)));
+            if (lastGlyphLocation.valid)
+            {
+                textFieldCursor = Rect(lastGlyphLocation.position.x + layoutPos.x + 2, lastGlyphLocation.position.y + layoutPos.y + 2, 1, lastGlyphLocation.line.size.y);
+                textinput->SetCursorIndex(lastGlyphLocation.index);
+            }
+        }
+
+        //TextLabel(Utilities::Format("Cursor Index = {0}", textinput->GetCursorIndex()));
+
+        if (activeTextFieldId == textFieldCounter)
+        {
+            // Draw the cursor
+            textFieldCursor.DrawFilled(*renderer, cursorColor);
+        }
+
         textFieldCounter++;
         return text;
     }
@@ -562,59 +624,57 @@ namespace Ossium::Editor
 
     bool EditorGUI::Button(string text, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed)
     {
-        if (IsVisible())
-        {
-            Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
-            TextLayout tlayout;
-            Vector2 layoutPos = GetLayoutPosition();
-            Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
-            tlayout.SetPointSize(style.normalStyleText.ptsize);
-            tlayout.SetBounds(limits);
-            tlayout.mainColor = style.normalStyleText.fg;
-            tlayout.mainStyle = style.normalStyleText.style;
-            tlayout.SetAlignment(useMaxWidth ? Typographic::TextAlignment::CENTERED : (Typographic::TextAlignment)style.normalStyleText.alignment);
-            tlayout.SetText(*renderer, font, text, true);
-            tlayout.Update(font);
-            return Button(text, tlayout, style, invertOutline, xpadding, ypadding, useMaxWidth, isHovered, isPressed);
-        }
-        return false;
+        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+        TextLayout tlayout;
+        Vector2 layoutPos = GetLayoutPosition();
+        Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
+        tlayout.SetPointSize(style.normalStyleText.ptsize);
+        tlayout.SetBounds(limits);
+        tlayout.mainColor = style.normalStyleText.fg;
+        tlayout.mainStyle = style.normalStyleText.style;
+        tlayout.SetAlignment(useMaxWidth ? Typographic::TextAlignment::CENTERED : (Typographic::TextAlignment)style.normalStyleText.alignment);
+        tlayout.SetText(*renderer, font, text, true);
+        tlayout.Update(font);
+        return Button(text, tlayout, style, invertOutline, xpadding, ypadding, useMaxWidth, isHovered, isPressed);
     }
 
     bool EditorGUI::Button(string text, TextLayout& textLayout, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed, bool parseTags)
     {
-        if (IsVisible())
-        {
-            Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
-            Vector2 layoutPos = GetLayoutPosition();
+        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+        Vector2 layoutPos = GetLayoutPosition();
 
-            bool hovered;
-            bool pressed;
-            if (isHovered == nullptr)
-            {
-                isHovered = &hovered;
-            }
-            if (isPressed == nullptr)
-            {
-                isPressed = &pressed;
-            }
-            bool result = Button(useMaxWidth ? viewport.w - xpadding : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding, nullptr, isHovered, isPressed);
-            if (*isHovered && (textLayout.mainColor != style.hoverStyleText.fg || textLayout.mainStyle != style.hoverStyleText.style))
-            {
-                textLayout.mainColor = style.hoverStyleText.fg;
-                textLayout.mainStyle = style.hoverStyleText.style;
-                textLayout.SetText(*renderer, font, text, parseTags);
-            }
-            else if (*isPressed && (textLayout.mainColor != style.clickStyleText.fg || textLayout.mainStyle != style.clickStyleText.style))
-            {
-                textLayout.mainColor = style.clickStyleText.fg;
-                textLayout.mainStyle = style.clickStyleText.style;
-                textLayout.SetText(*renderer, font, text, parseTags);
-            }
-            textLayout.Update(font);
-            textLayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
-            return result;
+        bool hovered;
+        bool pressed;
+        if (isHovered == nullptr)
+        {
+            isHovered = &hovered;
         }
-        return false;
+        if (isPressed == nullptr)
+        {
+            isPressed = &pressed;
+        }
+
+        bool wasVisible = IsVisible();
+
+        bool result = Button(useMaxWidth ? viewport.w - xpadding - layoutPos.x : textLayout.GetSize().x, textLayout.GetSize().y, style, invertOutline, xpadding, ypadding, nullptr, isHovered, isPressed);
+        if (*isHovered && (textLayout.mainColor != style.hoverStyleText.fg || textLayout.mainStyle != style.hoverStyleText.style))
+        {
+            textLayout.mainColor = style.hoverStyleText.fg;
+            textLayout.mainStyle = style.hoverStyleText.style;
+            textLayout.SetText(*renderer, font, text, parseTags);
+        }
+        else if (*isPressed && (textLayout.mainColor != style.clickStyleText.fg || textLayout.mainStyle != style.clickStyleText.style))
+        {
+            textLayout.mainColor = style.clickStyleText.fg;
+            textLayout.mainStyle = style.clickStyleText.style;
+            textLayout.SetText(*renderer, font, text, parseTags);
+        }
+        textLayout.Update(font);
+        if (wasVisible)
+        {
+            textLayout.Render(*renderer, font, layoutPos + Vector2(xpadding / 2, ypadding / 2));
+        }
+        return result;
     }
 
     bool EditorGUI::Button(Image* image, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool* isHovered, bool* isPressed)
@@ -629,31 +689,31 @@ namespace Ossium::Editor
 
     bool EditorGUI::Button(int w, int h, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Image* image, bool* isHovered, bool* isPressed)
     {
+        // Set the destination rect
+        SDL_Rect dest = GetButtonDest(w, h, xpadding, ypadding);
+        Rect buttonDest = GetButtonRect(dest, xpadding, ypadding);
+
+        bool hovered = buttonDest.Contains(InputState.mousePos);
+        bool pressed = InputState.mousePressed && buttonDest.Contains(InputState.mouseDownPos);
+        if (isHovered != nullptr)
+        {
+            *isHovered = hovered;
+        }
+        if (isPressed != nullptr)
+        {
+            *isPressed = pressed;
+        }
+
+        SDL_Color buttonColour = hovered ?
+            (pressed ?
+                style.clickColor : // Pressed colour
+                style.hoverColor   // Hovered colour
+            ) : style.normalColor; // Not hovered colour
+
+        // Render the button
+        // TODO: generate nicer buttons and pass styling arguments
         if (IsVisible())
         {
-            // Set the destination rect
-            SDL_Rect dest = GetButtonDest(w, h, xpadding, ypadding);
-            Rect buttonDest = GetButtonRect(dest, xpadding, ypadding);
-
-            bool hovered = buttonDest.Contains(InputState.mousePos);
-            bool pressed = InputState.mousePressed && buttonDest.Contains(InputState.mouseDownPos);
-            if (isHovered != nullptr)
-            {
-                *isHovered = hovered;
-            }
-            if (isPressed != nullptr)
-            {
-                *isPressed = pressed;
-            }
-
-            SDL_Color buttonColour = hovered ?
-                (pressed ?
-                    style.clickColor : // Pressed colour
-                    style.hoverColor   // Hovered colour
-                ) : style.normalColor; // Not hovered colour
-
-            // Render the button
-            // TODO: generate nicer buttons and pass styling arguments
             buttonDest.DrawFilled(*renderer, buttonColour);
 
             if (image != nullptr)
@@ -672,13 +732,12 @@ namespace Ossium::Editor
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.leftEdgeColor : style.rightEdgeColor);
             line.a = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
-
-            // Move along
-            Move(Vector2(buttonDest.w + 1, buttonDest.h + 1));
-
-            return hovered && !InputState.mousePressed && InputState.mouseWasPressed && buttonDest.Contains(InputState.mouseDownPos);
         }
-        return false;
+
+        // Move along
+        Move(Vector2(buttonDest.w + 1, buttonDest.h + 1));
+
+        return hovered && !InputState.mousePressed && InputState.mouseWasPressed && buttonDest.Contains(InputState.mouseDownPos);
     }
 
     bool EditorGUI::InvisibleButton(Rect area)
@@ -740,34 +799,37 @@ namespace Ossium::Editor
 
     bool EditorGUI::Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, function<void(bool)> drawFunc)
     {
+        // Empty button
+        if (Button("", style, false, (Uint32)boxSize.x, (Uint32)boxSize.y))
+        {
+            toggleValue = !toggleValue;
+        }
+
+        // Draw whatever we want on top
         if (IsVisible())
         {
-            // Empty button
-            if (Button("", style, false, (Uint32)boxSize.x, (Uint32)boxSize.y))
-            {
-                toggleValue = !toggleValue;
-            }
-
-            // Draw whatever we want on top
             drawFunc(toggleValue);
         }
+
         return toggleValue;
     }
 
     float EditorGUI::Slider(float sliderValue, float minValue, float maxValue, int length, int buttonWidth, int buttonHeight, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, Uint32 slotThickness, bool fullSlot, bool showTextValue)
     {
+        bool vertical = GetLayoutDirection() == EditorLayoutDirection::EDITOR_LAYOUT_VERTICAL;
+
+        Vector2 lpos = GetLayoutPosition();
+
+        // Draw the slot first
+        Rect slotDest = Rect(
+            lpos.x + (xpadding / 2) + (vertical ? (slotThickness - buttonWidth) / 2 : (fullSlot ? 0 : (buttonWidth / 2))),
+            lpos.y + (ypadding / 2) + (vertical ? (fullSlot ? 0 : (buttonHeight / 2)) : (slotThickness - buttonHeight) / 2),
+            vertical ? (float)slotThickness : (float)length,
+            vertical ? (float)length : (float)slotThickness
+        );
+
         if (IsVisible())
         {
-            bool vertical = GetLayoutDirection() == EditorLayoutDirection::EDITOR_LAYOUT_VERTICAL;
-
-            // Draw the slot first
-            Rect slotDest = Rect(
-                GetLayoutPosition().x + (xpadding / 2) + (vertical ? (slotThickness - buttonWidth) / 2 : (fullSlot ? 0 : (buttonWidth / 2))),
-                GetLayoutPosition().y + (ypadding / 2) + (vertical ? (fullSlot ? 0 : (buttonHeight / 2)) : (slotThickness - buttonHeight) / 2),
-                (float)length,
-                (float)slotThickness
-            );
-
             // Render the slider slot
             slotDest.DrawFilled(*renderer, Color(backgroundColor.r / 2, backgroundColor.g / 2, backgroundColor.b / 2));
 
@@ -781,142 +843,142 @@ namespace Ossium::Editor
             line.Draw(*renderer, Alpha(style.leftEdgeColor, 200));
             line.a = Vector2(slotDest.x, slotDest.y + slotDest.h);
             line.Draw(*renderer, Alpha(style.topEdgeColor, 200));
+        }
 
-            // Get the current button rect and last mouse state data
-            SDL_Rect dest;
-            dest.x = GetLayoutPosition().x + (xpadding / 2) + vertical ? 0 : (((sliderValue - minValue) / (maxValue - minValue)) * (float)length);
-            dest.y = GetLayoutPosition().y + (ypadding / 2) + vertical ? (((sliderValue - minValue) / (maxValue - minValue)) * (float)length) : 0;
-            dest.w = buttonWidth;
-            dest.h = buttonHeight;
+        float adaptedLength = (fullSlot ? (float)length - (vertical ? buttonHeight : buttonWidth) : (float)length);
 
-            Rect oldButtonDest = Rect(dest);
-            if (InputState.mousePressed && !InputState.mouseWasPressed && oldButtonDest.Contains(InputState.mouseDownPos))
+        // Get the current button rect and last mouse state data
+        Rect dest = Rect(
+            lpos.x + (xpadding / 2) + (vertical ? 0 : ((sliderValue - minValue) / (maxValue - minValue)) * adaptedLength),
+            lpos.y + (ypadding / 2) + (vertical ? ((sliderValue - minValue) / (maxValue - minValue)) * adaptedLength : 0),
+            buttonWidth,
+            buttonHeight
+        );
+
+        if (InputState.mousePressed && !InputState.mouseWasPressed && dest.Contains(InputState.mouseDownPos))
+        {
+            // Fake the 'mouse down position' because the button destination is not static, but the slot is (so it can be relied upon somewhat).
+            input_state.mouseDownPos.x = slotDest.x;
+            input_state.mouseDownPos.y = slotDest.y;
+        }
+
+        bool dragging = InputState.mousePressed && slotDest.Contains(InputState.mouseDownPos);
+
+        // Check how much the slider has been moved in this frame and change the slider value accordingly
+        if (dragging)
+        {
+            // Move directly to mouse pos
+            sliderValue = Utilities::Clamp(
+                (((vertical ? (slotDest.y - InputState.mousePos.y) : (InputState.mousePos.x - slotDest.x)) / (float)length) * (maxValue - minValue)) + minValue,
+                minValue,
+                maxValue
+            );
+
+            // Update the button rect
+            if (vertical)
             {
-                // Fake the 'mouse down position' because the button destination is not static, but the slot is (so it can be relied upon somewhat).
-                input_state.mouseDownPos.x = slotDest.x;
-                input_state.mouseDownPos.y = slotDest.y;
+                dest.y = lpos.y + (ypadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * adaptedLength;
             }
-
-            bool dragging = InputState.mousePressed && slotDest.Contains(InputState.mouseDownPos);
-
-            // Check how much the slider has been moved in this frame and change the slider value accordingly
-            if (dragging)
+            else
             {
-                // Move directly to mouse x
-                sliderValue = Utilities::Clamp(
-                    ((((vertical ? (InputState.mousePos.y - slotDest.y) : (InputState.mousePos.x - slotDest.x)) / (float)length)) * (maxValue - minValue)) + minValue,
-                    minValue,
-                    maxValue
-                );
-
-                // Update the button rect
-                if (vertical)
-                {
-                    dest.y = GetLayoutPosition().y + (ypadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
-                }
-                else
-                {
-                    dest.x = GetLayoutPosition().x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * (float)length;
-                }
+                dest.x = lpos.x + (xpadding / 2) + ((sliderValue - minValue) / (maxValue - minValue)) * adaptedLength;
             }
+        }
 
-            Rect buttonDest = Rect(dest);
+        bool hovered = dest.Contains(InputState.mousePos) || dragging;
+        bool pressed = dragging;
 
-            bool hovered = buttonDest.Contains(InputState.mousePos) || dragging;
-            bool pressed = dragging;
+        SDL_Color buttonColour = hovered ?
+            (pressed ?
+                style.clickColor : // Pressed colour
+                style.hoverColor   // Hovered colour
+            ) : style.normalColor; // Not hovered colour
 
-            SDL_Color buttonColour = hovered ?
-                (pressed ?
-                    style.clickColor : // Pressed colour
-                    style.hoverColor   // Hovered colour
-                ) : style.normalColor; // Not hovered colour
-
+        if (IsVisible())
+        {
             // Render the button
-            buttonDest.DrawFilled(*renderer, buttonColour);
+            dest.DrawFilled(*renderer, buttonColour);
 
             // Button outline
-            line = Line(Vector2(buttonDest.x, buttonDest.y), Vector2(buttonDest.x + buttonDest.w, buttonDest.y));
+            Line line(Vector2(dest.x, dest.y), Vector2(dest.x + dest.w, dest.y));
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.bottomEdgeColor : style.topEdgeColor);
-            line.b = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
+            line.b = Vector2(dest.x, dest.y + dest.h);
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.rightEdgeColor : style.leftEdgeColor);
-            line.a.x += buttonDest.w;
+            line.a.x += dest.w;
             line.b.x = line.a.x;
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.leftEdgeColor : style.rightEdgeColor);
-            line.a = Vector2(buttonDest.x, buttonDest.y + buttonDest.h);
+            line.a = Vector2(dest.x, dest.y + dest.h);
             line.Draw(*renderer, invertOutline && pressed && hovered ? style.topEdgeColor : style.bottomEdgeColor);
+        }
 
-            int extraSpace = 0;
-            if (showTextValue)
+        int extraSpace = 0;
+        if (showTextValue)
+        {
+            // Draw float value
+            Image valueText;
+            valueText.SetSurface(
+                resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize)->GenerateFromText(
+                    Utilities::ToString(sliderValue), style.normalStyleText, (Uint32)renderer->GetWidth()
+                )
+            );
+            valueText.PushGPU(*renderer);
+            SDL_Rect textDest;
+            textDest.w = valueText.GetWidth();
+            textDest.h = valueText.GetHeight();
+            // CONFIRM: check vertical actually positions the text somewhere sensible.
+            textDest.x = vertical ? slotDest.x + max(slotDest.w, dest.w) + 2 : slotDest.x + slotDest.w + (fullSlot ? 0 : dest.w) + 2;
+            textDest.y = vertical ? slotDest.y + (slotDest.h / 2) + 2 : slotDest.y - (textDest.h / 2) + (slotDest.h / 2);
+
+            if (IsVisible())
             {
-                // Draw float value
-                Image valueText;
-                valueText.SetSurface(
-                    resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize)->GenerateFromText(
-                        Utilities::ToString(sliderValue), style.normalStyleText, (Uint32)renderer->GetWidth()
-                    )
-                );
-                valueText.PushGPU(*renderer);
-                SDL_Rect textDest;
-                textDest.w = valueText.GetWidth();
-                textDest.h = valueText.GetHeight();
-                // CONFIRM: check vertical actually positions the text somewhere sensible.
-                textDest.x = vertical ? slotDest.x + max(slotDest.w, buttonDest.w) + 2 : slotDest.x + slotDest.w + (fullSlot ? 0 : buttonDest.w) + 2;
-                textDest.y = vertical ? slotDest.y + (slotDest.h / 2) + 2 : slotDest.y - (textDest.h / 2) + (slotDest.h / 2);
-
                 valueText.Render(renderer->GetRendererSDL(), textDest);
-
-                extraSpace = textDest.w;
             }
 
-            // Move along
-            Move(Vector2(
-                slotDest.w + (vertical && fullSlot ? 0 : buttonDest.w) + xpadding + extraSpace + 4,
-                slotDest.h + (vertical && fullSlot ? 0 : buttonDest.h) + ypadding
-            ));
-
+            extraSpace = textDest.w;
         }
+
+        // Move along
+        Move(Vector2(
+            slotDest.w + (vertical && fullSlot ? 0 : dest.w) + xpadding + extraSpace + 4,
+            slotDest.h + (vertical && fullSlot ? 0 : dest.h) + ypadding
+        ));
+
         return sliderValue;
     }
 
     string EditorGUI::DragAndDropField(string currentInput, bool* changed)
     {
-        if (IsVisible())
+        bool hovered = false;
+        bool pressed = false;
+        Button(currentInput, false, 4, 4, true, &hovered, &pressed);
+        if (hovered)
         {
-            bool hovered = false;
-            bool pressed = false;
-            Button(currentInput, false, 4, 4, true, &hovered, &pressed);
-            if (hovered)
+            if (pressed)
             {
-                if (pressed)
-                {
-                    // TODO: Set drag & drop state string to currentInput
-                }
-                else if (InputState.mouseWasPressed && !InputState.mousePressed)
-                {
-                    // TODO: Set currentInput to drag & drop state string
-                    //currentInput = ;
-                    *changed = true;
-                }
-
+                // TODO: Set drag & drop state string to currentInput
+            }
+            else if (InputState.mouseWasPressed && !InputState.mousePressed)
+            {
+                // TODO: Set currentInput to drag & drop state string
+                //currentInput = ;
+                *changed = true;
             }
 
         }
+
         return currentInput;
     }
 
     void EditorGUI::Dropdown(unsigned int selected, vector<string>& values, function<void(unsigned int)> onSelectHandler)
     {
-        if (IsVisible())
+        Vector2 oldPos = GetLayoutPosition();
+        if (Button(values[selected]))
         {
-            Vector2 oldPos = GetLayoutPosition();
-            if (Button(values[selected]))
-            {
-                OnDropdown(
-                    Vector2(oldPos.x, GetLayoutPosition().y) + renderer->GetWindow()->GetPosition(),
-                    values,
-                    onSelectHandler
-                );
-            }
+            OnDropdown(
+                Vector2(oldPos.x, GetLayoutPosition().y) + renderer->GetWindow()->GetPosition(),
+                values,
+                onSelectHandler
+            );
         }
     }
 

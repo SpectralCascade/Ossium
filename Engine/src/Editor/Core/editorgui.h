@@ -130,6 +130,12 @@ namespace Ossium::Editor
         /// When true, refresh on the next Update() call.
         bool update = true;
 
+        // Used for restoring the viewport after accounting for scroll bars.
+        Vector2 fullViewportDimensions = Vector2::Zero;
+
+        // How thick the scroll bar should be drawn.
+        const int scrollBarThickness = 16;
+
         /// Handles keyboard inputs such as backspace while a text field is in use.
         ActionOutcome HandleTextField(const KeyboardInput& key);
 
@@ -137,6 +143,9 @@ namespace Ossium::Editor
         Renderer* renderer = nullptr;
         InputContext* input = nullptr;
         ResourceController* resources = nullptr;
+
+        // Whether GUI elements should add the scroll position offset during OnGUI()
+        bool layoutWithScrollOffset = false;
 
         /// When true, refreshes every time Update() is called.
         bool alwaysUpdate = false;
@@ -197,7 +206,7 @@ namespace Ossium::Editor
         /// Similar to Space, but automatically moves along to the next multiple of the specified tab size.
         void Tab(int tabSize = 30);
 
-        /// Returns the current position.
+        /// Returns the current position. Includes the scroll position offset when layoutWithScrollOffset == true.
         Vector2 GetLayoutPosition();
 
         /// Returns the current direction.
