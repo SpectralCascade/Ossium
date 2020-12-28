@@ -268,7 +268,7 @@ namespace Ossium::Editor
                 false
             );
 
-            scrollPos.y = max(0.0f, scrollPos.y + (Button("v", true, 4, 4, true) ? (viewport.h / 8) : 0));
+            scrollPos.y = min(contentBounds.y - viewport.h, scrollPos.y + (Button("v", true, 4, 4, true) ? (viewport.h / 8) : 0));
 
             EndVertical();
 
@@ -857,6 +857,8 @@ namespace Ossium::Editor
 
         if (InputState.mousePressed && !InputState.mouseWasPressed && dest.Contains(InputState.mouseDownPos))
         {
+            // Capture slider mouse offset.
+            sliderMouseOffset = InputState.mouseDownPos - Vector2(fullSlot ? dest.x : dest.x + (buttonWidth / 2), fullSlot ? dest.y : dest.y + (buttonHeight / 2));
             // Fake the 'mouse down position' because the button destination is not static, but the slot is (so it can be relied upon somewhat).
             input_state.mouseDownPos.x = slotDest.x;
             input_state.mouseDownPos.y = slotDest.y;
@@ -869,7 +871,7 @@ namespace Ossium::Editor
         {
             // Move directly to mouse pos
             sliderValue = Utilities::Clamp(
-                (((vertical ? (slotDest.y - InputState.mousePos.y) : (InputState.mousePos.x - slotDest.x)) / (float)length) * (maxValue - minValue)) + minValue,
+                (((vertical ? (InputState.mousePos.y - (slotDest.y + sliderMouseOffset.y)) : (InputState.mousePos.x - (slotDest.x + sliderMouseOffset.x))) / adaptedLength) * (maxValue - minValue)) + minValue,
                 minValue,
                 maxValue
             );

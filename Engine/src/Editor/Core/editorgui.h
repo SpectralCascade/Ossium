@@ -130,11 +130,14 @@ namespace Ossium::Editor
         /// When true, refresh on the next Update() call.
         bool update = true;
 
+        // The offset between the start of the scroll bar and the mouse when first pressed.
+        Vector2 sliderMouseOffset = Vector2::Zero;
+
         // Used for restoring the viewport after accounting for scroll bars.
         Vector2 fullViewportDimensions = Vector2::Zero;
 
         // How thick the scroll bar should be drawn.
-        const int scrollBarThickness = 16;
+        const int scrollBarThickness = 14;
 
         /// Handles keyboard inputs such as backspace while a text field is in use.
         ActionOutcome HandleTextField(const KeyboardInput& key);
