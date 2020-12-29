@@ -73,17 +73,8 @@ namespace Ossium::Editor
             vector<BaseComponent*> modified;
             for (auto itr : selected->GetAllComponents())
             {
-                if (!IsVisible())
-                {
-                    break;
-                }
                 for (BaseComponent* component : itr.second)
                 {
-                    if (!IsVisible())
-                    {
-                        break;
-                    }
-
                     BeginHorizontal();
                     TextLabel(Utilities::Format("<b>{0}</b>", GetComponentName((ComponentType)component->GetType())));
                     Tab(100);
@@ -171,11 +162,6 @@ namespace Ossium::Editor
     {
         for (auto propertyItr = data.begin(); propertyItr != data.end(); propertyItr++)
         {
-            if (!IsVisible())
-            {
-                break;
-            }
-
             BeginHorizontal();
 
             TextLabel(propertyItr.key() + ": ", EditorStyle::StandardText);

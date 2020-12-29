@@ -18,7 +18,7 @@ namespace Ossium
     string EditorSerializer::SerializeProperty(const char* type, const char* name, int attribute, string& property)
     {
 #ifdef OSSIUM_EDITOR
-        if (gui->IsVisible() && !(attribute & ATTRIBUTE_HIDDEN))
+        if (!(attribute & ATTRIBUTE_HIDDEN))
         {
             gui->BeginHorizontal();
             gui->TextLabel(string(name), EditorStyle::StandardText);
@@ -35,7 +35,7 @@ namespace Ossium
     string EditorSerializer::SerializeProperty(const char* type, const char* name, int attribute, bool& property)
     {
 #ifdef OSSIUM_EDITOR
-        if (gui->IsVisible() && !(attribute & ATTRIBUTE_HIDDEN))
+        if (!(attribute & ATTRIBUTE_HIDDEN))
         {
             gui->BeginHorizontal();
             gui->TextLabel(string(name), EditorStyle::StandardText);
@@ -52,7 +52,7 @@ namespace Ossium
     string EditorSerializer::SerializeProperty(const char* type, const char* name, int attribute, Vector2& property)
     {
 #ifdef OSSIUM_EDITOR
-        if (gui->IsVisible() && !(attribute & ATTRIBUTE_HIDDEN))
+        if (!(attribute & ATTRIBUTE_HIDDEN))
         {
             gui->BeginHorizontal();
             gui->TextLabel(string(name), EditorStyle::StandardText);

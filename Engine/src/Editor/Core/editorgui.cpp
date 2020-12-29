@@ -62,8 +62,11 @@ namespace Ossium::Editor
                 {
                     // Stop text field input
                     activeTextFieldId = 0;
-                    //Log.Info("Unset active text field");
                     input->GetHandler<TextInputHandler>()->StopListening();
+                }
+                else if (m.type == MOUSE_WHEEL)
+                {
+                    input_state.mouseScrollChange = Vector2(m.x, m.y) * (m.direction == SDL_MOUSEWHEEL_NORMAL ? 1 : -1);
                 }
                 this->update = true;
                 return ActionOutcome::Ignore;
@@ -211,6 +214,14 @@ namespace Ossium::Editor
                 }
             }
         }
+
+        // Mouse wheel scrolling
+        // TODO: Horizontal scrolling?
+        if (autoScrollVertical && Rect(0, 0, viewport.w, viewport.h).Contains(InputState.mousePos) && InputState.mouseScrollChange.y != 0)
+        {
+            scrollPos.y = Clamp(scrollPos.y - (InputState.mouseScrollChange.y * (viewport.h / 16)), 0.0f, contentBounds.y - viewport.h);
+        }
+
         // Reset state
         Begin();
         // Immediate-mode GUI i/o
@@ -276,7 +287,7 @@ namespace Ossium::Editor
         }
         if (autoScrollHorizontal && contentBounds.x > viewport.w)
         {
-            // TODO
+            // TODO: Horizontal scrolling
         }
         
         if (oldScrollPos != scrollPos)
@@ -286,6 +297,9 @@ namespace Ossium::Editor
 
         // Restore layout position
         layoutStack.top() = oldLayoutPosition;
+
+        // Reset the scroll wheel change if necessary.
+        input_state.mouseScrollChange = Vector2::Zero;
 
     }
 

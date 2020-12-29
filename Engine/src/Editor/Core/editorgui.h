@@ -100,9 +100,9 @@ namespace Ossium::Editor
         Vector2 contentBounds = Vector2::Zero;
 
         /// Contains input state information
-        struct EditorInputState : public Schema<EditorInputState, 7>
+        struct EditorInputState : public Schema<EditorInputState, 20>
         {
-            DECLARE_BASE_SCHEMA(EditorInputState, 7);
+            DECLARE_BASE_SCHEMA(EditorInputState, 20);
 
             /// The position of the mouse in the current Refresh() call.
             M(Vector2, mousePos) = Vector2::Zero;
@@ -115,6 +115,9 @@ namespace Ossium::Editor
 
             /// The position of the mouse when it last released.
             M(Vector2, mouseUpPos) = Vector2::NegOneNegOne;
+
+            // How much the mouse has scrolled by this frame.
+            M(Vector2, mouseScrollChange) = Vector2::Zero;
 
             /// Whether the mouse is currently pressed.
             M(bool, mousePressed) = false;
@@ -296,17 +299,14 @@ namespace Ossium::Editor
         typename std::enable_if<std::is_base_of<SchemaReferable, T>::value, T*>::type
         ReferenceField(T* currentReference, std::function<T*(std::string)> findReference, std::string emptyField = "(null)")
         {
-            if (IsVisible())
+            bool didChange = false;
+            std::string result = DragAndDropField(
+                currentReference != nullptr ? currentReference->GetReferenceName() : emptyField,
+                &didChange
+            );
+            if (didChange)
             {
-                bool didChange = false;
-                std::string result = DragAndDropField(
-                    currentReference != nullptr ? currentReference->GetReferenceName() : emptyField,
-                    &didChange
-                );
-                if (didChange)
-                {
-                    currentReference = findReference(result);
-                }
+                currentReference = findReference(result);
             }
             return currentReference;
         }
@@ -315,22 +315,19 @@ namespace Ossium::Editor
         template<typename T>
         void Dropdown(std::function<bool(void)> openDropdownCondition, const std::vector<T>& values, std::function<void(unsigned int)> onSelectHandler)
         {
-            if (IsVisible())
+            Vector2 oldPos = GetLayoutPosition();
+            if (openDropdownCondition())
             {
-                Vector2 oldPos = GetLayoutPosition();
-                if (openDropdownCondition())
+                std::vector<std::string> converted;
+                for (auto& value : values)
                 {
-                    std::vector<std::string> converted;
-                    for (auto& value : values)
-                    {
-                        converted.push_back(Utilities::ToString(value));
-                    }
-                    OnDropdown(
-                        Vector2(oldPos.x, GetLayoutPosition().y) + renderer->GetWindow()->GetPosition(),
-                        converted,
-                        onSelectHandler
-                    );
+                    converted.push_back(Utilities::ToString(value));
                 }
+                OnDropdown(
+                    Vector2(oldPos.x, GetLayoutPosition().y) + renderer->GetWindow()->GetPosition(),
+                    converted,
+                    onSelectHandler
+                );
             }
         }
 

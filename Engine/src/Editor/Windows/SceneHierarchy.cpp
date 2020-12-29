@@ -23,11 +23,6 @@ namespace Ossium::Editor
         {
             for (auto& scene : project->openScenes)
             {
-                if (!IsVisible())
-                {
-                    // early out
-                    break;
-                }
                 Scene* loaded = resources->Find<Scene>(scene.path);
                 if (!loaded)
                 {
