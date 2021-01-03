@@ -199,6 +199,12 @@ namespace Ossium::Editor
         /// Abstract method that should contain all GUI logic.
         virtual void OnGUI() = 0;
 
+        /// Get the viewport scroll position.
+        Vector2 GetScrollPos();
+
+        /// Set the viewport scroll position.
+        void SetScrollPos(Vector2 pos);
+
         /// Returns false if the current UI layout position is off screen.
         bool IsVisible();
 

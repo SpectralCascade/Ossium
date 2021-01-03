@@ -126,14 +126,22 @@ namespace Ossium::Editor
         renderer->SetDrawColor(backgroundColor);
         SDL_RenderClear(renderer->GetRendererSDL());
         nativeOrigin = nativeWindow->GetPosition();
+        Rect displayRect = nativeWindow->GetDisplayBounds();
         EditorGUI::Refresh();
-        //Log.Info("InputState = {0}", InputState.ToString());
         if (fitRenderer)
         {
-            fitRenderer = false;
-            nativeWindow->SetWidth(width);
-            nativeWindow->SetHeight(GetLayoutPosition().y + (borderThickness * 2));
-            viewport = Rect(borderThickness, borderThickness, width, GetLayoutPosition().y).SDL();
+            layoutWithScrollOffset = false;
+            {
+                fitRenderer = false;
+                const float minHeightForScrolling = 64;
+                nativeWindow->SetWidth(width + borderThickness * 2);
+                nativeWindow->SetHeight(max(
+                    min(minHeightForScrolling, GetLayoutPosition().y) + (borderThickness * 2),
+                    min(GetLayoutPosition().y + (borderThickness * 2), displayRect.h - nativeOrigin.y)
+                ));
+                viewport = Rect(borderThickness, borderThickness, width, nativeWindow->GetHeight() - borderThickness * 2).SDL();
+            }
+            layoutWithScrollOffset = true;
         }
         if (borderThickness > 0)
         {
@@ -156,13 +164,9 @@ namespace Ossium::Editor
         {
             Rect displayRect = nativeWindow->GetDisplayBounds();
 
-            if (!IsVisible())
+            // Update window and viewport if an option is out of bounds and the viewport or window size isn't optimised.
+            if ((viewport.h + borderThickness * 2 < displayRect.h - nativeOrigin.y || nativeWindow->GetHeight() < displayRect.h - nativeOrigin.y) && !IsVisible())
             {
-                if (nativeWindow->GetHeight() >= (float)displayRect.h)
-                {
-                    // TODO: handle this case better - ideally prevent it.
-                    break;
-                }
                 if (!fitRenderer)
                 {
                     // In this scenario, we haven't got enough space to fit in this option! We must resize the renderer to maximum temporarily
@@ -316,8 +320,11 @@ namespace Ossium::Editor
 
     void ContextMenu::Show(Vector2 position)
     {
+        // Always start without any scrolling applied.
+        SetScrollPos(Vector2::Zero);
         input->SetActive(true);
         nativeWindow->SetPosition(position);
+        viewport.h = 0;
         nativeWindow->Show();
         nativeWindow->Focus();
         focus = this;

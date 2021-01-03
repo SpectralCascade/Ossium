@@ -371,6 +371,16 @@ namespace Ossium::Editor
         }
     }
 
+    Vector2 EditorGUI::GetScrollPos()
+    {
+        return scrollPos;
+    }
+
+    void EditorGUI::SetScrollPos(Vector2 pos)
+    {
+        scrollPos = pos;
+    }
+
     bool EditorGUI::IsVisible()
     {
         Vector2 lpos = GetLayoutPosition();
