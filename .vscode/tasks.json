@@ -39,7 +39,9 @@
 			"label": "Make Static Lib",
 			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
 			"args": [
-				"ossium"
+				"ossium",
+				"-j",
+				"8"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
@@ -55,7 +57,9 @@
 			"label": "Make Static Lib (Editor)",
 			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
 			"args": [
-				"libossiumeditor"
+				"libossiumeditor",
+				"-j",
+				"8"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
