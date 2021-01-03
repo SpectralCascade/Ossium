@@ -39,7 +39,7 @@
 #include "Core/utf8.h"
 #include "Core/textlayout.h"
 #include "Components/button.h"
-#include "Components/UI/BoxLayout.h"
+#include "Components/UI/GridLayout.h"
 #include "Components/UI/TabButton.h"
 #include "Components/UI/TabView.h"
 #include "Components/UI/ViewCard.h"

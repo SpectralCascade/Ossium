@@ -1,3 +1,6 @@
+#ifndef GRIDLAYOUT_H
+#define GRIDLAYOUT_H
+
 #include "BoxLayout.h"
 
 namespace Ossium
@@ -39,3 +42,5 @@ namespace Ossium
     };
     
 }
+
+#endif // GRIDLAYOUT_H
