@@ -217,9 +217,9 @@ namespace Ossium::Editor
 
         // Mouse wheel scrolling
         // TODO: Horizontal scrolling?
-        if (autoScrollVertical && Rect(0, 0, viewport.w, viewport.h).Contains(InputState.mousePos) && InputState.mouseScrollChange.y != 0)
+        if (autoScrollVertical && Rect(0, 0, fullViewportDimensions.x, fullViewportDimensions.y).Contains(InputState.mousePos) && InputState.mouseScrollChange.y != 0)
         {
-            scrollPos.y = Clamp(scrollPos.y - (InputState.mouseScrollChange.y * (viewport.h / 16)), 0.0f, contentBounds.y - viewport.h);
+            scrollPos.y = Clamp(scrollPos.y - (InputState.mouseScrollChange.y * (viewport.h / 16)), 0.0f, max(0.0f, contentBounds.y - viewport.h));
         }
 
         // Reset state
@@ -237,8 +237,8 @@ namespace Ossium::Editor
         Vector2 oldLayoutPosition = layoutStack.top();
 
         // Update content bounds
-        contentBounds.x = max(oldLayoutPosition.x, contentBounds.x);
-        contentBounds.y = max(oldLayoutPosition.y, contentBounds.y);
+        contentBounds.x = max(fullViewportDimensions.x, max(oldLayoutPosition.x, contentBounds.x));
+        contentBounds.y = max(fullViewportDimensions.y, max(oldLayoutPosition.y, contentBounds.y));
 
         // Reset layout position temporarily
         layoutStack.top() = Vector2(0, 0);
@@ -266,7 +266,7 @@ namespace Ossium::Editor
             scrollPos.y = Slider(
                 scrollPos.y,
                 0,
-                contentBounds.y - viewport.h,
+                max(0.0f, contentBounds.y - viewport.h),
                 viewport.h - buttonHeight - buttonHeight,
                 scrollBarThickness,
                 barHeight,
@@ -279,7 +279,7 @@ namespace Ossium::Editor
                 false
             );
 
-            scrollPos.y = min(contentBounds.y - viewport.h, scrollPos.y + (Button("v", true, 4, 4, true) ? (viewport.h / 8) : 0));
+            scrollPos.y = min(max(0.0f, contentBounds.y - viewport.h), scrollPos.y + (Button("v", true, 4, 4, true) ? (viewport.h / 8) : 0));
 
             EndVertical();
 
