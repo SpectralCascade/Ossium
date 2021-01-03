@@ -943,7 +943,12 @@ namespace Ossium
             //Log.Info("Loaded {0} component(s) of type {1}", total, GetComponentName(i));
         }
 
-        DEBUG_ASSERT(entities.size() == serialised.size(), "Input entities != created entities!");
+#ifdef OSSIUM_DEBUG
+        if (entities.size() == serialised.size())
+        {
+            Log.Warning("Serialised entities ({0}) != created entities ({1})!", entities.size(), serialised.size());
+        }
+#endif
     }
 
     vector<Entity*> Scene::GetRootEntities()
