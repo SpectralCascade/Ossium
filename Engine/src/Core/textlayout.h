@@ -25,9 +25,9 @@
 namespace Ossium
 {
 
-    struct TextLayoutSchema : public Schema<TextLayoutSchema, 9>
+    struct TextLayoutSchema : public Schema<TextLayoutSchema, 20>
     {
-        DECLARE_BASE_SCHEMA(TextLayoutSchema, 9);
+        DECLARE_BASE_SCHEMA(TextLayoutSchema, 20);
 
         /// The default colour of the text.
         M(SDL_Color, mainColor) = Colors::BLACK;
@@ -36,8 +36,19 @@ namespace Ossium
         M(int, mainStyle) = TTF_STYLE_NORMAL;
 
     protected:
-        /// Default size of the text.
-        M(float, pointSize);
+        /// Default size of the text. Caution: Overridden by dynamicFit and min/max point sizes.
+        M(float, pointSize) = 24;
+
+        /// Minimum size of the text in points. Overrides pointSize and dynamicFit.
+        M(float, minPointSize) = 12;
+
+        /// Maximum size of the text. Note that if this is <= 0, then the max size is limitless.
+        /// Overrides pointSize and dynamicFit.
+        M(float, maxPointSize) = 0;
+
+        /// Should the displayed point size be automagically determined by the bounds?
+        /// Use this to make sure the text fits at different resolutions.
+        M(bool, dynamicFit) = false;
 
         /// Text alignment when rendered
         M(Typographic::TextAlignment, alignment) = Typographic::TextAlignment::LEFT_ALIGNED;

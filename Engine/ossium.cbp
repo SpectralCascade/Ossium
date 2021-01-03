@@ -283,6 +283,8 @@
 		<Unit filename="src/Components/texture.h" />
 		<Unit filename="src/Components/UI/BoxLayout.cpp" />
 		<Unit filename="src/Components/UI/BoxLayout.h" />
+		<Unit filename="src/Components/UI/GridLayout.cpp" />
+		<Unit filename="src/Components/UI/GridLayout.h" />
 		<Unit filename="src/Components/UI/LayoutComponent.cpp" />
 		<Unit filename="src/Components/UI/LayoutComponent.h" />
 		<Unit filename="src/Components/UI/LayoutSurface.cpp" />
