@@ -28,6 +28,55 @@ namespace Ossium
         return cellElements[col][row];
     }
 
+    BoxLayout* GridLayout::GetCellElementAt(Vector2 worldPos, unsigned int* outcol, unsigned int* outrow)
+    {
+        // Obtain grid dimensions
+        Rect dimensions(GetTransform()->GetWorldPosition(), Vector2::Zero);
+        BoxLayout* mainLayout = entity->GetComponent<BoxLayout>();
+        if (mainLayout == nullptr)
+        {
+            mainLayout = entity->GetAncestor<BoxLayout>();
+        }
+        if (mainLayout != nullptr)
+        {
+            dimensions = Rect(Vector2(dimensions.x, dimensions.y), mainLayout->GetDimensions());
+        }
+        else
+        {
+            // Use renderer dimensions.
+            SDL_Rect vrect = entity->GetService<Renderer>()->GetViewportRect();
+            dimensions.w = vrect.w;
+            dimensions.h = vrect.h;
+        }
+
+        // Position for rect needs to be in the upper-left, not centre.
+        dimensions.x -= dimensions.w / 2.0f;
+        dimensions.y -= dimensions.h / 2.0f;
+
+        // Now determine which cell the worldPos intersects, if any.
+        if (dimensions.Contains(worldPos))
+        {
+            float colWidth = dimensions.w / (float)cols;
+            float rowHeight = dimensions.h / (float)rows;
+
+            // Map position to the grid, using integer truncation.
+            unsigned int col = (unsigned int)((worldPos.x - dimensions.x) / colWidth);
+            unsigned int row = (unsigned int)((worldPos.y - dimensions.y) / rowHeight);
+
+            if (outcol != nullptr)
+            {
+                *outcol = col;
+            }
+            if (outrow != nullptr)
+            {
+                *outrow = row;
+            }
+
+            return GetCellElement(col, row);
+        }
+        return nullptr;
+    }
+
     void GridLayout::LayoutRefresh()
     {
         // Destroy pre-existing cells that won't be reused.

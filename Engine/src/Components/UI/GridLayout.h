@@ -35,6 +35,10 @@ namespace Ossium
         // Returns a pointer to the BoxLayout instance placed in a particular cell.
         BoxLayout* GetCellElement(unsigned int col, unsigned int row);
 
+        // Returns a pointer to the BoxLayout instance placed in a particular cell. Returns nullptr if world position is outside.
+        // Also optionally takes a column index and row index pointer to indicate the column and row used.
+        BoxLayout* GetCellElementAt(Vector2 worldPos, unsigned int* outcol = nullptr, unsigned int* outrow = nullptr);
+
     private:
         // BoxLayout objects in the grid.
         std::vector<std::vector<BoxLayout*>> cellElements;
