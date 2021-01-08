@@ -402,6 +402,14 @@ namespace Ossium
         h = height;
     }
 
+    Rect::Rect(const Vector2& position, const Vector2& dimensions)
+    {
+        x = position.x;
+        y = position.y;
+        w = dimensions.x;
+        h = dimensions.y;
+    }
+
     Rect::Rect(SDL_Rect rect)
     {
         x = (float)rect.x;

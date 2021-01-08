@@ -91,9 +91,6 @@ namespace Ossium
         /// Sets up the input context and all bindings accordingly.
         void OnCreate();
 
-        /// Locates all InteractableGUI components on or below the entity and adds them on, breadth-first.
-        void OnLoadFinish();
-
         /// Override enables/disables the input context.
         void OnSetActive(bool active);
         

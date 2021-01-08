@@ -31,7 +31,6 @@ namespace Ossium
     void InteractableGUI::OnSetActive(bool active) { ParentType::OnSetActive(active); }
     void InteractableGUI::OnSetEnabled(bool enable) { ParentType::OnSetEnabled(enable); }
     void InteractableGUI::OnLoadStart() { ParentType::OnLoadStart(); }
-    void InteractableGUI::OnLoadFinish() { ParentType::OnLoadFinish(); }
     void InteractableGUI::OnClone(BaseComponent* src) {}
     void InteractableGUI::Update(){}
     std::string InteractableGUI::GetBaseTypeNames()
@@ -46,6 +45,18 @@ namespace Ossium
     Ossium::TypeSystem::TypeFactory<BaseComponent, ComponentType>(
         SID( "InteractableGUI" )::str, ComponentFactory, std::string(parentTypeName), true
     );
+
+    void InteractableGUI::OnLoadFinish()
+    {
+        ParentType::OnLoadFinish();
+#ifndef OSSIUM_EDITOR
+        input = entity->GetAncestor<InputGUI>();
+        if (input != nullptr)
+        {
+            input->AddInteractable(this);
+        }
+#endif
+    }
 
     void InteractableGUI::OnDestroy()
     {
@@ -181,31 +192,6 @@ namespace Ossium
         keyboard->AddAction("go_back", [&] (const KeyboardInput& data) { return this->GoBack(data); }, SDLK_ESCAPE);
     }
     
-    void InputGUI::OnLoadFinish()
-    {
-#ifndef OSSIUM_EDITOR
-        entity->GetScene()->WalkEntities(
-            [&] (Entity* target) {
-                InputGUI* inputGUI = target->GetComponent<InputGUI>();
-                if (inputGUI != nullptr && inputGUI != this)
-                {
-                    // Don't manage sub instances.
-                    return false;
-                }
-                auto components = target->GetComponents<InteractableGUI>();
-                for (auto component : components)
-                {
-                    AddInteractable(component);
-                    component->input = this;
-                }
-                return true;
-            },
-            true,
-            entity
-        );
-#endif // OSSIUM_EDITOR
-    }
-
     void InputGUI::OnSetActive(bool active)
     {
         if (active && IsEnabled())
