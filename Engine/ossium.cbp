@@ -344,6 +344,8 @@
         <Unit filename="src/Core/ordered_hash.h" />
 		<Unit filename="src/Core/ordered_map.h" />
 		<Unit filename="src/Core/ordered_set.h" />
+		<Unit filename="src/Core/osteon.cpp" />
+		<Unit filename="src/Core/osteon.h" />
 		<Unit filename="src/Core/physics.cpp" />
 		<Unit filename="src/Core/physics.h" />
 		<Unit filename="src/Core/pixeleffects.cpp" />

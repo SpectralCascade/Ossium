@@ -51,6 +51,10 @@ namespace Ossium
         ParentType::OnLoadFinish();
 #ifndef OSSIUM_EDITOR
         input = entity->GetAncestor<InputGUI>();
+        if (input == nullptr)
+        {
+            input = entity->GetComponent<InputGUI>();
+        }
         if (input != nullptr)
         {
             input->AddInteractable(this);

@@ -71,14 +71,14 @@ namespace Ossium
         // Returns the last handled MouseInput event.
         Vector2 GetLastMousePosition();
 
+        InputGUI* input = nullptr;
+
     private:
         // The last handled mouse input event.
         Vector2 lastMousePos;
 
         bool pressed = false;
         bool hovered = false;
-
-        InputGUI* input = nullptr;
 
     };
 
