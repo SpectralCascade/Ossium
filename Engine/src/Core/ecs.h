@@ -160,6 +160,9 @@ namespace Ossium
         /// Attempts to load this scene safely after updating.
         void LoadSafe(std::string guid_path);
 
+        /// Load this scene immediately. Do not use this unless you know what you're doing.
+        bool Load(std::string guid_path);
+
         /// Save the scene at a specified directory.
         bool Save(std::string directoryPath);
 
@@ -271,7 +274,6 @@ namespace Ossium
         std::string guid_path = "";
 
         // Resource loading methods
-        bool Load(std::string guid_path);
         bool Init(ServicesProvider* services);
         bool LoadAndInit(std::string guid_path, ServicesProvider* services);
 
@@ -323,6 +325,8 @@ namespace Ossium
         friend class Scene;
 
         /// Instantiates and attaches a component to this entity.
+        /// WARNING: Does NOT call OnLoadFinished(). That is left up to the end user!
+        /// TODO: By default, call OnLoadFinished() after OnCreate(), but have the option to not do this.
         template<class T>
         T* AddComponent()
         {
@@ -375,7 +379,7 @@ namespace Ossium
             auto itr = components.find(GetComponentType<T>());
             if (itr != components.end() && !itr->second.empty() && itr->second[0] != nullptr)
             {
-                BaseComponent* component = itr.second[0];
+                BaseComponent* component = itr->second[0];
                 GetScene()->DestroyComponent(component, immediate);
             }
         }
@@ -507,7 +511,10 @@ namespace Ossium
         /// Maps an id to a reference for serialisation.
         void MapReference(std::string ident, void** ptr);
 
+        /// Returns the parent entity, if any.
         Entity* GetParent();
+
+        /// Sets the parent entity. Disallows moving this entity to another scene, use SetScene() instead.
         void SetParent(Entity* parent);
 
         /// Returns this entity's ID
@@ -525,8 +532,9 @@ namespace Ossium
         /// Sets the local state of this entity to active or inactive.
         void SetActive(bool activate);
 
-        /// This effectively replaces the copy constructor; entities can only be explicitly copied
-        Entity* Clone();
+        /// This effectively replaces the copy constructor; entities can only be explicitly copied.
+        /// Optionally pass in an entity to parent the clone under. Defaults to this entity's parent.
+        Entity* Clone(Entity* parent = nullptr);
 
         /// Returns pointer to first found instance of an entity
         Entity* Find(std::string entityName, Entity* parent = nullptr);
@@ -536,6 +544,9 @@ namespace Ossium
 
         /// Returns a reference to the ECS instance.
         Scene* GetScene();
+
+        /// Move this entity from one scene to another. Optionally set a parent in the destination scene.
+        void SetScene(Scene* scene, Entity* parent = nullptr);
 
         /// String conversion methods get/set with the JSON representation of all attached components.
         void FromString(const std::string& str);

@@ -121,14 +121,16 @@ namespace Ossium
         /// Removes a specified data node and all nodes below it
         bool Remove(Node<T>* node)
         {
+            // First validate the node.
             if (node == nullptr)
             {
                 Log.Warning("(!) Attempted to remove node that is already null.");
                 return false;
             }
+
+            // Destroy all children
             std::vector<Node<T>*> all = GetAllBelow(node);
             node->children.clear();
-            /// Delete all nodes below the source node
             for (auto i = all.begin(); i != all.end(); i++)
             {
                 if (*i != nullptr)
@@ -138,6 +140,8 @@ namespace Ossium
                 }
                 total--;
             }
+
+            // Update cached sibling indexing
             std::vector<Node<T>*>& children = node->parent != nullptr ? node->parent->children : roots;
             //Log.Info("Removing child {0} from {1}", node->childIndex, children);
             auto index = children.begin() + node->childIndex;
@@ -146,18 +150,21 @@ namespace Ossium
                 (*i)->childIndex--;
                 //Log.Info("Reduced child index from {0} to {1}", (*i)->childIndex + 1, (*i)->childIndex);
             }
+
+            // Finally, remove the node and destroy it.
             children.erase(index);
-            updateFlattened = true;
             delete node;
             node = nullptr;
+
+            updateFlattened = true;
             total--;
+
             return true;
         }
 
         /// Finds and removes first found data node that meets the predicate condition.
         bool Remove(FindNodePredicate predicate)
         {
-            /// Short circuit evalutation
             Node<T>* node = Find(predicate);
             return Remove(node);
         }

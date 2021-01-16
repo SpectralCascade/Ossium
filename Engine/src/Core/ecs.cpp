@@ -61,9 +61,9 @@ namespace Ossium
         name = "Entity[" + Ossium::ToString(self->id) + "]";
     }
 
-    Entity* Entity::Clone()
+    Entity* Entity::Clone(Entity* parent)
     {
-        Entity* entityCopy = controller->CreateEntity(self->parent != nullptr ? self->parent->data : nullptr);
+        Entity* entityCopy = controller->CreateEntity(parent != nullptr ? parent : (self->parent != nullptr ? self->parent->data : nullptr));
         entityCopy->name = name + " (copy)";
         for (auto i = components.begin(); i != components.end(); i++)
         {
@@ -76,7 +76,27 @@ namespace Ossium
                 copiedComponents.push_back(copyComponent);
             }
             entityCopy->components.insert({i->first, copiedComponents});
+            for (auto itr : copiedComponents)
+            {
+                itr->OnCreate();
+            }
         }
+
+        // Now clone all children.
+        /*for (auto child : self->children)
+        {
+            child->data->Clone(this);
+        }*/
+
+        // Now call OnLoadFinish(), having created all the components on this entity.
+        for (auto i = components.begin(); i != components.end(); i++)
+        {
+            for (auto itr = i->second.begin(); itr != i->second.end(); itr++)
+            {
+                (*itr)->OnLoadFinish();
+            }
+        }
+
         /// Trigger active state setup
         entityCopy->OnSceneLoaded();
 
@@ -366,6 +386,84 @@ namespace Ossium
     Scene* Entity::GetScene()
     {
         return controller;
+    }
+
+    void Entity::SetScene(Scene* scene, Entity* parent)
+    {
+        if (controller != scene)
+        {
+            auto oldSelf = self;
+            Scene* oldScene = controller;
+
+            // Insert nodes into the destination scene.
+            oldScene->entityTree.WalkBreadth([scene, parent, oldScene, this] (Node<Entity*>* node) {
+                Entity* walked = node->data;
+
+                // Keep active state
+                if (!walked->IsActive())
+                {
+                    scene->inactiveEntities.insert(walked);
+                }
+                
+                // Erase references in the source scene.
+                oldScene->inactiveEntities.erase(walked);
+                oldScene->pendingDestruction.erase(walked);
+                oldScene->entities.erase(walked->self->id);
+                for (auto itr : walked->components)
+                {
+                    for (auto c : itr.second)
+                    {
+                        oldScene->pendingDestructionComponents.erase(c);
+                        for (auto i = oldScene->components[itr.first].begin(); i != oldScene->components[itr.first].end(); i++)
+                        {
+                            if (*i == c)
+                            {
+                                oldScene->components[itr.first].erase(i);
+                                break;
+                            }
+                        }
+                        // While here, add components to the destination scene.
+                        scene->components[itr.first].push_back(c);
+                    }
+                }
+
+                // Insert nodes into destination scene hierarchy.
+                auto previousSelf = walked->self;
+                if (this == walked)
+                {
+                    walked->self = scene->entityTree.Insert(
+                        walked,
+                        parent != nullptr && parent->GetScene() == scene ? parent->self : nullptr
+                    );
+                }
+                else
+                {
+                    walked->self = scene->entityTree.Insert(
+                        walked,
+                        walked->self->parent
+                    );
+                }
+                scene->entities[walked->self->id] = walked->self;
+
+                // After inserting, update parenting of all children.
+                // A little cheeky but safe as these will be removed anyway later.
+                for (auto child : previousSelf->children)
+                {
+                    child->parent = walked->self;
+                }
+
+                walked->controller = scene;
+                // Figure out why this is necessary. Looks like stuff isn't actually cleaned up...
+                previousSelf->data = nullptr;
+
+                return true;
+            }, oldSelf);
+
+            // Remove root references from the source scene.
+            oldScene->entityTree.Remove(oldSelf);
+
+            // TODO: OnSceneChanged() callback for components perhaps?
+        }
     }
 
     ///
@@ -944,7 +1042,7 @@ namespace Ossium
         }
 
 #ifdef OSSIUM_DEBUG
-        if (entities.size() == serialised.size())
+        if (entities.size() != serialised.size())
         {
             Log.Warning("Serialised entities ({0}) != created entities ({1})!", entities.size(), serialised.size());
         }
