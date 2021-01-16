@@ -489,10 +489,11 @@ namespace Ossium
                 Free();
             }
 
-            void AudioStream::Init()
+            bool AudioStream::Init()
             {
                 paused = false;
                 started = false;
+                return true;
             }
 
             void AudioStream::Free()

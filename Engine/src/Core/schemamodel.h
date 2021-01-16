@@ -139,6 +139,16 @@ namespace Ossium
             return false;
         }
 
+        bool Init()
+        {
+            return true;
+        }
+
+        bool LoadAndInit(std::string filePath)
+        {
+            return Load(filePath) && Init();
+        }
+
         /// Saves this schema instance as a JSON file.
         bool Save(std::string filePath)
         {

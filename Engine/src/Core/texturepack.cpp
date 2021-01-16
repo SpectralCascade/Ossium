@@ -39,8 +39,6 @@ namespace Ossium
         texture = tex;
     }
 
-    REGISTER_RESOURCE(TexturePack);
-
     SDL_Rect GetMipMapClipTP(SDL_Rect src, int level, Uint16 minSize)
     {
         SDL_Rect mipMapClip = {src.x + src.w, src.y, src.w / 2, src.h / 2};

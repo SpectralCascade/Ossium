@@ -433,7 +433,7 @@ namespace Ossium
                 virtual ~AudioStream();
 
                 /// Resets started and paused to false
-                void Init();
+                bool Init();
 
                 /// Frees the audio stream
                 void Free();

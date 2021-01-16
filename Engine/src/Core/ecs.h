@@ -30,7 +30,6 @@
 #include "stringintern.h"
 #include "schemamodel.h"
 #include "services.h"
-#include "resource.h"
 
 namespace Ossium
 {

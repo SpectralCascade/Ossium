@@ -1,6 +1,10 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
+#include "typefactory.h"
+
+#include <SDL2/SDL.h>
+
 namespace Ossium
 {
 
@@ -18,10 +22,10 @@ namespace Ossium
     {                                                                                                                   \
         return ((ResourceController*)target_controller)->Load<TYPE>("");                                                \
     }                                                                                                                   \
-    Ossium::TypeSystem::TypeFactory<Resource, ResourceType> TYPE::__resource_factory(SID( #TYPE )::str, ResourceFactory);
+    Ossium::TypeSystem::TypeFactory<Resource, ResourceType> TYPE::__resource_factory(SID( #TYPE )::str, ResourceFactory)
 
     /// All resource classes e.g. images, audio clips etc. should inherit from this base class
-    class OSSIUM_EDL Resource
+    class Resource
     {
     public:
         virtual ~Resource() = default;

@@ -62,10 +62,9 @@ namespace Ossium
      * (e.g. when minSize = 16, level n = 16, level n - 1 = 32, level n - 2 = 64, etc.) **/
     SDL_Rect GetMipMapClipTP(SDL_Rect src, int level = 0, Uint16 minSize = 4);
 
-    class TexturePack : public Resource, public TexturePackSchema
+    class TexturePack : public TexturePackSchema
     {
     public:
-        DECLARE_RESOURCE(TexturePack);
         CONSTRUCT_SCHEMA(SchemaRoot, TexturePackSchema);
 
         TexturePack() = default;

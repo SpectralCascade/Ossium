@@ -57,7 +57,7 @@ namespace Ossium
             {
                 delete resource;
                 resource = nullptr;
-                Log.Warning("Failed to load resource '{0}.", guid_path);
+                Log.Warning("Failed to load resource '{0}'.", guid_path);
             }
             return resource;
         };
