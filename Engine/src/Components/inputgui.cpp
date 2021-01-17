@@ -232,16 +232,26 @@ namespace Ossium
 
     void InputGUI::AddInteractable(InteractableGUI* element)
     {
+        // First check that it hasn't already been added
+        for (auto interactable : interactables)
+        {
+            if (interactable == element)
+            {
+                Log.Warning("Attempted to add InteractableGUI element that had already been added! Entity Name: {0}", element->GetEntity()->name);
+                return;
+            }
+        }
         interactables.push_back(element);
     }
 
     bool InputGUI::RemoveInteractable(InteractableGUI* element)
     {
-        for (auto interactable : interactables)
+        for (auto itr = interactables.begin(); itr != interactables.end(); itr++)
         {
             /// Check if it's the same instance
-            if (interactable == element)
+            if (*itr == element)
             {
+                interactables.erase(itr);
                 return true;
             }
         }

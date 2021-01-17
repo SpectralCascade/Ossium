@@ -135,6 +135,7 @@ namespace Ossium
         int mouseActionId;
 
         /// All interactables.
+        /// TODO: Use a set instead? Can use separate vector for order.
         std::vector<InteractableGUI*> interactables;
 
     };
