@@ -91,6 +91,13 @@ namespace Ossium
                     {
                         value = Strip(value, '\n');
                         value = Strip(value);
+                        auto vlen = value.length();
+                        // If it's a string, strip the double quotes.
+                        if (vlen > 1 && value[0] == '"' && value[vlen - 1] == '"')
+                        {
+                            value.erase(vlen - 1);
+                            value.erase(value.begin());
+                        }
                         dataArray.push_back(value);
                         value = (string)"";
                         continue;
@@ -108,8 +115,16 @@ namespace Ossium
                         arrayCount--;
                         if (arrayCount < 1)
                         {
+                            value = Strip(value);
                             value = Strip(value, '\n');
                             value = Strip(value);
+                            auto vlen = value.length();
+                            // If it's a string, strip the double quotes.
+                            if (vlen > 1 && value[0] == '"' && value[vlen - 1] == '"')
+                            {
+                                value.erase(vlen - 1);
+                                value.erase(value.begin());
+                            }
                             dataArray.push_back(value);
                             break;
                         }

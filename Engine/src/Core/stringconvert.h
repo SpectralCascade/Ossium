@@ -86,21 +86,28 @@ namespace Ossium
             obj = data;
         }
 
-        /// Converts string version of an iterable object into said object (except for strings).
+        /// Converts string version of a vector object into said object (except for strings).
         template<typename T>
         typename std::enable_if<
             !has_ToString<T>::value &&
-            !is_insertable<T>::value &&
-            (is_insertable<typename T::value_type>::value || has_ToString<typename T::value_type>::value) &&
-            !std::is_base_of<std::string, T>::value,
+            std::is_same<std::vector<typename T::value_type>, T>::value,
         void>::type
         FromString(T& obj, const std::string& data)
         {
-            std::vector<JString> jdata = JString(data).ToArray();
-            auto target = obj.begin();
-            for (auto itr = jdata.begin(); itr != jdata.end(); itr++)
+            JString jarray = JString(data);
+            if (!jarray.IsArray())
             {
-                if (*itr == "\\!EB!\\")
+                // Early out, clear the target vector.
+                printf("WARN: Data passed to FromString() for std::vector is not a valid JString array! Raw data: %s", data.c_str());
+                obj.clear();
+                return;
+            }
+
+            std::vector<JString> jdata = jarray.ToArray();
+            auto target = obj.begin();
+            for (auto& jstr : jdata)
+            {
+                if (jstr == "\\!EB!\\")
                 {
                     // Early out on failed FromString for an element.
                     if (target < obj.end())
@@ -114,15 +121,19 @@ namespace Ossium
                     // This assumes there's a default public constructor available. If not, make it so.
                     typename T::value_type converted;
 
-                    FromString(converted, *itr);
+                    FromString(converted, (std::string)jstr);
                     obj.push_back(converted);
+                    target = obj.end();
                 }
                 else
                 {
+                    typename T::value_type converted;
+                    
                     // Serialise the pre-existing object.
-                    FromString(*target, *itr);
+                    FromString(converted, (std::string)jstr);
+                    *target = converted;
+                    target++;
                 }
-                target++;
             }
         }
 
