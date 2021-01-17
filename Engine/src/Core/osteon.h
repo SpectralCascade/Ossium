@@ -36,6 +36,8 @@ namespace Ossium
         DECLARE_COMPONENT(Component, Osteon);
         
         void OnLoadFinish();
+
+        void Reload();
         
     };
     
