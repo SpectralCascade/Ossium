@@ -89,7 +89,7 @@ namespace Ossium
         }*/
 
         // Now call OnLoadFinish(), having created all the components on this entity.
-        for (auto i = components.begin(); i != components.end(); i++)
+        for (auto i = entityCopy->components.begin(); i != entityCopy->components.end(); i++)
         {
             for (auto itr = i->second.begin(); itr != i->second.end(); itr++)
             {

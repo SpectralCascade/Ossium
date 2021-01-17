@@ -538,6 +538,19 @@ namespace Ossium
         /// Returns pointer to first found instance of an entity
         Entity* Find(std::string entityName, Entity* parent = nullptr);
 
+        /// Returns pointer to first found instance of an component on a found entity.
+        template<typename T>
+        typename std::enable_if<is_component<T>::value, T*>::type
+        FindAndGetComponent(std::string entityName, Entity* parent = nullptr)
+        {
+            Entity* found = Find(entityName, parent);
+            if (found != nullptr)
+            {
+                return found->GetComponent<T>();
+            }
+            return nullptr;
+        }
+
         /// Creates a child entity of this entity
         Entity* CreateChild();
 
