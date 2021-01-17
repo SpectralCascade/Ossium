@@ -31,15 +31,15 @@ namespace Ossium
     #define STRINGIFY(CODE) "CODE"
 
     #ifdef OSSIUM_DEBUG
-    #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)                                               \
+    #define DEBUG_ASSERT(CONDITION, ...)                                                        \
             if (!(CONDITION))                                                                   \
             {                                                                                   \
-                Log.Error("{0}:{1} {2}", __FILE__ , __LINE__ , FAIL_MESSAGE);   \
+                Log.Error("Debug Assertion failure at {0}:{1} {2}", __FILE__ , __LINE__ ,##__VA_ARGS__);   \
                 SDL_assert(CONDITION);                                                          \
             }                                                                                   \
             SDL_assert(true)
     #else
-    #define DEBUG_ASSERT(CONDITION, FAIL_MESSAGE)
+    #define DEBUG_ASSERT(CONDITION, ...)
     #endif
 
     /// Export Dynamic Link macro for creating shared library links.
