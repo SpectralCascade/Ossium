@@ -106,6 +106,11 @@ namespace Ossium
 
     void InteractableGUI::OnPointerEvent(const MouseInput& data)
     {
+        if (!IsActiveAndEnabled())
+        {
+            // Early out.
+            return;
+        }
         Point mpos;
         if (GetService<Renderer>() != nullptr)
         {
