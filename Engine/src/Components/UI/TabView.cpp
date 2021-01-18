@@ -22,7 +22,7 @@ namespace Ossium
         for (unsigned int i = 0; i < tabButtons.size(); i++)
         {
             // Call OnLoadFinish() early to ensure the texture is loaded.
-            tabButtons[i]->sprite->OnLoadFinish();
+            tabButtons[i]->GetEntity()->AddComponentOnce<StateSprite>()->OnLoadFinish();
             tabButtons[i]->SetSelected(i == currentTab);
             tabButtons[i]->OnClicked += [=] (Button& button) { this->SwitchTo(i); };
         }

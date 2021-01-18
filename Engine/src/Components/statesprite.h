@@ -67,7 +67,7 @@ namespace Ossium
     };
 
     /// Can be switched between different textures/texture clips
-    class OSSIUM_EDL StateSprite : public Texture, protected StateSpriteSchema
+    class OSSIUM_EDL StateSprite : public IOnButtonState, public Texture, protected StateSpriteSchema
     {
     public:
         CONSTRUCT_SCHEMA(Texture, StateSpriteSchema);
@@ -97,6 +97,9 @@ namespace Ossium
 
         /// Returns the current substate clip rect
         SDL_Rect GetCurrentClip();
+
+        /// Implementation of IOnButtonState.
+        void OnButtonState(int state);
 
         /// Multiple states, multiple textures
         StateSpriteTable states;

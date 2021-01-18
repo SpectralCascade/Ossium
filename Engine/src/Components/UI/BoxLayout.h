@@ -2,6 +2,7 @@
 #define BOXLAYOUT_H
 
 #include "LayoutComponent.h"
+#include "../componentinterfaces.h"
 
 namespace Ossium
 {
@@ -30,8 +31,7 @@ namespace Ossium
 
     };
 
-
-    class BoxLayout : public LayoutComponent, public BoxLayoutSchema
+    class BoxLayout : public IContainsPoint, public LayoutComponent, public BoxLayoutSchema
     {
     public:
         CONSTRUCT_SCHEMA(LayoutComponent, BoxLayoutSchema);
@@ -59,6 +59,9 @@ namespace Ossium
 
         // Returns true if the layout contains a given world point.
         bool Contains(Vector2 worldPoint, bool innerDimensions = false);
+
+        // IContainsPoint implementation, calls default Contains().
+        bool Contains(Point p);
 
     private:
         // Cached percent of anchorMin.

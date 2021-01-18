@@ -35,6 +35,7 @@ namespace Ossium
         /// http://jguegant.github.io/blogs/tech/sfinae-introduction.html
         ///
 
+        // TODO: an additional, stricter #define that also checks the method return type.
         #define DETECT_METHOD(METHOD_NAME)                                                                                                                      \
         template<class T>                                                                                                                                       \
         struct OSSIUM_EDL has_##METHOD_NAME                                                                                                                     \
@@ -59,6 +60,7 @@ namespace Ossium
                                                                                                                                                                 \
         }
 
+        // TODO: use variadic and condense into a single DETECT_METHOD(METHOD_NAME, ...) #define.
         #define DETECT_METHOD_P(METHOD_NAME, PARAMTYPE)                                                                                                         \
         template<class T>                                                                                                                                       \
         struct OSSIUM_EDL has_##METHOD_NAME                                                                                                                                \

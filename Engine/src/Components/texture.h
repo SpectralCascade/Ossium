@@ -26,6 +26,7 @@
 #include "../Core/font.h"
 #include "../Core/resourcecontroller.h"
 #include "../Core/image.h"
+#include "componentinterfaces.h"
 
 namespace Ossium
 {
@@ -74,7 +75,7 @@ namespace Ossium
     };
 
     /// This class is used for rendering an image
-    class OSSIUM_EDL Texture : public GraphicComponent, public TextureSchema
+    class OSSIUM_EDL Texture : public IContainsPoint, public GraphicComponent, public TextureSchema
     {
     public:
         DECLARE_COMPONENT(GraphicComponent, Texture);
@@ -132,6 +133,9 @@ namespace Ossium
 
         /// Takes a point from UI space and transforms it to the local texture space
         Point ScreenToLocalPoint(Point source);
+
+        /// Implementation of IContainsPoint.
+        bool Contains(Point p);
 
     protected:
         /// The source image that this texture renders a copy of

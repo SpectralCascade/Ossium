@@ -18,11 +18,14 @@ namespace Ossium
         /// Override to use sprite rect.
         bool ContainsPointer(Point position);
 
-        /// Callback registry that is called whenever the button is clicked
+        /// Callback registry that is called whenever the button is clicked.
         Callback<Button> OnClicked;
 
-        /// Reference to the sprite component this button requires.
-        StateSprite* sprite = nullptr;
+        /// Pointer to implementation of IOnButtonState.
+        IOnButtonState* stateFollower = nullptr;
+
+        /// Pointer to implementation of IContainsPoint.
+        IContainsPoint* hitTester = nullptr;
 
     protected:
         void OnClick();

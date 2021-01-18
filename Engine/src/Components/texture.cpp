@@ -415,4 +415,9 @@ namespace Ossium
         return source;
     }
 
+    bool Texture::Contains(Point p)
+    {
+        return GetRect(GetTransform()->GetWorldPosition()).Contains(p);
+    }
+
 }

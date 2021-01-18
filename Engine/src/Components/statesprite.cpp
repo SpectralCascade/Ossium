@@ -210,5 +210,10 @@ namespace Ossium
     {
         return clip;
     }
+    
+    void StateSprite::OnButtonState(int state)
+    {
+        ChangeSubState(state);
+    }
 
 }

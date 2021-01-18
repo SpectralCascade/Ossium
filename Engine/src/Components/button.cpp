@@ -1,4 +1,5 @@
 #include "button.h"
+#include "UI/BoxLayout.h"
 #include "statesprite.h"
 
 namespace Ossium
@@ -9,45 +10,71 @@ namespace Ossium
     void Button::OnLoadFinish()
     {
         ParentType::OnLoadFinish();
-        /// We can't inherit from StateSprite as we already inherit indirectly from GraphicComponent,
-        /// but we can add our own instance to the ECS.
-        sprite = entity->AddComponentOnce<StateSprite>();
+        StateSprite* sprite = entity->GetComponent<StateSprite>();
+        if (sprite != nullptr)
+        {
+            stateFollower = sprite;
+            hitTester = sprite;
+        }
+        else
+        {
+            hitTester = entity->GetComponent<BoxLayout>();
+        }
+
+#ifndef OSSIUM_EDITOR
+        DEBUG_ASSERT(hitTester != nullptr, "Button hit tester implementation was not found!");
+
+        if (hitTester == nullptr)
+        {
+            Log.Error("Failed to find Button hit tester implementation! Disabling Button on entity \"{0}\"", entity->name);
+            SetEnabled(false);
+        }
+#endif // OSSIUM_EDITOR
     }
 
     bool Button::ContainsPointer(Point position)
     {
-        return sprite->GetRect(GetTransform()->GetWorldPosition()).Contains(position);
+        return hitTester->Contains(position);
     }
 
     void Button::OnClick()
     {
-        sprite->ChangeSubState(1);
+        if (stateFollower != nullptr)
+        {
+            stateFollower->OnButtonState(BUTTON_STATE_HOVERED);
+        }
         OnClicked(*this);
     }
 
     void Button::OnPointerDown()
     {
-        sprite->ChangeSubState(2);
+        if (stateFollower != nullptr)
+        {
+            stateFollower->OnButtonState(BUTTON_STATE_PRESSED);
+        }
     }
 
     void Button::OnPointerUp()
     {
-        sprite->ChangeSubState(0);
+        if (stateFollower != nullptr)
+        {
+            stateFollower->OnButtonState(BUTTON_STATE_NONE);
+        }
     }
 
     void Button::OnHoverBegin()
     {
-        if (!IsPressed())
+        if (!IsPressed() && stateFollower != nullptr)
         {
-            sprite->ChangeSubState(1);
+            stateFollower->OnButtonState(BUTTON_STATE_HOVERED);
         }
     }
 
     void Button::OnHoverEnd()
     {
-        if (!IsPressed())
+        if (!IsPressed() && stateFollower != nullptr)
         {
-            sprite->ChangeSubState(0);
+            stateFollower->OnButtonState(BUTTON_STATE_NONE);
         }
     }
 

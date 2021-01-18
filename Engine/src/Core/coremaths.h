@@ -317,6 +317,8 @@ namespace Ossium
 
     };
 
+    /// Special template attributes 
+
     ///
     /// Vector2 maths
     ///
