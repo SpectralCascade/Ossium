@@ -110,7 +110,7 @@ namespace Ossium
         void Clear();
 
         /// Called when the GoBack() action is called (useful for things like the Android back button).
-        Callback<InputGUI> OnBack;
+        Callback<InputGUI&> OnBack;
 
     private:
         /// These are here for convenience; if you wish to use them directly you can use the inherited GetHandler<>() method.

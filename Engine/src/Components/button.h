@@ -19,7 +19,7 @@ namespace Ossium
         bool ContainsPointer(Point position);
 
         /// Callback registry that is called whenever the button is clicked.
-        Callback<Button> OnClicked;
+        Callback<Button&> OnClicked;
 
         /// Pointer to implementation of IOnButtonState.
         IOnButtonState* stateFollower = nullptr;

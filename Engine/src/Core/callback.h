@@ -25,18 +25,18 @@
 namespace Ossium
 {
 
-    template<typename CallerType>
+    template<typename ...Args>
     class OSSIUM_EDL Callback
     {
     public:
-        typedef std::function<void(CallerType&)> RegisteredCallback;
+        typedef std::function<void(Args&&...)> RegisteredCallback;
 
         /// Calls all listeners, passing in a reference to the caller.
-        void operator()(CallerType& caller)
+        void operator()(Args&&...args)
         {
             for (auto func : callees)
             {
-                func.second(caller);
+                func.second(std::forward<Args>(args)...);
             }
         }
 
@@ -73,8 +73,8 @@ namespace Ossium
 
     };
 
-    template<typename CallerType>
-    int Callback<CallerType>::nextHandle = -1;
+    template<typename ...Args>
+    int Callback<Args...>::nextHandle = -1;
 
 }
 

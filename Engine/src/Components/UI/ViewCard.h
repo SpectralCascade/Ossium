@@ -19,16 +19,16 @@ namespace Ossium
         virtual void Hide();
 
         /// Called when Show() is called.
-        Callback<ViewCard> OnShow;
+        Callback<ViewCard&> OnShow;
 
         /// Called when this view is fully shown.
-        Callback<ViewCard> OnShown;
+        Callback<ViewCard&> OnShown;
 
         /// Called when Hide() is called.
-        Callback<ViewCard> OnHide;
+        Callback<ViewCard&> OnHide;
 
         /// Called when this view is fully hidden.
-        Callback<ViewCard> OnHidden;
+        Callback<ViewCard&> OnHidden;
         
     };
 

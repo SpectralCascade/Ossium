@@ -101,29 +101,29 @@ namespace Ossium
 
         // Callbacks for window state changes
         /// Called when the window size has been changed; this includes cases the size is changed directly by the API.
-        Callback<Window> OnSizeChanged;
+        Callback<Window&> OnSizeChanged;
         /// Called when the window has been resized; this is preceded by OnSizeChanged and only gets called if the change was made by the user or native window manager.
-        Callback<Window> OnResize;
+        Callback<Window&> OnResize;
         /// Called when the window switches to fullscreen.
-        Callback<Window> OnFullscreen;
+        Callback<Window&> OnFullscreen;
         /// Called when the window switches from fullscreen back to normal.
-        Callback<Window> OnWindowed;
+        Callback<Window&> OnWindowed;
         /// Called when the window is minimised.
-        Callback<Window> OnMinimise;
+        Callback<Window&> OnMinimise;
         /// Called when the window is maxinised.
-        Callback<Window> OnMaximise;
+        Callback<Window&> OnMaximise;
         /// Called when the user interacts with the window while it is not in focus.
-        Callback<Window> OnFocusGained;
+        Callback<Window&> OnFocusGained;
         /// Called when the user interacts with something that isn't part of this window.
-        Callback<Window> OnFocusLost;
+        Callback<Window&> OnFocusLost;
         /// Called when the mouse cursor touches the window when it has not been touching it.
-        Callback<Window> OnMouseEnter;
+        Callback<Window&> OnMouseEnter;
         /// Called when the mouse cursor leaves the window when it had been touching it previously.
-        Callback<Window> OnMouseLeave;
+        Callback<Window&> OnMouseLeave;
         /// Called when the close button is used.
-        Callback<Window> OnCloseButton;
+        Callback<Window&> OnCloseButton;
         /// Called when the window is destroyed so any associated renderers can null their window pointers.
-        Callback<Window> OnDestroyed;
+        Callback<Window&> OnDestroyed;
 
     private:
         // Prohibited copying of windows

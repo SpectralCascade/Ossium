@@ -28,7 +28,7 @@ namespace Ossium
         ViewCard* GetCurrentTabCard();
 
         /// Called when the current tab is switched.
-        Callback<TabView> OnSwitchTab;
+        Callback<TabView&> OnSwitchTab;
 
     private:
         // TODO: Serialise me when editor supports component serialisation
