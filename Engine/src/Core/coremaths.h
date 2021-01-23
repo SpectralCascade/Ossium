@@ -18,6 +18,8 @@
 #define VECTOR_H
 
 #include <string>
+#include <type_traits>
+#include <initializer_list>
 #include <Box2D/Common/b2Math.h>
 
 #include "mathconsts.h"
@@ -139,6 +141,148 @@ namespace Ossium
         using b2Rot::GetAngle;
 
     };
+
+    /// A matrix representation.
+    /// I.e. data[0] = { x0, y0, z0 }, data[1] = { x1, y1, z1 } etc.
+    /// such that each array row actually represents a column vector in the mathematical representation.
+    /// For example, to create a 3x4 matrix: Matrix<3, 4>();
+    template<unsigned int Dimensions, unsigned int Vectors>
+    struct Matrix
+    {
+    private:
+        // A matrix full of zeroes.
+        static Matrix<Dimensions, Vectors> zeroes;
+
+    public:
+        // The underlying data, in row-major order (for contiguous memory layout).
+        float data[Vectors][Dimensions];
+
+        const static unsigned int TotalVectors;
+        const static unsigned int TotalDimensions;
+
+        Matrix() = default;
+
+        Matrix(float init[Vectors][Dimensions])
+        {
+            memcpy(data, init, Vectors * Dimensions);
+        }
+
+        Matrix(std::initializer_list<std::initializer_list<float>> init)
+        {
+            //Log.Debug("Creating matrix of size ({0}, {1})...", TotalDimensions, TotalVectors);
+            DEBUG_ASSERT(
+                init.size() == TotalVectors && init.begin()->size() == TotalDimensions,
+                Utilities::Format(
+                    "Matrix dimensions mismatch! Input dimensions = ({0}, {1}), dest dimensions = ({2}, {3})",
+                    init.begin()->size(),
+                    init.size(),
+                    TotalDimensions,
+                    TotalVectors
+                )
+            );
+            unsigned int i = 0, j = 0;
+            for (auto itr = init.begin(); itr != init.end(); itr++)
+            {
+                for (auto jtr = itr->begin(); jtr != itr->end(); jtr++)
+                {
+                    data[i][j] = *jtr;
+                    j++;
+                }
+                i++;
+                j = 0;
+            }
+        }
+
+        /// Multiplies this with another matrix, such that if A = this, B = operand,
+        /// it performs the multiplication: AB
+        template<typename MatType>
+        typename std::enable_if<MatType::TotalDimensions == TotalVectors, Matrix<Dimensions, MatType::TotalVectors>>::type
+        operator*(const MatType& operand)
+        {
+            // Make sure resultant matrix always starts initialised to zeroes.
+            auto result = Matrix<Dimensions, MatType::TotalVectors>::Zeroes();
+
+            // Iterate over each vector in the operand matrix.
+            for (unsigned int operandVec = 0; operandVec < MatType::TotalVectors; operandVec++)
+            {
+                // Iterate over each element in that vector.
+                for (unsigned int operandElement = 0; operandElement < MatType::TotalDimensions; operandElement++)
+                {
+                    // Finally, iterate over each element in the corresponding vector of this matrix.
+                    for (unsigned int element = 0; element < Dimensions; element++)
+                    {
+                        // Due to row-major ordering, we specify column first THEN row when indexing.
+                        result.data[operandVec][element] += 
+                            data[operandElement][element] * operand.data[operandVec][operandElement];
+                    }
+                }
+            }
+            return result;
+        }
+
+        // For convenience. Returns a reference to the value of the specified vector and dimension.
+        float& operator()(unsigned int vec, unsigned int dimension)
+        {
+            return data[vec][dimension];
+        }
+
+        std::string ToString()
+        {
+            std::string result = "[";
+            for (unsigned int i = 0; i < TotalVectors; i++)
+            {
+                result += "[";
+                result += Utilities::ToString(data[i][0]);
+                for (unsigned int j = 1; j < TotalDimensions; j++)
+                {
+                    result += ", ";
+                    result += Utilities::ToString(data[i][j]);
+                }
+                result += "]";
+            }
+            result += "]";
+            return result;
+        }
+
+        static Matrix<Dimensions, Vectors> Zeroes()
+        {
+            return zeroes;
+        }
+
+    private:
+        // TODO: Compile time iteration
+        /*template<typename MatType, typename N = Vectors>
+        inline void CompiledMult(MatType& matrix)
+        {
+            // Recurse over each element
+            CompiledMultValue<MatType, Dimensions>(matrix)
+            if constexpr (N > 1)
+            {
+                CompiledMult<MatType, N - 1>(matrix);
+            }
+        }
+
+        template<typename MatType, typename Col, typename Element>
+        inline void CompiledMultValue(MatType& matrix)
+        {
+            // Multiply this matrix row
+            matrix.data[][] *= data[Col][Element];
+            if constexpr (Element > 1)
+            {
+                CompiledMultValue<MatType, Element - 1>(matrix);
+            }
+        }*/
+
+    };
+
+    template<unsigned int Dimensions, unsigned int Vectors>
+    Matrix<Dimensions, Vectors> Matrix<Dimensions, Vectors>::zeroes = Matrix<Dimensions, Vectors>((float[Vectors][Dimensions]){0});
+
+    template<unsigned int Dimensions, unsigned int Vectors>
+    const unsigned int Matrix<Dimensions, Vectors>::TotalVectors = Vectors;
+
+    template<unsigned int Dimensions, unsigned int Vectors>
+    const unsigned int Matrix<Dimensions, Vectors>::TotalDimensions = Dimensions;
 
     /*inline Rotation operator*(const Rotation& rota, const Rotation& rotb)
     {

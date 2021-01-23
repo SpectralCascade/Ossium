@@ -75,7 +75,9 @@
 			"label": "Make Editor (Debug)",
 			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
 			"args": [
-				"ossiumeditor__debug_"
+				"ossiumeditor__debug_",
+				"-j",
+				"8"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
@@ -112,7 +114,7 @@
 			"args": [
 				"-r",
 				"-Force",
-				"obj"
+				".objs"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"

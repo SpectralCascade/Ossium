@@ -113,7 +113,7 @@
 				</Linker>
 			</Target>
 			<Target title="OssiumEditor (Debug)">
-				<Option output="bin/OssiumEditorDebug/Ossium" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/OssiumEditorDebug/OssiumEditor" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/OssiumEditorDebug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -438,8 +438,18 @@
 			<Option target="OssiumEditor (Debug Linux)" />
 			<Option target="libOssiumEditor" />
 		</Unit>
-		<Unit filename="src/Editor/Core/editorserializer.cpp" />
-		<Unit filename="src/Editor/Core/editorserializer.h" />
+		<Unit filename="src/Editor/Core/editorserializer.cpp">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+			<Option target="libOssiumEditor" />
+		</Unit>
+		<Unit filename="src/Editor/Core/editorserializer.h">
+			<Option target="OssiumEditor" />
+			<Option target="OssiumEditor (Debug)" />
+			<Option target="OssiumEditor (Debug Linux)" />
+			<Option target="libOssiumEditor" />
+		</Unit>
 		<Unit filename="src/Editor/Core/editorstyle.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
