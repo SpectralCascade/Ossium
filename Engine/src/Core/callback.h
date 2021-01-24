@@ -29,14 +29,14 @@ namespace Ossium
     class OSSIUM_EDL Callback
     {
     public:
-        typedef std::function<void(Args&&...)> RegisteredCallback;
+        typedef std::function<void(Args...)> RegisteredCallback;
 
         /// Calls all listeners, passing in a reference to the caller.
-        void operator()(Args&&...args)
+        void operator()(Args...args)
         {
             for (auto func : callees)
             {
-                func.second(std::forward<Args>(args)...);
+                func.second(args...);
             }
         }
 
