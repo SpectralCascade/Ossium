@@ -39,14 +39,14 @@ namespace Ossium
     }
 
     template<unsigned int Dimensions, unsigned int Vectors, typename Enable = void>
-    struct Vector
+    struct MatrixBase
     {
         // The underlying data, in row-major order (for contiguous memory layout).
         float data[Vectors][Dimensions];
     };
 
     template<unsigned int Dimensions, unsigned int Vectors>
-    struct Vector<Dimensions, Vectors, std::enable_if_t<(Dimensions == 2)>>
+    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 2 && Vectors == 1>>
     {
         union {
             struct {
@@ -57,10 +57,11 @@ namespace Ossium
             // The underlying data, in row-major order (for contiguous memory layout).
             float data[Vectors][Dimensions];    
         };
+        
     };
 
     template<unsigned int Dimensions, unsigned int Vectors>
-    struct Vector<Dimensions, Vectors, std::enable_if_t<Dimensions == 3>>
+    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 3 && Vectors == 1>>
     {
         union {
             struct {
@@ -72,6 +73,60 @@ namespace Ossium
             // The underlying data, in row-major order (for contiguous memory layout).
             float data[Vectors][Dimensions];
         };
+
+        
+
+    };
+
+    template<unsigned int Dimensions, unsigned int Vectors>
+    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 2 && Vectors == 2>>
+    {
+        union {
+            struct {
+                float a;
+                float c;
+                float b;
+                float d;
+            };
+
+            // The underlying data, in row-major order (for contiguous memory layout).
+            float data[Vectors][Dimensions];
+        };
+
+        /// Returns the determinant of this matrix (signed volume of the parallelogram).
+        float Determinant()
+        {
+            return a * d - b * c;
+        }
+
+    };
+
+    template<unsigned int Dimensions, unsigned int Vectors>
+    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 3 && Vectors == 3>>
+    {
+        union {
+            struct {
+                float a;
+                float d;
+                float g;
+                float b;
+                float e;
+                float h;
+                float c;
+                float f;
+                float i;
+            };
+
+            // The underlying data, in row-major order (for contiguous memory layout).
+            float data[Vectors][Dimensions];
+        };
+
+        /// Returns the determinant of this matrix (signed volume of the parallelpiped).
+        float Determinant()
+        {
+            return (a * e * i) + (b * f * g) + (c * d * h) - (c * e * g) - (b * d * i) - (a * f * h);
+        }
+
     };
 
     /// A matrix representation.
@@ -79,13 +134,14 @@ namespace Ossium
     /// such that each array row actually represents a column vector in the mathematical representation.
     /// For example, to create a 3x4 matrix: Matrix<3, 4>();
     template<unsigned int Dimensions, unsigned int Vectors>
-    struct Matrix : public Vector<Dimensions, Vectors>
+    struct Matrix : public MatrixBase<Dimensions, Vectors>
     {
     private:
         // A matrix full of zeroes.
         static Matrix<Dimensions, Vectors> zeroes;
+        static Matrix<Dimensions, Vectors> ones;
 
-        typedef Vector<Dimensions, Vectors> Base;
+        typedef MatrixBase<Dimensions, Vectors> Base;
 
     public:
         inline const static unsigned int TotalVectors = Vectors;
@@ -315,6 +371,11 @@ namespace Ossium
             return zeroes;
         }
 
+        static Matrix<Dimensions, Vectors> Ones()
+        {
+            return ones;
+        }
+
     private:
         // TODO: Compile time iteration
         /*template<typename MatType, typename N = Vectors>
@@ -343,13 +404,20 @@ namespace Ossium
 
     template<unsigned int Dimensions, unsigned int Vectors>
     Matrix<Dimensions, Vectors> Matrix<Dimensions, Vectors>::zeroes = Matrix<Dimensions, Vectors>((float[Vectors][Dimensions]){0});
-/*
-    template<unsigned int Dimensions, unsigned int Vectors>
-    const unsigned int Matrix<Dimensions, Vectors>::TotalVectors = Vectors;
 
     template<unsigned int Dimensions, unsigned int Vectors>
-    const unsigned int Matrix<Dimensions, Vectors>::TotalDimensions = Dimensions;
-*/
+    Matrix<Dimensions, Vectors> Matrix<Dimensions, Vectors>::ones = Matrix<Dimensions, Vectors>((float[Vectors][Dimensions]){1});
+
+    struct Vector3 : public Matrix<3, 1>
+    {
+        Vector3() = default;
+        Vector3(float x, float y, float z);
+        Vector3(Matrix<3, 1> matrix) : Matrix(matrix) {}
+        Vector3(Matrix<2, 1> matrix) : Matrix(Matrix<3, 1>({{matrix.x, matrix.y, z}})) {}
+
+        Vector3 Cross(const Vector3& vec);
+    };
+
     /// Represents a 2D vector.
     /// TODO: Derive from Matrix instead of b2Vec2 and union the data array with x and y members.
     struct OSSIUM_EDL Vector2 : public b2Vec2

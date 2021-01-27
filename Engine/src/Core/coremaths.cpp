@@ -26,6 +26,25 @@ namespace Ossium
 {
 
     ///
+    /// Vector3
+    ///
+    Vector3::Vector3(float x, float y, float z)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+
+    Vector3 Vector3::Cross(const Vector3& vec)
+    {
+        return Vector3(
+            y * vec.z - vec.y * z,
+            z * vec.x - vec.z * x,
+            x * vec.y - vec.x * y
+        );
+    }
+
+    ///
     /// Vector2
     ///
 
