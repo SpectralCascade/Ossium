@@ -562,10 +562,12 @@ namespace Ossium::Editor
             }
         }
 
+        Rect vrect = Rect(0, 0, viewport.w, viewport.h);
+
         // Check if mouse is hovering over the button, if so change the cursor to an I beam.
         Vector2 layoutSize = tlayout.GetSize();
         Rect buttonRect = GetButtonRect(layoutSize.x, layoutSize.y);
-        if (buttonRect.Contains(InputState.mousePos))
+        if (buttonRect.Contains(InputState.mousePos) && vrect.Contains(InputState.mousePos))
         {
             input_state.textFieldHovered = true;
         }
@@ -717,8 +719,10 @@ namespace Ossium::Editor
         SDL_Rect dest = GetButtonDest(w, h, xpadding, ypadding);
         Rect buttonDest = GetButtonRect(dest, xpadding, ypadding);
 
-        bool hovered = buttonDest.Contains(InputState.mousePos);
-        bool pressed = InputState.mousePressed && buttonDest.Contains(InputState.mouseDownPos);
+        Rect vrect = Rect(0, 0, viewport.w, viewport.h);
+
+        bool hovered = buttonDest.Contains(InputState.mousePos) && vrect.Contains(InputState.mousePos);
+        bool pressed = InputState.mousePressed && buttonDest.Contains(InputState.mouseDownPos) && vrect.Contains(InputState.mouseDownPos);
         if (isHovered != nullptr)
         {
             *isHovered = hovered;
@@ -761,14 +765,15 @@ namespace Ossium::Editor
         // Move along
         Move(Vector2(buttonDest.w + 1, buttonDest.h + 1));
 
-        return hovered && !InputState.mousePressed && InputState.mouseWasPressed && buttonDest.Contains(InputState.mouseDownPos);
+        return hovered && !InputState.mousePressed && InputState.mouseWasPressed && buttonDest.Contains(InputState.mouseDownPos) && vrect.Contains(InputState.mouseDownPos);
     }
 
     bool EditorGUI::InvisibleButton(Rect area)
     {
-        bool hovered = area.Contains(InputState.mousePos);
+        Rect vrect = Rect(0, 0, viewport.w, viewport.h);
+        bool hovered = area.Contains(InputState.mousePos) && vrect.Contains(InputState.mousePos);
 
-        return hovered && !InputState.mousePressed && InputState.mouseWasPressed && area.Contains(InputState.mouseDownPos);
+        return hovered && !InputState.mousePressed && InputState.mouseWasPressed && area.Contains(InputState.mouseDownPos) && vrect.Contains(InputState.mouseDownPos);
     }
 
     Vector2 EditorGUI::DraggableArea(Rect area, bool absolute)
@@ -879,7 +884,9 @@ namespace Ossium::Editor
             buttonHeight
         );
 
-        if (InputState.mousePressed && !InputState.mouseWasPressed && dest.Contains(InputState.mouseDownPos))
+        Rect vrect = Rect(0, 0, viewport.w, viewport.h);
+
+        if (InputState.mousePressed && !InputState.mouseWasPressed && dest.Contains(InputState.mouseDownPos) && vrect.Contains(InputState.mouseDownPos))
         {
             // Capture slider mouse offset.
             sliderMouseOffset = InputState.mouseDownPos - Vector2(fullSlot ? dest.x : dest.x + (buttonWidth / 2), fullSlot ? dest.y : dest.y + (buttonHeight / 2));
@@ -888,7 +895,7 @@ namespace Ossium::Editor
             input_state.mouseDownPos.y = slotDest.y;
         }
 
-        bool dragging = InputState.mousePressed && slotDest.Contains(InputState.mouseDownPos);
+        bool dragging = InputState.mousePressed && slotDest.Contains(InputState.mouseDownPos) && vrect.Contains(InputState.mouseDownPos);
 
         // Check how much the slider has been moved in this frame and change the slider value accordingly
         if (dragging)
@@ -911,7 +918,7 @@ namespace Ossium::Editor
             }
         }
 
-        bool hovered = dest.Contains(InputState.mousePos) || dragging;
+        bool hovered = (dest.Contains(InputState.mousePos) && vrect.Contains(InputState.mousePos)) || dragging;
         bool pressed = dragging;
 
         SDL_Color buttonColour = hovered ?
