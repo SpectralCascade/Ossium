@@ -11,3 +11,5 @@ bin/ossium/libossium.a
 Engine/bin/
 
 test_output.csv
+
+!Engine/cbp2make.exe
