@@ -16,7 +16,6 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add directory="../Box2D/" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -29,7 +28,6 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
-					<Add directory="../Box2D/" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -37,8 +35,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add directory="C:/Users/2013b/Git/Ossium/Box2D/" />
-			<Add directory="/home/tim/git/Ossium/Box2D/" />
+			<Add directory="." />
 		</Compiler>
 		<Unit filename="Box2D/Box2D.h" />
 		<Unit filename="Box2D/Collision/Shapes/b2ChainShape.cpp" />

@@ -21,6 +21,42 @@
 		},
 		{
 			"type": "shell",
+			"label": "Generate Makefile (Box2D)",
+			"command": "./cbp2make.exe",
+			"args": [
+				"-in",
+				"Box2D/Box2D.cbp",
+				"-out",
+				"Box2D/makefile.mak"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Make Box2D",
+			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"args": [
+				"release",
+				"-j",
+				"8"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine/Box2D"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"dependsOn": "Generate Makefile (Box2D)"
+		},
+		{
+			"type": "shell",
 			"label": "Make All",
 			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
 			"args": [
@@ -118,6 +154,23 @@
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Clean Box2D",
+			"command": "rm",
+			"args": [
+				"-r",
+				"-Force",
+				"obj"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/Engine/Box2D"
 			},
 			"problemMatcher": [
 				"$gcc"
