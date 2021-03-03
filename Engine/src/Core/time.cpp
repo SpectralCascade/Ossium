@@ -306,6 +306,113 @@ namespace Ossium
         return paused;
     }
 
+    ///
+    /// TimeSequence definitions
+    ///
+
+    TimeSequence::TimeSequence(std::vector<Uint32> timePoints, int loops, Clock* refClock)
+    {
+        this->clock = refClock;
+        this->timePoints = timePoints;
+        this->loops = loops;
+    }
+
+    void TimeSequence::Start()
+    {
+        Timer::Start();
+        // Update event tracking
+        eventIndex = 0;
+        currentLoop = 0;
+    }
+
+    void TimeSequence::Stop()
+    {
+        Timer::Stop();
+        // Update event tracking
+        eventIndex = 0;
+        currentLoop = 0;
+    }
+
+    void TimeSequence::Update()
+    {
+        if (IsStarted() && !IsPaused() && !timePoints.empty() && eventIndex < timePoints.size())
+        {
+            Uint32 ticks = GetTicks();
+            while (ticks > timePoints[eventIndex] && eventIndex < timePoints.size())
+            {
+                OnEventChange(eventIndex);
+                eventIndex++;
+            }
+            if (eventIndex >= timePoints.size())
+            {
+                // Check if we should loop, otherwise finish.
+                if (loops < 0 || currentLoop < (Uint32)loops)
+                {
+                    // Update the loop counter
+                    currentLoop++;
+
+                    // Restart the sequence, but take the carry over ticks into account
+                    Uint32 carryOver = GetTicks() - timePoints[timePoints.size() - 1];
+
+                    // Don't reset the currentLoop variable, so instead call base Start method.
+                    Timer::Start();
+                    startTicks -= carryOver;
+                    eventIndex = 0;
+
+                    // Recursive call to update event tracking in case events were missed in the carry over
+                    // Condition may help prevent accidental stack overflow for infinite loops where
+                    // there's only one time point of 0.
+                    if (timePoints.size() > 1 || timePoints[0] != 0)
+                    {
+                        Update();
+                    }
+                }
+                else if (resetOnFinish)
+                {
+                    // Stop the sequence and reset the event.
+                    Stop();
+                }
+                else
+                {
+                    // Simply pause, don't reset
+                    Pause();
+                }
+            }
+        }
+    }
+
+    Uint32 TimeSequence::GetEventIndex()
+    {
+        return eventIndex;
+    }
+
+    float TimeSequence::GetEventProgress()
+    {
+        return eventIndex >= timePoints.size() ? 1 : Utilities::MapRange(
+            timePoints[eventIndex] - (timePoints[eventIndex] - GetTicks()),
+            0,
+            (eventIndex < timePoints.size() ? 
+                (eventIndex > 0 ? 
+                    timePoints[eventIndex] - timePoints[eventIndex - 1] : 
+                    timePoints[eventIndex]
+                ) : 1
+            ),
+            0,
+            1
+        );
+    }
+
+    float TimeSequence::GetSequenceProgress()
+    {
+        return timePoints.empty() ? 0 : Utilities::MapRange(
+            timePoints.back() - (timePoints.back() - GetTicks()),
+            0,
+            timePoints.back(),
+            0,
+            1
+        );
+    }
+
     Uint32 GetMS(float seconds)
     {
         return (Uint32)(seconds * 1000.0f);

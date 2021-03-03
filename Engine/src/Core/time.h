@@ -18,6 +18,7 @@
 #define TIME_H
 
 #include "schemamodel.h"
+#include "callback.h"
 
 namespace Ossium
 {
@@ -112,7 +113,7 @@ namespace Ossium
         bool IsStarted();
         bool IsPaused();
 
-    private:
+    protected:
         /// Reference clock.
         Clock* clock;
 
@@ -125,6 +126,63 @@ namespace Ossium
         /// Timer flags.
         bool paused = false;
         bool started = false;
+
+    };
+
+    struct OSSIUM_EDL TimeSequenceSchema : public Schema<TimeSequenceSchema, 10>
+    {
+        DECLARE_BASE_SCHEMA(TimeSequenceSchema, 10);
+
+        // Chronological array of time points, in milliseconds.
+        M(std::vector<Uint32>, timePoints);
+
+        // Values < 0 means repeat forever, 0 means never repeat, 1+ means repeat that many times.
+        M(int, loops) = 0;
+
+        // When true, after the final loop the timer is stopped and the event index is reset.
+        // Otherwise, the timer is permanently paused and the event index is not reset.
+        M(bool, resetOnFinish) = false;
+
+    protected:
+        // The current time point index.
+        M(Uint32, eventIndex) = 0;
+        
+        // How many times the sequence has played.
+        M(Uint32, currentLoop) = 0;
+
+    };
+
+    /// A time-based sequential event tracker; given a set of time points in milliseconds,
+    /// returns the current corresponding sequence index. Useful for animating stuff or triggering events.
+    /// The event index corresponds to the current time point. When an event time point is reached,
+    /// the OnEventChange callback is called with the index of the event time point.
+    class OSSIUM_EDL TimeSequence : public Timer, public TimeSequenceSchema
+    {
+    public:
+        CONSTRUCT_SCHEMA(SchemaRoot, TimeSequenceSchema);
+
+        TimeSequence(std::vector<Uint32> timePoints = {}, int loops = 0, Clock* refClock = nullptr);
+
+        // Overload to reset eventIndex. Note, parent method is not virtual.
+        void Start();
+
+        // Overload to reset eventIndex. Note, parent method is not virtual.
+        void Stop();
+
+        // Checks the time and updates time tracking accordingly.
+        void Update();
+
+        // Returns the index to the next time point in the sequence.
+        Uint32 GetEventIndex();
+
+        // Returns the normalised difference of the current event index with the last event, between 0 and 1.
+        float GetEventProgress();
+
+        // Returns the normalised progress from the first time point to the last time point in the sequence
+        float GetSequenceProgress();
+
+        // Called when the eventIndex changes.
+        Callback<Uint32> OnEventChange;
 
     };
 
