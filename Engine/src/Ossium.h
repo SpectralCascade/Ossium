@@ -14,8 +14,13 @@
  *  3. This notice may not be removed or altered from any source distribution.
  *
 **/
-#include "Core/config.h"
+#pragma once
+
+#ifndef OSSIUM_H
+#define OSSIUM_H
+
 #include "Core/init.h"
+#include "Core/config.h"
 #include "Core/time.h"
 #include "Core/font.h"
 #include "Components/text.h"
@@ -45,3 +50,5 @@
 #include "Components/UI/TabView.h"
 #include "Components/UI/ViewCard.h"
 #include "Components/UI/LayoutSurface.h"
+
+#endif // OSSIUM_H

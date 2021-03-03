@@ -65,6 +65,10 @@ namespace Ossium
     {
         Entity* entityCopy = controller->CreateEntity(parent != nullptr ? parent : (self->parent != nullptr ? self->parent->data : nullptr));
         entityCopy->name = name + " (copy)";
+        if (!active)
+        {
+            entityCopy->SetActive(false);
+        }
         for (auto i = components.begin(); i != components.end(); i++)
         {
             vector<BaseComponent*> copiedComponents;
@@ -74,6 +78,7 @@ namespace Ossium
                 copyComponent->entity = entityCopy;
                 copyComponent->OnClone(*itr);
                 copiedComponents.push_back(copyComponent);
+                GetScene()->components[copyComponent->GetType()].push_back(copyComponent);
             }
             entityCopy->components.insert({i->first, copiedComponents});
             for (auto itr : copiedComponents)

@@ -384,6 +384,8 @@
 		<Unit filename="src/Core/utf8.h" />
 		<Unit filename="src/Core/window.cpp" />
 		<Unit filename="src/Core/window.h" />
+		<Unit filename="src/Editor/Core/editorserializer.cpp" />
+		<Unit filename="src/Editor/Core/editorserializer.h" />
 		<Unit filename="src/Editor/Core/contextmenu.cpp">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
@@ -433,18 +435,6 @@
 			<Option target="libOssiumEditor" />
 		</Unit>
 		<Unit filename="src/Editor/Core/editorlayout.h">
-			<Option target="OssiumEditor" />
-			<Option target="OssiumEditor (Debug)" />
-			<Option target="OssiumEditor (Debug Linux)" />
-			<Option target="libOssiumEditor" />
-		</Unit>
-		<Unit filename="src/Editor/Core/editorserializer.cpp">
-			<Option target="OssiumEditor" />
-			<Option target="OssiumEditor (Debug)" />
-			<Option target="OssiumEditor (Debug Linux)" />
-			<Option target="libOssiumEditor" />
-		</Unit>
-		<Unit filename="src/Editor/Core/editorserializer.h">
 			<Option target="OssiumEditor" />
 			<Option target="OssiumEditor (Debug)" />
 			<Option target="OssiumEditor (Debug Linux)" />

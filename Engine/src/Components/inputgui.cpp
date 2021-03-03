@@ -271,7 +271,7 @@ namespace Ossium
 
     ActionOutcome InputGUI::HandlePointer(const MouseInput& data)
     {
-        if (data.type != MOUSE_UNKNOWN)
+        if (IsEnabled() && data.type != MOUSE_UNKNOWN)
         {
             for (auto interactable : interactables)
             {
@@ -284,7 +284,7 @@ namespace Ossium
 
     ActionOutcome InputGUI::ConfirmSelection(const KeyboardInput& data)
     {
-        if (data.state)
+        if (IsEnabled() && data.state)
         {
             // This effectively fakes a click event for the currently selected GUI element
             if (!interactables.empty() && currentIndex < interactables.size())
@@ -310,7 +310,7 @@ namespace Ossium
 
     ActionOutcome InputGUI::SelectRight(const KeyboardInput& data)
     {
-        if (data.state)
+        if (IsEnabled() && data.state)
         {
             if (!interactables.empty())
             {
@@ -330,7 +330,7 @@ namespace Ossium
 
     ActionOutcome InputGUI::SelectLeft(const KeyboardInput& data)
     {
-        if (data.state)
+        if (IsEnabled() && data.state)
         {
             if (!interactables.empty())
             {
@@ -359,7 +359,7 @@ namespace Ossium
 
     ActionOutcome InputGUI::GoBack(const KeyboardInput& data)
     {
-        if (data.state)
+        if (IsEnabled() && data.state)
         {
             OnBack(*this);
             return ClaimContext;

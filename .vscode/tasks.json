@@ -150,7 +150,7 @@
 			"args": [
 				"-r",
 				"-Force",
-				".objs"
+				"obj"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"

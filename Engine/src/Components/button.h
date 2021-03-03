@@ -12,7 +12,6 @@ namespace Ossium
     public:
         DECLARE_COMPONENT(InteractableGUI, Button);
 
-        /// Adds a sprite component and sets up a reference to it.
         void OnLoadFinish();
 
         /// Override to use sprite rect.
