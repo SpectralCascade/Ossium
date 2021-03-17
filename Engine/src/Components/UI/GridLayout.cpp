@@ -122,6 +122,7 @@ namespace Ossium
             {
                 // Create missing column entity.
                 children.push_back(entity->CreateChild()->AddComponentOnce<Transform>());
+                children.back()->GetEntity()->name = Utilities::Format("Column {0}", i);
             }
 
             auto cells = children[i]->GetEntity()->GetComponentsInChildren<BoxLayout>();
@@ -144,6 +145,7 @@ namespace Ossium
                 {
                     // Create missing cell for this row.
                     cells.push_back(children[i]->GetEntity()->CreateChild()->AddComponentOnce<BoxLayout>());
+                    cells.back()->GetEntity()->name = Utilities::Format("Row {0}", j);
                 }
 
                 // Override BoxLayout anchors, which will in turn update the transform position.
