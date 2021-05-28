@@ -137,8 +137,9 @@ namespace Ossium
     void Vector2::RotateRad(float radians)
     {
         float length = Length();
-        x = SDL_sinf(radians) * length;
-        y = SDL_cosf(radians) * length;
+        float current = RotationRad();
+        x = sinf(radians + current) * length;
+        y = cosf(radians + current) * length;
     }
 
     Vector2 Vector2::Rotation(float degrees)
