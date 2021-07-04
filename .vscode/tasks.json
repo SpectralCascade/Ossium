@@ -4,7 +4,8 @@
 		{
 			"type": "shell",
 			"label": "Generate Makefile",
-			"command": "./cbp2make.exe",
+			"windows": { "command": "./cbp2make.exe" },
+			"linux": { "command": "cbp2make" },
 			"args": [
 				"-in",
 				"ossium.cbp",
@@ -73,8 +74,10 @@
 		{
 			"type": "shell",
 			"label": "Make Static Lib",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"windows": { "command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe" },
+			"linux": { "command": "make" },
 			"args": [
+				"--makefile=makefile.mak",
 				"ossium",
 				"-j",
 				"8"
@@ -91,8 +94,10 @@
 		{
 			"type": "shell",
 			"label": "Make Static Lib (Editor)",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"windows": { "command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe" },
+			"linux": { "command": "make" },
 			"args": [
+				"--makefile=makefile.mak",
 				"libossiumeditor",
 				"-j",
 				"8"
@@ -147,11 +152,20 @@
 			"type": "shell",
 			"label": "Clean Project",
 			"command": "rm",
-			"args": [
-				"-r",
-				"-Force",
-				"obj"
-			],
+			"windows": {
+				"args": [
+					"-r",
+					"-Force",
+					"obj"
+				]
+			},
+			"linux": {
+				"args": [
+					"-r",
+					"-f",
+					"obj"
+				]
+			},
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
 			},
