@@ -101,6 +101,12 @@ namespace Ossium
             return strStream.str();
         }
 
+        string FileToString(string path)
+        {
+            ifstream file(path);
+            return FileToString(file);
+        }
+
         string FileToString(ifstream& fileStream)
         {
             if (!fileStream.is_open())

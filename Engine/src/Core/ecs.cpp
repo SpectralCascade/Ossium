@@ -597,6 +597,7 @@ namespace Ossium
         }
         this->guid_path = guid_path;
         FromString(toParse);
+        onLoadComplete(this);
         return true;
     }
 

@@ -3,109 +3,109 @@
 #------------------------------------------------------------------------------#
 
 
-WORKDIR = `pwd`
+WORKDIR = %cd%
 
-CC = gcc
-CXX = g++
-AR = ar
-LD = g++
-WINDRES = windres
+CC = gcc.exe
+CXX = g++.exe
+AR = ar.exe
+LD = g++.exe
+WINDRES = windres.exe
 
 INC = -IBox2D
 CFLAGS = -Wall -std=c++1z
 RESINC = 
-LIBDIR = -LBox2D/bin/Release
+LIBDIR = -LBox2D\\bin\\Release
 LIB = 
 LDFLAGS = 
 
-INC_OSSIUM = $(INC) -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2 -IBox2D
+INC_OSSIUM = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_OSSIUM = $(CFLAGS) -std=c++1z -g
 RESINC_OSSIUM = $(RESINC)
 RCFLAGS_OSSIUM = $(RCFLAGS)
-LIBDIR_OSSIUM = $(LIBDIR) -LC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib -LBox2D/bin/Release
-LIB_OSSIUM = $(LIB)C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a Box2D/bin/Release/libBox2D.a
+LIBDIR_OSSIUM = $(LIBDIR) -LC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\lib -LBox2D\bin\Release
+LIB_OSSIUM = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a C:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib\libSDL2_ttf.dll.a C:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib\libSDL2_mixer.dll.a C:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib\libSDL2_image.dll.a Box2D\bin\Release\libBox2D.a
 LDFLAGS_OSSIUM = $(LDFLAGS) -static-libstdc++ -static-libgcc -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
-OBJDIR_OSSIUM = obj/ossium
+OBJDIR_OSSIUM = obj\\ossium
 DEP_OSSIUM = 
-OUT_OSSIUM = bin/ossium/libossium.a
+OUT_OSSIUM = bin\\ossium\\libossium.a
 
 INC_OSSIUMDLL = $(INC) -IBox2D
 CFLAGS_OSSIUMDLL = $(CFLAGS) -DOSSIUM_EXPORT_DLL
 RESINC_OSSIUMDLL = $(RESINC)
 RCFLAGS_OSSIUMDLL = $(RCFLAGS)
-LIBDIR_OSSIUMDLL = $(LIBDIR) -LBox2D/bin/Release
-LIB_OSSIUMDLL = $(LIB)C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a Box2D/bin/Release/libBox2D.a
+LIBDIR_OSSIUMDLL = $(LIBDIR) -LBox2D\bin\Release
+LIB_OSSIUMDLL = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a C:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib\libSDL2_ttf.dll.a C:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib\libSDL2_mixer.dll.a C:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib\libSDL2_image.dll.a Box2D\bin\Release\libBox2D.a
 LDFLAGS_OSSIUMDLL = $(LDFLAGS) -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
-OBJDIR_OSSIUMDLL = obj/ossiumdll
+OBJDIR_OSSIUMDLL = obj\\ossiumdll
 DEP_OSSIUMDLL = 
-OUT_OSSIUMDLL = bin/ossiumdll/ossium.so
+OUT_OSSIUMDLL = bin\\ossiumdll\\ossium.dll
 
-INC_OSSIUMEDITOR = $(INC) -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2 -IBox2D
+INC_OSSIUMEDITOR = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_OSSIUMEDITOR = $(CFLAGS) -std=c++1z -DOSSIUM_EDITOR
 RESINC_OSSIUMEDITOR = $(RESINC)
 RCFLAGS_OSSIUMEDITOR = $(RCFLAGS)
-LIBDIR_OSSIUMEDITOR = $(LIBDIR) -LC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib -LBox2D/bin/Release
-LIB_OSSIUMEDITOR = $(LIB)C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a Box2D/bin/Release/libBox2D.a
+LIBDIR_OSSIUMEDITOR = $(LIBDIR) -LC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\lib -LBox2D\bin\Release
+LIB_OSSIUMEDITOR = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a C:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib\libSDL2_ttf.dll.a C:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib\libSDL2_mixer.dll.a C:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib\libSDL2_image.dll.a Box2D\bin\Release\libBox2D.a
 LDFLAGS_OSSIUMEDITOR = $(LDFLAGS) -static-libstdc++ -static-libgcc -lmingw32 -lcomdlg32 -lole32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
 OBJDIR_OSSIUMEDITOR = .objs
 DEP_OSSIUMEDITOR = 
-OUT_OSSIUMEDITOR = bin/OssiumEditor/Ossium
+OUT_OSSIUMEDITOR = bin\\OssiumEditor\\Ossium.exe
 
-INC_OSSIUMEDITOR__DEBUG_ = $(INC) -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2 -IBox2D
+INC_OSSIUMEDITOR__DEBUG_ = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_OSSIUMEDITOR__DEBUG_ = $(CFLAGS) -std=c++1z -g -DOSSIUM_DEBUG -DOSSIUM_EDITOR
 RESINC_OSSIUMEDITOR__DEBUG_ = $(RESINC)
 RCFLAGS_OSSIUMEDITOR__DEBUG_ = $(RCFLAGS)
-LIBDIR_OSSIUMEDITOR__DEBUG_ = $(LIBDIR) -LC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib -LBox2D/bin/Release
-LIB_OSSIUMEDITOR__DEBUG_ = $(LIB)C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a Box2D/bin/Release/libBox2D.a
+LIBDIR_OSSIUMEDITOR__DEBUG_ = $(LIBDIR) -LC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\lib -LBox2D\bin\Release
+LIB_OSSIUMEDITOR__DEBUG_ = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a C:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib\libSDL2_ttf.dll.a C:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib\libSDL2_mixer.dll.a C:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib\libSDL2_image.dll.a Box2D\bin\Release\libBox2D.a
 LDFLAGS_OSSIUMEDITOR__DEBUG_ = $(LDFLAGS) -static-libstdc++ -static-libgcc -lmingw32 -lcomdlg32 -lole32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
 OBJDIR_OSSIUMEDITOR__DEBUG_ = .objs
 DEP_OSSIUMEDITOR__DEBUG_ = 
-OUT_OSSIUMEDITOR__DEBUG_ = bin/OssiumEditorDebug/OssiumEditor
+OUT_OSSIUMEDITOR__DEBUG_ = bin\\OssiumEditorDebug\\OssiumEditor.exe
 
-INC_OSSIUMEDITOR__DEBUG_LINUX_ = $(INC) -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2 -IBox2D
+INC_OSSIUMEDITOR__DEBUG_LINUX_ = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_ = $(CFLAGS) -std=c++1z -g -DOSSIUM_DEBUG -DOSSIUM_EDITOR
 RESINC_OSSIUMEDITOR__DEBUG_LINUX_ = $(RESINC)
 RCFLAGS_OSSIUMEDITOR__DEBUG_LINUX_ = $(RCFLAGS)
-LIBDIR_OSSIUMEDITOR__DEBUG_LINUX_ = $(LIBDIR) -LC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib -LBox2D/bin/Release
-LIB_OSSIUMEDITOR__DEBUG_LINUX_ = $(LIB)Box2D/bin/Release/libBox2D.a
+LIBDIR_OSSIUMEDITOR__DEBUG_LINUX_ = $(LIBDIR) -LC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\lib -LBox2D\bin\Release
+LIB_OSSIUMEDITOR__DEBUG_LINUX_ = $(LIB)Box2D\bin\Release\libBox2D.a
 LDFLAGS_OSSIUMEDITOR__DEBUG_LINUX_ = $(LDFLAGS) -static-libstdc++ -static-libgcc -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
 OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_ = .objs
 DEP_OSSIUMEDITOR__DEBUG_LINUX_ = 
-OUT_OSSIUMEDITOR__DEBUG_LINUX_ = bin/OssiumEditor/Ossium
+OUT_OSSIUMEDITOR__DEBUG_LINUX_ = bin\\OssiumEditor\\Ossium.exe
 
-INC_LIBOSSIUMEDITOR = $(INC) -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include -IC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2 -IC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2 -IBox2D
+INC_LIBOSSIUMEDITOR = $(INC) -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include -IC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\include\SDL2 -IC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\include\SDL2 -IBox2D
 CFLAGS_LIBOSSIUMEDITOR = $(CFLAGS) -g -std=c++1z -DOSSIUM_DEBUG -DOSSIUM_EDITOR
 RESINC_LIBOSSIUMEDITOR = $(RESINC)
 RCFLAGS_LIBOSSIUMEDITOR = $(RCFLAGS)
-LIBDIR_LIBOSSIUMEDITOR = $(LIBDIR) -LC:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib -LC:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib -LBox2D/bin/Release
-LIB_LIBOSSIUMEDITOR = $(LIB)C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a Box2D/bin/Release/libBox2D.a
+LIBDIR_LIBOSSIUMEDITOR = $(LIBDIR) -LC:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib -LC:\SDL2\SDL2_net-2.0.1\x86_64-w64-mingw32\lib -LBox2D\bin\Release
+LIB_LIBOSSIUMEDITOR = $(LIB)C:\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a C:\SDL2\SDL2_ttf-2.0.15\x86_64-w64-mingw32\lib\libSDL2_ttf.dll.a C:\SDL2\SDL2_mixer-2.0.4\x86_64-w64-mingw32\lib\libSDL2_mixer.dll.a C:\SDL2\SDL2_image-2.0.4\x86_64-w64-mingw32\lib\libSDL2_image.dll.a Box2D\bin\Release\libBox2D.a
 LDFLAGS_LIBOSSIUMEDITOR = $(LDFLAGS) -static-libstdc++ -static-libgcc -lmingw32 -lcomdlg32 -lole32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2_net -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++
-OBJDIR_LIBOSSIUMEDITOR = obj/OssiumEditorDebug
+OBJDIR_LIBOSSIUMEDITOR = obj\\OssiumEditorDebug
 DEP_LIBOSSIUMEDITOR = 
-OUT_LIBOSSIUMEDITOR = bin/OssiumEditorDebug/libOssium.a
+OUT_LIBOSSIUMEDITOR = bin\\OssiumEditorDebug\\libOssium.a
 
-OBJ_OSSIUM = $(OBJDIR_OSSIUM)/src/Core/time.o $(OBJDIR_OSSIUM)/src/Core/stringconvert.o $(OBJDIR_OSSIUM)/src/Core/textinput.o $(OBJDIR_OSSIUM)/src/Core/textlayout.o $(OBJDIR_OSSIUM)/src/Core/texturepack.o $(OBJDIR_OSSIUM)/src/Core/transform.o $(OBJDIR_OSSIUM)/src/Core/typeinference.o $(OBJDIR_OSSIUM)/src/Core/utf8.o $(OBJDIR_OSSIUM)/src/Core/osteon.o $(OBJDIR_OSSIUM)/src/Core/physics.o $(OBJDIR_OSSIUM)/src/Core/pixeleffects.o $(OBJDIR_OSSIUM)/src/Core/randutils.o $(OBJDIR_OSSIUM)/src/Core/window.o $(OBJDIR_OSSIUM)/src/Core/renderer.o $(OBJDIR_OSSIUM)/src/Core/resourcecontroller.o $(OBJDIR_OSSIUM)/src/Core/schemamodel.o $(OBJDIR_OSSIUM)/src/Core/schematype.o $(OBJDIR_OSSIUM)/src/Core/services.o $(OBJDIR_OSSIUM)/src/Editor/Core/editorserializer.o $(OBJDIR_OSSIUM)/src/Components/UI/TabView.o $(OBJDIR_OSSIUM)/src/Components/UI/BoxLayout.o $(OBJDIR_OSSIUM)/src/Components/UI/GridLayout.o $(OBJDIR_OSSIUM)/src/Components/UI/LayoutComponent.o $(OBJDIR_OSSIUM)/src/Components/UI/LayoutSurface.o $(OBJDIR_OSSIUM)/src/Components/UI/TabButton.o $(OBJDIR_OSSIUM)/src/Components/UI/ViewCard.o $(OBJDIR_OSSIUM)/src/Core/audio.o $(OBJDIR_OSSIUM)/src/Core/colors.o $(OBJDIR_OSSIUM)/src/Components/inputgui.o $(OBJDIR_OSSIUM)/src/Components/boxcollider.o $(OBJDIR_OSSIUM)/src/Components/button.o $(OBJDIR_OSSIUM)/src/Components/collider.o $(OBJDIR_OSSIUM)/src/Components/debugdraw.o $(OBJDIR_OSSIUM)/src/Core/component.o $(OBJDIR_OSSIUM)/src/Components/rigidcircle.o $(OBJDIR_OSSIUM)/src/Components/statesprite.o $(OBJDIR_OSSIUM)/src/Components/text.o $(OBJDIR_OSSIUM)/src/Components/texture.o $(OBJDIR_OSSIUM)/src/Core/image.o $(OBJDIR_OSSIUM)/src/Core/init.o $(OBJDIR_OSSIUM)/src/Core/input.o $(OBJDIR_OSSIUM)/src/Core/jsondata.o $(OBJDIR_OSSIUM)/src/Core/keyboard.o $(OBJDIR_OSSIUM)/src/Core/logging.o $(OBJDIR_OSSIUM)/src/Core/mouse.o $(OBJDIR_OSSIUM)/src/Core/mousecursor.o $(OBJDIR_OSSIUM)/src/Core/coremaths.o $(OBJDIR_OSSIUM)/src/Core/csvdata.o $(OBJDIR_OSSIUM)/src/Core/curves.o $(OBJDIR_OSSIUM)/src/Core/delta.o $(OBJDIR_OSSIUM)/src/Components/audioextensions.o $(OBJDIR_OSSIUM)/src/Core/ecs.o $(OBJDIR_OSSIUM)/src/Core/enginesystem.o $(OBJDIR_OSSIUM)/src/Core/font.o $(OBJDIR_OSSIUM)/src/Core/funcutils.o
+OBJ_OSSIUM = $(OBJDIR_OSSIUM)\\src\\Core\\stringconvert.o $(OBJDIR_OSSIUM)\\src\\Core\\textinput.o $(OBJDIR_OSSIUM)\\src\\Core\\textlayout.o $(OBJDIR_OSSIUM)\\src\\Core\\texturepack.o $(OBJDIR_OSSIUM)\\src\\Core\\time.o $(OBJDIR_OSSIUM)\\src\\Core\\transform.o $(OBJDIR_OSSIUM)\\src\\Core\\typeinference.o $(OBJDIR_OSSIUM)\\src\\Core\\utf8.o $(OBJDIR_OSSIUM)\\src\\Core\\osteon.o $(OBJDIR_OSSIUM)\\src\\Core\\physics.o $(OBJDIR_OSSIUM)\\src\\Core\\pixeleffects.o $(OBJDIR_OSSIUM)\\src\\Core\\randutils.o $(OBJDIR_OSSIUM)\\src\\Core\\renderer.o $(OBJDIR_OSSIUM)\\src\\Core\\resourcecontroller.o $(OBJDIR_OSSIUM)\\src\\Core\\schemamodel.o $(OBJDIR_OSSIUM)\\src\\Core\\schematype.o $(OBJDIR_OSSIUM)\\src\\Core\\services.o $(OBJDIR_OSSIUM)\\src\\Core\\window.o $(OBJDIR_OSSIUM)\\src\\Editor\\Core\\editorserializer.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\BoxLayout.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\GridLayout.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\LayoutComponent.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\LayoutSurface.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\TabButton.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\TabView.o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\ViewCard.o $(OBJDIR_OSSIUM)\\src\\Core\\audio.o $(OBJDIR_OSSIUM)\\src\\Core\\colors.o $(OBJDIR_OSSIUM)\\src\\Components\\audioextensions.o $(OBJDIR_OSSIUM)\\src\\Components\\boxcollider.o $(OBJDIR_OSSIUM)\\src\\Components\\button.o $(OBJDIR_OSSIUM)\\src\\Components\\collider.o $(OBJDIR_OSSIUM)\\src\\Components\\debugdraw.o $(OBJDIR_OSSIUM)\\src\\Components\\inputgui.o $(OBJDIR_OSSIUM)\\src\\Components\\rigidcircle.o $(OBJDIR_OSSIUM)\\src\\Components\\statesprite.o $(OBJDIR_OSSIUM)\\src\\Components\\text.o $(OBJDIR_OSSIUM)\\src\\Components\\texture.o $(OBJDIR_OSSIUM)\\src\\Core\\image.o $(OBJDIR_OSSIUM)\\src\\Core\\init.o $(OBJDIR_OSSIUM)\\src\\Core\\input.o $(OBJDIR_OSSIUM)\\src\\Core\\jsondata.o $(OBJDIR_OSSIUM)\\src\\Core\\keyboard.o $(OBJDIR_OSSIUM)\\src\\Core\\logging.o $(OBJDIR_OSSIUM)\\src\\Core\\mouse.o $(OBJDIR_OSSIUM)\\src\\Core\\mousecursor.o $(OBJDIR_OSSIUM)\\src\\Core\\component.o $(OBJDIR_OSSIUM)\\src\\Core\\coremaths.o $(OBJDIR_OSSIUM)\\src\\Core\\csvdata.o $(OBJDIR_OSSIUM)\\src\\Core\\curves.o $(OBJDIR_OSSIUM)\\src\\Core\\delta.o $(OBJDIR_OSSIUM)\\src\\Core\\ecs.o $(OBJDIR_OSSIUM)\\src\\Core\\enginesystem.o $(OBJDIR_OSSIUM)\\src\\Core\\font.o $(OBJDIR_OSSIUM)\\src\\Core\\funcutils.o
 
-OBJ_OSSIUMDLL = $(OBJDIR_OSSIUMDLL)/src/Core/time.o $(OBJDIR_OSSIUMDLL)/src/Core/stringconvert.o $(OBJDIR_OSSIUMDLL)/src/Core/textinput.o $(OBJDIR_OSSIUMDLL)/src/Core/textlayout.o $(OBJDIR_OSSIUMDLL)/src/Core/texturepack.o $(OBJDIR_OSSIUMDLL)/src/Core/transform.o $(OBJDIR_OSSIUMDLL)/src/Core/typeinference.o $(OBJDIR_OSSIUMDLL)/src/Core/utf8.o $(OBJDIR_OSSIUMDLL)/src/Core/osteon.o $(OBJDIR_OSSIUMDLL)/src/Core/physics.o $(OBJDIR_OSSIUMDLL)/src/Core/pixeleffects.o $(OBJDIR_OSSIUMDLL)/src/Core/randutils.o $(OBJDIR_OSSIUMDLL)/src/Core/window.o $(OBJDIR_OSSIUMDLL)/src/Core/renderer.o $(OBJDIR_OSSIUMDLL)/src/Core/resourcecontroller.o $(OBJDIR_OSSIUMDLL)/src/Core/schemamodel.o $(OBJDIR_OSSIUMDLL)/src/Core/schematype.o $(OBJDIR_OSSIUMDLL)/src/Core/services.o $(OBJDIR_OSSIUMDLL)/src/Editor/Core/editorserializer.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/TabView.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/BoxLayout.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/GridLayout.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/LayoutComponent.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/LayoutSurface.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/TabButton.o $(OBJDIR_OSSIUMDLL)/src/Components/UI/ViewCard.o $(OBJDIR_OSSIUMDLL)/src/Core/audio.o $(OBJDIR_OSSIUMDLL)/src/Core/colors.o $(OBJDIR_OSSIUMDLL)/src/Components/inputgui.o $(OBJDIR_OSSIUMDLL)/src/Components/boxcollider.o $(OBJDIR_OSSIUMDLL)/src/Components/button.o $(OBJDIR_OSSIUMDLL)/src/Components/collider.o $(OBJDIR_OSSIUMDLL)/src/Components/debugdraw.o $(OBJDIR_OSSIUMDLL)/src/Core/component.o $(OBJDIR_OSSIUMDLL)/src/Components/rigidcircle.o $(OBJDIR_OSSIUMDLL)/src/Components/statesprite.o $(OBJDIR_OSSIUMDLL)/src/Components/text.o $(OBJDIR_OSSIUMDLL)/src/Components/texture.o $(OBJDIR_OSSIUMDLL)/src/Core/image.o $(OBJDIR_OSSIUMDLL)/src/Core/init.o $(OBJDIR_OSSIUMDLL)/src/Core/input.o $(OBJDIR_OSSIUMDLL)/src/Core/jsondata.o $(OBJDIR_OSSIUMDLL)/src/Core/keyboard.o $(OBJDIR_OSSIUMDLL)/src/Core/logging.o $(OBJDIR_OSSIUMDLL)/src/Core/mouse.o $(OBJDIR_OSSIUMDLL)/src/Core/mousecursor.o $(OBJDIR_OSSIUMDLL)/src/Core/coremaths.o $(OBJDIR_OSSIUMDLL)/src/Core/csvdata.o $(OBJDIR_OSSIUMDLL)/src/Core/curves.o $(OBJDIR_OSSIUMDLL)/src/Core/delta.o $(OBJDIR_OSSIUMDLL)/src/Components/audioextensions.o $(OBJDIR_OSSIUMDLL)/src/Core/ecs.o $(OBJDIR_OSSIUMDLL)/src/Core/enginesystem.o $(OBJDIR_OSSIUMDLL)/src/Core/font.o $(OBJDIR_OSSIUMDLL)/src/Core/funcutils.o
+OBJ_OSSIUMDLL = $(OBJDIR_OSSIUMDLL)\\src\\Core\\stringconvert.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\textinput.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\textlayout.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\texturepack.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\time.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\transform.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\typeinference.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\utf8.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\osteon.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\physics.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\pixeleffects.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\randutils.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\renderer.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\resourcecontroller.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\schemamodel.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\schematype.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\services.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\window.o $(OBJDIR_OSSIUMDLL)\\src\\Editor\\Core\\editorserializer.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\BoxLayout.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\GridLayout.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\LayoutComponent.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\LayoutSurface.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\TabButton.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\TabView.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\ViewCard.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\audio.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\colors.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\audioextensions.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\boxcollider.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\button.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\collider.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\debugdraw.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\inputgui.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\rigidcircle.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\statesprite.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\text.o $(OBJDIR_OSSIUMDLL)\\src\\Components\\texture.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\image.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\init.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\input.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\jsondata.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\keyboard.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\logging.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\mouse.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\mousecursor.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\component.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\coremaths.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\csvdata.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\curves.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\delta.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\ecs.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\enginesystem.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\font.o $(OBJDIR_OSSIUMDLL)\\src\\Core\\funcutils.o
 
-OBJ_OSSIUMEDITOR = $(OBJDIR_OSSIUMEDITOR)/src/Core/time.o $(OBJDIR_OSSIUMEDITOR)/src/Core/stringconvert.o $(OBJDIR_OSSIUMEDITOR)/src/Core/textinput.o $(OBJDIR_OSSIUMEDITOR)/src/Core/textlayout.o $(OBJDIR_OSSIUMEDITOR)/src/Core/texturepack.o $(OBJDIR_OSSIUMEDITOR)/src/Core/transform.o $(OBJDIR_OSSIUMEDITOR)/src/Core/typeinference.o $(OBJDIR_OSSIUMEDITOR)/src/Core/utf8.o $(OBJDIR_OSSIUMEDITOR)/src/Core/osteon.o $(OBJDIR_OSSIUMEDITOR)/src/Core/physics.o $(OBJDIR_OSSIUMEDITOR)/src/Core/pixeleffects.o $(OBJDIR_OSSIUMEDITOR)/src/Core/randutils.o $(OBJDIR_OSSIUMEDITOR)/src/Core/window.o $(OBJDIR_OSSIUMEDITOR)/src/Core/renderer.o $(OBJDIR_OSSIUMEDITOR)/src/Core/resourcecontroller.o $(OBJDIR_OSSIUMEDITOR)/src/Core/schemamodel.o $(OBJDIR_OSSIUMEDITOR)/src/Core/schematype.o $(OBJDIR_OSSIUMEDITOR)/src/Core/services.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/demo_window_docking.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/font_viewer.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/layout_diagram.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/simple_demo_window.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/EntityProperties.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/SceneHierarchy.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/SceneView.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/ToolBar.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/main.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorserializer.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/contextmenu.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorcontroller.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorgui.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorlayout.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorstyle.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorwindow.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/project.o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/tinyfiledialogs.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/TabView.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/BoxLayout.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/GridLayout.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/LayoutComponent.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/LayoutSurface.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/TabButton.o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/ViewCard.o $(OBJDIR_OSSIUMEDITOR)/src/Core/audio.o $(OBJDIR_OSSIUMEDITOR)/src/Core/colors.o $(OBJDIR_OSSIUMEDITOR)/src/Components/inputgui.o $(OBJDIR_OSSIUMEDITOR)/src/Components/boxcollider.o $(OBJDIR_OSSIUMEDITOR)/src/Components/button.o $(OBJDIR_OSSIUMEDITOR)/src/Components/collider.o $(OBJDIR_OSSIUMEDITOR)/src/Components/debugdraw.o $(OBJDIR_OSSIUMEDITOR)/src/Core/component.o $(OBJDIR_OSSIUMEDITOR)/src/Components/rigidcircle.o $(OBJDIR_OSSIUMEDITOR)/src/Components/statesprite.o $(OBJDIR_OSSIUMEDITOR)/src/Components/text.o $(OBJDIR_OSSIUMEDITOR)/src/Components/texture.o $(OBJDIR_OSSIUMEDITOR)/src/Core/image.o $(OBJDIR_OSSIUMEDITOR)/src/Core/init.o $(OBJDIR_OSSIUMEDITOR)/src/Core/input.o $(OBJDIR_OSSIUMEDITOR)/src/Core/jsondata.o $(OBJDIR_OSSIUMEDITOR)/src/Core/keyboard.o $(OBJDIR_OSSIUMEDITOR)/src/Core/logging.o $(OBJDIR_OSSIUMEDITOR)/src/Core/mouse.o $(OBJDIR_OSSIUMEDITOR)/src/Core/mousecursor.o $(OBJDIR_OSSIUMEDITOR)/src/Core/coremaths.o $(OBJDIR_OSSIUMEDITOR)/src/Core/csvdata.o $(OBJDIR_OSSIUMEDITOR)/src/Core/curves.o $(OBJDIR_OSSIUMEDITOR)/src/Core/delta.o $(OBJDIR_OSSIUMEDITOR)/src/Components/audioextensions.o $(OBJDIR_OSSIUMEDITOR)/src/Core/ecs.o $(OBJDIR_OSSIUMEDITOR)/src/Core/enginesystem.o $(OBJDIR_OSSIUMEDITOR)/src/Core/font.o $(OBJDIR_OSSIUMEDITOR)/src/Core/funcutils.o
+OBJ_OSSIUMEDITOR = $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\stringconvert.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\textinput.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\textlayout.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\texturepack.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\time.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\transform.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\typeinference.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\utf8.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\osteon.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\physics.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\pixeleffects.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\randutils.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\renderer.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\resourcecontroller.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\schemamodel.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\schematype.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\services.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\demo_window_docking.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\font_viewer.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\layout_diagram.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\simple_demo_window.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\EntityProperties.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\SceneHierarchy.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\SceneView.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\ToolBar.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\main.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\window.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorserializer.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\contextmenu.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorcontroller.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorgui.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorlayout.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorstyle.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorwindow.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\project.o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\tinyfiledialogs.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\BoxLayout.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\GridLayout.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\LayoutComponent.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\LayoutSurface.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\TabButton.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\TabView.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\ViewCard.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\audio.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\colors.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\audioextensions.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\boxcollider.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\button.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\collider.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\debugdraw.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\inputgui.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\rigidcircle.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\statesprite.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\text.o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\texture.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\image.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\init.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\input.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\jsondata.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\keyboard.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\logging.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\mouse.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\mousecursor.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\component.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\coremaths.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\csvdata.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\curves.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\delta.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\ecs.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\enginesystem.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\font.o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\funcutils.o
 
-OBJ_OSSIUMEDITOR__DEBUG_ = $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/time.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/stringconvert.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/textinput.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/textlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/texturepack.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/transform.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/typeinference.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/utf8.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/osteon.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/physics.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/pixeleffects.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/randutils.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/renderer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/resourcecontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/schemamodel.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/schematype.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/services.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/demo_window_docking.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/font_viewer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/layout_diagram.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/simple_demo_window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/EntityProperties.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/SceneHierarchy.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/SceneView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/ToolBar.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/main.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorserializer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/contextmenu.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorcontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorstyle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorwindow.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/project.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/tinyfiledialogs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/TabView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/BoxLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/GridLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/LayoutComponent.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/LayoutSurface.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/TabButton.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/ViewCard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/audio.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/colors.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/inputgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/boxcollider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/button.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/collider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/debugdraw.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/component.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/rigidcircle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/statesprite.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/text.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/texture.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/image.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/init.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/input.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/jsondata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/keyboard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/logging.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/mouse.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/mousecursor.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/coremaths.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/csvdata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/curves.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/delta.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/audioextensions.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/ecs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/enginesystem.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/font.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/funcutils.o
+OBJ_OSSIUMEDITOR__DEBUG_ = $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\stringconvert.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\textinput.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\textlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\texturepack.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\time.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\transform.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\typeinference.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\utf8.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\osteon.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\physics.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\pixeleffects.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\randutils.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\renderer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\resourcecontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\schemamodel.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\schematype.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\services.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\demo_window_docking.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\font_viewer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\layout_diagram.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\simple_demo_window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\EntityProperties.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\SceneHierarchy.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\SceneView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\ToolBar.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\main.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorserializer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\contextmenu.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorcontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorstyle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorwindow.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\project.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\tinyfiledialogs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\BoxLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\GridLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\LayoutComponent.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\LayoutSurface.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\TabButton.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\TabView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\ViewCard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\audio.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\colors.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\audioextensions.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\boxcollider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\button.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\collider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\debugdraw.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\inputgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\rigidcircle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\statesprite.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\text.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\texture.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\image.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\init.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\input.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\jsondata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\keyboard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\logging.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\mouse.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\mousecursor.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\component.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\coremaths.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\csvdata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\curves.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\delta.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\ecs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\enginesystem.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\font.o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\funcutils.o
 
-OBJ_OSSIUMEDITOR__DEBUG_LINUX_ = $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/time.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/stringconvert.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/textinput.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/textlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/texturepack.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/transform.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/typeinference.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/utf8.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/osteon.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/physics.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/pixeleffects.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/randutils.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/renderer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/resourcecontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/schemamodel.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/schematype.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/services.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/demo_window_docking.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/font_viewer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/layout_diagram.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/simple_demo_window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/EntityProperties.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/SceneHierarchy.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/SceneView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/ToolBar.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/main.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorserializer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/contextmenu.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorcontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorstyle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorwindow.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/project.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/tinyfiledialogs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/TabView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/BoxLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/GridLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/LayoutComponent.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/LayoutSurface.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/TabButton.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/ViewCard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/audio.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/colors.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/inputgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/boxcollider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/button.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/collider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/debugdraw.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/component.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/rigidcircle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/statesprite.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/text.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/texture.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/image.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/init.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/input.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/jsondata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/keyboard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/logging.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/mouse.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/mousecursor.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/coremaths.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/csvdata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/curves.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/delta.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/audioextensions.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/ecs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/enginesystem.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/font.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/funcutils.o
+OBJ_OSSIUMEDITOR__DEBUG_LINUX_ = $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\stringconvert.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\textinput.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\textlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\texturepack.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\time.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\transform.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\typeinference.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\utf8.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\osteon.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\physics.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\pixeleffects.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\randutils.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\renderer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\resourcecontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\schemamodel.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\schematype.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\services.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\demo_window_docking.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\font_viewer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\layout_diagram.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\simple_demo_window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\EntityProperties.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\SceneHierarchy.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\SceneView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\ToolBar.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\main.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\window.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorserializer.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\contextmenu.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorcontroller.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorlayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorstyle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorwindow.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\project.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\tinyfiledialogs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\BoxLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\GridLayout.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\LayoutComponent.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\LayoutSurface.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\TabButton.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\TabView.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\ViewCard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\audio.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\colors.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\audioextensions.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\boxcollider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\button.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\collider.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\debugdraw.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\inputgui.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\rigidcircle.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\statesprite.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\text.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\texture.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\image.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\init.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\input.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\jsondata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\keyboard.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\logging.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\mouse.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\mousecursor.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\component.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\coremaths.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\csvdata.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\curves.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\delta.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\ecs.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\enginesystem.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\font.o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\funcutils.o
 
-OBJ_LIBOSSIUMEDITOR = $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/time.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/stringconvert.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/textinput.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/textlayout.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/texturepack.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/transform.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/typeinference.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/utf8.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/osteon.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/physics.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/pixeleffects.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/randutils.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/window.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/renderer.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/resourcecontroller.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/schemamodel.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/schematype.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/services.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/demo_window_docking.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/font_viewer.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/layout_diagram.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/simple_demo_window.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/EntityProperties.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/SceneHierarchy.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/SceneView.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/ToolBar.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorserializer.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/contextmenu.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorcontroller.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorgui.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorlayout.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorstyle.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorwindow.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/project.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/tinyfiledialogs.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/TabView.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/BoxLayout.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/GridLayout.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/LayoutComponent.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/LayoutSurface.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/TabButton.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/ViewCard.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/audio.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/colors.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/inputgui.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/boxcollider.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/button.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/collider.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/debugdraw.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/component.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/rigidcircle.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/statesprite.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/text.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/texture.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/image.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/init.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/input.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/jsondata.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/keyboard.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/logging.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/mouse.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/mousecursor.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/coremaths.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/csvdata.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/curves.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/delta.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/audioextensions.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/ecs.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/enginesystem.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/font.o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/funcutils.o
+OBJ_LIBOSSIUMEDITOR = $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\stringconvert.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\textinput.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\textlayout.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\texturepack.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\time.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\transform.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\typeinference.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\utf8.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\osteon.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\physics.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\pixeleffects.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\randutils.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\renderer.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\resourcecontroller.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\schemamodel.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\schematype.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\services.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\demo_window_docking.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\font_viewer.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\layout_diagram.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\simple_demo_window.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\EntityProperties.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\SceneHierarchy.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\SceneView.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\ToolBar.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\window.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorserializer.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\contextmenu.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorcontroller.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorgui.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorlayout.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorstyle.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorwindow.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\project.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\tinyfiledialogs.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\BoxLayout.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\GridLayout.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\LayoutComponent.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\LayoutSurface.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\TabButton.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\TabView.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\ViewCard.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\audio.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\colors.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\audioextensions.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\boxcollider.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\button.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\collider.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\debugdraw.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\inputgui.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\rigidcircle.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\statesprite.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\text.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\texture.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\image.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\init.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\input.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\jsondata.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\keyboard.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\logging.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\mouse.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\mousecursor.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\component.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\coremaths.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\csvdata.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\curves.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\delta.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\ecs.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\enginesystem.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\font.o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\funcutils.o
 
 all: ossium ossiumdll ossiumeditor ossiumeditor__debug_ ossiumeditor__debug_linux_ libossiumeditor
 
 clean: clean_ossium clean_ossiumdll clean_ossiumeditor clean_ossiumeditor__debug_ clean_ossiumeditor__debug_linux_ clean_libossiumeditor
 
 before_ossium: 
-	test -d bin/ossium || mkdir -p bin/ossium
-	test -d $(OBJDIR_OSSIUM)/src/Core || mkdir -p $(OBJDIR_OSSIUM)/src/Core
-	test -d $(OBJDIR_OSSIUM)/src/Editor/Core || mkdir -p $(OBJDIR_OSSIUM)/src/Editor/Core
-	test -d $(OBJDIR_OSSIUM)/src/Components/UI || mkdir -p $(OBJDIR_OSSIUM)/src/Components/UI
-	test -d $(OBJDIR_OSSIUM)/src/Components || mkdir -p $(OBJDIR_OSSIUM)/src/Components
+	cmd /c if not exist bin\\ossium md bin\\ossium
+	cmd /c if not exist $(OBJDIR_OSSIUM)\\src\\Core md $(OBJDIR_OSSIUM)\\src\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUM)\\src\\Editor\\Core md $(OBJDIR_OSSIUM)\\src\\Editor\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUM)\\src\\Components\\UI md $(OBJDIR_OSSIUM)\\src\\Components\\UI
+	cmd /c if not exist $(OBJDIR_OSSIUM)\\src\\Components md $(OBJDIR_OSSIUM)\\src\\Components
 
 after_ossium: 
 
@@ -114,185 +114,185 @@ ossium: before_ossium out_ossium after_ossium
 out_ossium: before_ossium $(OBJ_OSSIUM) $(DEP_OSSIUM)
 	$(AR) rcs $(OUT_OSSIUM) $(OBJ_OSSIUM)
 
-$(OBJDIR_OSSIUM)/src/Core/time.o: src/Core/time.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/time.cpp -o $(OBJDIR_OSSIUM)/src/Core/time.o
+$(OBJDIR_OSSIUM)\\src\\Core\\stringconvert.o: src\\Core\\stringconvert.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\stringconvert.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\stringconvert.o
 
-$(OBJDIR_OSSIUM)/src/Core/stringconvert.o: src/Core/stringconvert.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/stringconvert.cpp -o $(OBJDIR_OSSIUM)/src/Core/stringconvert.o
+$(OBJDIR_OSSIUM)\\src\\Core\\textinput.o: src\\Core\\textinput.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\textinput.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\textinput.o
 
-$(OBJDIR_OSSIUM)/src/Core/textinput.o: src/Core/textinput.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/textinput.cpp -o $(OBJDIR_OSSIUM)/src/Core/textinput.o
+$(OBJDIR_OSSIUM)\\src\\Core\\textlayout.o: src\\Core\\textlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\textlayout.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\textlayout.o
 
-$(OBJDIR_OSSIUM)/src/Core/textlayout.o: src/Core/textlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/textlayout.cpp -o $(OBJDIR_OSSIUM)/src/Core/textlayout.o
+$(OBJDIR_OSSIUM)\\src\\Core\\texturepack.o: src\\Core\\texturepack.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\texturepack.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\texturepack.o
 
-$(OBJDIR_OSSIUM)/src/Core/texturepack.o: src/Core/texturepack.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/texturepack.cpp -o $(OBJDIR_OSSIUM)/src/Core/texturepack.o
+$(OBJDIR_OSSIUM)\\src\\Core\\time.o: src\\Core\\time.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\time.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\time.o
 
-$(OBJDIR_OSSIUM)/src/Core/transform.o: src/Core/transform.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/transform.cpp -o $(OBJDIR_OSSIUM)/src/Core/transform.o
+$(OBJDIR_OSSIUM)\\src\\Core\\transform.o: src\\Core\\transform.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\transform.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\transform.o
 
-$(OBJDIR_OSSIUM)/src/Core/typeinference.o: src/Core/typeinference.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/typeinference.cpp -o $(OBJDIR_OSSIUM)/src/Core/typeinference.o
+$(OBJDIR_OSSIUM)\\src\\Core\\typeinference.o: src\\Core\\typeinference.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\typeinference.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\typeinference.o
 
-$(OBJDIR_OSSIUM)/src/Core/utf8.o: src/Core/utf8.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/utf8.cpp -o $(OBJDIR_OSSIUM)/src/Core/utf8.o
+$(OBJDIR_OSSIUM)\\src\\Core\\utf8.o: src\\Core\\utf8.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\utf8.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\utf8.o
 
-$(OBJDIR_OSSIUM)/src/Core/osteon.o: src/Core/osteon.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/osteon.cpp -o $(OBJDIR_OSSIUM)/src/Core/osteon.o
+$(OBJDIR_OSSIUM)\\src\\Core\\osteon.o: src\\Core\\osteon.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\osteon.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\osteon.o
 
-$(OBJDIR_OSSIUM)/src/Core/physics.o: src/Core/physics.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/physics.cpp -o $(OBJDIR_OSSIUM)/src/Core/physics.o
+$(OBJDIR_OSSIUM)\\src\\Core\\physics.o: src\\Core\\physics.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\physics.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\physics.o
 
-$(OBJDIR_OSSIUM)/src/Core/pixeleffects.o: src/Core/pixeleffects.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/pixeleffects.cpp -o $(OBJDIR_OSSIUM)/src/Core/pixeleffects.o
+$(OBJDIR_OSSIUM)\\src\\Core\\pixeleffects.o: src\\Core\\pixeleffects.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\pixeleffects.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\pixeleffects.o
 
-$(OBJDIR_OSSIUM)/src/Core/randutils.o: src/Core/randutils.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/randutils.cpp -o $(OBJDIR_OSSIUM)/src/Core/randutils.o
+$(OBJDIR_OSSIUM)\\src\\Core\\randutils.o: src\\Core\\randutils.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\randutils.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\randutils.o
 
-$(OBJDIR_OSSIUM)/src/Core/window.o: src/Core/window.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/window.cpp -o $(OBJDIR_OSSIUM)/src/Core/window.o
+$(OBJDIR_OSSIUM)\\src\\Core\\renderer.o: src\\Core\\renderer.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\renderer.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\renderer.o
 
-$(OBJDIR_OSSIUM)/src/Core/renderer.o: src/Core/renderer.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/renderer.cpp -o $(OBJDIR_OSSIUM)/src/Core/renderer.o
+$(OBJDIR_OSSIUM)\\src\\Core\\resourcecontroller.o: src\\Core\\resourcecontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\resourcecontroller.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\resourcecontroller.o
 
-$(OBJDIR_OSSIUM)/src/Core/resourcecontroller.o: src/Core/resourcecontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/resourcecontroller.cpp -o $(OBJDIR_OSSIUM)/src/Core/resourcecontroller.o
+$(OBJDIR_OSSIUM)\\src\\Core\\schemamodel.o: src\\Core\\schemamodel.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\schemamodel.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\schemamodel.o
 
-$(OBJDIR_OSSIUM)/src/Core/schemamodel.o: src/Core/schemamodel.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/schemamodel.cpp -o $(OBJDIR_OSSIUM)/src/Core/schemamodel.o
+$(OBJDIR_OSSIUM)\\src\\Core\\schematype.o: src\\Core\\schematype.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\schematype.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\schematype.o
 
-$(OBJDIR_OSSIUM)/src/Core/schematype.o: src/Core/schematype.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/schematype.cpp -o $(OBJDIR_OSSIUM)/src/Core/schematype.o
+$(OBJDIR_OSSIUM)\\src\\Core\\services.o: src\\Core\\services.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\services.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\services.o
 
-$(OBJDIR_OSSIUM)/src/Core/services.o: src/Core/services.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/services.cpp -o $(OBJDIR_OSSIUM)/src/Core/services.o
+$(OBJDIR_OSSIUM)\\src\\Core\\window.o: src\\Core\\window.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\window.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\window.o
 
-$(OBJDIR_OSSIUM)/src/Editor/Core/editorserializer.o: src/Editor/Core/editorserializer.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Editor/Core/editorserializer.cpp -o $(OBJDIR_OSSIUM)/src/Editor/Core/editorserializer.o
+$(OBJDIR_OSSIUM)\\src\\Editor\\Core\\editorserializer.o: src\\Editor\\Core\\editorserializer.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Editor\\Core\\editorserializer.cpp -o $(OBJDIR_OSSIUM)\\src\\Editor\\Core\\editorserializer.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/TabView.o: src/Components/UI/TabView.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/TabView.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/TabView.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\BoxLayout.o: src\\Components\\UI\\BoxLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\BoxLayout.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\BoxLayout.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/BoxLayout.o: src/Components/UI/BoxLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/BoxLayout.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/BoxLayout.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\GridLayout.o: src\\Components\\UI\\GridLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\GridLayout.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\GridLayout.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/GridLayout.o: src/Components/UI/GridLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/GridLayout.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/GridLayout.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\LayoutComponent.o: src\\Components\\UI\\LayoutComponent.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\LayoutComponent.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\LayoutComponent.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/LayoutComponent.o: src/Components/UI/LayoutComponent.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/LayoutComponent.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/LayoutComponent.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\LayoutSurface.o: src\\Components\\UI\\LayoutSurface.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\LayoutSurface.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\LayoutSurface.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/LayoutSurface.o: src/Components/UI/LayoutSurface.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/LayoutSurface.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/LayoutSurface.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\TabButton.o: src\\Components\\UI\\TabButton.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\TabButton.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\TabButton.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/TabButton.o: src/Components/UI/TabButton.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/TabButton.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/TabButton.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\TabView.o: src\\Components\\UI\\TabView.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\TabView.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\TabView.o
 
-$(OBJDIR_OSSIUM)/src/Components/UI/ViewCard.o: src/Components/UI/ViewCard.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/UI/ViewCard.cpp -o $(OBJDIR_OSSIUM)/src/Components/UI/ViewCard.o
+$(OBJDIR_OSSIUM)\\src\\Components\\UI\\ViewCard.o: src\\Components\\UI\\ViewCard.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\UI\\ViewCard.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\UI\\ViewCard.o
 
-$(OBJDIR_OSSIUM)/src/Core/audio.o: src/Core/audio.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/audio.cpp -o $(OBJDIR_OSSIUM)/src/Core/audio.o
+$(OBJDIR_OSSIUM)\\src\\Core\\audio.o: src\\Core\\audio.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\audio.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\audio.o
 
-$(OBJDIR_OSSIUM)/src/Core/colors.o: src/Core/colors.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/colors.cpp -o $(OBJDIR_OSSIUM)/src/Core/colors.o
+$(OBJDIR_OSSIUM)\\src\\Core\\colors.o: src\\Core\\colors.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\colors.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\colors.o
 
-$(OBJDIR_OSSIUM)/src/Components/inputgui.o: src/Components/inputgui.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/inputgui.cpp -o $(OBJDIR_OSSIUM)/src/Components/inputgui.o
+$(OBJDIR_OSSIUM)\\src\\Components\\audioextensions.o: src\\Components\\audioextensions.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\audioextensions.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\audioextensions.o
 
-$(OBJDIR_OSSIUM)/src/Components/boxcollider.o: src/Components/boxcollider.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/boxcollider.cpp -o $(OBJDIR_OSSIUM)/src/Components/boxcollider.o
+$(OBJDIR_OSSIUM)\\src\\Components\\boxcollider.o: src\\Components\\boxcollider.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\boxcollider.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\boxcollider.o
 
-$(OBJDIR_OSSIUM)/src/Components/button.o: src/Components/button.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/button.cpp -o $(OBJDIR_OSSIUM)/src/Components/button.o
+$(OBJDIR_OSSIUM)\\src\\Components\\button.o: src\\Components\\button.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\button.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\button.o
 
-$(OBJDIR_OSSIUM)/src/Components/collider.o: src/Components/collider.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/collider.cpp -o $(OBJDIR_OSSIUM)/src/Components/collider.o
+$(OBJDIR_OSSIUM)\\src\\Components\\collider.o: src\\Components\\collider.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\collider.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\collider.o
 
-$(OBJDIR_OSSIUM)/src/Components/debugdraw.o: src/Components/debugdraw.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/debugdraw.cpp -o $(OBJDIR_OSSIUM)/src/Components/debugdraw.o
+$(OBJDIR_OSSIUM)\\src\\Components\\debugdraw.o: src\\Components\\debugdraw.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\debugdraw.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\debugdraw.o
 
-$(OBJDIR_OSSIUM)/src/Core/component.o: src/Core/component.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/component.cpp -o $(OBJDIR_OSSIUM)/src/Core/component.o
+$(OBJDIR_OSSIUM)\\src\\Components\\inputgui.o: src\\Components\\inputgui.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\inputgui.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\inputgui.o
 
-$(OBJDIR_OSSIUM)/src/Components/rigidcircle.o: src/Components/rigidcircle.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/rigidcircle.cpp -o $(OBJDIR_OSSIUM)/src/Components/rigidcircle.o
+$(OBJDIR_OSSIUM)\\src\\Components\\rigidcircle.o: src\\Components\\rigidcircle.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\rigidcircle.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\rigidcircle.o
 
-$(OBJDIR_OSSIUM)/src/Components/statesprite.o: src/Components/statesprite.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/statesprite.cpp -o $(OBJDIR_OSSIUM)/src/Components/statesprite.o
+$(OBJDIR_OSSIUM)\\src\\Components\\statesprite.o: src\\Components\\statesprite.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\statesprite.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\statesprite.o
 
-$(OBJDIR_OSSIUM)/src/Components/text.o: src/Components/text.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/text.cpp -o $(OBJDIR_OSSIUM)/src/Components/text.o
+$(OBJDIR_OSSIUM)\\src\\Components\\text.o: src\\Components\\text.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\text.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\text.o
 
-$(OBJDIR_OSSIUM)/src/Components/texture.o: src/Components/texture.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/texture.cpp -o $(OBJDIR_OSSIUM)/src/Components/texture.o
+$(OBJDIR_OSSIUM)\\src\\Components\\texture.o: src\\Components\\texture.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Components\\texture.cpp -o $(OBJDIR_OSSIUM)\\src\\Components\\texture.o
 
-$(OBJDIR_OSSIUM)/src/Core/image.o: src/Core/image.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/image.cpp -o $(OBJDIR_OSSIUM)/src/Core/image.o
+$(OBJDIR_OSSIUM)\\src\\Core\\image.o: src\\Core\\image.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\image.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\image.o
 
-$(OBJDIR_OSSIUM)/src/Core/init.o: src/Core/init.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/init.cpp -o $(OBJDIR_OSSIUM)/src/Core/init.o
+$(OBJDIR_OSSIUM)\\src\\Core\\init.o: src\\Core\\init.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\init.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\init.o
 
-$(OBJDIR_OSSIUM)/src/Core/input.o: src/Core/input.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/input.cpp -o $(OBJDIR_OSSIUM)/src/Core/input.o
+$(OBJDIR_OSSIUM)\\src\\Core\\input.o: src\\Core\\input.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\input.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\input.o
 
-$(OBJDIR_OSSIUM)/src/Core/jsondata.o: src/Core/jsondata.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/jsondata.cpp -o $(OBJDIR_OSSIUM)/src/Core/jsondata.o
+$(OBJDIR_OSSIUM)\\src\\Core\\jsondata.o: src\\Core\\jsondata.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\jsondata.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\jsondata.o
 
-$(OBJDIR_OSSIUM)/src/Core/keyboard.o: src/Core/keyboard.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/keyboard.cpp -o $(OBJDIR_OSSIUM)/src/Core/keyboard.o
+$(OBJDIR_OSSIUM)\\src\\Core\\keyboard.o: src\\Core\\keyboard.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\keyboard.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\keyboard.o
 
-$(OBJDIR_OSSIUM)/src/Core/logging.o: src/Core/logging.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/logging.cpp -o $(OBJDIR_OSSIUM)/src/Core/logging.o
+$(OBJDIR_OSSIUM)\\src\\Core\\logging.o: src\\Core\\logging.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\logging.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\logging.o
 
-$(OBJDIR_OSSIUM)/src/Core/mouse.o: src/Core/mouse.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/mouse.cpp -o $(OBJDIR_OSSIUM)/src/Core/mouse.o
+$(OBJDIR_OSSIUM)\\src\\Core\\mouse.o: src\\Core\\mouse.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\mouse.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\mouse.o
 
-$(OBJDIR_OSSIUM)/src/Core/mousecursor.o: src/Core/mousecursor.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/mousecursor.cpp -o $(OBJDIR_OSSIUM)/src/Core/mousecursor.o
+$(OBJDIR_OSSIUM)\\src\\Core\\mousecursor.o: src\\Core\\mousecursor.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\mousecursor.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\mousecursor.o
 
-$(OBJDIR_OSSIUM)/src/Core/coremaths.o: src/Core/coremaths.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/coremaths.cpp -o $(OBJDIR_OSSIUM)/src/Core/coremaths.o
+$(OBJDIR_OSSIUM)\\src\\Core\\component.o: src\\Core\\component.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\component.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\component.o
 
-$(OBJDIR_OSSIUM)/src/Core/csvdata.o: src/Core/csvdata.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/csvdata.cpp -o $(OBJDIR_OSSIUM)/src/Core/csvdata.o
+$(OBJDIR_OSSIUM)\\src\\Core\\coremaths.o: src\\Core\\coremaths.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\coremaths.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\coremaths.o
 
-$(OBJDIR_OSSIUM)/src/Core/curves.o: src/Core/curves.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/curves.cpp -o $(OBJDIR_OSSIUM)/src/Core/curves.o
+$(OBJDIR_OSSIUM)\\src\\Core\\csvdata.o: src\\Core\\csvdata.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\csvdata.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\csvdata.o
 
-$(OBJDIR_OSSIUM)/src/Core/delta.o: src/Core/delta.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/delta.cpp -o $(OBJDIR_OSSIUM)/src/Core/delta.o
+$(OBJDIR_OSSIUM)\\src\\Core\\curves.o: src\\Core\\curves.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\curves.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\curves.o
 
-$(OBJDIR_OSSIUM)/src/Components/audioextensions.o: src/Components/audioextensions.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Components/audioextensions.cpp -o $(OBJDIR_OSSIUM)/src/Components/audioextensions.o
+$(OBJDIR_OSSIUM)\\src\\Core\\delta.o: src\\Core\\delta.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\delta.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\delta.o
 
-$(OBJDIR_OSSIUM)/src/Core/ecs.o: src/Core/ecs.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/ecs.cpp -o $(OBJDIR_OSSIUM)/src/Core/ecs.o
+$(OBJDIR_OSSIUM)\\src\\Core\\ecs.o: src\\Core\\ecs.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\ecs.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\ecs.o
 
-$(OBJDIR_OSSIUM)/src/Core/enginesystem.o: src/Core/enginesystem.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/enginesystem.cpp -o $(OBJDIR_OSSIUM)/src/Core/enginesystem.o
+$(OBJDIR_OSSIUM)\\src\\Core\\enginesystem.o: src\\Core\\enginesystem.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\enginesystem.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\enginesystem.o
 
-$(OBJDIR_OSSIUM)/src/Core/font.o: src/Core/font.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/font.cpp -o $(OBJDIR_OSSIUM)/src/Core/font.o
+$(OBJDIR_OSSIUM)\\src\\Core\\font.o: src\\Core\\font.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\font.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\font.o
 
-$(OBJDIR_OSSIUM)/src/Core/funcutils.o: src/Core/funcutils.cpp
-	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src/Core/funcutils.cpp -o $(OBJDIR_OSSIUM)/src/Core/funcutils.o
+$(OBJDIR_OSSIUM)\\src\\Core\\funcutils.o: src\\Core\\funcutils.cpp
+	$(CXX) $(CFLAGS_OSSIUM) $(INC_OSSIUM) -c src\\Core\\funcutils.cpp -o $(OBJDIR_OSSIUM)\\src\\Core\\funcutils.o
 
 clean_ossium: 
-	rm -f $(OBJ_OSSIUM) $(OUT_OSSIUM)
-	rm -rf bin/ossium
-	rm -rf $(OBJDIR_OSSIUM)/src/Core
-	rm -rf $(OBJDIR_OSSIUM)/src/Editor/Core
-	rm -rf $(OBJDIR_OSSIUM)/src/Components/UI
-	rm -rf $(OBJDIR_OSSIUM)/src/Components
+	cmd /c del /f $(OBJ_OSSIUM) $(OUT_OSSIUM)
+	cmd /c rd bin\\ossium
+	cmd /c rd $(OBJDIR_OSSIUM)\\src\\Core
+	cmd /c rd $(OBJDIR_OSSIUM)\\src\\Editor\\Core
+	cmd /c rd $(OBJDIR_OSSIUM)\\src\\Components\\UI
+	cmd /c rd $(OBJDIR_OSSIUM)\\src\\Components
 
 before_ossiumdll: 
-	test -d bin/ossiumdll || mkdir -p bin/ossiumdll
-	test -d $(OBJDIR_OSSIUMDLL)/src/Core || mkdir -p $(OBJDIR_OSSIUMDLL)/src/Core
-	test -d $(OBJDIR_OSSIUMDLL)/src/Editor/Core || mkdir -p $(OBJDIR_OSSIUMDLL)/src/Editor/Core
-	test -d $(OBJDIR_OSSIUMDLL)/src/Components/UI || mkdir -p $(OBJDIR_OSSIUMDLL)/src/Components/UI
-	test -d $(OBJDIR_OSSIUMDLL)/src/Components || mkdir -p $(OBJDIR_OSSIUMDLL)/src/Components
+	cmd /c if not exist bin\\ossiumdll md bin\\ossiumdll
+	cmd /c if not exist $(OBJDIR_OSSIUMDLL)\\src\\Core md $(OBJDIR_OSSIUMDLL)\\src\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMDLL)\\src\\Editor\\Core md $(OBJDIR_OSSIUMDLL)\\src\\Editor\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI md $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI
+	cmd /c if not exist $(OBJDIR_OSSIUMDLL)\\src\\Components md $(OBJDIR_OSSIUMDLL)\\src\\Components
 
 after_ossiumdll: 
 
@@ -301,432 +301,432 @@ ossiumdll: before_ossiumdll out_ossiumdll after_ossiumdll
 out_ossiumdll: before_ossiumdll $(OBJ_OSSIUMDLL) $(DEP_OSSIUMDLL)
 	$(LD) -shared $(LIBDIR_OSSIUMDLL) $(OBJ_OSSIUMDLL)  -o $(OUT_OSSIUMDLL) $(LDFLAGS_OSSIUMDLL) $(LIB_OSSIUMDLL)
 
-$(OBJDIR_OSSIUMDLL)/src/Core/time.o: src/Core/time.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/time.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/time.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\stringconvert.o: src\\Core\\stringconvert.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\stringconvert.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\stringconvert.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/stringconvert.o: src/Core/stringconvert.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/stringconvert.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/stringconvert.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\textinput.o: src\\Core\\textinput.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\textinput.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\textinput.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/textinput.o: src/Core/textinput.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/textinput.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/textinput.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\textlayout.o: src\\Core\\textlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\textlayout.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\textlayout.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/textlayout.o: src/Core/textlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/textlayout.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/textlayout.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\texturepack.o: src\\Core\\texturepack.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\texturepack.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\texturepack.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/texturepack.o: src/Core/texturepack.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/texturepack.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/texturepack.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\time.o: src\\Core\\time.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\time.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\time.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/transform.o: src/Core/transform.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/transform.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/transform.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\transform.o: src\\Core\\transform.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\transform.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\transform.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/typeinference.o: src/Core/typeinference.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/typeinference.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/typeinference.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\typeinference.o: src\\Core\\typeinference.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\typeinference.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\typeinference.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/utf8.o: src/Core/utf8.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/utf8.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/utf8.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\utf8.o: src\\Core\\utf8.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\utf8.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\utf8.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/osteon.o: src/Core/osteon.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/osteon.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/osteon.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\osteon.o: src\\Core\\osteon.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\osteon.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\osteon.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/physics.o: src/Core/physics.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/physics.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/physics.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\physics.o: src\\Core\\physics.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\physics.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\physics.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/pixeleffects.o: src/Core/pixeleffects.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/pixeleffects.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/pixeleffects.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\pixeleffects.o: src\\Core\\pixeleffects.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\pixeleffects.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\pixeleffects.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/randutils.o: src/Core/randutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/randutils.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/randutils.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\randutils.o: src\\Core\\randutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\randutils.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\randutils.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/window.o: src/Core/window.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/window.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/window.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\renderer.o: src\\Core\\renderer.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\renderer.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\renderer.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/renderer.o: src/Core/renderer.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/renderer.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/renderer.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\resourcecontroller.o: src\\Core\\resourcecontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\resourcecontroller.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\resourcecontroller.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/resourcecontroller.o: src/Core/resourcecontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/resourcecontroller.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/resourcecontroller.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\schemamodel.o: src\\Core\\schemamodel.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\schemamodel.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\schemamodel.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/schemamodel.o: src/Core/schemamodel.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/schemamodel.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/schemamodel.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\schematype.o: src\\Core\\schematype.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\schematype.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\schematype.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/schematype.o: src/Core/schematype.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/schematype.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/schematype.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\services.o: src\\Core\\services.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\services.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\services.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/services.o: src/Core/services.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/services.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/services.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\window.o: src\\Core\\window.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\window.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\window.o
 
-$(OBJDIR_OSSIUMDLL)/src/Editor/Core/editorserializer.o: src/Editor/Core/editorserializer.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Editor/Core/editorserializer.cpp -o $(OBJDIR_OSSIUMDLL)/src/Editor/Core/editorserializer.o
+$(OBJDIR_OSSIUMDLL)\\src\\Editor\\Core\\editorserializer.o: src\\Editor\\Core\\editorserializer.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Editor\\Core\\editorserializer.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Editor\\Core\\editorserializer.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/TabView.o: src/Components/UI/TabView.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/TabView.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/TabView.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\BoxLayout.o: src\\Components\\UI\\BoxLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\BoxLayout.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\BoxLayout.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/BoxLayout.o: src/Components/UI/BoxLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/BoxLayout.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/BoxLayout.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\GridLayout.o: src\\Components\\UI\\GridLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\GridLayout.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\GridLayout.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/GridLayout.o: src/Components/UI/GridLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/GridLayout.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/GridLayout.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\LayoutComponent.o: src\\Components\\UI\\LayoutComponent.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\LayoutComponent.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\LayoutComponent.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/LayoutComponent.o: src/Components/UI/LayoutComponent.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/LayoutComponent.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/LayoutComponent.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\LayoutSurface.o: src\\Components\\UI\\LayoutSurface.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\LayoutSurface.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\LayoutSurface.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/LayoutSurface.o: src/Components/UI/LayoutSurface.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/LayoutSurface.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/LayoutSurface.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\TabButton.o: src\\Components\\UI\\TabButton.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\TabButton.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\TabButton.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/TabButton.o: src/Components/UI/TabButton.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/TabButton.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/TabButton.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\TabView.o: src\\Components\\UI\\TabView.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\TabView.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\TabView.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/UI/ViewCard.o: src/Components/UI/ViewCard.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/UI/ViewCard.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/UI/ViewCard.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\ViewCard.o: src\\Components\\UI\\ViewCard.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\UI\\ViewCard.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI\\ViewCard.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/audio.o: src/Core/audio.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/audio.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/audio.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\audio.o: src\\Core\\audio.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\audio.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\audio.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/colors.o: src/Core/colors.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/colors.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/colors.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\colors.o: src\\Core\\colors.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\colors.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\colors.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/inputgui.o: src/Components/inputgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/inputgui.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/inputgui.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\audioextensions.o: src\\Components\\audioextensions.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\audioextensions.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\audioextensions.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/boxcollider.o: src/Components/boxcollider.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/boxcollider.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/boxcollider.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\boxcollider.o: src\\Components\\boxcollider.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\boxcollider.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\boxcollider.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/button.o: src/Components/button.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/button.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/button.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\button.o: src\\Components\\button.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\button.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\button.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/collider.o: src/Components/collider.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/collider.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/collider.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\collider.o: src\\Components\\collider.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\collider.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\collider.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/debugdraw.o: src/Components/debugdraw.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/debugdraw.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/debugdraw.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\debugdraw.o: src\\Components\\debugdraw.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\debugdraw.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\debugdraw.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/component.o: src/Core/component.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/component.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/component.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\inputgui.o: src\\Components\\inputgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\inputgui.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\inputgui.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/rigidcircle.o: src/Components/rigidcircle.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/rigidcircle.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/rigidcircle.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\rigidcircle.o: src\\Components\\rigidcircle.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\rigidcircle.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\rigidcircle.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/statesprite.o: src/Components/statesprite.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/statesprite.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/statesprite.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\statesprite.o: src\\Components\\statesprite.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\statesprite.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\statesprite.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/text.o: src/Components/text.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/text.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/text.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\text.o: src\\Components\\text.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\text.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\text.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/texture.o: src/Components/texture.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/texture.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/texture.o
+$(OBJDIR_OSSIUMDLL)\\src\\Components\\texture.o: src\\Components\\texture.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Components\\texture.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Components\\texture.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/image.o: src/Core/image.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/image.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/image.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\image.o: src\\Core\\image.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\image.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\image.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/init.o: src/Core/init.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/init.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/init.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\init.o: src\\Core\\init.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\init.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\init.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/input.o: src/Core/input.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/input.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/input.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\input.o: src\\Core\\input.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\input.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\input.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/jsondata.o: src/Core/jsondata.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/jsondata.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/jsondata.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\jsondata.o: src\\Core\\jsondata.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\jsondata.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\jsondata.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/keyboard.o: src/Core/keyboard.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/keyboard.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/keyboard.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\keyboard.o: src\\Core\\keyboard.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\keyboard.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\keyboard.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/logging.o: src/Core/logging.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/logging.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/logging.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\logging.o: src\\Core\\logging.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\logging.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\logging.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/mouse.o: src/Core/mouse.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/mouse.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/mouse.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\mouse.o: src\\Core\\mouse.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\mouse.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\mouse.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/mousecursor.o: src/Core/mousecursor.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/mousecursor.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/mousecursor.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\mousecursor.o: src\\Core\\mousecursor.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\mousecursor.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\mousecursor.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/coremaths.o: src/Core/coremaths.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/coremaths.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/coremaths.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\component.o: src\\Core\\component.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\component.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\component.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/csvdata.o: src/Core/csvdata.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/csvdata.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/csvdata.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\coremaths.o: src\\Core\\coremaths.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\coremaths.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\coremaths.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/curves.o: src/Core/curves.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/curves.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/curves.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\csvdata.o: src\\Core\\csvdata.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\csvdata.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\csvdata.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/delta.o: src/Core/delta.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/delta.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/delta.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\curves.o: src\\Core\\curves.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\curves.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\curves.o
 
-$(OBJDIR_OSSIUMDLL)/src/Components/audioextensions.o: src/Components/audioextensions.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Components/audioextensions.cpp -o $(OBJDIR_OSSIUMDLL)/src/Components/audioextensions.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\delta.o: src\\Core\\delta.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\delta.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\delta.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/ecs.o: src/Core/ecs.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/ecs.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/ecs.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\ecs.o: src\\Core\\ecs.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\ecs.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\ecs.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/enginesystem.o: src/Core/enginesystem.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/enginesystem.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/enginesystem.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\enginesystem.o: src\\Core\\enginesystem.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\enginesystem.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\enginesystem.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/font.o: src/Core/font.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/font.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/font.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\font.o: src\\Core\\font.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\font.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\font.o
 
-$(OBJDIR_OSSIUMDLL)/src/Core/funcutils.o: src/Core/funcutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src/Core/funcutils.cpp -o $(OBJDIR_OSSIUMDLL)/src/Core/funcutils.o
+$(OBJDIR_OSSIUMDLL)\\src\\Core\\funcutils.o: src\\Core\\funcutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMDLL) $(INC_OSSIUMDLL) -c src\\Core\\funcutils.cpp -o $(OBJDIR_OSSIUMDLL)\\src\\Core\\funcutils.o
 
 clean_ossiumdll: 
-	rm -f $(OBJ_OSSIUMDLL) $(OUT_OSSIUMDLL)
-	rm -rf bin/ossiumdll
-	rm -rf $(OBJDIR_OSSIUMDLL)/src/Core
-	rm -rf $(OBJDIR_OSSIUMDLL)/src/Editor/Core
-	rm -rf $(OBJDIR_OSSIUMDLL)/src/Components/UI
-	rm -rf $(OBJDIR_OSSIUMDLL)/src/Components
+	cmd /c del /f $(OBJ_OSSIUMDLL) $(OUT_OSSIUMDLL)
+	cmd /c rd bin\\ossiumdll
+	cmd /c rd $(OBJDIR_OSSIUMDLL)\\src\\Core
+	cmd /c rd $(OBJDIR_OSSIUMDLL)\\src\\Editor\\Core
+	cmd /c rd $(OBJDIR_OSSIUMDLL)\\src\\Components\\UI
+	cmd /c rd $(OBJDIR_OSSIUMDLL)\\src\\Components
 
 before_ossiumeditor: 
-	test -d bin/OssiumEditor || mkdir -p bin/OssiumEditor
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Core || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Core
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Editor || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Editor
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Components/UI || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Components/UI
-	test -d $(OBJDIR_OSSIUMEDITOR)/src/Components || mkdir -p $(OBJDIR_OSSIUMEDITOR)/src/Components
+	cmd /c if not exist bin\\OssiumEditor md bin\\OssiumEditor
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Core md $(OBJDIR_OSSIUMEDITOR)\\src\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples md $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows md $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Editor md $(OBJDIR_OSSIUMEDITOR)\\src\\Editor
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core md $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI md $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR)\\src\\Components md $(OBJDIR_OSSIUMEDITOR)\\src\\Components
 
 after_ossiumeditor: 
 
 ossiumeditor: before_ossiumeditor out_ossiumeditor after_ossiumeditor
 
 out_ossiumeditor: before_ossiumeditor $(OBJ_OSSIUMEDITOR) $(DEP_OSSIUMEDITOR)
-	$(LD) $(LIBDIR_OSSIUMEDITOR) -o $(OUT_OSSIUMEDITOR) $(OBJ_OSSIUMEDITOR)  $(LDFLAGS_OSSIUMEDITOR) $(LIB_OSSIUMEDITOR)
+	$(LD) $(LIBDIR_OSSIUMEDITOR) -o $(OUT_OSSIUMEDITOR) $(OBJ_OSSIUMEDITOR)  $(LDFLAGS_OSSIUMEDITOR) -mwindows $(LIB_OSSIUMEDITOR)
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/time.o: src/Core/time.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/time.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/time.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\stringconvert.o: src\\Core\\stringconvert.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\stringconvert.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\stringconvert.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/stringconvert.o: src/Core/stringconvert.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/stringconvert.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/stringconvert.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\textinput.o: src\\Core\\textinput.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\textinput.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\textinput.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/textinput.o: src/Core/textinput.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/textinput.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/textinput.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\textlayout.o: src\\Core\\textlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\textlayout.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\textlayout.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/textlayout.o: src/Core/textlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/textlayout.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/textlayout.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\texturepack.o: src\\Core\\texturepack.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\texturepack.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\texturepack.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/texturepack.o: src/Core/texturepack.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/texturepack.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/texturepack.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\time.o: src\\Core\\time.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\time.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\time.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/transform.o: src/Core/transform.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/transform.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/transform.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\transform.o: src\\Core\\transform.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\transform.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\transform.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/typeinference.o: src/Core/typeinference.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/typeinference.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/typeinference.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\typeinference.o: src\\Core\\typeinference.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\typeinference.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\typeinference.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/utf8.o: src/Core/utf8.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/utf8.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/utf8.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\utf8.o: src\\Core\\utf8.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\utf8.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\utf8.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/osteon.o: src/Core/osteon.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/osteon.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/osteon.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\osteon.o: src\\Core\\osteon.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\osteon.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\osteon.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/physics.o: src/Core/physics.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/physics.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/physics.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\physics.o: src\\Core\\physics.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\physics.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\physics.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/pixeleffects.o: src/Core/pixeleffects.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/pixeleffects.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/pixeleffects.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\pixeleffects.o: src\\Core\\pixeleffects.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\pixeleffects.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\pixeleffects.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/randutils.o: src/Core/randutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/randutils.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/randutils.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\randutils.o: src\\Core\\randutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\randutils.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\randutils.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/window.o: src/Core/window.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/window.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/window.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\renderer.o: src\\Core\\renderer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\renderer.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\renderer.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/renderer.o: src/Core/renderer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/renderer.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/renderer.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\resourcecontroller.o: src\\Core\\resourcecontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\resourcecontroller.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\resourcecontroller.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/resourcecontroller.o: src/Core/resourcecontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/resourcecontroller.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/resourcecontroller.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\schemamodel.o: src\\Core\\schemamodel.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\schemamodel.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\schemamodel.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/schemamodel.o: src/Core/schemamodel.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/schemamodel.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/schemamodel.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\schematype.o: src\\Core\\schematype.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\schematype.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\schematype.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/schematype.o: src/Core/schematype.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/schematype.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/schematype.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\services.o: src\\Core\\services.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\services.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\services.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/services.o: src/Core/services.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/services.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/services.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\demo_window_docking.o: src\\Editor\\Examples\\demo_window_docking.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Examples\\demo_window_docking.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\demo_window_docking.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/demo_window_docking.o: src/Editor/Examples/demo_window_docking.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Examples/demo_window_docking.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/demo_window_docking.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\font_viewer.o: src\\Editor\\Examples\\font_viewer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Examples\\font_viewer.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\font_viewer.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/font_viewer.o: src/Editor/Examples/font_viewer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Examples/font_viewer.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/font_viewer.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\layout_diagram.o: src\\Editor\\Examples\\layout_diagram.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Examples\\layout_diagram.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\layout_diagram.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/layout_diagram.o: src/Editor/Examples/layout_diagram.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Examples/layout_diagram.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/layout_diagram.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\simple_demo_window.o: src\\Editor\\Examples\\simple_demo_window.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Examples\\simple_demo_window.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples\\simple_demo_window.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/simple_demo_window.o: src/Editor/Examples/simple_demo_window.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Examples/simple_demo_window.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples/simple_demo_window.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\EntityProperties.o: src\\Editor\\Windows\\EntityProperties.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Windows\\EntityProperties.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\EntityProperties.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/EntityProperties.o: src/Editor/Windows/EntityProperties.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Windows/EntityProperties.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/EntityProperties.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\SceneHierarchy.o: src\\Editor\\Windows\\SceneHierarchy.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Windows\\SceneHierarchy.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\SceneHierarchy.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/SceneHierarchy.o: src/Editor/Windows/SceneHierarchy.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Windows/SceneHierarchy.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/SceneHierarchy.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\SceneView.o: src\\Editor\\Windows\\SceneView.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Windows\\SceneView.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\SceneView.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/SceneView.o: src/Editor/Windows/SceneView.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Windows/SceneView.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/SceneView.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\ToolBar.o: src\\Editor\\Windows\\ToolBar.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Windows\\ToolBar.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows\\ToolBar.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/ToolBar.o: src/Editor/Windows/ToolBar.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Windows/ToolBar.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows/ToolBar.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\main.o: src\\Editor\\main.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\main.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\main.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/main.o: src/Editor/main.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/main.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/main.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\window.o: src\\Core\\window.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\window.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\window.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorserializer.o: src/Editor/Core/editorserializer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/editorserializer.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorserializer.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorserializer.o: src\\Editor\\Core\\editorserializer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\editorserializer.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorserializer.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/contextmenu.o: src/Editor/Core/contextmenu.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/contextmenu.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/contextmenu.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\contextmenu.o: src\\Editor\\Core\\contextmenu.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\contextmenu.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\contextmenu.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorcontroller.o: src/Editor/Core/editorcontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/editorcontroller.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorcontroller.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorcontroller.o: src\\Editor\\Core\\editorcontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\editorcontroller.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorcontroller.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorgui.o: src/Editor/Core/editorgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/editorgui.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorgui.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorgui.o: src\\Editor\\Core\\editorgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\editorgui.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorgui.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorlayout.o: src/Editor/Core/editorlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/editorlayout.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorlayout.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorlayout.o: src\\Editor\\Core\\editorlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\editorlayout.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorlayout.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorstyle.o: src/Editor/Core/editorstyle.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/editorstyle.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorstyle.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorstyle.o: src\\Editor\\Core\\editorstyle.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\editorstyle.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorstyle.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorwindow.o: src/Editor/Core/editorwindow.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/editorwindow.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/editorwindow.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorwindow.o: src\\Editor\\Core\\editorwindow.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\editorwindow.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\editorwindow.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/project.o: src/Editor/Core/project.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/project.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/project.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\project.o: src\\Editor\\Core\\project.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\project.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\project.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/tinyfiledialogs.o: src/Editor/Core/tinyfiledialogs.c
-	$(CC) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Editor/Core/tinyfiledialogs.c -o $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core/tinyfiledialogs.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\tinyfiledialogs.o: src\\Editor\\Core\\tinyfiledialogs.c
+	$(CC) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Editor\\Core\\tinyfiledialogs.c -o $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core\\tinyfiledialogs.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/TabView.o: src/Components/UI/TabView.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/TabView.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/TabView.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\BoxLayout.o: src\\Components\\UI\\BoxLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\BoxLayout.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\BoxLayout.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/BoxLayout.o: src/Components/UI/BoxLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/BoxLayout.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/BoxLayout.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\GridLayout.o: src\\Components\\UI\\GridLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\GridLayout.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\GridLayout.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/GridLayout.o: src/Components/UI/GridLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/GridLayout.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/GridLayout.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\LayoutComponent.o: src\\Components\\UI\\LayoutComponent.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\LayoutComponent.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\LayoutComponent.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/LayoutComponent.o: src/Components/UI/LayoutComponent.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/LayoutComponent.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/LayoutComponent.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\LayoutSurface.o: src\\Components\\UI\\LayoutSurface.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\LayoutSurface.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\LayoutSurface.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/LayoutSurface.o: src/Components/UI/LayoutSurface.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/LayoutSurface.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/LayoutSurface.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\TabButton.o: src\\Components\\UI\\TabButton.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\TabButton.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\TabButton.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/TabButton.o: src/Components/UI/TabButton.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/TabButton.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/TabButton.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\TabView.o: src\\Components\\UI\\TabView.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\TabView.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\TabView.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/UI/ViewCard.o: src/Components/UI/ViewCard.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/UI/ViewCard.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/UI/ViewCard.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\ViewCard.o: src\\Components\\UI\\ViewCard.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\UI\\ViewCard.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI\\ViewCard.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/audio.o: src/Core/audio.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/audio.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/audio.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\audio.o: src\\Core\\audio.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\audio.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\audio.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/colors.o: src/Core/colors.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/colors.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/colors.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\colors.o: src\\Core\\colors.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\colors.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\colors.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/inputgui.o: src/Components/inputgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/inputgui.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/inputgui.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\audioextensions.o: src\\Components\\audioextensions.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\audioextensions.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\audioextensions.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/boxcollider.o: src/Components/boxcollider.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/boxcollider.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/boxcollider.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\boxcollider.o: src\\Components\\boxcollider.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\boxcollider.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\boxcollider.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/button.o: src/Components/button.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/button.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/button.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\button.o: src\\Components\\button.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\button.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\button.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/collider.o: src/Components/collider.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/collider.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/collider.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\collider.o: src\\Components\\collider.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\collider.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\collider.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/debugdraw.o: src/Components/debugdraw.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/debugdraw.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/debugdraw.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\debugdraw.o: src\\Components\\debugdraw.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\debugdraw.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\debugdraw.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/component.o: src/Core/component.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/component.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/component.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\inputgui.o: src\\Components\\inputgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\inputgui.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\inputgui.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/rigidcircle.o: src/Components/rigidcircle.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/rigidcircle.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/rigidcircle.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\rigidcircle.o: src\\Components\\rigidcircle.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\rigidcircle.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\rigidcircle.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/statesprite.o: src/Components/statesprite.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/statesprite.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/statesprite.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\statesprite.o: src\\Components\\statesprite.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\statesprite.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\statesprite.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/text.o: src/Components/text.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/text.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/text.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\text.o: src\\Components\\text.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\text.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\text.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/texture.o: src/Components/texture.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/texture.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/texture.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Components\\texture.o: src\\Components\\texture.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Components\\texture.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\texture.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/image.o: src/Core/image.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/image.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/image.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\image.o: src\\Core\\image.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\image.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\image.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/init.o: src/Core/init.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/init.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/init.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\init.o: src\\Core\\init.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\init.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\init.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/input.o: src/Core/input.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/input.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/input.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\input.o: src\\Core\\input.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\input.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\input.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/jsondata.o: src/Core/jsondata.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/jsondata.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/jsondata.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\jsondata.o: src\\Core\\jsondata.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\jsondata.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\jsondata.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/keyboard.o: src/Core/keyboard.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/keyboard.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/keyboard.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\keyboard.o: src\\Core\\keyboard.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\keyboard.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\keyboard.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/logging.o: src/Core/logging.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/logging.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/logging.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\logging.o: src\\Core\\logging.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\logging.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\logging.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/mouse.o: src/Core/mouse.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/mouse.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/mouse.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\mouse.o: src\\Core\\mouse.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\mouse.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\mouse.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/mousecursor.o: src/Core/mousecursor.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/mousecursor.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/mousecursor.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\mousecursor.o: src\\Core\\mousecursor.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\mousecursor.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\mousecursor.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/coremaths.o: src/Core/coremaths.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/coremaths.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/coremaths.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\component.o: src\\Core\\component.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\component.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\component.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/csvdata.o: src/Core/csvdata.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/csvdata.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/csvdata.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\coremaths.o: src\\Core\\coremaths.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\coremaths.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\coremaths.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/curves.o: src/Core/curves.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/curves.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/curves.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\csvdata.o: src\\Core\\csvdata.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\csvdata.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\csvdata.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/delta.o: src/Core/delta.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/delta.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/delta.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\curves.o: src\\Core\\curves.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\curves.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\curves.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Components/audioextensions.o: src/Components/audioextensions.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Components/audioextensions.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Components/audioextensions.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\delta.o: src\\Core\\delta.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\delta.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\delta.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/ecs.o: src/Core/ecs.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/ecs.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/ecs.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\ecs.o: src\\Core\\ecs.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\ecs.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\ecs.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/enginesystem.o: src/Core/enginesystem.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/enginesystem.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/enginesystem.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\enginesystem.o: src\\Core\\enginesystem.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\enginesystem.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\enginesystem.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/font.o: src/Core/font.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/font.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/font.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\font.o: src\\Core\\font.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\font.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\font.o
 
-$(OBJDIR_OSSIUMEDITOR)/src/Core/funcutils.o: src/Core/funcutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src/Core/funcutils.cpp -o $(OBJDIR_OSSIUMEDITOR)/src/Core/funcutils.o
+$(OBJDIR_OSSIUMEDITOR)\\src\\Core\\funcutils.o: src\\Core\\funcutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR) $(INC_OSSIUMEDITOR) -c src\\Core\\funcutils.cpp -o $(OBJDIR_OSSIUMEDITOR)\\src\\Core\\funcutils.o
 
 clean_ossiumeditor: 
-	rm -f $(OBJ_OSSIUMEDITOR) $(OUT_OSSIUMEDITOR)
-	rm -rf bin/OssiumEditor
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Core
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Editor/Examples
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Editor/Windows
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Editor
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Editor/Core
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Components/UI
-	rm -rf $(OBJDIR_OSSIUMEDITOR)/src/Components
+	cmd /c del /f $(OBJ_OSSIUMEDITOR) $(OUT_OSSIUMEDITOR)
+	cmd /c rd bin\\OssiumEditor
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Core
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Examples
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Windows
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Editor
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Editor\\Core
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Components\\UI
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR)\\src\\Components
 
 before_ossiumeditor__debug_: 
-	test -d bin/OssiumEditorDebug || mkdir -p bin/OssiumEditorDebug
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components
+	cmd /c if not exist bin\\OssiumEditorDebug md bin\\OssiumEditorDebug
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components md $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components
 
 after_ossiumeditor__debug_: 
 
@@ -735,242 +735,242 @@ ossiumeditor__debug_: before_ossiumeditor__debug_ out_ossiumeditor__debug_ after
 out_ossiumeditor__debug_: before_ossiumeditor__debug_ $(OBJ_OSSIUMEDITOR__DEBUG_) $(DEP_OSSIUMEDITOR__DEBUG_)
 	$(LD) $(LIBDIR_OSSIUMEDITOR__DEBUG_) -o $(OUT_OSSIUMEDITOR__DEBUG_) $(OBJ_OSSIUMEDITOR__DEBUG_)  $(LDFLAGS_OSSIUMEDITOR__DEBUG_) $(LIB_OSSIUMEDITOR__DEBUG_)
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/time.o: src/Core/time.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/time.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/time.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\stringconvert.o: src\\Core\\stringconvert.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\stringconvert.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\stringconvert.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/stringconvert.o: src/Core/stringconvert.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/stringconvert.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/stringconvert.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\textinput.o: src\\Core\\textinput.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\textinput.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\textinput.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/textinput.o: src/Core/textinput.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/textinput.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/textinput.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\textlayout.o: src\\Core\\textlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\textlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\textlayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/textlayout.o: src/Core/textlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/textlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/textlayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\texturepack.o: src\\Core\\texturepack.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\texturepack.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\texturepack.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/texturepack.o: src/Core/texturepack.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/texturepack.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/texturepack.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\time.o: src\\Core\\time.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\time.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\time.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/transform.o: src/Core/transform.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/transform.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/transform.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\transform.o: src\\Core\\transform.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\transform.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\transform.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/typeinference.o: src/Core/typeinference.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/typeinference.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/typeinference.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\typeinference.o: src\\Core\\typeinference.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\typeinference.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\typeinference.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/utf8.o: src/Core/utf8.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/utf8.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/utf8.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\utf8.o: src\\Core\\utf8.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\utf8.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\utf8.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/osteon.o: src/Core/osteon.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/osteon.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/osteon.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\osteon.o: src\\Core\\osteon.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\osteon.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\osteon.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/physics.o: src/Core/physics.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/physics.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/physics.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\physics.o: src\\Core\\physics.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\physics.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\physics.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/pixeleffects.o: src/Core/pixeleffects.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/pixeleffects.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/pixeleffects.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\pixeleffects.o: src\\Core\\pixeleffects.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\pixeleffects.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\pixeleffects.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/randutils.o: src/Core/randutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/randutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/randutils.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\randutils.o: src\\Core\\randutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\randutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\randutils.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/window.o: src/Core/window.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/window.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\renderer.o: src\\Core\\renderer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\renderer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\renderer.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/renderer.o: src/Core/renderer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/renderer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/renderer.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\resourcecontroller.o: src\\Core\\resourcecontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\resourcecontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\resourcecontroller.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/resourcecontroller.o: src/Core/resourcecontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/resourcecontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/resourcecontroller.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\schemamodel.o: src\\Core\\schemamodel.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\schemamodel.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\schemamodel.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/schemamodel.o: src/Core/schemamodel.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/schemamodel.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/schemamodel.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\schematype.o: src\\Core\\schematype.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\schematype.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\schematype.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/schematype.o: src/Core/schematype.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/schematype.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/schematype.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\services.o: src\\Core\\services.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\services.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\services.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/services.o: src/Core/services.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/services.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/services.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\demo_window_docking.o: src\\Editor\\Examples\\demo_window_docking.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Examples\\demo_window_docking.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\demo_window_docking.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/demo_window_docking.o: src/Editor/Examples/demo_window_docking.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Examples/demo_window_docking.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/demo_window_docking.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\font_viewer.o: src\\Editor\\Examples\\font_viewer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Examples\\font_viewer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\font_viewer.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/font_viewer.o: src/Editor/Examples/font_viewer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Examples/font_viewer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/font_viewer.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\layout_diagram.o: src\\Editor\\Examples\\layout_diagram.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Examples\\layout_diagram.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\layout_diagram.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/layout_diagram.o: src/Editor/Examples/layout_diagram.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Examples/layout_diagram.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/layout_diagram.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\simple_demo_window.o: src\\Editor\\Examples\\simple_demo_window.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Examples\\simple_demo_window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples\\simple_demo_window.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/simple_demo_window.o: src/Editor/Examples/simple_demo_window.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Examples/simple_demo_window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples/simple_demo_window.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\EntityProperties.o: src\\Editor\\Windows\\EntityProperties.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Windows\\EntityProperties.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\EntityProperties.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/EntityProperties.o: src/Editor/Windows/EntityProperties.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Windows/EntityProperties.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/EntityProperties.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\SceneHierarchy.o: src\\Editor\\Windows\\SceneHierarchy.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Windows\\SceneHierarchy.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\SceneHierarchy.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/SceneHierarchy.o: src/Editor/Windows/SceneHierarchy.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Windows/SceneHierarchy.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/SceneHierarchy.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\SceneView.o: src\\Editor\\Windows\\SceneView.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Windows\\SceneView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\SceneView.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/SceneView.o: src/Editor/Windows/SceneView.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Windows/SceneView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/SceneView.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\ToolBar.o: src\\Editor\\Windows\\ToolBar.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Windows\\ToolBar.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows\\ToolBar.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/ToolBar.o: src/Editor/Windows/ToolBar.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Windows/ToolBar.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows/ToolBar.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\main.o: src\\Editor\\main.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\main.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\main.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/main.o: src/Editor/main.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/main.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/main.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\window.o: src\\Core\\window.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\window.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorserializer.o: src/Editor/Core/editorserializer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/editorserializer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorserializer.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorserializer.o: src\\Editor\\Core\\editorserializer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\editorserializer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorserializer.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/contextmenu.o: src/Editor/Core/contextmenu.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/contextmenu.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/contextmenu.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\contextmenu.o: src\\Editor\\Core\\contextmenu.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\contextmenu.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\contextmenu.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorcontroller.o: src/Editor/Core/editorcontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/editorcontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorcontroller.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorcontroller.o: src\\Editor\\Core\\editorcontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\editorcontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorcontroller.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorgui.o: src/Editor/Core/editorgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/editorgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorgui.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorgui.o: src\\Editor\\Core\\editorgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\editorgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorgui.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorlayout.o: src/Editor/Core/editorlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/editorlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorlayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorlayout.o: src\\Editor\\Core\\editorlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\editorlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorlayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorstyle.o: src/Editor/Core/editorstyle.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/editorstyle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorstyle.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorstyle.o: src\\Editor\\Core\\editorstyle.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\editorstyle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorstyle.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorwindow.o: src/Editor/Core/editorwindow.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/editorwindow.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/editorwindow.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorwindow.o: src\\Editor\\Core\\editorwindow.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\editorwindow.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\editorwindow.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/project.o: src/Editor/Core/project.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/project.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/project.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\project.o: src\\Editor\\Core\\project.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\project.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\project.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/tinyfiledialogs.o: src/Editor/Core/tinyfiledialogs.c
-	$(CC) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Editor/Core/tinyfiledialogs.c -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core/tinyfiledialogs.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\tinyfiledialogs.o: src\\Editor\\Core\\tinyfiledialogs.c
+	$(CC) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Editor\\Core\\tinyfiledialogs.c -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core\\tinyfiledialogs.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/TabView.o: src/Components/UI/TabView.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/TabView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/TabView.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\BoxLayout.o: src\\Components\\UI\\BoxLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\BoxLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\BoxLayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/BoxLayout.o: src/Components/UI/BoxLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/BoxLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/BoxLayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\GridLayout.o: src\\Components\\UI\\GridLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\GridLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\GridLayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/GridLayout.o: src/Components/UI/GridLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/GridLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/GridLayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\LayoutComponent.o: src\\Components\\UI\\LayoutComponent.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\LayoutComponent.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\LayoutComponent.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/LayoutComponent.o: src/Components/UI/LayoutComponent.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/LayoutComponent.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/LayoutComponent.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\LayoutSurface.o: src\\Components\\UI\\LayoutSurface.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\LayoutSurface.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\LayoutSurface.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/LayoutSurface.o: src/Components/UI/LayoutSurface.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/LayoutSurface.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/LayoutSurface.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\TabButton.o: src\\Components\\UI\\TabButton.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\TabButton.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\TabButton.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/TabButton.o: src/Components/UI/TabButton.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/TabButton.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/TabButton.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\TabView.o: src\\Components\\UI\\TabView.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\TabView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\TabView.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/ViewCard.o: src/Components/UI/ViewCard.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/UI/ViewCard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI/ViewCard.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\ViewCard.o: src\\Components\\UI\\ViewCard.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\UI\\ViewCard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI\\ViewCard.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/audio.o: src/Core/audio.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/audio.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/audio.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\audio.o: src\\Core\\audio.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\audio.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\audio.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/colors.o: src/Core/colors.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/colors.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/colors.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\colors.o: src\\Core\\colors.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\colors.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\colors.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/inputgui.o: src/Components/inputgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/inputgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/inputgui.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\audioextensions.o: src\\Components\\audioextensions.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\audioextensions.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\audioextensions.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/boxcollider.o: src/Components/boxcollider.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/boxcollider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/boxcollider.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\boxcollider.o: src\\Components\\boxcollider.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\boxcollider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\boxcollider.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/button.o: src/Components/button.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/button.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/button.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\button.o: src\\Components\\button.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\button.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\button.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/collider.o: src/Components/collider.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/collider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/collider.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\collider.o: src\\Components\\collider.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\collider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\collider.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/debugdraw.o: src/Components/debugdraw.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/debugdraw.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/debugdraw.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\debugdraw.o: src\\Components\\debugdraw.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\debugdraw.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\debugdraw.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/component.o: src/Core/component.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/component.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/component.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\inputgui.o: src\\Components\\inputgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\inputgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\inputgui.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/rigidcircle.o: src/Components/rigidcircle.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/rigidcircle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/rigidcircle.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\rigidcircle.o: src\\Components\\rigidcircle.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\rigidcircle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\rigidcircle.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/statesprite.o: src/Components/statesprite.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/statesprite.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/statesprite.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\statesprite.o: src\\Components\\statesprite.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\statesprite.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\statesprite.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/text.o: src/Components/text.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/text.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/text.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\text.o: src\\Components\\text.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\text.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\text.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/texture.o: src/Components/texture.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/texture.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/texture.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\texture.o: src\\Components\\texture.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Components\\texture.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\texture.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/image.o: src/Core/image.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/image.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/image.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\image.o: src\\Core\\image.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\image.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\image.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/init.o: src/Core/init.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/init.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/init.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\init.o: src\\Core\\init.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\init.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\init.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/input.o: src/Core/input.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/input.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/input.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\input.o: src\\Core\\input.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\input.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\input.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/jsondata.o: src/Core/jsondata.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/jsondata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/jsondata.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\jsondata.o: src\\Core\\jsondata.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\jsondata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\jsondata.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/keyboard.o: src/Core/keyboard.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/keyboard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/keyboard.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\keyboard.o: src\\Core\\keyboard.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\keyboard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\keyboard.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/logging.o: src/Core/logging.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/logging.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/logging.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\logging.o: src\\Core\\logging.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\logging.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\logging.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/mouse.o: src/Core/mouse.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/mouse.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/mouse.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\mouse.o: src\\Core\\mouse.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\mouse.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\mouse.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/mousecursor.o: src/Core/mousecursor.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/mousecursor.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/mousecursor.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\mousecursor.o: src\\Core\\mousecursor.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\mousecursor.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\mousecursor.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/coremaths.o: src/Core/coremaths.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/coremaths.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/coremaths.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\component.o: src\\Core\\component.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\component.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\component.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/csvdata.o: src/Core/csvdata.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/csvdata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/csvdata.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\coremaths.o: src\\Core\\coremaths.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\coremaths.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\coremaths.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/curves.o: src/Core/curves.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/curves.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/curves.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\csvdata.o: src\\Core\\csvdata.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\csvdata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\csvdata.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/delta.o: src/Core/delta.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/delta.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/delta.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\curves.o: src\\Core\\curves.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\curves.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\curves.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/audioextensions.o: src/Components/audioextensions.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Components/audioextensions.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/audioextensions.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\delta.o: src\\Core\\delta.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\delta.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\delta.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/ecs.o: src/Core/ecs.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/ecs.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/ecs.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\ecs.o: src\\Core\\ecs.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\ecs.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\ecs.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/enginesystem.o: src/Core/enginesystem.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/enginesystem.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/enginesystem.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\enginesystem.o: src\\Core\\enginesystem.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\enginesystem.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\enginesystem.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/font.o: src/Core/font.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/font.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/font.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\font.o: src\\Core\\font.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\font.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\font.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/funcutils.o: src/Core/funcutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src/Core/funcutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core/funcutils.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\funcutils.o: src\\Core\\funcutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_) $(INC_OSSIUMEDITOR__DEBUG_) -c src\\Core\\funcutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core\\funcutils.o
 
 clean_ossiumeditor__debug_: 
-	rm -f $(OBJ_OSSIUMEDITOR__DEBUG_) $(OUT_OSSIUMEDITOR__DEBUG_)
-	rm -rf bin/OssiumEditorDebug
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Core
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Examples
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Windows
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Editor/Core
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components/UI
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_)/src/Components
+	cmd /c del /f $(OBJ_OSSIUMEDITOR__DEBUG_) $(OUT_OSSIUMEDITOR__DEBUG_)
+	cmd /c rd bin\\OssiumEditorDebug
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Core
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Examples
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Windows
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Editor\\Core
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components\\UI
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_)\\src\\Components
 
 before_ossiumeditor__debug_linux_: 
-	test -d bin/OssiumEditor || mkdir -p bin/OssiumEditor
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI
-	test -d $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components || mkdir -p $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components
+	cmd /c if not exist bin\\OssiumEditor md bin\\OssiumEditor
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI
+	cmd /c if not exist $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components md $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components
 
 after_ossiumeditor__debug_linux_: 
 
@@ -979,241 +979,241 @@ ossiumeditor__debug_linux_: before_ossiumeditor__debug_linux_ out_ossiumeditor__
 out_ossiumeditor__debug_linux_: before_ossiumeditor__debug_linux_ $(OBJ_OSSIUMEDITOR__DEBUG_LINUX_) $(DEP_OSSIUMEDITOR__DEBUG_LINUX_)
 	$(LD) $(LIBDIR_OSSIUMEDITOR__DEBUG_LINUX_) -o $(OUT_OSSIUMEDITOR__DEBUG_LINUX_) $(OBJ_OSSIUMEDITOR__DEBUG_LINUX_)  $(LDFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(LIB_OSSIUMEDITOR__DEBUG_LINUX_)
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/time.o: src/Core/time.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/time.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/time.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\stringconvert.o: src\\Core\\stringconvert.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\stringconvert.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\stringconvert.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/stringconvert.o: src/Core/stringconvert.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/stringconvert.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/stringconvert.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\textinput.o: src\\Core\\textinput.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\textinput.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\textinput.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/textinput.o: src/Core/textinput.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/textinput.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/textinput.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\textlayout.o: src\\Core\\textlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\textlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\textlayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/textlayout.o: src/Core/textlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/textlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/textlayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\texturepack.o: src\\Core\\texturepack.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\texturepack.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\texturepack.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/texturepack.o: src/Core/texturepack.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/texturepack.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/texturepack.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\time.o: src\\Core\\time.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\time.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\time.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/transform.o: src/Core/transform.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/transform.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/transform.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\transform.o: src\\Core\\transform.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\transform.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\transform.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/typeinference.o: src/Core/typeinference.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/typeinference.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/typeinference.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\typeinference.o: src\\Core\\typeinference.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\typeinference.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\typeinference.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/utf8.o: src/Core/utf8.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/utf8.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/utf8.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\utf8.o: src\\Core\\utf8.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\utf8.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\utf8.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/osteon.o: src/Core/osteon.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/osteon.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/osteon.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\osteon.o: src\\Core\\osteon.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\osteon.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\osteon.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/physics.o: src/Core/physics.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/physics.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/physics.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\physics.o: src\\Core\\physics.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\physics.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\physics.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/pixeleffects.o: src/Core/pixeleffects.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/pixeleffects.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/pixeleffects.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\pixeleffects.o: src\\Core\\pixeleffects.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\pixeleffects.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\pixeleffects.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/randutils.o: src/Core/randutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/randutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/randutils.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\randutils.o: src\\Core\\randutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\randutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\randutils.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/window.o: src/Core/window.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/window.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\renderer.o: src\\Core\\renderer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\renderer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\renderer.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/renderer.o: src/Core/renderer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/renderer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/renderer.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\resourcecontroller.o: src\\Core\\resourcecontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\resourcecontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\resourcecontroller.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/resourcecontroller.o: src/Core/resourcecontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/resourcecontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/resourcecontroller.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\schemamodel.o: src\\Core\\schemamodel.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\schemamodel.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\schemamodel.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/schemamodel.o: src/Core/schemamodel.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/schemamodel.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/schemamodel.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\schematype.o: src\\Core\\schematype.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\schematype.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\schematype.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/schematype.o: src/Core/schematype.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/schematype.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/schematype.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\services.o: src\\Core\\services.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\services.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\services.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/services.o: src/Core/services.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/services.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/services.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\demo_window_docking.o: src\\Editor\\Examples\\demo_window_docking.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Examples\\demo_window_docking.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\demo_window_docking.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/demo_window_docking.o: src/Editor/Examples/demo_window_docking.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Examples/demo_window_docking.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/demo_window_docking.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\font_viewer.o: src\\Editor\\Examples\\font_viewer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Examples\\font_viewer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\font_viewer.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/font_viewer.o: src/Editor/Examples/font_viewer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Examples/font_viewer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/font_viewer.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\layout_diagram.o: src\\Editor\\Examples\\layout_diagram.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Examples\\layout_diagram.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\layout_diagram.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/layout_diagram.o: src/Editor/Examples/layout_diagram.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Examples/layout_diagram.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/layout_diagram.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\simple_demo_window.o: src\\Editor\\Examples\\simple_demo_window.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Examples\\simple_demo_window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples\\simple_demo_window.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/simple_demo_window.o: src/Editor/Examples/simple_demo_window.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Examples/simple_demo_window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples/simple_demo_window.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\EntityProperties.o: src\\Editor\\Windows\\EntityProperties.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Windows\\EntityProperties.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\EntityProperties.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/EntityProperties.o: src/Editor/Windows/EntityProperties.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Windows/EntityProperties.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/EntityProperties.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\SceneHierarchy.o: src\\Editor\\Windows\\SceneHierarchy.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Windows\\SceneHierarchy.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\SceneHierarchy.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/SceneHierarchy.o: src/Editor/Windows/SceneHierarchy.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Windows/SceneHierarchy.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/SceneHierarchy.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\SceneView.o: src\\Editor\\Windows\\SceneView.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Windows\\SceneView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\SceneView.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/SceneView.o: src/Editor/Windows/SceneView.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Windows/SceneView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/SceneView.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\ToolBar.o: src\\Editor\\Windows\\ToolBar.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Windows\\ToolBar.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows\\ToolBar.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/ToolBar.o: src/Editor/Windows/ToolBar.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Windows/ToolBar.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows/ToolBar.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\main.o: src\\Editor\\main.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\main.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\main.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/main.o: src/Editor/main.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/main.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/main.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\window.o: src\\Core\\window.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\window.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\window.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorserializer.o: src/Editor/Core/editorserializer.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/editorserializer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorserializer.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorserializer.o: src\\Editor\\Core\\editorserializer.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\editorserializer.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorserializer.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/contextmenu.o: src/Editor/Core/contextmenu.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/contextmenu.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/contextmenu.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\contextmenu.o: src\\Editor\\Core\\contextmenu.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\contextmenu.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\contextmenu.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorcontroller.o: src/Editor/Core/editorcontroller.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/editorcontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorcontroller.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorcontroller.o: src\\Editor\\Core\\editorcontroller.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\editorcontroller.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorcontroller.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorgui.o: src/Editor/Core/editorgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/editorgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorgui.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorgui.o: src\\Editor\\Core\\editorgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\editorgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorgui.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorlayout.o: src/Editor/Core/editorlayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/editorlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorlayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorlayout.o: src\\Editor\\Core\\editorlayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\editorlayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorlayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorstyle.o: src/Editor/Core/editorstyle.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/editorstyle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorstyle.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorstyle.o: src\\Editor\\Core\\editorstyle.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\editorstyle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorstyle.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorwindow.o: src/Editor/Core/editorwindow.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/editorwindow.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/editorwindow.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorwindow.o: src\\Editor\\Core\\editorwindow.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\editorwindow.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\editorwindow.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/project.o: src/Editor/Core/project.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/project.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/project.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\project.o: src\\Editor\\Core\\project.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\project.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\project.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/tinyfiledialogs.o: src/Editor/Core/tinyfiledialogs.c
-	$(CC) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Editor/Core/tinyfiledialogs.c -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core/tinyfiledialogs.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\tinyfiledialogs.o: src\\Editor\\Core\\tinyfiledialogs.c
+	$(CC) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Editor\\Core\\tinyfiledialogs.c -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core\\tinyfiledialogs.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/TabView.o: src/Components/UI/TabView.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/TabView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/TabView.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\BoxLayout.o: src\\Components\\UI\\BoxLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\BoxLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\BoxLayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/BoxLayout.o: src/Components/UI/BoxLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/BoxLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/BoxLayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\GridLayout.o: src\\Components\\UI\\GridLayout.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\GridLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\GridLayout.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/GridLayout.o: src/Components/UI/GridLayout.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/GridLayout.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/GridLayout.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\LayoutComponent.o: src\\Components\\UI\\LayoutComponent.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\LayoutComponent.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\LayoutComponent.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/LayoutComponent.o: src/Components/UI/LayoutComponent.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/LayoutComponent.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/LayoutComponent.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\LayoutSurface.o: src\\Components\\UI\\LayoutSurface.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\LayoutSurface.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\LayoutSurface.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/LayoutSurface.o: src/Components/UI/LayoutSurface.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/LayoutSurface.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/LayoutSurface.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\TabButton.o: src\\Components\\UI\\TabButton.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\TabButton.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\TabButton.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/TabButton.o: src/Components/UI/TabButton.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/TabButton.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/TabButton.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\TabView.o: src\\Components\\UI\\TabView.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\TabView.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\TabView.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/ViewCard.o: src/Components/UI/ViewCard.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/UI/ViewCard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI/ViewCard.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\ViewCard.o: src\\Components\\UI\\ViewCard.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\UI\\ViewCard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI\\ViewCard.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/audio.o: src/Core/audio.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/audio.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/audio.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\audio.o: src\\Core\\audio.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\audio.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\audio.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/colors.o: src/Core/colors.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/colors.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/colors.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\colors.o: src\\Core\\colors.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\colors.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\colors.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/inputgui.o: src/Components/inputgui.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/inputgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/inputgui.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\audioextensions.o: src\\Components\\audioextensions.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\audioextensions.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\audioextensions.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/boxcollider.o: src/Components/boxcollider.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/boxcollider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/boxcollider.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\boxcollider.o: src\\Components\\boxcollider.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\boxcollider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\boxcollider.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/button.o: src/Components/button.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/button.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/button.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\button.o: src\\Components\\button.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\button.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\button.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/collider.o: src/Components/collider.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/collider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/collider.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\collider.o: src\\Components\\collider.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\collider.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\collider.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/debugdraw.o: src/Components/debugdraw.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/debugdraw.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/debugdraw.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\debugdraw.o: src\\Components\\debugdraw.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\debugdraw.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\debugdraw.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/component.o: src/Core/component.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/component.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/component.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\inputgui.o: src\\Components\\inputgui.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\inputgui.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\inputgui.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/rigidcircle.o: src/Components/rigidcircle.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/rigidcircle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/rigidcircle.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\rigidcircle.o: src\\Components\\rigidcircle.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\rigidcircle.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\rigidcircle.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/statesprite.o: src/Components/statesprite.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/statesprite.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/statesprite.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\statesprite.o: src\\Components\\statesprite.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\statesprite.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\statesprite.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/text.o: src/Components/text.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/text.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/text.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\text.o: src\\Components\\text.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\text.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\text.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/texture.o: src/Components/texture.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/texture.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/texture.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\texture.o: src\\Components\\texture.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Components\\texture.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\texture.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/image.o: src/Core/image.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/image.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/image.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\image.o: src\\Core\\image.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\image.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\image.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/init.o: src/Core/init.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/init.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/init.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\init.o: src\\Core\\init.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\init.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\init.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/input.o: src/Core/input.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/input.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/input.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\input.o: src\\Core\\input.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\input.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\input.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/jsondata.o: src/Core/jsondata.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/jsondata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/jsondata.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\jsondata.o: src\\Core\\jsondata.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\jsondata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\jsondata.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/keyboard.o: src/Core/keyboard.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/keyboard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/keyboard.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\keyboard.o: src\\Core\\keyboard.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\keyboard.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\keyboard.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/logging.o: src/Core/logging.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/logging.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/logging.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\logging.o: src\\Core\\logging.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\logging.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\logging.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/mouse.o: src/Core/mouse.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/mouse.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/mouse.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\mouse.o: src\\Core\\mouse.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\mouse.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\mouse.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/mousecursor.o: src/Core/mousecursor.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/mousecursor.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/mousecursor.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\mousecursor.o: src\\Core\\mousecursor.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\mousecursor.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\mousecursor.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/coremaths.o: src/Core/coremaths.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/coremaths.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/coremaths.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\component.o: src\\Core\\component.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\component.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\component.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/csvdata.o: src/Core/csvdata.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/csvdata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/csvdata.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\coremaths.o: src\\Core\\coremaths.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\coremaths.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\coremaths.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/curves.o: src/Core/curves.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/curves.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/curves.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\csvdata.o: src\\Core\\csvdata.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\csvdata.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\csvdata.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/delta.o: src/Core/delta.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/delta.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/delta.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\curves.o: src\\Core\\curves.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\curves.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\curves.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/audioextensions.o: src/Components/audioextensions.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Components/audioextensions.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/audioextensions.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\delta.o: src\\Core\\delta.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\delta.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\delta.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/ecs.o: src/Core/ecs.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/ecs.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/ecs.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\ecs.o: src\\Core\\ecs.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\ecs.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\ecs.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/enginesystem.o: src/Core/enginesystem.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/enginesystem.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/enginesystem.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\enginesystem.o: src\\Core\\enginesystem.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\enginesystem.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\enginesystem.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/font.o: src/Core/font.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/font.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/font.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\font.o: src\\Core\\font.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\font.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\font.o
 
-$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/funcutils.o: src/Core/funcutils.cpp
-	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src/Core/funcutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core/funcutils.o
+$(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\funcutils.o: src\\Core\\funcutils.cpp
+	$(CXX) $(CFLAGS_OSSIUMEDITOR__DEBUG_LINUX_) $(INC_OSSIUMEDITOR__DEBUG_LINUX_) -c src\\Core\\funcutils.cpp -o $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core\\funcutils.o
 
 clean_ossiumeditor__debug_linux_: 
-	rm -f $(OBJ_OSSIUMEDITOR__DEBUG_LINUX_) $(OUT_OSSIUMEDITOR__DEBUG_LINUX_)
-	rm -rf bin/OssiumEditor
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Core
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Examples
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Windows
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Editor/Core
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components/UI
-	rm -rf $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)/src/Components
+	cmd /c del /f $(OBJ_OSSIUMEDITOR__DEBUG_LINUX_) $(OUT_OSSIUMEDITOR__DEBUG_LINUX_)
+	cmd /c rd bin\\OssiumEditor
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Core
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Examples
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Windows
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Editor\\Core
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components\\UI
+	cmd /c rd $(OBJDIR_OSSIUMEDITOR__DEBUG_LINUX_)\\src\\Components
 
 before_libossiumeditor: 
-	test -d bin/OssiumEditorDebug || mkdir -p bin/OssiumEditorDebug
-	test -d $(OBJDIR_LIBOSSIUMEDITOR)/src/Core || mkdir -p $(OBJDIR_LIBOSSIUMEDITOR)/src/Core
-	test -d $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples || mkdir -p $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples
-	test -d $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows || mkdir -p $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows
-	test -d $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core || mkdir -p $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core
-	test -d $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI || mkdir -p $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI
-	test -d $(OBJDIR_LIBOSSIUMEDITOR)/src/Components || mkdir -p $(OBJDIR_LIBOSSIUMEDITOR)/src/Components
+	cmd /c if not exist bin\\OssiumEditorDebug md bin\\OssiumEditorDebug
+	cmd /c if not exist $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core md $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core
+	cmd /c if not exist $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples md $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples
+	cmd /c if not exist $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows md $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows
+	cmd /c if not exist $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core md $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core
+	cmd /c if not exist $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI md $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI
+	cmd /c if not exist $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components md $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components
 
 after_libossiumeditor: 
 
@@ -1222,228 +1222,228 @@ libossiumeditor: before_libossiumeditor out_libossiumeditor after_libossiumedito
 out_libossiumeditor: before_libossiumeditor $(OBJ_LIBOSSIUMEDITOR) $(DEP_LIBOSSIUMEDITOR)
 	$(AR) rcs $(OUT_LIBOSSIUMEDITOR) $(OBJ_LIBOSSIUMEDITOR)
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/time.o: src/Core/time.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/time.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/time.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\stringconvert.o: src\\Core\\stringconvert.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\stringconvert.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\stringconvert.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/stringconvert.o: src/Core/stringconvert.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/stringconvert.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/stringconvert.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\textinput.o: src\\Core\\textinput.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\textinput.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\textinput.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/textinput.o: src/Core/textinput.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/textinput.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/textinput.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\textlayout.o: src\\Core\\textlayout.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\textlayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\textlayout.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/textlayout.o: src/Core/textlayout.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/textlayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/textlayout.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\texturepack.o: src\\Core\\texturepack.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\texturepack.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\texturepack.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/texturepack.o: src/Core/texturepack.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/texturepack.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/texturepack.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\time.o: src\\Core\\time.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\time.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\time.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/transform.o: src/Core/transform.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/transform.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/transform.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\transform.o: src\\Core\\transform.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\transform.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\transform.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/typeinference.o: src/Core/typeinference.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/typeinference.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/typeinference.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\typeinference.o: src\\Core\\typeinference.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\typeinference.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\typeinference.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/utf8.o: src/Core/utf8.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/utf8.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/utf8.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\utf8.o: src\\Core\\utf8.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\utf8.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\utf8.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/osteon.o: src/Core/osteon.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/osteon.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/osteon.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\osteon.o: src\\Core\\osteon.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\osteon.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\osteon.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/physics.o: src/Core/physics.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/physics.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/physics.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\physics.o: src\\Core\\physics.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\physics.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\physics.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/pixeleffects.o: src/Core/pixeleffects.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/pixeleffects.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/pixeleffects.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\pixeleffects.o: src\\Core\\pixeleffects.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\pixeleffects.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\pixeleffects.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/randutils.o: src/Core/randutils.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/randutils.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/randutils.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\randutils.o: src\\Core\\randutils.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\randutils.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\randutils.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/window.o: src/Core/window.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/window.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/window.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\renderer.o: src\\Core\\renderer.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\renderer.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\renderer.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/renderer.o: src/Core/renderer.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/renderer.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/renderer.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\resourcecontroller.o: src\\Core\\resourcecontroller.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\resourcecontroller.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\resourcecontroller.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/resourcecontroller.o: src/Core/resourcecontroller.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/resourcecontroller.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/resourcecontroller.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\schemamodel.o: src\\Core\\schemamodel.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\schemamodel.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\schemamodel.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/schemamodel.o: src/Core/schemamodel.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/schemamodel.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/schemamodel.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\schematype.o: src\\Core\\schematype.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\schematype.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\schematype.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/schematype.o: src/Core/schematype.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/schematype.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/schematype.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\services.o: src\\Core\\services.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\services.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\services.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/services.o: src/Core/services.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/services.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/services.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\demo_window_docking.o: src\\Editor\\Examples\\demo_window_docking.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Examples\\demo_window_docking.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\demo_window_docking.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/demo_window_docking.o: src/Editor/Examples/demo_window_docking.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Examples/demo_window_docking.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/demo_window_docking.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\font_viewer.o: src\\Editor\\Examples\\font_viewer.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Examples\\font_viewer.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\font_viewer.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/font_viewer.o: src/Editor/Examples/font_viewer.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Examples/font_viewer.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/font_viewer.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\layout_diagram.o: src\\Editor\\Examples\\layout_diagram.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Examples\\layout_diagram.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\layout_diagram.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/layout_diagram.o: src/Editor/Examples/layout_diagram.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Examples/layout_diagram.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/layout_diagram.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\simple_demo_window.o: src\\Editor\\Examples\\simple_demo_window.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Examples\\simple_demo_window.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples\\simple_demo_window.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/simple_demo_window.o: src/Editor/Examples/simple_demo_window.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Examples/simple_demo_window.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples/simple_demo_window.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\EntityProperties.o: src\\Editor\\Windows\\EntityProperties.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Windows\\EntityProperties.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\EntityProperties.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/EntityProperties.o: src/Editor/Windows/EntityProperties.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Windows/EntityProperties.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/EntityProperties.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\SceneHierarchy.o: src\\Editor\\Windows\\SceneHierarchy.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Windows\\SceneHierarchy.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\SceneHierarchy.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/SceneHierarchy.o: src/Editor/Windows/SceneHierarchy.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Windows/SceneHierarchy.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/SceneHierarchy.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\SceneView.o: src\\Editor\\Windows\\SceneView.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Windows\\SceneView.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\SceneView.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/SceneView.o: src/Editor/Windows/SceneView.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Windows/SceneView.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/SceneView.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\ToolBar.o: src\\Editor\\Windows\\ToolBar.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Windows\\ToolBar.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows\\ToolBar.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/ToolBar.o: src/Editor/Windows/ToolBar.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Windows/ToolBar.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows/ToolBar.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\window.o: src\\Core\\window.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\window.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\window.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorserializer.o: src/Editor/Core/editorserializer.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/editorserializer.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorserializer.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorserializer.o: src\\Editor\\Core\\editorserializer.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\editorserializer.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorserializer.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/contextmenu.o: src/Editor/Core/contextmenu.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/contextmenu.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/contextmenu.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\contextmenu.o: src\\Editor\\Core\\contextmenu.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\contextmenu.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\contextmenu.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorcontroller.o: src/Editor/Core/editorcontroller.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/editorcontroller.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorcontroller.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorcontroller.o: src\\Editor\\Core\\editorcontroller.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\editorcontroller.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorcontroller.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorgui.o: src/Editor/Core/editorgui.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/editorgui.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorgui.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorgui.o: src\\Editor\\Core\\editorgui.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\editorgui.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorgui.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorlayout.o: src/Editor/Core/editorlayout.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/editorlayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorlayout.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorlayout.o: src\\Editor\\Core\\editorlayout.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\editorlayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorlayout.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorstyle.o: src/Editor/Core/editorstyle.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/editorstyle.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorstyle.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorstyle.o: src\\Editor\\Core\\editorstyle.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\editorstyle.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorstyle.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorwindow.o: src/Editor/Core/editorwindow.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/editorwindow.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/editorwindow.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorwindow.o: src\\Editor\\Core\\editorwindow.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\editorwindow.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\editorwindow.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/project.o: src/Editor/Core/project.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/project.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/project.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\project.o: src\\Editor\\Core\\project.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\project.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\project.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/tinyfiledialogs.o: src/Editor/Core/tinyfiledialogs.c
-	$(CC) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Editor/Core/tinyfiledialogs.c -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core/tinyfiledialogs.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\tinyfiledialogs.o: src\\Editor\\Core\\tinyfiledialogs.c
+	$(CC) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Editor\\Core\\tinyfiledialogs.c -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core\\tinyfiledialogs.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/TabView.o: src/Components/UI/TabView.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/TabView.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/TabView.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\BoxLayout.o: src\\Components\\UI\\BoxLayout.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\BoxLayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\BoxLayout.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/BoxLayout.o: src/Components/UI/BoxLayout.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/BoxLayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/BoxLayout.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\GridLayout.o: src\\Components\\UI\\GridLayout.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\GridLayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\GridLayout.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/GridLayout.o: src/Components/UI/GridLayout.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/GridLayout.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/GridLayout.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\LayoutComponent.o: src\\Components\\UI\\LayoutComponent.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\LayoutComponent.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\LayoutComponent.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/LayoutComponent.o: src/Components/UI/LayoutComponent.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/LayoutComponent.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/LayoutComponent.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\LayoutSurface.o: src\\Components\\UI\\LayoutSurface.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\LayoutSurface.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\LayoutSurface.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/LayoutSurface.o: src/Components/UI/LayoutSurface.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/LayoutSurface.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/LayoutSurface.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\TabButton.o: src\\Components\\UI\\TabButton.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\TabButton.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\TabButton.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/TabButton.o: src/Components/UI/TabButton.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/TabButton.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/TabButton.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\TabView.o: src\\Components\\UI\\TabView.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\TabView.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\TabView.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/ViewCard.o: src/Components/UI/ViewCard.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/UI/ViewCard.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI/ViewCard.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\ViewCard.o: src\\Components\\UI\\ViewCard.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\UI\\ViewCard.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI\\ViewCard.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/audio.o: src/Core/audio.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/audio.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/audio.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\audio.o: src\\Core\\audio.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\audio.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\audio.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/colors.o: src/Core/colors.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/colors.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/colors.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\colors.o: src\\Core\\colors.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\colors.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\colors.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/inputgui.o: src/Components/inputgui.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/inputgui.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/inputgui.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\audioextensions.o: src\\Components\\audioextensions.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\audioextensions.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\audioextensions.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/boxcollider.o: src/Components/boxcollider.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/boxcollider.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/boxcollider.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\boxcollider.o: src\\Components\\boxcollider.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\boxcollider.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\boxcollider.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/button.o: src/Components/button.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/button.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/button.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\button.o: src\\Components\\button.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\button.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\button.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/collider.o: src/Components/collider.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/collider.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/collider.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\collider.o: src\\Components\\collider.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\collider.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\collider.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/debugdraw.o: src/Components/debugdraw.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/debugdraw.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/debugdraw.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\debugdraw.o: src\\Components\\debugdraw.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\debugdraw.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\debugdraw.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/component.o: src/Core/component.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/component.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/component.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\inputgui.o: src\\Components\\inputgui.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\inputgui.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\inputgui.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/rigidcircle.o: src/Components/rigidcircle.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/rigidcircle.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/rigidcircle.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\rigidcircle.o: src\\Components\\rigidcircle.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\rigidcircle.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\rigidcircle.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/statesprite.o: src/Components/statesprite.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/statesprite.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/statesprite.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\statesprite.o: src\\Components\\statesprite.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\statesprite.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\statesprite.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/text.o: src/Components/text.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/text.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/text.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\text.o: src\\Components\\text.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\text.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\text.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/texture.o: src/Components/texture.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/texture.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/texture.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\texture.o: src\\Components\\texture.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Components\\texture.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\texture.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/image.o: src/Core/image.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/image.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/image.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\image.o: src\\Core\\image.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\image.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\image.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/init.o: src/Core/init.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/init.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/init.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\init.o: src\\Core\\init.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\init.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\init.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/input.o: src/Core/input.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/input.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/input.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\input.o: src\\Core\\input.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\input.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\input.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/jsondata.o: src/Core/jsondata.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/jsondata.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/jsondata.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\jsondata.o: src\\Core\\jsondata.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\jsondata.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\jsondata.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/keyboard.o: src/Core/keyboard.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/keyboard.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/keyboard.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\keyboard.o: src\\Core\\keyboard.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\keyboard.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\keyboard.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/logging.o: src/Core/logging.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/logging.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/logging.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\logging.o: src\\Core\\logging.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\logging.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\logging.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/mouse.o: src/Core/mouse.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/mouse.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/mouse.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\mouse.o: src\\Core\\mouse.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\mouse.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\mouse.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/mousecursor.o: src/Core/mousecursor.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/mousecursor.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/mousecursor.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\mousecursor.o: src\\Core\\mousecursor.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\mousecursor.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\mousecursor.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/coremaths.o: src/Core/coremaths.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/coremaths.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/coremaths.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\component.o: src\\Core\\component.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\component.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\component.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/csvdata.o: src/Core/csvdata.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/csvdata.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/csvdata.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\coremaths.o: src\\Core\\coremaths.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\coremaths.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\coremaths.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/curves.o: src/Core/curves.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/curves.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/curves.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\csvdata.o: src\\Core\\csvdata.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\csvdata.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\csvdata.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/delta.o: src/Core/delta.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/delta.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/delta.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\curves.o: src\\Core\\curves.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\curves.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\curves.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Components/audioextensions.o: src/Components/audioextensions.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Components/audioextensions.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/audioextensions.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\delta.o: src\\Core\\delta.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\delta.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\delta.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/ecs.o: src/Core/ecs.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/ecs.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/ecs.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\ecs.o: src\\Core\\ecs.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\ecs.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\ecs.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/enginesystem.o: src/Core/enginesystem.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/enginesystem.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/enginesystem.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\enginesystem.o: src\\Core\\enginesystem.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\enginesystem.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\enginesystem.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/font.o: src/Core/font.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/font.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/font.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\font.o: src\\Core\\font.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\font.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\font.o
 
-$(OBJDIR_LIBOSSIUMEDITOR)/src/Core/funcutils.o: src/Core/funcutils.cpp
-	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src/Core/funcutils.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)/src/Core/funcutils.o
+$(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\funcutils.o: src\\Core\\funcutils.cpp
+	$(CXX) $(CFLAGS_LIBOSSIUMEDITOR) $(INC_LIBOSSIUMEDITOR) -c src\\Core\\funcutils.cpp -o $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core\\funcutils.o
 
 clean_libossiumeditor: 
-	rm -f $(OBJ_LIBOSSIUMEDITOR) $(OUT_LIBOSSIUMEDITOR)
-	rm -rf bin/OssiumEditorDebug
-	rm -rf $(OBJDIR_LIBOSSIUMEDITOR)/src/Core
-	rm -rf $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Examples
-	rm -rf $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Windows
-	rm -rf $(OBJDIR_LIBOSSIUMEDITOR)/src/Editor/Core
-	rm -rf $(OBJDIR_LIBOSSIUMEDITOR)/src/Components/UI
-	rm -rf $(OBJDIR_LIBOSSIUMEDITOR)/src/Components
+	cmd /c del /f $(OBJ_LIBOSSIUMEDITOR) $(OUT_LIBOSSIUMEDITOR)
+	cmd /c rd bin\\OssiumEditorDebug
+	cmd /c rd $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Core
+	cmd /c rd $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Examples
+	cmd /c rd $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Windows
+	cmd /c rd $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Editor\\Core
+	cmd /c rd $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components\\UI
+	cmd /c rd $(OBJDIR_LIBOSSIUMEDITOR)\\src\\Components
 
 .PHONY: before_ossium after_ossium clean_ossium before_ossiumdll after_ossiumdll clean_ossiumdll before_ossiumeditor after_ossiumeditor clean_ossiumeditor before_ossiumeditor__debug_ after_ossiumeditor__debug_ clean_ossiumeditor__debug_ before_ossiumeditor__debug_linux_ after_ossiumeditor__debug_linux_ clean_ossiumeditor__debug_linux_ before_libossiumeditor after_libossiumeditor clean_libossiumeditor
 

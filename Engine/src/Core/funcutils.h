@@ -46,6 +46,9 @@ namespace Ossium
         OSSIUM_EDL std::string ToString(float n);
         OSSIUM_EDL std::string ToString(int n);
 
+        /// Turns an entire file at the given path into a string.
+        OSSIUM_EDL std::string FileToString(std::string path);
+
         /// Turns an entire file stream into a string.
         OSSIUM_EDL std::string FileToString(std::ifstream& fileStream);
 

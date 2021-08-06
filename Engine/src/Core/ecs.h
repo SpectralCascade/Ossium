@@ -30,6 +30,7 @@
 #include "stringintern.h"
 #include "schemamodel.h"
 #include "services.h"
+#include "callback.h"
 
 namespace Ossium
 {
@@ -259,6 +260,9 @@ namespace Ossium
         /// Serialise everything
         std::string ToString();
         void FromString(const std::string& str);
+
+        // Callback for when the scene has finished loading
+        Callback<Scene*> onLoadComplete;
 
     private:
         /// Destroys ALL entities and their components
