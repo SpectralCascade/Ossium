@@ -1,5 +1,5 @@
 # About Ossium
-Ossium is a bare-bones, cross-platform 2D game engine being built in C++ with SDL 2 and Box2D.
+Ossium is a bare-bones, cross-platform 2D game engine being built in C++ with SDL 2 and Box2D. A number of games made with Ossium can be [found here](https://itch.io/c/1747446/ossium-engine-games).
 
 ## Features
 * Low number of dependencies (SDL 2 with a few small extension libraries and Box2D for physics)
