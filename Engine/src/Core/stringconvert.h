@@ -105,6 +105,7 @@ namespace Ossium
 
             std::vector<JString> jdata = jarray.ToArray();
             auto target = obj.begin();
+            unsigned int count = 0;
             for (auto& jstr : jdata)
             {
                 if (jstr == "\\!EB!\\")
@@ -134,6 +135,13 @@ namespace Ossium
                     *target = converted;
                     target++;
                 }
+                count++;
+            }
+
+            auto itr = obj.begin() + count;
+            if (itr < obj.end())
+            {
+                obj.erase(itr, obj.end());
             }
         }
 
