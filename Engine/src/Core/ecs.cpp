@@ -588,9 +588,7 @@ namespace Ossium
 
     bool Scene::Load(string guid_path)
     {
-        ifstream file(guid_path.c_str());
-        string toParse = Utilities::FileToString(file);
-        file.close();
+        string toParse = Utilities::FileToString(guid_path);
         if (toParse.empty())
         {
             return false;
