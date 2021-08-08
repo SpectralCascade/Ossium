@@ -62,9 +62,9 @@ namespace Ossium
         /// Returns the SDL_Rect equivalent of the rect (with rounding).
         SDL_Rect GetSDL(const Point& position, Vector2 scale = Vector2::OneOne)
         {
-            float w = width * scale.x;
-            float h = height * scale.y;
-            SDL_Rect output = {(int)round(position.x - (w * 0.5f)), (int)round(position.y - (h * 0.5f)), (int)round(w), (int)round(h)};
+            float w = round(width * scale.x);
+            float h = round(height * scale.y);
+            SDL_Rect output = {(int)round(position.x - round(w * 0.5f)), (int)round(position.y - round(h * 0.5f)), (int)w, (int)h};
             return output;
         }
 
