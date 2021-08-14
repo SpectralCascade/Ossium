@@ -202,7 +202,8 @@ namespace Ossium
                 }
                 else
                 {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_ASSERT, "Could not find member '%s' of type '%s' in provided JSON data during serialisation.", member_names[i], member_types[i]);
+                    // Could not find the data member.
+                    Log.Verbose("Could not find member '{0}' of type '{1}' in provided JSON data during serialisation.", member_names[i], member_types[i]);
                 }
             }
         }
