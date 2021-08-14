@@ -20,20 +20,16 @@ namespace Ossium
         {
             hitTester = entity->GetComponent<BoxLayout>();
         }
-
-#ifndef OSSIUM_EDITOR
-        DEBUG_ASSERT(hitTester != nullptr, "Button hit tester implementation was not found!");
-
-        if (hitTester == nullptr)
-        {
-            Log.Error("Failed to find Button hit tester implementation! Disabling Button on entity \"{0}\"", entity->name);
-            SetEnabled(false);
-        }
-#endif // OSSIUM_EDITOR
     }
 
     bool Button::ContainsPointer(Point position)
     {
+        if (hitTester == nullptr)
+        {
+            Log.Error("Failed to find Button hit tester implementation! Disabling Button on entity \"{0}\"", entity->name);
+            SetEnabled(false);
+            return false;
+        }
         return hitTester->Contains(position);
     }
 
