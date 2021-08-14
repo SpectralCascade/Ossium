@@ -35,10 +35,10 @@ namespace Ossium
         /// Sets the RNG seed, also resetting the generator.
         void Seed(int seed);
 
-        /// Returns a random integer.
+        /// Returns a random integer (inclusive-inclusive).
         int Int(int min = 0, int max = 1);
 
-        /// Returns a random float.
+        /// Returns a random float (inclusive-exclusive).
         float Float(float min = 0, float max = 1);
 
         /// Returns a random vector within the given range.
