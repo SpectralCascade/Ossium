@@ -91,14 +91,17 @@ namespace Ossium
                     {
                         value = Strip(value, '\n');
                         value = Strip(value);
-                        auto vlen = value.length();
-                        // If it's a string, strip the double quotes.
-                        if (vlen > 1 && value[0] == '"' && value[vlen - 1] == '"')
+                        if (!value.empty())
                         {
-                            value.erase(vlen - 1);
-                            value.erase(value.begin());
+                            auto vlen = value.length();
+                            // If it's a string, strip the double quotes.
+                            if (vlen > 1 && value[0] == '"' && value[vlen - 1] == '"')
+                            {
+                                value.erase(vlen - 1);
+                                value.erase(value.begin());
+                            }
+                            dataArray.push_back(value);
                         }
-                        dataArray.push_back(value);
                         value = (string)"";
                         continue;
                     }
@@ -118,14 +121,17 @@ namespace Ossium
                             value = Strip(value);
                             value = Strip(value, '\n');
                             value = Strip(value);
-                            auto vlen = value.length();
-                            // If it's a string, strip the double quotes.
-                            if (vlen > 1 && value[0] == '"' && value[vlen - 1] == '"')
+                            if (!value.empty())
                             {
-                                value.erase(vlen - 1);
-                                value.erase(value.begin());
+                                auto vlen = value.length();
+                                // If it's a string, strip the double quotes.
+                                if (vlen > 1 && value[0] == '"' && value[vlen - 1] == '"')
+                                {
+                                    value.erase(vlen - 1);
+                                    value.erase(value.begin());
+                                }
+                                dataArray.push_back(value);
                             }
-                            dataArray.push_back(value);
                             break;
                         }
                     }
@@ -458,7 +464,8 @@ namespace Ossium
         }
         if (open || !isJson)
         {
-            Log.Warning("Failed to parse JSON correctly due to bad formatting.");
+            Log.Warning("Failed to parse JSON correctly due to bad formatting. Open: {0} | Is JSON: {1}", open ? "Yes" : "No", isJson ? "Yes" : "No");
+            Log.Warning("JSON: {0}", json);
             return false;
         }
         return true;
