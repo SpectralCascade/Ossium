@@ -362,6 +362,8 @@
 		<Unit filename="src/Core/schematype.h" />
 		<Unit filename="src/Core/services.cpp" />
 		<Unit filename="src/Core/services.h" />
+		<Unit filename="src/Core/sortedpicker.h" />
+		<Unit filename="src/Core/sortedpicker.cpp" />
 		<Unit filename="src/Core/stb_rect_pack.h" />
 		<Unit filename="src/Core/stringconvert.cpp" />
 		<Unit filename="src/Core/stringconvert.h" />
