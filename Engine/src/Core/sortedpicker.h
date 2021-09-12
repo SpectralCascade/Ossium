@@ -1,3 +1,6 @@
+#ifndef SORTEDPICKER_H
+#define SORTEDPICKER_H
+
 #include <queue>
 #include <limits>
 
@@ -77,3 +80,5 @@ namespace Ossium
     };
 
 }
+
+#endif

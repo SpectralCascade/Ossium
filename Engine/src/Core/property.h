@@ -32,9 +32,6 @@ namespace Ossium
         T operator=(const T& value) { return setter(value); }
         T operator->() { return getter(); }
 
-        /*std::string ToString() { return Utilities::ToString(getter()); }
-        void FromString(const std::string& data) { Utilities::FromString(getter(), data); }*/
-
     private:
         std::function<T()> getter;
         std::function<T(const T&)> setter;
