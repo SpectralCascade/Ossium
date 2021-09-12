@@ -45,6 +45,7 @@
 #include "Core/textlayout.h"
 #include "Core/osteon.h"
 #include "Core/sortedpicker.h"
+#include "Core/property.h"
 #include "Components/button.h"
 #include "Components/UI/GridLayout.h"
 #include "Components/UI/TabButton.h"

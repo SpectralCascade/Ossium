@@ -350,6 +350,7 @@
 		<Unit filename="src/Core/physics.h" />
 		<Unit filename="src/Core/pixeleffects.cpp" />
 		<Unit filename="src/Core/pixeleffects.h" />
+		<Unit filename="src/Core/property.h" />
 		<Unit filename="src/Core/randutils.cpp" />
 		<Unit filename="src/Core/randutils.h" />
 		<Unit filename="src/Core/renderer.cpp" />
