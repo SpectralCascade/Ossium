@@ -1,4 +1,6 @@
-//#define OSSIUM_DEMO
+#ifdef __ANDROID__
+#define OSSIUM_DEMO
+#endif
 
 #include "../Ossium.h"
 #ifndef OSSIUM_DEMO
