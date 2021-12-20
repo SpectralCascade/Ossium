@@ -20,7 +20,7 @@
 #include <string>
 #include <functional>
 #include <map>
-#include <SDL2/SDL_types.h>
+#include <SDL_types.h>
 
 #include "helpermacros.h"
 #include "jsondata.h"

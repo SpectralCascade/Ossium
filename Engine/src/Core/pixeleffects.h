@@ -17,7 +17,7 @@
 #ifndef PIXELEFFECTS_H
 #define PIXELEFFECTS_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "helpermacros.h"
 

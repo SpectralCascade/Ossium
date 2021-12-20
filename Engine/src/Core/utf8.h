@@ -17,7 +17,7 @@
 #ifndef UTF8_H
 #define UTF8_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <string>
 

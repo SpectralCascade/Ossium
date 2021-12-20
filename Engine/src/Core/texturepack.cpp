@@ -15,7 +15,7 @@
  *
 **/
 extern "C" {
-    #include <SDL2/SDL_image.h>
+    #include <SDL_image.h>
 }
 
 #include "utf8.h"

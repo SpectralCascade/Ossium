@@ -23,7 +23,7 @@
 
 extern "C"
 {
-    #include <SDL2/SDL.h>
+    #include <SDL.h>
 }
 
 namespace Ossium
@@ -77,6 +77,7 @@ namespace Ossium
     {
         return {r, g, b, a};
     }
+    
     /// Returns an SDL_Color from a 24 bit hex code
     OSSIUM_EDL SDL_Color Color(HexCode rgb);
 
