@@ -38,7 +38,6 @@
 #include "Core/physics.h"
 #include "Components/boxcollider.h"
 #include "Components/rigidcircle.h"
-#include "Components/debugdraw.h"
 #include "Core/enginesystem.h"
 #include "Core/texturepack.h"
 #include "Core/utf8.h"

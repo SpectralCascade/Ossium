@@ -8,6 +8,14 @@ else {
 }
 
 android {
+    signingConfigs {
+        release {
+        storeFile file('C:\\Users\\2013b\\Git\\Ossium\\Engine\\Android\\keystore.jks')
+            storePassword 'spectral'
+            keyAlias 'ossium-demo-release'
+            keyPassword 'spectral'
+        }
+    }
     compileSdkVersion 31
     defaultConfig {
         if (buildAsApplication) {
@@ -33,6 +41,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {

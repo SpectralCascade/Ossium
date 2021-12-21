@@ -271,8 +271,6 @@
 		<Unit filename="src/Components/button.h" />
 		<Unit filename="src/Components/collider.cpp" />
 		<Unit filename="src/Components/collider.h" />
-		<Unit filename="src/Components/debugdraw.cpp" />
-		<Unit filename="src/Components/debugdraw.h" />
 		<Unit filename="src/Components/inputgui.cpp" />
 		<Unit filename="src/Components/inputgui.h" />
 		<Unit filename="src/Components/polygoncollider.h" />

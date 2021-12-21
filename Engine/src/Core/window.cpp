@@ -39,7 +39,7 @@ namespace Ossium
         if (window == NULL)
         {
             Log.Error("Window creation failed! SDL_Error: {0}", SDL_GetError());
-            throw;
+            return;
         }
 
         if (fullscreen)

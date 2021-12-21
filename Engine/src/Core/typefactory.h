@@ -18,6 +18,7 @@
 #define TYPEFACTORY_H
 
 #include <functional>
+#include <unordered_map>
 
 #include "logging.h"
 

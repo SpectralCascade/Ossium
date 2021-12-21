@@ -30,7 +30,7 @@ namespace Ossium
 
     void Texture::Render(Renderer& renderer)
     {
-        if (width <= 0 || height <= 0)
+        if (width <= 0 || height <= 0 || !IsEnabled() && source != nullptr)
         {
             // Early out
             return;
@@ -39,7 +39,7 @@ namespace Ossium
         Transform* trans = GetTransform();
 
         BoxLayout* boxLayout = entity->GetComponent<BoxLayout>();
-        if (boxLayout != nullptr)
+        if (boxLayout != nullptr && boxLayout->IsEnabled())
         {
             Vector2 dimensions = boxLayout->GetInnerDimensions();
             switch (fitLayout)

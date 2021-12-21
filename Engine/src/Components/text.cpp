@@ -16,7 +16,9 @@
 **/
 #include <string>
 #include <algorithm>
+#ifndef __ANDROID__
 #include <filesystem>
+#endif
 
 #include "text.h"
 #include "UI/BoxLayout.h"
@@ -32,8 +34,13 @@ namespace Ossium
     {
         ParentType::OnLoadFinish();
         // Check if the path is valid
-        if (std::filesystem::exists(std::filesystem::path(font_guid)))
-        {
+        if (
+#ifndef __ANDROID__
+            std::filesystem::exists(std::filesystem::path(font_guid))
+#else
+            true // TODO: replace std::filesystem exists() check
+#endif
+        ) {
             font = GetService<ResourceController>()->Get<Font>(font_guid, 72, 0, 0, 2048);
         }
         else

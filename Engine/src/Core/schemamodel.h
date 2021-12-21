@@ -104,10 +104,10 @@ namespace Ossium
         }
 
         /// Serializes the specified member using custom serialization methods available in the derived class.
-        static std::string SerializeMember(Serializer* serializer, unsigned int index)
+        /*static std::string SerializeMember(Serializer* serializer, unsigned int index)
         {
             return member_serializer[index](serializer, GetMemberType(index), GetMemberName(index), GetMemberAttribute(index), GetMember(index));
-        }
+        }*/
 
         /// Initialises this schema instance from a JSON string.
         void FromString(const std::string& str)
