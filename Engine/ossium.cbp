@@ -14,7 +14,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-I/usr/include/SDL2">
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
 					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
@@ -73,7 +72,6 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-I/usr/include/SDL2">
 					<Add option="-std=c++1z" />
 					<Add option="-DOSSIUM_EDITOR" />
 					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
@@ -121,7 +119,6 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-I/usr/include/SDL2">
 					<Add option="-std=c++1z" />
 					<Add option="-g" />
 					<Add option="-DOSSIUM_DEBUG" />

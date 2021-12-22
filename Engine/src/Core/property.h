@@ -4,8 +4,8 @@
 #include <functional>
 #include "stringconvert.h"
 
-#define get [&] ()
-#define set [&]
+#define GET [&] ()
+#define SET [&]
 
 namespace Ossium
 {
@@ -18,8 +18,8 @@ namespace Ossium
     //
     //  ExampleType* _example = nullptr;
     //  Property<ExampleType*> example = {
-    //      get { Log.Info("Returning example..."); return _example; },
-    //      set (ExampleType* const& value) { Log.Info("Setting example..."); return _example = value; }
+    //      GET { Log.Info("Returning example..."); return _example; },
+    //      SET (ExampleType* const& value) { Log.Info("Setting example..."); return _example = value; }
     //  };
     //
     template<typename T>
