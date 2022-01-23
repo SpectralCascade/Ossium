@@ -273,8 +273,10 @@ namespace Ossium
     {
         if (IsEnabled() && data.type != MOUSE_UNKNOWN)
         {
-            for (auto interactable : interactables)
+            // Loop doesn't include any interactables added during iteration this way
+            for (unsigned int i = 0, counti = interactables.size(); i < counti; i++)
             {
+                auto interactable = interactables[i];
                 interactable->OnPointerEvent(data);
             }
         }
