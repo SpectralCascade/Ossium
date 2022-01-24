@@ -4,10 +4,8 @@ project(MY_APP)
 
 find_library(SDL2 SDL2)
 
-add_library(main SHARED)
+add_library(Ossium STATIC)
 
-target_sources(main PRIVATE Editor/main.cpp)
-
-target_link_libraries(main SDL2)
+target_link_libraries(Ossium SDL2)
 
 
