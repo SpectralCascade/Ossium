@@ -127,12 +127,10 @@ namespace Ossium
         /// Loads this schema instance from a specified JSON file.
         bool Load(std::string filePath)
         {
-            std::ifstream file(filePath);
-            std::string data = Utilities::FileToString(file);
+            std::string data = Utilities::FileToString(filePath);
             if (!data.empty())
             {
                 this->FromString(data);
-                file.close();
                 return true;
             }
             Log.Warning("Failed to load schema from file '{0}'!", filePath);

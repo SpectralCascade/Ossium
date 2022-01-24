@@ -120,6 +120,8 @@ namespace Ossium
                         {
                             value = Strip(value);
                             value = Strip(value, '\n');
+                            value = Strip(value, '\r');
+                            value = Strip(value, '\n');
                             value = Strip(value);
                             if (!value.empty())
                             {
@@ -149,7 +151,7 @@ namespace Ossium
         }
         else
         {
-            Log.Warning("Attempted to convert JString value into array, but the value is not an array!");
+            Log.Warning("Attempted to convert JString value into array, but the value is not an array. Raw string:\n{0}", (*this));
         }
         return dataArray;
     }
@@ -173,6 +175,8 @@ namespace Ossium
                     if ((*this)[i] == ',' && arrayCount == 1 && objCount == 0)
                     {
                         value = Strip(value, '\n');
+                        value = Strip(value, '\r');
+                        value = Strip(value, '\n');
                         value = Strip(value);
                         value = Strip(value, '"');
                         if (element_index == arrayIndex)
@@ -192,6 +196,8 @@ namespace Ossium
                         arrayCount--;
                         if (arrayCount < 1)
                         {
+                            value = Strip(value, '\n');
+                            value = Strip(value, '\r');
                             value = Strip(value, '\n');
                             value = Strip(value);
                             value = Strip(value, '"');
@@ -241,14 +247,12 @@ namespace Ossium
 
     bool JSON::Import(string path)
     {
-        ifstream file(path.c_str());
-        string toParse = Utilities::FileToString(file);
+        string toParse = Utilities::FileToString(path);
         if (toParse.empty())
         {
             Log.Warning("Failed to load JSON file '{0}'!", path);
             return false;
         }
-        file.close();
         if (!Parse(toParse))
         {
             return false;
@@ -440,6 +444,8 @@ namespace Ossium
                 {
                     if (json[i] == ',' || json[i] == '}')
                     {
+                        value = Strip(value, '\n');
+                        value = Strip(value, '\r');
                         value = Strip(value, '\n');
                         value = Strip(value);
                         value = Strip(value, '"');

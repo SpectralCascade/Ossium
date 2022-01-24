@@ -49,9 +49,6 @@ namespace Ossium
         /// Turns an entire file at the given path into a string.
         OSSIUM_EDL std::string FileToString(std::string path);
 
-        /// Turns an entire file stream into a string.
-        OSSIUM_EDL std::string FileToString(std::ifstream& fileStream);
-
         /// Removes white space or some other specified character from both ends of a string
         OSSIUM_EDL std::string Strip(std::string data, char optionalChar = ' ');
 

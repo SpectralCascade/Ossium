@@ -103,19 +103,33 @@ namespace Ossium
 
         string FileToString(string path)
         {
-            ifstream file(path);
-            return FileToString(file);
-        }
-
-        string FileToString(ifstream& fileStream)
-        {
-            if (!fileStream.is_open())
+            string data;
+            // Open the file
+            SDL_RWops* file = SDL_RWFromFile(path.c_str(), "rb");
+            Sint64 fsize = -1;
+            if (file != NULL && (fsize = SDL_RWsize(file)) >= 0)
             {
-                return "";
+                char* buffer = new char[fsize + 1];
+                // Read the data
+                Sint64 num_bytes = SDL_RWread(file, buffer, sizeof(char), fsize);
+                if (num_bytes > 0)
+                {
+                    // Null terminate and copy
+                    buffer[num_bytes] = '\0';
+                    data = string(buffer);
+                }
+
+                // Clean up
+                delete[] buffer;
+                SDL_RWclose(file);
             }
-            stringstream conversionStream;
-            conversionStream << fileStream.rdbuf();
-            return conversionStream.str();
+            else
+            {
+                // File could not be opened
+                // TODO: return in error message object
+                Log.Warning("Failed to open file at path \"{0}\". {1}", path, SDL_GetError());
+            }
+            return data;
         }
 
         string Strip(string data, char optionalChar)
