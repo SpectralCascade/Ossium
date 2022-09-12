@@ -1,5 +1,5 @@
 Things that annoy me with the editor:
-1. Randomised scene hierarchy order and component order
+1. Randomised scene hierarchy order and component order ~ FIXED
 2. File explorer always starts in C:\ drive, which makes it extremely slow to open scenes etc.
 3. File explorer provides full paths instead of relative paths
 4. Window resizing is broken
@@ -8,12 +8,12 @@ Things that annoy me with the editor:
 7. Clone doesn't clone entity children
 8. No prefabs
 9. Working with scene loading/unloading is a pain
-10. No scrolling, limited scene size as a result
+10. No scrolling, limited scene size as a result ~ FIXED
 11. No mouse gizmos for moving stuff around in the scene
 12. No key shortcuts
 13. Sketchy toolbar setup (not customisable outside engine as of yet either)
 14. Immediate mode GUI layout a bit borked
-15. Project loading broken if more than one opened scene
+15. Project loading broken if more than one opened scene ~ FIXED
 16. No copy/paste functionality, besides cloning
 
 Things that I like:
