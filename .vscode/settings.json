@@ -69,6 +69,7 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "*.in": "cpp"
     }
 }
