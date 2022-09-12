@@ -1,4 +1,5 @@
 LOCAL_PATH := $(call my-dir)
+$(info Building Ossium module. LOCAL_PATH=$(LOCAL_PATH))
 
 include $(CLEAR_VARS)
 
