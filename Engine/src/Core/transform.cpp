@@ -31,13 +31,12 @@ namespace Ossium
             if (parent != nullptr)
             {
                 worldPosition = position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
-                worldRotation = Rotation(b2Mul(rotation, parent->AddComponentOnce<Transform>()->GetWorldRotation()));
-                worldScale = scale * parent->AddComponentOnce<Transform>()->GetWorldScale();
+                Vector2 parentScale = parent->AddComponentOnce<Transform>()->GetWorldScale();
+                worldScale = Vector2(scale.x * parentScale.x, scale.y * parentScale.y);
             }
             else
             {
                 worldPosition = position;
-                worldRotation = rotation;
                 worldScale = scale;
             }
             dirty = false;
@@ -71,11 +70,6 @@ namespace Ossium
         return position;
     }
 
-    Rotation Transform::GetLocalRotation()
-    {
-        return rotation;
-    }
-
     Vector2 Transform::GetLocalScale()
     {
         return scale;
@@ -87,22 +81,15 @@ namespace Ossium
         SetDirty();
     }
 
-    void Transform::SetLocalRotation(Rotation r)
-    {
-        rotation = r;
-        SetDirty();
-    }
-
     void Transform::SetLocalScale(Vector2 s)
     {
         scale = s;
         SetDirty();
     }
 
-    void Transform::SetLocal(Point p, Rotation r, Vector2 s)
+    void Transform::SetLocal(Point p, Vector2 s)
     {
         position = p;
-        rotation = r;
         scale = s;
         SetDirty();
     }
@@ -115,16 +102,6 @@ namespace Ossium
         }
         RefreshData();
         return worldPosition;
-    }
-
-    Rotation Transform::GetWorldRotation()
-    {
-        if (!relative)
-        {
-            return rotation;
-        }
-        RefreshData();
-        return worldRotation;
     }
 
     Vector2 Transform::GetWorldScale()
@@ -143,23 +120,15 @@ namespace Ossium
         SetDirty();
     }
 
-    void Transform::SetWorldRotation(Rotation r)
-    {
-        // TODO
-        rotation = r;
-        SetDirty();
-    }
-
     void Transform::SetWorldScale(Vector2 s)
     {
         scale += s - GetWorldScale();
         SetDirty();
     }
 
-    void Transform::SetWorld(Point p, Rotation r, Vector2 s)
+    void Transform::SetWorld(Point p, Vector2 s)
     {
         position += p - GetWorldPosition();
-        rotation = r; // TODO
         scale += s - GetWorldScale();
         SetDirty();
     }

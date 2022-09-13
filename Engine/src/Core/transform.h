@@ -31,11 +31,9 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(TransformSchema, 4);
 
     protected:
-        /// TODO: use a matrix!
+        /// TODO: use a single matrix!
         /// Local/relative position to parent.
         M(Point, position) = Point(0, 0);
-        /// Local/relative rotation to parent.
-        M(Rotation, rotation) = Rotation(0);
         /// Local/relative scale to parent.
         M(Vector2, scale) = Vector2(1, 1);
 
@@ -49,9 +47,8 @@ namespace Ossium
     {
     private:
         /// Cached world transform data. Only used if in 'relative' mode.
-        /// TODO: Use a matrix!
+        /// TODO: Use a single matrix!
         Point worldPosition = Point(0, 0);
-        Rotation worldRotation = Rotation(0);
         Vector2 worldScale = Vector2(1, 1);
 
         /// Has this transform been modified?
@@ -70,22 +67,18 @@ namespace Ossium
         void SetDirty();
 
         Point GetLocalPosition();
-        Rotation GetLocalRotation();
         Vector2 GetLocalScale();
 
         void SetLocalPosition(Point p);
-        void SetLocalRotation(Rotation r);
         void SetLocalScale(Vector2 s);
-        void SetLocal(Point p, Rotation r, Vector2 s);
+        void SetLocal(Point p, Vector2 s);
 
         Point GetWorldPosition();
-        Rotation GetWorldRotation();
         Vector2 GetWorldScale();
 
         void SetWorldPosition(Point p);
-        void SetWorldRotation(Rotation r);
         void SetWorldScale(Vector2 s);
-        void SetWorld(Point p, Rotation r, Vector2 s);
+        void SetWorld(Point p, Vector2 s);
 
     };
 

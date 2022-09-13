@@ -63,9 +63,6 @@ namespace Ossium
         /// Input system.
         InputController* input = nullptr;
 
-        /// Physics world.
-        Physics::PhysicsWorld* physWorld = nullptr;
-
         /// Services available to this engine system instance. Always provides a renderer at the very least.
         ServicesProvider* services = nullptr;
 

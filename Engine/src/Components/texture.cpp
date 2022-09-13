@@ -201,7 +201,7 @@ namespace Ossium
                             sliceDest,
                             &finalClip,
                             &trueOrigin,
-                            trans->GetWorldRotation().GetDegrees(),
+                            0,
                             modulation,
                             blending,
                             flip
@@ -216,7 +216,7 @@ namespace Ossium
                     dest,
                     &srcClip,
                     &trueOrigin,
-                    trans->GetWorldRotation().GetDegrees(),
+                    0,
                     modulation,
                     blending,
                     flip
@@ -253,7 +253,7 @@ namespace Ossium
                     dest = { (int)round(minPos.x + (texClip.w * col)), (int)round(minPos.y + (texClip.h * row)), texClip.w, texClip.h };
 
                     // Compute true origin for rotating this tile
-                    screenOrigin = (Vector2(origin.x * sWidth, origin.y * sHeight) + Vector2((-sWidth) + dest.x, (-sHeight) + dest.y)).Rotation90Clockwise().Rotation90Clockwise();
+                    screenOrigin = Vector2(Vector2(origin.x * sWidth, origin.y * sHeight) + Vector2((-sWidth) + dest.x, (-sHeight) + dest.y)).Rotation90Clockwise().Rotation90Clockwise();
 
                     converted.x = (int)round(screenOrigin.x);
                     converted.y = (int)round(screenOrigin.y);
@@ -264,7 +264,7 @@ namespace Ossium
                         dest,
                         &trueClip,
                         &converted,
-                        trans->GetWorldRotation().GetDegrees(),
+                        0,
                         modulation,
                         blending,
                         flip

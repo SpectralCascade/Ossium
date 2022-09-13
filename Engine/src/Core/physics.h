@@ -17,11 +17,7 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include <Box2D/Box2D.h>
-#include <functional>
-
 #include "coremaths.h"
-#include "services.h"
 
 namespace Ossium
 {
@@ -44,53 +40,6 @@ namespace Ossium
     inline Vector2 MTP(const Vector2& vecMetres)
     {
         return Vector2(MTP(vecMetres.x), MTP(vecMetres.y));
-    }
-
-    inline namespace Physics
-    {
-
-        class OSSIUM_EDL OnRayHit : public b2RayCastCallback
-        {
-        public:
-            typedef std::function<float32(b2Fixture*, const b2Vec2&, const b2Vec2&, float32)> RayHitCallback;
-
-            OnRayHit(RayHitCallback callback);
-
-            virtual ~OnRayHit() = default;
-
-            float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction);
-
-        private:
-            RayHitCallback onRayHit;
-        };
-
-        class OSSIUM_EDL PhysicsWorld : public b2World, public Service<PhysicsWorld>
-        {
-        public:
-            PhysicsWorld() : b2World({0.0f, -9.81f}) {};
-            PhysicsWorld(Vector2 gravity) : b2World(gravity) {};
-
-            /// Overloads that make it easier to perform raycasting and allow for use of Lambdas.
-            void RayCast(const Ray& ray, b2RayCastCallback* callback, float distance = 100.0f);
-            void RayCast(const Ray& ray, OnRayHit* callback, float distance = 100.0f);
-            void RayCast(const Point& origin, const Point& endPoint, OnRayHit* callback);
-
-            /// BaseService::PostUpdate() override, updates physics after the scenes have been updated.
-            void PostUpdate();
-
-            /// Freeze or unfreeze the physics world.
-            void SetFrozen(bool freeze);
-            bool IsFrozen();
-
-            float timeStep = 1.0f / 60.0f;
-            int velocityIterations = 6;
-            int positionIterations = 2;
-
-        private:
-            bool frozen = false;
-
-        };
-
     }
 
 }

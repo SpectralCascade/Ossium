@@ -20,7 +20,6 @@
 #include <string>
 #include <type_traits>
 #include <initializer_list>
-#include <Box2D/Common/b2Math.h>
 
 #include "mathconsts.h"
 #include "renderer.h"
@@ -313,6 +312,36 @@ namespace Ossium
             return Base::data[vec][dimension];
         }
 
+        // Compare two matrices to see if they're the same
+        template<typename MatType>
+        typename std::enable_if<
+            MatType::TotalDimensions == TotalDimensions && MatType::TotalVectors == TotalVectors,
+            bool
+        >::type
+        operator==(const MatType& operand)
+        {
+            for (unsigned int i = 0; i < TotalVectors; i++)
+            {
+                for (unsigned int j = 0; j < TotalDimensions; j++) {
+                    if (Base::data[i][j] != operand.data[i][j]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Compare two matrices to see if they're different
+        template<typename MatType>
+        typename std::enable_if<
+            MatType::TotalDimensions == TotalDimensions && MatType::TotalVectors == TotalVectors,
+            bool
+        >::type
+        operator!=(const MatType& operand)
+        {
+            return !(*this == operand);
+        }
+
         std::string ToString()
         {
             std::string result = "[";
@@ -412,19 +441,19 @@ namespace Ossium
     {
         Vector3() = default;
         Vector3(float x, float y, float z);
-        Vector3(Matrix<3, 1> matrix) : Matrix(matrix) {}
-        Vector3(Matrix<2, 1> matrix) : Matrix(Matrix<3, 1>({{matrix.x, matrix.y, z}})) {}
+        Vector3(const Matrix<3, 1>& matrix) : Matrix(matrix) {}
+        Vector3(const Matrix<2, 1>& matrix) : Matrix(Matrix<3, 1>({{matrix.x, matrix.y, z}})) {}
 
         Vector3 Cross(const Vector3& vec);
     };
 
     /// Represents a 2D vector.
-    /// TODO: Derive from Matrix instead of b2Vec2 and union the data array with x and y members.
-    struct OSSIUM_EDL Vector2 : public b2Vec2
+    struct Vector2 : public Matrix<2, 1>
     {
         Vector2() = default;
-        Vector2(float _x, float _y);
-        Vector2(const b2Vec2& vec);
+        Vector2(float x, float y) : Matrix({{x, y}}) {}
+        Vector2(const Matrix<2, 1>& matrix) : Matrix(matrix) {}
+        Vector2(const Matrix<3, 1>& matrix) : Matrix(Matrix<2, 1>({{matrix.x, matrix.y}})) {}
 
         /// Dot product of this and another vector
         float Dot(Vector2 vec);
@@ -441,6 +470,12 @@ namespace Ossium
         /// Calculate distance between two point vectors
         float Distance(Vector2 point);
 
+        /// Calculate the length of this vector squared
+        float LengthSquared();
+
+        /// Calculate the length of this vector
+        float Length();
+        
         /// Calculate reflection of vector
         Vector2 Reflection(Vector2 normal);
 
@@ -497,7 +532,7 @@ namespace Ossium
 
     };
 
-    struct OSSIUM_EDL Rotation : public b2Rot
+    /*struct OSSIUM_EDL Rotation : public b2Rot
     {
         Rotation() = default;
         Rotation(const b2Rot& rot);
@@ -522,7 +557,7 @@ namespace Ossium
         using b2Rot::Set;
         using b2Rot::GetAngle;
 
-    };
+    };*/
 
     /*inline Rotation operator*(const Rotation& rota, const Rotation& rotb)
     {
@@ -544,6 +579,7 @@ namespace Ossium
         Point() = default;
         Point(float _x, float _y);
         Point(const Vector2& vec);
+        Point(const Matrix<2, 1>& mat) : Point(Vector2(mat)) {}
 
         void Draw(Renderer& renderer);
         void Draw(Renderer& renderer, SDL_Color color);
@@ -700,33 +736,6 @@ namespace Ossium
         std::vector<Point> vertices;
 
     };
-
-    /// Special template attributes 
-
-    ///
-    /// Vector2 maths
-    ///
-
-    /// Basic vector arithmetic
-    OSSIUM_EDL Vector2 operator+(const Vector2& vec_a, const Vector2& vec_b);
-
-    OSSIUM_EDL void operator+=(Vector2 &vec_a, const Vector2& vec_b);
-
-    OSSIUM_EDL Vector2 operator-(const Vector2& vec_a, const Vector2& vec_b);
-
-    OSSIUM_EDL void operator-=(Vector2 &vec_a, const Vector2& vec_b);
-
-    OSSIUM_EDL Vector2 operator*(const Vector2& vec_a, const Vector2& vec_b);
-
-    /// Scalar multiplication
-    inline Vector2 operator*(const Vector2& vec, float scalar)
-    {
-        return Vector2(vec.x * scalar, vec.y * scalar);
-    }
-    inline Vector2 operator*(float scalar, const Vector2& vec)
-    {
-        return Vector2(vec.x * scalar, vec.y * scalar);
-    }
 
 }
 

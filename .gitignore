@@ -1,15 +1,5 @@
-
-*.o
-*.dll
-*.exe
-*.a
 ossium.cfg
 ossium.depend
 ossium.layout
-bin/Debug/Orkney Regular.ttf
-bin/ossium/libossium.a
-Engine/bin/
-
+Engine/soupbuild
 test_output.csv
-
-!Engine/cbp2make.exe

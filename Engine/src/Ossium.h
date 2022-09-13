@@ -36,8 +36,6 @@
 #include "Components/inputgui.h"
 #include "Core/randutils.h"
 #include "Core/physics.h"
-#include "Components/boxcollider.h"
-#include "Components/rigidcircle.h"
 #include "Core/enginesystem.h"
 #include "Core/texturepack.h"
 #include "Core/utf8.h"

@@ -17,7 +17,6 @@
 #include "window.h"
 #include "enginesystem.h"
 #include "ecs.h"
-#include "../Components/collider.h"
 #include "../Components/UI/LayoutSurface.h"
 
 namespace Ossium
@@ -27,9 +26,8 @@ namespace Ossium
     {
         window = new Window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags);
         renderer = new Renderer(window, config.totalRenderLayers, (config.vsync ? SDL_RENDERER_PRESENTVSYNC : 0) | (config.hardwareAcceleration ? SDL_RENDERER_ACCELERATED : 0));
-        physWorld = new Physics::PhysicsWorld(Vector2::Zero);
         input = new InputController();
-        services = new ServicesProvider(renderer, &resources, physWorld, input);
+        services = new ServicesProvider(renderer, &resources, input);
         Init(config);
     }
 
@@ -37,7 +35,6 @@ namespace Ossium
     {
         delete services;
         delete input;
-        delete physWorld;
         delete renderer;
         delete window;
     }
@@ -91,11 +88,6 @@ namespace Ossium
         for (auto itr : resources.GetAll<Scene>())
         {
             Scene* scene = (Scene*)itr.second;
-            // TODO: Optimise this? Perhaps there's a way transforms can point directly to the physics world transform when a physics body is associated.
-            // Once the physics world has updated, update all the transforms associated with physics bodies.
-            scene->WalkComponents<PhysicsBody>([] (PhysicsBody* body) {
-                body->UpdatePhysics();
-            });
             // Update all layouts now everything has moved.
             scene->WalkEntities([=] (Entity* entity) {
                 if (entity->IsActive())

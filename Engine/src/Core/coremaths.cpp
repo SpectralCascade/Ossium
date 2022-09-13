@@ -48,18 +48,6 @@ namespace Ossium
     /// Vector2
     ///
 
-    Vector2::Vector2(float _x, float _y)
-    {
-        x = _x;
-        y = _y;
-    }
-
-    Vector2::Vector2(const b2Vec2& vec)
-    {
-        x = vec.x;
-        y = vec.y;
-    }
-
     float Vector2::Dot(Vector2 vec)
     {
         return (x * vec.x) + (y * vec.y);
@@ -91,9 +79,17 @@ namespace Ossium
         return point.Length();
     }
 
+    float Vector2::LengthSquared() {
+        return (x * x) + (y * y);
+    }
+
+    float Vector2::Length() {
+        return sqrt(LengthSquared());
+    }
+
     Vector2 Vector2::Reflection(Vector2 normal)
     {
-        return (*this) - (2.0f * ProjectOnto(normal));
+        return (*this) - (ProjectOnto(normal) * 2.0f);
     }
 
     Vector2 Vector2::Rotation90Clockwise()
@@ -198,7 +194,7 @@ namespace Ossium
     ///
     /// Rotation
     ///
-
+/*
     Rotation::Rotation(const b2Rot& rot)
     {
         s = rot.s;
@@ -233,7 +229,7 @@ namespace Ossium
     {
         return Utilities::ToString(GetDegrees());
     }
-
+*/
     ///
     /// Point
     ///
@@ -557,31 +553,6 @@ namespace Ossium
             }
             SDL_RenderDrawLine(renderer.GetRendererSDL(), (int)previousPoint.x, (int)previousPoint.y, (int)vertices[0].x, (int)vertices[0].y);
         }
-    }
-
-    Vector2 operator+(const Vector2& vec_a, const Vector2& vec_b)
-    {
-        return {vec_a.x + vec_b.x, vec_a.y + vec_b.y};
-    }
-
-    void operator+=(Vector2 &vec_a, const Vector2& vec_b)
-    {
-        vec_a = {vec_a.x + vec_b.x, vec_a.y + vec_b.y};
-    }
-
-    Vector2 operator-(const Vector2& vec_a, const Vector2& vec_b)
-    {
-        return {vec_a.x - vec_b.x, vec_a.y - vec_b.y};
-    }
-
-    void operator-=(Vector2& vec_a, const Vector2& vec_b)
-    {
-        vec_a = {vec_a.x - vec_b.x, vec_a.y - vec_b.y};
-    }
-
-    Vector2 operator*(const Vector2& vec_a, const Vector2& vec_b)
-    {
-        return {vec_a.x * vec_b.x, vec_a.y * vec_b.y};
     }
 
 }

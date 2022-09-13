@@ -1,0 +1,224 @@
+{
+    "name": "Ossium",
+    "source": "src",
+    "source-ext": [".cpp", ".c"],
+    "header-ext": [".h"],
+    "source-ignore": [".Unused", "Tests"],
+    "output": "soupbuild/outputs",
+    "work": "soupbuild/work",
+    "default-platform": "Windows",
+    "default-mode": "release",
+    "default-task": "build",
+    "modes": {
+        "release": {
+        },
+        "OssiumEditor": {
+        }
+    },
+    "platforms": {
+        "Windows": {
+            "dependencies": [
+                {
+                    "name": "SDL2",
+                    "version": "2.0.22",
+                    "source": "https://www.libsdl.org/release/SDL2-devel-{version}-mingw.tar.gz",
+                    "shared": "https://www.libsdl.org/release/SDL2-{version}-win32-x64.zip",
+                    "includes": ["x86_64-w64-mingw32/include", "x86_64-w64-mingw32/include/SDL2"],
+                    "libs": ["x86_64-w64-mingw32/lib"]
+                },
+                {
+                    "name": "SDL2_image",
+                    "version": "2.6.2",
+                    "source": "https://github.com/libsdl-org/SDL_image/releases/download/release-{version}/SDL2_image-devel-{version}-mingw.tar.gz",
+                    "shared": "https://github.com/libsdl-org/SDL_image/releases/download/release-{version}/SDL2_image-{version}-win32-x64.zip",
+                    "includes": ["x86_64-w64-mingw32/include", "x86_64-w64-mingw32/include/SDL2"],
+                    "libs": ["x86_64-w64-mingw32/lib"]
+                },
+                {
+                    "name": "SDL2_mixer",
+                    "version": "2.6.2",
+                    "source": "https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-devel-{version}-mingw.tar.gz",
+                    "shared": "https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-{version}-win32-x64.zip",
+                    "includes": ["x86_64-w64-mingw32/include", "x86_64-w64-mingw32/include/SDL2"],
+                    "libs": ["x86_64-w64-mingw32/lib"]
+                },
+                {
+                    "name": "SDL2_ttf",
+                    "version": "2.20.1",
+                    "source": "https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-{version}-mingw.tar.gz",
+                    "shared": "https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-{version}-win32-x64.zip",
+                    "includes": ["x86_64-w64-mingw32/include", "x86_64-w64-mingw32/include/SDL2"],
+                    "libs": ["x86_64-w64-mingw32/lib"]
+                },
+                {
+                    "name": "SDL2_net",
+                    "version": "2.2.0",
+                    "source": "https://github.com/libsdl-org/SDL_net/releases/download/release-{version}/SDL2_net-devel-{version}-mingw.tar.gz",
+                    "shared": "https://github.com/libsdl-org/SDL_net/releases/download/release-{version}/SDL2_net-{version}-win32-x64.zip",
+                    "includes": ["x86_64-w64-mingw32/include", "x86_64-w64-mingw32/include/SDL2"],
+                    "libs": ["x86_64-w64-mingw32/lib"]
+                },
+                {
+                    "name": "bx",
+                    "version": "2022.09.12",
+                    "source": "https://github.com/bkaradzic/bx/archive/a2dff8e0a0ecf705b264062656b3ddc1c9bd4569.zip",
+                    "includes": ["include"],
+                    "libs": [],
+                    "build": ["robocopy -E -IT . ../bx > nul"]
+                },
+                {
+                    "name": "bimg",
+                    "version": "2022.09.12",
+                    "source": "https://github.com/bkaradzic/bimg/archive/90ac47dfb0ac21e602ed46a91fcc34016e565b98.zip",
+                    "includes": ["include"],
+                    "libs": [],
+                    "build": ["robocopy -E -IT . ../bimg > nul"]
+                },
+                {
+                    "name": "bgfx",
+                    "version": "2022.09.12",
+                    "source": "https://github.com/bkaradzic/bgfx/archive/cb439deae3a2c85275b41645da6e25a5f805144a.zip",
+                    "includes": ["include"],
+                    "libs": ["libs"],
+                    "build": [
+                        "../bx/tools/bin/windows/genie --with-shared-lib --gcc=mingw-gcc gmake",
+                        "mingw32-make config=release bgfx -C .build/projects/gmake-mingw-gcc/ -j {cpu_count}",
+                        "mingw32-make config=release bgfx-shared-lib -C .build/projects/gmake-mingw-gcc/ -j {cpu_count}",
+                        "mkdir libs > nul",
+                        "robocopy -IT ../bx/scripts ./libs libbxRelease.a > nul",
+                        "robocopy -IT ../bimg/scripts ./libs libbimgRelease.a > nul",
+                        "robocopy -IT ./scripts ./libs libbgfxRelease.a > nul"
+                    ]
+                }
+            ],
+            "source-ignore": [
+                "Editor/Core/contextmenu.cpp",
+                "Editor/Core/contextmenu.h",
+                "Editor/Core/editorconstants.h",
+                "Editor/Core/editorcontroller.cpp",
+                "Editor/Core/editorcontroller.h",
+                "Editor/Core/editorgui.cpp",
+                "Editor/Core/editorgui.h",
+                "Editor/Core/editorlayout.cpp",
+                "Editor/Core/editorlayout.h",
+                "Editor/Core/editorstyle.cpp",
+                "Editor/Core/editorstyle.h",
+                "Editor/Core/editorwindow.cpp",
+                "Editor/Core/editorwindow.h",
+                "Editor/Core/project.cpp",
+                "Editor/Core/project.h",
+                "Editor/Core/tinyfiledialogs.c",
+                "Editor/Core/tinyfiledialogs.h",
+                "Editor/Examples",
+                "Editor/Windows",
+                "Editor/main.cpp",
+                "OssiumEditor.h"
+            ],
+            "template": {
+                "project": "templates/Windows",
+                "source": "src",
+                "generate": {
+                    "soup_app_name": {
+                        "paths": ["ossium.cbp"],
+                        "value": "{name}"
+                    },
+                    "soup_source_paths": {
+                        "separator": "\n        ",
+                        "formatter": "<Unit filename=\"{item}\" />",
+                        "paths": ["ossium.cbp"],
+                        "value": "{all_source_files}"
+                    },
+                    "soup_header_paths": {
+                        "separator": "\n        ",
+                        "formatter": "<Unit filename=\"{item}\" />",
+                        "paths": ["ossium.cbp"],
+                        "value": "{all_header_files}"
+                    },
+                    "soup_include_paths": {
+                        "separator": "\n                    ",
+                        "formatter": "<Add directory=\"{item}\" />",
+                        "paths": ["ossium.cbp"],
+                        "value": "{all_include_paths}"
+                    },
+                    "soup_lib_paths": {
+                        "separator": "\n                    ",
+                        "formatter": "<Add directory=\"{item}\" />",
+                        "paths": ["ossium.cbp"],
+                        "value": "{all_lib_paths}"
+                    }
+                }
+            },
+            "tasks": {
+                "generate_makefile": {
+                    "steps": [
+                        "cmd /c cbp2make.exe -in ossium.cbp -out makefile.mak"
+                    ]
+                },
+                "setup_deps": {
+                    "steps": []
+                },
+                "build": {
+                    "steps": [
+                        "{run_task} Windows generate_makefile {mode}",
+                        "{run_task} Windows setup_deps {mode}",
+                        "cmd /c mingw32-make {mode} -j {cpu_count}"
+                    ],
+                    "outputs": ["bin/{mode}/lib{name}.a"],
+                    "output_shared": false
+                },
+                "clean": {
+                    "steps": [
+                        "rm -r -Force obj",
+                        "rm -r -Force bin",
+                        "rm -r -Force \"{root}/{output}/{platform}/{mode}\""
+                    ],
+                    "abort_on_error": false
+                }
+            }
+        },
+        "Android": {
+            "template": {
+                "project": "templates/Android",
+                "source": "app/jni/src",
+                "assets": "app/src/main/assets/assets",
+                "generate": {
+                    "soup_app_name": {
+                        "paths": ["app/src/main/res/values/strings.xml"],
+                        "value": "{name}"
+                    },
+                    "soup_source_paths": {
+                        "all_source_files_separator": " ",
+                        "all_source_files_format": "\"{source_file}\"",
+                        "paths": ["app/jni/Android.mk"],
+                        "value": "{all_source_files}"
+                    },
+                    "soup_header_paths": {
+                        "all_header_files_separator": " ",
+                        "all_header_files_format": "\"{header_file}\"",
+                        "paths": ["app/jni/Android.mk"],
+                        "value": "{all_header_files}"
+                    }
+                }
+            },
+            "tasks": {
+                "build": {
+                    "steps": [
+                        "./gradlew assemble{mode}"
+                    ],
+                    "outputs": ["app/build/outputs/apk/{mode}/"]
+                },
+                "build-bundle": {
+                    "steps": [
+                        "./gradlew bundle{mode}"
+                    ],
+                    "outputs": ["app/build/outputs/aab/{mode}/"]
+                },
+                "clean": {
+                    "steps": [
+                        "./gradlew clean"
+                    ]
+                }
+            }
+        }
+    }
+}
