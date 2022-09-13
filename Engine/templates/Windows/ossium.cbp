@@ -45,67 +45,26 @@
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-DOSSIUM_EXPORT_DLL" />
-					<Add directory="Box2D" />
+                    {soup_include_paths}
 				</Compiler>
 				<Linker>
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" />
-					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="Box2D/bin/Release" />
-				</Linker>
-			</Target>
-			<Target title="OssiumEditor">
-				<Option output="bin/OssiumEditor/Ossium" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/OssiumEditor/" />
-				<Option type="0" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-std=c++1z" />
-					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D" />
-				</Compiler>
-				<Linker>
-					<Add option="-static-libstdc++" />
-					<Add option="-static-libgcc" />
-					<Add option="-lmingw32" />
-					<Add option="-lcomdlg32" />
-					<Add option="-lole32" />
-					<Add option="-lSDL2main" />
+                    <Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
+                    <Add option="-lSDL2_image" />
 					<Add option="-lSDL2_mixer" />
 					<Add option="-lSDL2_ttf" />
-					<Add option="-lSDL2_net" />
-					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
-					<Add directory="Box2D/bin/Release" />
+                    <Add option="-lSDL2_net" />
+                    <Add option="-lbgfxRelease" />
+                    <Add option="-lbimgRelease" />
+                    <Add option="-lbxRelease" />
+                    <Add option="-lgdi32" />
+                    {soup_lib_paths}
 				</Linker>
 			</Target>
-			<Target title="OssiumEditor (Debug)">
-				<Option output="bin/OssiumEditorDebug/OssiumEditor" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/OssiumEditorDebug/" />
+			<Target title="debug_editor">
+				<Option output="bin/debug_editor/{soup_app_name}Editor" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/debug_editor/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
@@ -114,17 +73,7 @@
 					<Add option="-g" />
 					<Add option="-DOSSIUM_DEBUG" />
 					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D" />
+                    {soup_include_paths}
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -134,112 +83,16 @@
 					<Add option="-lole32" />
 					<Add option="-lSDL2main" />
 					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
+                    <Add option="-lSDL2_image" />
 					<Add option="-lSDL2_mixer" />
 					<Add option="-lSDL2_ttf" />
-					<Add option="-lSDL2_net" />
+                    <Add option="-lSDL2_net" />
+                    <Add option="-lbgfxRelease" />
+                    <Add option="-lbimgRelease" />
+                    <Add option="-lbxRelease" />
+                    <Add option="-lgdi32" />
+					{soup_lib_paths}
 					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
-					<Add directory="Box2D/bin/Release" />
-				</Linker>
-			</Target>
-			<Target title="OssiumEditor (Debug Linux)">
-				<Option output="bin/OssiumEditor/Ossium" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin/OssiumEditor/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
-				<Compiler>
-					<Add option="-std=c++1z" />
-					<Add option="-g" />
-					<Add option="-DOSSIUM_DEBUG" />
-					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D" />
-				</Compiler>
-				<Linker>
-					<Add option="-static-libstdc++" />
-					<Add option="-static-libgcc" />
-					<Add option="-lSDL2main" />
-					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
-					<Add option="-lSDL2_mixer" />
-					<Add option="-lSDL2_ttf" />
-					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
-					<Add directory="Box2D/bin/Release" />
-				</Linker>
-			</Target>
-			<Target title="libOssiumEditor">
-				<Option output="bin/OssiumEditorDebug/Ossium" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="" />
-				<Option object_output="obj/OssiumEditorDebug/" />
-				<Option type="2" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-					<Add option="-std=c++1z" />
-					<Add option="-DOSSIUM_DEBUG" />
-					<Add option="-DOSSIUM_EDITOR" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/include/SDL2" />
-					<Add directory="Box2D" />
-				</Compiler>
-				<Linker>
-					<Add option="-static-libstdc++" />
-					<Add option="-static-libgcc" />
-					<Add option="-lmingw32" />
-					<Add option="-lcomdlg32" />
-					<Add option="-lole32" />
-					<Add option="-lSDL2main" />
-					<Add option="-lSDL2" />
-					<Add option="-lSDL2_image" />
-					<Add option="-lSDL2_mixer" />
-					<Add option="-lSDL2_ttf" />
-					<Add option="-lSDL2_net" />
-					<Add option="-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -static-libgcc -static-libstdc++" />
-					<Add library="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add library="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
-					<Add library="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
-					<Add library="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib/libSDL2_image.dll.a" />
-					<Add library="Box2D/bin/Release/libBox2D.a" />
-					<Add directory="C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/lib" />
-					<Add directory="C:/SDL2/SDL2_net-2.0.1/x86_64-w64-mingw32/lib" />
-					<Add directory="Box2D/bin/Release" />
 				</Linker>
 			</Target>
 		</Build>
