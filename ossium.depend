@@ -1,0 +1,1220 @@
+# depslib dependency file v1.0
+1574010239 source:c:\users\2013b\git\ossium\src\ossium\animator.cpp
+	"animator.h"
+
+1574203076 c:\users\2013b\git\ossium\src\ossium\animator.h
+	<set>
+	<SDL.h>
+	"fsm.h"
+	"time.h"
+	"renderer.h"
+	"funcutils.h"
+	"curves.h"
+
+1574011123 c:\users\2013b\git\ossium\src\ossium\fsm.h
+	<vector>
+	<string>
+	<SDL.h>
+	"serialisation.h"
+	"circularbuffer.h"
+	"ecs.h"
+
+1574013112 c:\users\2013b\git\ossium\src\ossium\serialisation.h
+	<string>
+	<stack>
+	<SDL.h>
+	"coremaths.h"
+	"helpermacros.h"
+	"logging.h"
+
+1573949863 c:\users\2013b\git\ossium\src\ossium\coremaths.h
+	<SDL.h>
+	<string>
+	<Box2D/Common/b2Math.h>
+	"mathconsts.h"
+	"renderer.h"
+	"helpermacros.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2math.h
+	"Box2D/Common/b2Settings.h"
+	<math.h>
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2settings.h
+	<stddef.h>
+	<assert.h>
+	<float.h>
+
+1564251167 c:\users\2013b\git\ossium\src\ossium\mathconsts.h
+
+1574720385 c:\users\2013b\git\ossium\src\ossium\renderer.h
+	<vector>
+	<queue>
+	<set>
+	<SDL.h>
+	"colors.h"
+	"helpermacros.h"
+	"services.h"
+
+1560506442 c:\users\2013b\git\ossium\src\ossium\colors.h
+	<SDL.h>
+
+1574011169 c:\users\2013b\git\ossium\src\ossium\helpermacros.h
+
+1574203076 c:\users\2013b\git\ossium\src\ossium\circularbuffer.h
+	<algorithm>
+	<SDL.h>
+	"funcutils.h"
+	"logging.h"
+
+1574202211 c:\users\2013b\git\ossium\src\ossium\basics.h
+	<string>
+	<functional>
+	<map>
+	<SDL.h>
+	"helpermacros.h"
+	"jsondata.h"
+
+1558786254 c:\users\2013b\git\ossium\src\ossium\jsondata.h
+	<string>
+	<vector>
+	<unordered_map>
+
+1574717890 c:\users\2013b\git\ossium\src\ossium\ecs.h
+	<vector>
+	<string.h>
+	<unordered_map>
+	<set>
+	<algorithm>
+	<SDL.h>
+	"tree.h"
+	"stringintern.h"
+	"schemamodel.h"
+	"services.h"
+
+1574203076 c:\users\2013b\git\ossium\src\ossium\tree.h
+	<string>
+	<vector>
+	<unordered_map>
+	<SDL.h>
+	"funcutils.h"
+	"logging.h"
+
+1555571343 c:\users\2013b\git\ossium\src\ossium\stringintern.h
+	<cstdio>
+
+1562438345 c:\users\2013b\git\ossium\src\ossium\time.h
+	<SDL.h>
+	"schemamodel.h"
+
+1574203076 c:\users\2013b\git\ossium\src\ossium\schemamodel.h
+	<SDL.h>
+	<fstream>
+	"stringintern.h"
+	"funcutils.h"
+	"typefactory.h"
+	"jsondata.h"
+
+1562364541 c:\users\2013b\git\ossium\src\ossium\curves.h
+
+1574202110 source:c:\users\2013b\git\ossium\src\ossium\audio.cpp
+	"audio.h"
+	"logging.h"
+
+1574203075 c:\users\2013b\git\ossium\src\ossium\audio.h
+	<SDL.h>
+	<SDL_mixer.h>
+	<set>
+	<vector>
+	"funcutils.h"
+	"delta.h"
+	"resourcecontroller.h"
+	"schemamodel.h"
+
+1573000715 c:\users\2013b\git\ossium\src\ossium\delta.h
+	"jsondata.h"
+
+1574001790 c:\users\2013b\git\ossium\src\ossium\config.h
+	"schemamodel.h"
+	"stringconvert.h"
+
+1574202211 source:c:\users\2013b\git\ossium\src\ossium\basics.cpp
+	<cstdarg>
+	<SDL.h>
+	<cstdio>
+	<string>
+	<fstream>
+	<sstream>
+	"basics.h"
+	"logging.h"
+
+1560093686 source:c:\users\2013b\git\ossium\src\ossium\colors.cpp
+	"colors.h"
+
+1552346261 source:c:\users\2013b\git\ossium\src\ossium\config.cpp
+	<string>
+	<iostream>
+	<fstream>
+	<SDL.h>
+	"config.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\coremaths.cpp
+	<cmath>
+	"funcutils.h"
+	"stringconvert.h"
+	"coremaths.h"
+
+1574203075 source:c:\users\2013b\git\ossium\src\ossium\csvdata.cpp
+	<fstream>
+	<string>
+	<vector>
+	<SDL.h>
+	"funcutils.h"
+	"csvdata.h"
+	"logging.h"
+
+1553357610 c:\users\2013b\git\ossium\src\ossium\csvdata.h
+	<string>
+	<vector>
+
+1560093686 source:c:\users\2013b\git\ossium\src\ossium\curves.cpp
+	<cmath>
+	<SDL.h>
+	"mathconsts.h"
+	"curves.h"
+
+1574183385 source:c:\users\2013b\git\ossium\src\ossium\debugdraw.cpp
+	"debugdraw.h"
+
+1574183396 c:\users\2013b\git\ossium\src\ossium\debugdraw.h
+	<Box2D/Common/b2Draw.h>
+	"stringintern.h"
+	"text.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2draw.h
+	"Box2D/Common/b2Math.h"
+
+1571186431 c:\users\2013b\git\ossium\src\ossium\text.h
+	<string>
+	<SDL.h>
+	<SDL_ttf.h>
+	"font.h"
+	"renderer.h"
+	"ecs.h"
+	"texture.h"
+	"helpermacros.h"
+
+1552673012 c:\users\2013b\git\ossium\src\ossium\font.h
+	<string>
+	<map>
+	<SDL.h>
+	<SDL_ttf.h>
+
+1574201744 c:\users\2013b\git\ossium\src\ossium\texture.h
+	<string>
+	<SDL.h>
+	<SDL_ttf.h>
+	"coremaths.h"
+	"component.h"
+	"colors.h"
+	"metarect.h"
+	"font.h"
+	"resourcecontroller.h"
+	"image.h"
+
+1574163067 c:\users\2013b\git\ossium\src\ossium\metarect.h
+	<cmath>
+	"schemamodel.h"
+	"coremaths.h"
+	"ecs.h"
+
+1574201457 c:\users\2013b\git\ossium\src\ossium\resourcecontroller.h
+	<string.h>
+	<unordered_map>
+	"stringconvert.h"
+	"stringintern.h"
+	"services.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\delta.cpp
+	<SDL.h>
+	"delta.h"
+	"funcutils.h"
+
+1574717924 source:c:\users\2013b\git\ossium\src\ossium\ecs.cpp
+	<cstdio>
+	<string>
+	<algorithm>
+	<unordered_map>
+	<vector>
+	<SDL.h>
+	"funcutils.h"
+	"stringconvert.h"
+	"ecs.h"
+	"delta.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\events.cpp
+	<unordered_map>
+	<string>
+	<sstream>
+	<SDL.h>
+	"events.h"
+	"funcutils.h"
+
+1574011039 c:\users\2013b\git\ossium\src\ossium\events.h
+	<set>
+	<string>
+	<unordered_map>
+	<map>
+	<vector>
+	<variant>
+	"time.h"
+	"csvdata.h"
+
+1574013123 source:c:\users\2013b\git\ossium\src\ossium\font.cpp
+	<SDL.h>
+	<SDL_ttf.h>
+	"font.h"
+	"logging.h"
+
+1574290535 source:c:\users\2013b\git\ossium\src\ossium\init.cpp
+	<cstdio>
+	<string>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<SDL_mixer.h>
+	"init.h"
+	"delta.h"
+	"ecs.h"
+	"audio.h"
+
+1552346261 c:\users\2013b\git\ossium\src\ossium\init.h
+	<SDL.h>
+
+1574717615 source:c:\users\2013b\git\ossium\src\ossium\input.cpp
+	"input.h"
+
+1574717532 c:\users\2013b\git\ossium\src\ossium\input.h
+	<unordered_map>
+	<vector>
+	<functional>
+	<SDL.h>
+	"funcutils.h"
+	"helpermacros.h"
+	"services.h"
+
+1574202089 source:c:\users\2013b\git\ossium\src\ossium\inputgui.cpp
+	"inputgui.h"
+
+1574700411 c:\users\2013b\git\ossium\src\ossium\inputgui.h
+	"input.h"
+	"keyboard.h"
+	"mouse.h"
+	"stringintern.h"
+	"component.h"
+	"callback.h"
+
+1574702251 c:\users\2013b\git\ossium\src\ossium\keyboard.h
+	"input.h"
+
+1574702265 c:\users\2013b\git\ossium\src\ossium\mouse.h
+	"input.h"
+	"coremaths.h"
+
+1574013147 c:\users\2013b\git\ossium\src\ossium\callback.h
+	<map>
+	<functional>
+	"logging.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\jsondata.cpp
+	<fstream>
+	<sstream>
+	"jsondata.h"
+	"funcutils.h"
+	"logging.h"
+
+1574702292 source:c:\users\2013b\git\ossium\src\ossium\keyboard.cpp
+	"keyboard.h"
+
+1574702288 source:c:\users\2013b\git\ossium\src\ossium\mouse.cpp
+	"mouse.h"
+
+1564434010 source:c:\users\2013b\git\ossium\src\ossium\physics.cpp
+	"physics.h"
+
+1573902424 c:\users\2013b\git\ossium\src\ossium\physics.h
+	<Box2D/Box2D.h>
+	<functional>
+	"coremaths.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\box2d.h
+	"Box2D/Common/b2Settings.h"
+	"Box2D/Common/b2Draw.h"
+	"Box2D/Common/b2Timer.h"
+	"Box2D/Collision/Shapes/b2CircleShape.h"
+	"Box2D/Collision/Shapes/b2EdgeShape.h"
+	"Box2D/Collision/Shapes/b2ChainShape.h"
+	"Box2D/Collision/Shapes/b2PolygonShape.h"
+	"Box2D/Collision/b2BroadPhase.h"
+	"Box2D/Collision/b2Distance.h"
+	"Box2D/Collision/b2DynamicTree.h"
+	"Box2D/Collision/b2TimeOfImpact.h"
+	"Box2D/Dynamics/b2Body.h"
+	"Box2D/Dynamics/b2Fixture.h"
+	"Box2D/Dynamics/b2WorldCallbacks.h"
+	"Box2D/Dynamics/b2TimeStep.h"
+	"Box2D/Dynamics/b2World.h"
+	"Box2D/Dynamics/Contacts/b2Contact.h"
+	"Box2D/Dynamics/Joints/b2DistanceJoint.h"
+	"Box2D/Dynamics/Joints/b2FrictionJoint.h"
+	"Box2D/Dynamics/Joints/b2GearJoint.h"
+	"Box2D/Dynamics/Joints/b2MotorJoint.h"
+	"Box2D/Dynamics/Joints/b2MouseJoint.h"
+	"Box2D/Dynamics/Joints/b2PrismaticJoint.h"
+	"Box2D/Dynamics/Joints/b2PulleyJoint.h"
+	"Box2D/Dynamics/Joints/b2RevoluteJoint.h"
+	"Box2D/Dynamics/Joints/b2RopeJoint.h"
+	"Box2D/Dynamics/Joints/b2WeldJoint.h"
+	"Box2D/Dynamics/Joints/b2WheelJoint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2timer.h
+	"Box2D/Common/b2Settings.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\shapes\b2circleshape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\shapes\b2shape.h
+	"Box2D/Common/b2BlockAllocator.h"
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/b2Collision.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2blockallocator.h
+	"Box2D/Common/b2Settings.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\b2collision.h
+	"Box2D/Common/b2Math.h"
+	<limits.h>
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\shapes\b2edgeshape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\shapes\b2chainshape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\shapes\b2polygonshape.h
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\b2broadphase.h
+	"Box2D/Common/b2Settings.h"
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Collision/b2DynamicTree.h"
+	<algorithm>
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\b2dynamictree.h
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Common/b2GrowableStack.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2growablestack.h
+	"Box2D/Common/b2Settings.h"
+	<string.h>
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\b2distance.h
+	"Box2D/Common/b2Math.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\collision\b2timeofimpact.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/b2Distance.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\b2body.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/Shapes/b2Shape.h"
+	<memory>
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\b2fixture.h
+	"Box2D/Dynamics/b2Body.h"
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Collision/Shapes/b2Shape.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\b2worldcallbacks.h
+	"Box2D/Common/b2Settings.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\b2timestep.h
+	"Box2D/Common/b2Math.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\b2world.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Common/b2BlockAllocator.h"
+	"Box2D/Common/b2StackAllocator.h"
+	"Box2D/Dynamics/b2ContactManager.h"
+	"Box2D/Dynamics/b2WorldCallbacks.h"
+	"Box2D/Dynamics/b2TimeStep.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\common\b2stackallocator.h
+	"Box2D/Common/b2Settings.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\b2contactmanager.h
+	"Box2D/Collision/b2BroadPhase.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\contacts\b2contact.h
+	"Box2D/Common/b2Math.h"
+	"Box2D/Collision/b2Collision.h"
+	"Box2D/Collision/Shapes/b2Shape.h"
+	"Box2D/Dynamics/b2Fixture.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2distancejoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2joint.h
+	"Box2D/Common/b2Math.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2frictionjoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2gearjoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2motorjoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2mousejoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2prismaticjoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2pulleyjoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2revolutejoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2ropejoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2weldjoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1569513465 c:\users\2013b\git\ossium\box2d\\box2d\dynamics\joints\b2wheeljoint.h
+	"Box2D/Dynamics/Joints/b2Joint.h"
+
+1560089288 source:c:\users\2013b\git\ossium\src\ossium\pixeleffects.cpp
+	"pixeleffects.h"
+	"colors.h"
+
+1560089288 c:\users\2013b\git\ossium\src\ossium\pixeleffects.h
+	<SDL.h>
+
+1564253891 source:c:\users\2013b\git\ossium\src\ossium\randutils.cpp
+	"randutils.h"
+
+1564253886 c:\users\2013b\git\ossium\src\ossium\randutils.h
+	<functional>
+	<random>
+	"coremaths.h"
+
+1574720459 source:c:\users\2013b\git\ossium\src\ossium\renderer.cpp
+	<queue>
+	<algorithm>
+	<unordered_set>
+	<SDL.h>
+	"renderer.h"
+	"window.h"
+
+1574719500 c:\users\2013b\git\ossium\src\ossium\window.h
+	<string>
+	<set>
+	<SDL.h>
+	"services.h"
+	"callback.h"
+
+1574012083 source:c:\users\2013b\git\ossium\src\ossium\serialisation.cpp
+	<stack>
+	<string.h>
+	<SDL.h>
+	"coremaths.h"
+	"serialisation.h"
+
+1574202211 source:c:\users\2013b\git\ossium\src\ossium\sprite.cpp
+	<algorithm>
+	"sprite.h"
+	"csvdata.h"
+
+1574163152 c:\users\2013b\git\ossium\src\ossium\sprite.h
+	"texture.h"
+	"animator.h"
+
+1560089288 source:c:\users\2013b\git\ossium\src\ossium\statesprite.cpp
+	<map>
+	<utility>
+	<string>
+	<SDL.h>
+	"texture.h"
+	"statesprite.h"
+	"renderer.h"
+
+1560089288 c:\users\2013b\git\ossium\src\ossium\statesprite.h
+	<map>
+	<utility>
+	<string>
+	<SDL.h>
+	"texture.h"
+	"resourcecontroller.h"
+	"renderer.h"
+	"schemamodel.h"
+
+1574193074 source:c:\users\2013b\git\ossium\src\ossium\testmodules.cpp
+	"testmodules.h"
+
+1574203076 c:\users\2013b\git\ossium\src\ossium\testmodules.h
+	<string>
+	<unordered_map>
+	<iostream>
+	"circularbuffer.h"
+	"tree.h"
+	"fsm.h"
+	"events.h"
+	"csvdata.h"
+	"jsondata.h"
+	"funcutils.h"
+	"time.h"
+	"delta.h"
+	"schemamodel.h"
+	"randutils.h"
+	"ecs.h"
+	"text.h"
+
+1574163096 source:c:\users\2013b\git\ossium\src\ossium\text.cpp
+	<string>
+	<algorithm>
+	<SDL.h>
+	<SDL_ttf.h>
+	"text.h"
+	"renderer.h"
+	"ecs.h"
+
+1574201761 source:c:\users\2013b\git\ossium\src\ossium\texture.cpp
+	<memory>
+	<string>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	"texture.h"
+	"colors.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\texturepack.cpp
+	<string.h>
+	<vector>
+	<SDL.h>
+	<SDL_image.h>
+	"funcutils.h"
+	"renderer.h"
+	"texture.h"
+	"texturepack.h"
+	"serialisation.h"
+
+1552673554 c:\users\2013b\git\ossium\src\ossium\texturepack.h
+	<string>
+	<vector>
+	<math.h>
+	"helpermacros.h"
+	"texture.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\time.cpp
+	<SDL.h>
+	<cmath>
+	"time.h"
+	"funcutils.h"
+
+1574719525 source:c:\users\2013b\git\ossium\src\ossium\window.cpp
+	<SDL.h>
+	"funcutils.h"
+	"window.h"
+
+1574798065 source:c:\users\2013b\git\ossium\src\teststuff.cpp
+	"teststuff.h"
+	"Ossium/Core/window.h"
+	"Ossium/Core/pixeleffects.h"
+
+1574803241 c:\users\2013b\git\ossium\src\teststuff.h
+	"Ossium/Core/keyboard.h"
+	"Ossium/Core/delta.h"
+	"Ossium/Core/component.h"
+
+1574801837 source:c:\users\2013b\git\ossium\src\main.cpp
+	<cstdio>
+	<string.h>
+	<Box2D/Box2D.h>
+	"Ossium.h"
+	"Ossium/Tests/testmodules.h"
+
+1574797833 c:\users\2013b\git\ossium\src\ossium.h
+	"Ossium/Core/config.h"
+	"Ossium/Core/init.h"
+	"Ossium/Core/time.h"
+	"Ossium/Core/font.h"
+	"Ossium/Components/text.h"
+	"Ossium/Core/window.h"
+	"Ossium/Core/renderer.h"
+	"Ossium/Core/audio.h"
+	"Ossium/Core/colors.h"
+	"Ossium/Components/statesprite.h"
+	"Ossium/Core/pixeleffects.h"
+	"Ossium/Core/csvdata.h"
+	"Ossium/Core/circularbuffer.h"
+	"Ossium/Core/curves.h"
+	"Ossium/Components/inputgui.h"
+	"Ossium/Core/randutils.h"
+	"Ossium/Core/physics.h"
+	"Ossium/Components/debugdraw.h"
+	"Ossium/Core/enginesystem.h"
+
+1574719538 source:c:\users\2013b\git\ossium\src\ossium\enginesystem.cpp
+	"window.h"
+	"enginesystem.h"
+
+1574717678 c:\users\2013b\git\ossium\src\ossium\enginesystem.h
+	"input.h"
+	"delta.h"
+	"component.h"
+
+1574001030 source:c:\users\2013b\git\ossium\src\ossium\resourcecontroller.cpp
+	"resourcecontroller.h"
+
+1574001029 source:c:\users\2013b\git\ossium\src\ossium\schemamodel.cpp
+	"schemamodel.h"
+
+1574194017 c:\users\2013b\git\ossium\src\ossium\component.h
+	"transform.h"
+
+1574197662 source:c:\users\2013b\git\ossium\src\ossium\component.cpp
+	"component.h"
+
+1574202107 source:c:\users\2013b\git\ossium\src\ossium\audioextensions.cpp
+	"transform.h"
+	"audioextensions.h"
+
+1574190770 c:\users\2013b\git\ossium\src\ossium\audioextensions.h
+	"audio.h"
+	"component.h"
+
+1574162992 source:c:\users\2013b\git\ossium\src\ossium\transform.cpp
+	"transform.h"
+
+1573949912 c:\users\2013b\git\ossium\src\ossium\transform.h
+	"coremaths.h"
+	"ecs.h"
+	"globalservices.h"
+
+1574118069 c:\users\2013b\git\ossium\src\ossium\globalservices.h
+	"logging.h"
+
+1574117884 source:c:\users\2013b\git\ossium\src\ossium\globalservices.cpp
+	"globalservices.h"
+
+1574203076 c:\users\2013b\git\ossium\src\ossium\stringconvert.h
+	<utility>
+	"typeinference.h"
+	"jsondata.h"
+	"funcutils.h"
+
+1574181551 c:\users\2013b\git\ossium\src\ossium\typeinference.h
+	<sstream>
+	<type_traits>
+	<any>
+
+1574013133 c:\users\2013b\git\ossium\src\ossium\typefactory.h
+	<functional>
+	"logging.h"
+
+1574000610 source:c:\users\2013b\git\ossium\src\ossium\typeinference.cpp
+	"typeinference.h"
+
+1574015481 source:c:\users\2013b\git\ossium\src\ossium\stringconvert.cpp
+	"stringconvert.h"
+	"logging.h"
+
+1574009943 c:\users\2013b\git\ossium\src\ossium\logging.h
+	"stringconvert.h"
+
+1574009948 source:c:\users\2013b\git\ossium\src\ossium\logging.cpp
+	"logging.h"
+
+1574718077 c:\users\2013b\git\ossium\src\ossium\services.h
+	"logging.h"
+	"typefactory.h"
+
+1574181751 source:c:\users\2013b\git\ossium\src\ossium\services.cpp
+	"services.h"
+
+1574201693 c:\users\2013b\git\ossium\src\ossium\image.h
+	"resourcecontroller.h"
+	"renderer.h"
+	"font.h"
+
+1574201849 source:c:\users\2013b\git\ossium\src\ossium\image.cpp
+	<SDL_image.h>
+	"image.h"
+
+1574203052 c:\users\2013b\git\ossium\src\ossium\funcutils.h
+	<string>
+	<functional>
+	<map>
+	<SDL.h>
+	"helpermacros.h"
+	"jsondata.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\funcutils.cpp
+	<cstdarg>
+	<SDL.h>
+	<cstdio>
+	<string>
+	<fstream>
+	<sstream>
+	"funcutils.h"
+	"logging.h"
+
+1574807616 source:c:\users\2013b\git\ossium\src\ossium\core\audio.cpp
+	"audio.h"
+	"logging.h"
+
+1574807528 c:\users\2013b\git\ossium\src\ossium\core\audio.h
+	<SDL.h>
+	<SDL_mixer.h>
+	<set>
+	<vector>
+	"funcutils.h"
+	"delta.h"
+	"resourcecontroller.h"
+	"schemamodel.h"
+
+1574808116 c:\users\2013b\git\ossium\src\ossium\core\funcutils.h
+	<string>
+	<functional>
+	<map>
+	"helpermacros.h"
+	"jsondata.h"
+
+1574805715 c:\users\2013b\git\ossium\src\ossium\core\helpermacros.h
+
+1574803282 c:\users\2013b\git\ossium\src\ossium\core\jsondata.h
+	<string>
+	<vector>
+	<unordered_map>
+	"helpermacros.h"
+
+1574805225 c:\users\2013b\git\ossium\src\ossium\core\delta.h
+	"jsondata.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\resourcecontroller.h
+	<string.h>
+	<unordered_map>
+	"stringconvert.h"
+	"stringintern.h"
+	"services.h"
+
+1574809564 c:\users\2013b\git\ossium\src\ossium\core\stringconvert.h
+	<utility>
+	<SDL.h>
+	"typeinference.h"
+	"jsondata.h"
+	"funcutils.h"
+
+1574181551 c:\users\2013b\git\ossium\src\ossium\core\typeinference.h
+	<sstream>
+	<type_traits>
+	<any>
+
+1574808540 c:\users\2013b\git\ossium\src\ossium\core\stringintern.h
+	<cstdio>
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\services.h
+	"logging.h"
+	"typefactory.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\logging.h
+	"stringconvert.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\typefactory.h
+	<functional>
+	"logging.h"
+
+1574808276 c:\users\2013b\git\ossium\src\ossium\core\schemamodel.h
+	<SDL.h>
+	<fstream>
+	"stringintern.h"
+	"funcutils.h"
+	"typefactory.h"
+	"jsondata.h"
+
+1560093686 source:c:\users\2013b\git\ossium\src\ossium\core\colors.cpp
+	"colors.h"
+
+1574807901 c:\users\2013b\git\ossium\src\ossium\core\colors.h
+	"helpermacros.h"
+	<SDL.h>
+
+1574197662 source:c:\users\2013b\git\ossium\src\ossium\core\component.cpp
+	"component.h"
+
+1574807933 c:\users\2013b\git\ossium\src\ossium\core\component.h
+	"transform.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\transform.h
+	"coremaths.h"
+	"ecs.h"
+	"globalservices.h"
+
+1574808011 c:\users\2013b\git\ossium\src\ossium\core\coremaths.h
+	<string>
+	<Box2D/Common/b2Math.h>
+	"mathconsts.h"
+	"renderer.h"
+	"helpermacros.h"
+
+1564251167 c:\users\2013b\git\ossium\src\ossium\core\mathconsts.h
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\renderer.h
+	<vector>
+	<queue>
+	<set>
+	<SDL.h>
+	"colors.h"
+	"helpermacros.h"
+	"services.h"
+
+1574808070 c:\users\2013b\git\ossium\src\ossium\core\ecs.h
+	<vector>
+	<string.h>
+	<unordered_map>
+	<set>
+	<algorithm>
+	"tree.h"
+	"stringintern.h"
+	"schemamodel.h"
+	"services.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\tree.h
+	<string>
+	<vector>
+	<unordered_map>
+	"funcutils.h"
+	"logging.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\globalservices.h
+	"logging.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\core\coremaths.cpp
+	<cmath>
+	"funcutils.h"
+	"stringconvert.h"
+	"coremaths.h"
+
+1574801402 source:c:\users\2013b\git\ossium\src\ossium\core\csvdata.cpp
+	<fstream>
+	<string>
+	<vector>
+	"funcutils.h"
+	"csvdata.h"
+	"logging.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\csvdata.h
+	<string>
+	<vector>
+
+1574801425 source:c:\users\2013b\git\ossium\src\ossium\core\curves.cpp
+	<cmath>
+	"mathconsts.h"
+	"curves.h"
+
+1574808509 c:\users\2013b\git\ossium\src\ossium\core\curves.h
+	"helpermacros.h"
+
+1574801462 source:c:\users\2013b\git\ossium\src\ossium\core\delta.cpp
+	<SDL.h>
+	"delta.h"
+	"funcutils.h"
+
+1574801510 source:c:\users\2013b\git\ossium\src\ossium\core\ecs.cpp
+	<cstdio>
+	<string>
+	<algorithm>
+	<unordered_map>
+	<vector>
+	"funcutils.h"
+	"stringconvert.h"
+	"ecs.h"
+	"delta.h"
+
+1574719538 source:c:\users\2013b\git\ossium\src\ossium\core\enginesystem.cpp
+	"window.h"
+	"enginesystem.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\window.h
+	<string>
+	<set>
+	<SDL.h>
+	"services.h"
+	"callback.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\callback.h
+	<map>
+	<functional>
+	"logging.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\enginesystem.h
+	"input.h"
+	"delta.h"
+	"component.h"
+
+1574847923 c:\users\2013b\git\ossium\src\ossium\core\input.h
+	<unordered_map>
+	<vector>
+	<functional>
+	<SDL.h>
+	"funcutils.h"
+	"helpermacros.h"
+	"services.h"
+
+1574801530 source:c:\users\2013b\git\ossium\src\ossium\core\font.cpp
+	"font.h"
+	"logging.h"
+
+1574803267 c:\users\2013b\git\ossium\src\ossium\core\font.h
+	<string>
+	<map>
+	<SDL_ttf.h>
+	"../Core/helpermacros.h"
+
+1574801613 source:c:\users\2013b\git\ossium\src\ossium\core\funcutils.cpp
+	<cstdarg>
+	<cstdio>
+	<string>
+	<fstream>
+	<sstream>
+	"funcutils.h"
+	"logging.h"
+
+1574117884 source:c:\users\2013b\git\ossium\src\ossium\core\globalservices.cpp
+	"globalservices.h"
+
+1574801641 source:c:\users\2013b\git\ossium\src\ossium\core\image.cpp
+	<SDL_image.h>
+	"image.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\image.h
+	"resourcecontroller.h"
+	"renderer.h"
+	"font.h"
+
+1574801652 source:c:\users\2013b\git\ossium\src\ossium\core\init.cpp
+	<cstdio>
+	<string>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<SDL_mixer.h>
+	"init.h"
+	"delta.h"
+	"ecs.h"
+	"audio.h"
+
+1574808551 c:\users\2013b\git\ossium\src\ossium\core\init.h
+	"helpermacros.h"
+
+1574812814 source:c:\users\2013b\git\ossium\src\ossium\core\input.cpp
+	"input.h"
+
+1574203076 source:c:\users\2013b\git\ossium\src\ossium\core\jsondata.cpp
+	<fstream>
+	<sstream>
+	"jsondata.h"
+	"funcutils.h"
+	"logging.h"
+
+1574702292 source:c:\users\2013b\git\ossium\src\ossium\core\keyboard.cpp
+	"keyboard.h"
+
+1574808195 c:\users\2013b\git\ossium\src\ossium\core\keyboard.h
+	"input.h"
+
+1574009948 source:c:\users\2013b\git\ossium\src\ossium\core\logging.cpp
+	"logging.h"
+
+1574702288 source:c:\users\2013b\git\ossium\src\ossium\core\mouse.cpp
+	"mouse.h"
+
+1574808228 c:\users\2013b\git\ossium\src\ossium\core\mouse.h
+	"input.h"
+	"coremaths.h"
+
+1564434010 source:c:\users\2013b\git\ossium\src\ossium\core\physics.cpp
+	"physics.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\physics.h
+	<Box2D/Box2D.h>
+	<functional>
+	"coremaths.h"
+
+1560089288 source:c:\users\2013b\git\ossium\src\ossium\core\pixeleffects.cpp
+	"pixeleffects.h"
+	"colors.h"
+
+1574808561 c:\users\2013b\git\ossium\src\ossium\core\pixeleffects.h
+	<SDL.h>
+	"helpermacros.h"
+
+1564253891 source:c:\users\2013b\git\ossium\src\ossium\core\randutils.cpp
+	"randutils.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\randutils.h
+	<functional>
+	<random>
+	"coremaths.h"
+
+1574801714 source:c:\users\2013b\git\ossium\src\ossium\core\renderer.cpp
+	<queue>
+	<algorithm>
+	<unordered_set>
+	"renderer.h"
+	"window.h"
+
+1574001030 source:c:\users\2013b\git\ossium\src\ossium\core\resourcecontroller.cpp
+	"resourcecontroller.h"
+
+1574202089 source:c:\users\2013b\git\ossium\src\ossium\components\inputgui.cpp
+	"inputgui.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\components\inputgui.h
+	"../Core/input.h"
+	"../Core/keyboard.h"
+	"../Core/mouse.h"
+	"../Core/stringintern.h"
+	"../Core/component.h"
+	"../Core/callback.h"
+
+1574001029 source:c:\users\2013b\git\ossium\src\ossium\core\schemamodel.cpp
+	"schemamodel.h"
+
+1574181751 source:c:\users\2013b\git\ossium\src\ossium\core\services.cpp
+	"services.h"
+
+1574015481 source:c:\users\2013b\git\ossium\src\ossium\core\stringconvert.cpp
+	"stringconvert.h"
+	"logging.h"
+
+1574801758 source:c:\users\2013b\git\ossium\src\ossium\core\time.cpp
+	<SDL.h>
+	<cmath>
+	"time.h"
+	"funcutils.h"
+
+1574808383 c:\users\2013b\git\ossium\src\ossium\core\time.h
+	"schemamodel.h"
+
+1574162992 source:c:\users\2013b\git\ossium\src\ossium\core\transform.cpp
+	"transform.h"
+
+1574000610 source:c:\users\2013b\git\ossium\src\ossium\core\typeinference.cpp
+	"typeinference.h"
+
+1574801826 source:c:\users\2013b\git\ossium\src\ossium\core\window.cpp
+	"funcutils.h"
+	"window.h"
+
+1574183385 source:c:\users\2013b\git\ossium\src\ossium\components\debugdraw.cpp
+	"debugdraw.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\components\debugdraw.h
+	<Box2D/Common/b2Draw.h>
+	"../Core/stringintern.h"
+	"text.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\components\text.h
+	<string>
+	"../Core/font.h"
+	"../Core/renderer.h"
+	"../Core/ecs.h"
+	"texture.h"
+	"../Core/helpermacros.h"
+
+1574808494 c:\users\2013b\git\ossium\src\ossium\components\texture.h
+	<string>
+	"../Core/coremaths.h"
+	"../Core/component.h"
+	"../Core/colors.h"
+	"../Core/metarect.h"
+	"../Core/font.h"
+	"../Core/resourcecontroller.h"
+	"../Core/image.h"
+
+1574808216 c:\users\2013b\git\ossium\src\ossium\core\metarect.h
+	<cmath>
+	"schemamodel.h"
+	"coremaths.h"
+	"ecs.h"
+
+1574797655 source:c:\users\2013b\git\ossium\src\ossium\components\audioextensions.cpp
+	"../Core/transform.h"
+	"audioextensions.h"
+
+1574808456 c:\users\2013b\git\ossium\src\ossium\components\audioextensions.h
+	"../Core/audio.h"
+	"../Core/component.h"
+
+1574801228 source:c:\users\2013b\git\ossium\src\ossium\components\statesprite.cpp
+	<map>
+	<utility>
+	<string>
+	"texture.h"
+	"statesprite.h"
+	"../Core/renderer.h"
+
+1574808484 c:\users\2013b\git\ossium\src\ossium\components\statesprite.h
+	<map>
+	<utility>
+	<string>
+	"../Components/texture.h"
+	"../Core/resourcecontroller.h"
+	"../Core/renderer.h"
+	"../Core/schemamodel.h"
+
+1574801212 source:c:\users\2013b\git\ossium\src\ossium\components\text.cpp
+	<string>
+	<algorithm>
+	"text.h"
+	"../Core/renderer.h"
+	"../Core/ecs.h"
+
+1574801169 source:c:\users\2013b\git\ossium\src\ossium\components\texture.cpp
+	<memory>
+	<string>
+	"texture.h"
+	"../Core/colors.h"
+
+1574193074 source:c:\users\2013b\git\ossium\src\ossium\tests\testmodules.cpp
+	"testmodules.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\tests\testmodules.h
+	<string>
+	<unordered_map>
+	<iostream>
+	"../Core/circularbuffer.h"
+	"../Core/tree.h"
+	"../Core/csvdata.h"
+	"../Core/jsondata.h"
+	"../Core/funcutils.h"
+	"../Core/time.h"
+	"../Core/delta.h"
+	"../Core/schemamodel.h"
+	"../Core/randutils.h"
+	"../Core/ecs.h"
+	"../Components/text.h"
+
+1574803241 c:\users\2013b\git\ossium\src\ossium\core\circularbuffer.h
+	<algorithm>
+	"funcutils.h"
+	"logging.h"
+
+1574807949 c:\users\2013b\git\ossium\src\ossium\core\config.h
+	"schemamodel.h"
+	"stringconvert.h"
+
