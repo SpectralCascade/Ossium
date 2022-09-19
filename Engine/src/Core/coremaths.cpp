@@ -182,17 +182,22 @@ namespace Ossium
         }
     }
 
-    // Get the result of scaling this vector
+
     Vector2 Vector2::operator*(float scalar) {
         return Vector2((*this) * scalar);
     }
-    // Get the result of adding this vector to another vector
+
     Vector2 Vector2::operator+(Vector2 operand) {
         return Vector2((*this) + operand);
     }
-    // Get the result of subtracting another vector from this vector
+
     Vector2 Vector2::operator-(Vector2 operand) {
         return Vector2((*this) - operand);
+    }
+
+    Vector2 operator*(float scalar, Vector2 operand)
+    {
+        return operand * scalar;
     }
 
     const Vector2 Vector2::Zero         =   {0, 0};

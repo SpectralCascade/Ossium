@@ -434,6 +434,11 @@ namespace Ossium
     };
 
     template<unsigned int Dimensions, unsigned int Vectors>
+    Matrix<Dimensions, Vectors> operator*(float scalar, Matrix<Dimensions, Vectors> mat) {
+        return mat * scalar;
+    }
+
+    template<unsigned int Dimensions, unsigned int Vectors>
     Matrix<Dimensions, Vectors> Matrix<Dimensions, Vectors>::zeroes = Matrix<Dimensions, Vectors>((float[Vectors][Dimensions]){0});
 
     template<unsigned int Dimensions, unsigned int Vectors>
@@ -540,6 +545,9 @@ namespace Ossium
         const static Vector2 ZeroNegOne;
 
     };
+
+    // Get the result of scaling this vector
+    Vector2 operator*(float scalar, Vector2 operand);
 
     /*struct OSSIUM_EDL Rotation : public b2Rot
     {
