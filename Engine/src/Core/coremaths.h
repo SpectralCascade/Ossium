@@ -246,6 +246,7 @@ namespace Ossium
 
         /// Returns the result of adding this with another matrix, such that if A = this, B = operand,
         /// it performs the entrywise sum: A + B
+        /// TODO: Use const ref?
         template<typename MatType>
         typename std::enable_if<
             MatType::TotalDimensions == TotalDimensions && MatType::TotalVectors == TotalVectors,
@@ -265,6 +266,7 @@ namespace Ossium
 
         /// Returns the result of subtracting another matrix from this, such that if A = this, B = operand,
         /// it performs the entrywise subtraction: A - B
+        /// TODO: Use const ref?
         template<typename MatType>
         typename std::enable_if<
             MatType::TotalDimensions == TotalDimensions && MatType::TotalVectors == TotalVectors,
@@ -520,6 +522,13 @@ namespace Ossium
         /// String conversion methods
         std::string ToString();
         void FromString(const std::string& str);
+
+        // Get the result of scaling this vector
+        Vector2 operator*(float scalar);
+        // Get the result of adding this vector to another vector
+        Vector2 operator+(Vector2 operand);
+        // Get the result of subtracting another vector from this vector
+        Vector2 operator-(Vector2 operand);
 
         const static Vector2 Zero;
         const static Vector2 OneOne;
