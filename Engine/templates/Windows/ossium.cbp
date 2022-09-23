@@ -99,11 +99,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-std=c++1z" />
-			<Add directory="Box2D" />
 		</Compiler>
-		<Linker>
-			<Add directory="Box2D/bin/Release" />
-		</Linker>
 		{soup_header_paths}
         {soup_source_paths}
 		<Extensions>
