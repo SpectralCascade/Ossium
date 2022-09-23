@@ -168,9 +168,8 @@
                 },
                 "clean": {
                     "steps": [
-                        "rm -r -Force obj",
-                        "rm -r -Force bin",
-                        "rm -r -Force \"{root}/{output}/{platform}/{mode}\""
+                        "rm -r -Force \"{root}/{work}/{platform}\"",
+                        "rm -r -Force \"{root}/{output}/{platform}\""
                     ],
                     "abort_on_error": false
                 }
