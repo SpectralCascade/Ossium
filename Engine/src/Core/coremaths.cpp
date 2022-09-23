@@ -184,15 +184,15 @@ namespace Ossium
 
 
     Vector2 Vector2::operator*(float scalar) {
-        return Vector2((*this) * scalar);
+        return Vector2((Matrix<2, 1>)(*this) * scalar);
     }
 
     Vector2 Vector2::operator+(Vector2 operand) {
-        return Vector2((*this) + operand);
+        return Vector2((Matrix<2, 1>)(*this) + operand);
     }
 
     Vector2 Vector2::operator-(Vector2 operand) {
-        return Vector2((*this) - operand);
+        return Vector2((Matrix<2, 1>)(*this) - operand);
     }
 
     Vector2 operator*(float scalar, Vector2 operand)
