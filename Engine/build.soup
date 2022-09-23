@@ -154,13 +154,9 @@
                         "cmd /c cbp2make.exe -in ossium.cbp -out makefile.mak"
                     ]
                 },
-                "setup_deps": {
-                    "steps": []
-                },
                 "build": {
                     "steps": [
                         "{run_task} Windows generate_makefile {mode}",
-                        "{run_task} Windows setup_deps {mode}",
                         "cmd /c mingw32-make {mode} -j {cpu_count}"
                     ],
                     "outputs": ["bin/{mode}/lib{name}.a"],
@@ -168,8 +164,7 @@
                 },
                 "clean": {
                     "steps": [
-                        "rm -r -Force \"{root}/{work}/{platform}\"",
-                        "rm -r -Force \"{root}/{output}/{platform}\""
+                        "{clean}"
                     ],
                     "abort_on_error": false
                 }
