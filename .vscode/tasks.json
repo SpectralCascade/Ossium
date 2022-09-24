@@ -3,14 +3,13 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "Generate Makefile",
-			"windows": { "command": "./cbp2make.exe" },
-			"linux": { "command": "cbp2make" },
+			"label": "Build Windows (Debug)",
+			"command": "python3",
 			"args": [
-				"-in",
-				"ossium.cbp",
-				"-out",
-				"makefile.mak"
+				"../tools/soupbuild.py",
+				"Windows",
+				"build",
+				"debug"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
@@ -22,13 +21,13 @@
 		},
 		{
 			"type": "shell",
-			"label": "Generate Makefile (Box2D)",
-			"command": "./cbp2make.exe",
+			"label": "Build Windows (Release)",
+			"command": "python3",
 			"args": [
-				"-in",
-				"Box2D/Box2D.cbp",
-				"-out",
-				"Box2D/makefile.mak"
+				"../tools/soupbuild.py",
+				"Windows",
+				"build",
+				"release"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
@@ -40,132 +39,14 @@
 		},
 		{
 			"type": "shell",
-			"label": "Make Box2D",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
+			"label": "Clean",
+			"command": "python3",
 			"args": [
-				"release",
-				"-j",
-				"8"
+				"../tools/soupbuild.py",
+				"--task-only",
+				"Windows",
+				"clean"
 			],
-			"options": {
-				"cwd": "${workspaceFolder}/Engine/Box2D"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"dependsOn": "Generate Makefile (Box2D)"
-		},
-		{
-			"type": "shell",
-			"label": "Make All",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
-			"args": [
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/Engine"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"dependsOn": "Generate Makefile"
-		},
-		{
-			"type": "shell",
-			"label": "Make Static Lib",
-			"windows": { "command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe" },
-			"linux": { "command": "make" },
-			"args": [
-				"--makefile=makefile.mak",
-				"ossium",
-				"-j",
-				"8"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/Engine"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"dependsOn": "Generate Makefile"
-		},
-		{
-			"type": "shell",
-			"label": "Make Static Lib (Editor)",
-			"windows": { "command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe" },
-			"linux": { "command": "make" },
-			"args": [
-				"--makefile=makefile.mak",
-				"libossiumeditor",
-				"-j",
-				"8"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/Engine"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"dependsOn": "Generate Makefile"
-		},
-		{
-			"type": "shell",
-			"label": "Make Editor (Debug)",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
-			"args": [
-				"ossiumeditor__debug_",
-				"-j",
-				"8"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/Engine"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"dependsOn": "Generate Makefile"
-		},
-		{
-			"type": "shell",
-			"label": "Make Editor (Release)",
-			"command": "C:\\msys64\\mingw64\\bin\\mingw32-make.exe",
-			"args": [
-				"ossiumeditor"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/Engine"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"dependsOn": "Generate Makefile"
-		},
-		{
-			"type": "shell",
-			"label": "Clean Project",
-			"command": "rm",
-			"windows": {
-				"args": [
-					"-r",
-					"-Force",
-					"obj"
-				]
-			},
-			"linux": {
-				"args": [
-					"-r",
-					"-f",
-					"obj"
-				]
-			},
 			"options": {
 				"cwd": "${workspaceFolder}/Engine"
 			},
@@ -176,20 +57,21 @@
 		},
 		{
 			"type": "shell",
-			"label": "Clean Box2D",
-			"command": "rm",
+			"label": "Clean Dependencies",
+			"command": "python3",
 			"args": [
-				"-r",
-				"-Force",
-				"obj"
+				"../tools/soupbuild.py",
+				"--task-only",
+				"Windows",
+				"clean_deps"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/Engine/Box2D"
+				"cwd": "${workspaceFolder}/Engine"
 			},
 			"problemMatcher": [
 				"$gcc"
 			],
 			"group": "build"
-		}
+		},
 	]
 }

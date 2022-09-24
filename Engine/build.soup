@@ -12,6 +12,8 @@
     "modes": {
         "release": {
         },
+        "debug": {
+        },
         "OssiumEditor": {
         }
     },
@@ -165,6 +167,12 @@
                 "clean": {
                     "steps": [
                         "{clean}"
+                    ],
+                    "abort_on_error": false
+                },
+                "clean_deps": {
+                    "steps": [
+                        "{clean_deps}"
                     ],
                     "abort_on_error": false
                 }
