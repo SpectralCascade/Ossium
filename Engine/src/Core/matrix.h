@@ -45,7 +45,23 @@ namespace Ossium
             float data[Vectors][Dimensions];
         };
 
-        
+    };
+
+    // 4D vector union allows easy access to individual x, y, z and w components of a matrix
+    template<unsigned int Dimensions, unsigned int Vectors>
+    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 4 && Vectors == 1>>
+    {
+        union {
+            struct {
+                float x;
+                float y;
+                float z;
+                float w;
+            };
+
+            // The underlying data, in row-major order (for contiguous memory layout).
+            float data[Vectors][Dimensions];
+        };
 
     };
 
@@ -397,7 +413,7 @@ namespace Ossium
             Matrix<Dimensions, Vectors> identity = zeroes;
             for (unsigned int i = 0; i < Vectors && i < Dimensions; i++)
             {
-                identity[i][i] = 1;
+                identity(i, i) = 1;
             }
             return identity;
         }
