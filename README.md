@@ -1,5 +1,7 @@
 # About Ossium
-Ossium is a bare-bones, cross-platform 2D game engine being built in C++ with SDL 2 and Box2D. A number of games made with Ossium can be [found here](https://itch.io/c/1747446/ossium-engine-games).
+Ossium is a bare-bones, cross-platform game engine built in C++ with only essential dependencies. A number of games made with Ossium can be [found here](https://itch.io/c/1747446/ossium-engine-games).
+
+WIP working towards a proper release.
 
 ## Features
 * Low number of dependencies (SDL 2 with a few small extension libraries and Box2D for physics)
@@ -12,27 +14,24 @@ Ossium is a bare-bones, cross-platform 2D game engine being built in C++ with SD
 * Rendering with layer support
 
 ## Pre-requisites
-All SDL libraries are listed on the [main SDL 2 webpage](https://www.libsdl.org/download-2.0.php) and the [SDL 2 projects page](https://www.libsdl.org/projects).
-* A compiler with the C++17 standard; I use Mingw-w64 via [MSYS2](https://www.msys2.org) for the latest stable GCC version.
-* SDL 2.0.8 (or greater)
-* SDL_Image
-* SDL_Mixer
-* SDL_TTF
+* mingw toolchain supporting the latest GCC versions, for Windows this is installed via [MSYS2](https://www.msys2.org). Make sure you setup the system path to point at MSYS2, mingw root directory AND the mingw bin folder.
+* Python 3 (must be version 3.8 or newer)
+* [soupbuild](https://github.com/SpectralCascade/soupbuild) is required to build Ossium. You can make a quick debug build for Windows by running `python3 soupbuild.py` in the Ossium root directory; this will output `libOssium.a` in the generated `soupbuild/outputs/Windows/debug` directory.
 
 ## How to Use
 
-At some stage I intend to write up documentation for Ossium (once I've cleaned up the code a bit). Until then, you can check up on [my website](https://timlanesoftware.com) from time to time for blog posts and articles about Ossium (and other projects I'm working on). Or you can dive into the code to better understand how different parts of the engine work for yourself. Note that the engine is constantly being updated and improved currently, so if you intend to use it for your own games and projects beware of bugs and changes over time.
+Ossium is currently best used as a static library.
 
-If building from scratch, you will need to build Box2D as a static lib and have that output in `Engine/Box2D/bin/Release` as `libBox2D.a`. Once built it must be linked correctly (if you're on Linux, the .cbp file for Ossium should be setup to link against Box2D already - make sure you select the correct build target (likely named `ossium (Linux)` in the Code::Blocks drop down)).
+At some stage I intend to write up documentation for Ossium (once I've cleaned up the code a bit). Until then, you can check up on [my website](https://timlanesoftware.com) from time to time for blog posts and articles about Ossium (and other projects I'm working on). Or you can dive into the code to better understand how different parts of the engine work for yourself. Note that the engine is constantly being updated and improved currently, so if you intend to use it for your own games and projects beware of bugs and changes over time.
 
 ## Roadmap
 I have a rough [todo list](https://github.com/SpectralCascade/Ossium/wiki/Todo) that details what I'm working on currently.
 
 ## Additional notes
-I'm developing this project using Visual Studio Code and Make with the GNU GCC/G++ compiler. The engine should work fine on Linux (tested) and Mac (untested as of yet), and it should be possible to make mobile builds for Android or iOS (both untested as of yet).
+I'm developing this project using Visual Studio Code and Make with the MinGW64 GCC/G++ compiler toolchain.
 
 Before building, please make sure you are compiling with C++17 enabled (use compile option `-std=c++1z` or `-std=c++17` and make sure you're using GCC 8 or later) as the project makes use of some of those features.
 
-Check out Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL; if you don't know how to setup SDL 2 to build Ossium, check out the first tutorial.
+Check out Lazy Foo's SDL 2 tutorials at www.lazyfoo.net if you're unfamiliar with SDL.
 
 P.S. if you make anything cool with Ossium, I'd love to hear about it!
