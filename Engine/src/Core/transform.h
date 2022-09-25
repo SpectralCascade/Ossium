@@ -31,7 +31,7 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(TransformSchema, 2);
 
     protected:
-        M(Matrix<4>, m) = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+        M(Matrix<4>, local) = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 
         /// Does this transform move relative to the parent?
         M(bool, relative) = true;
@@ -43,11 +43,9 @@ namespace Ossium
     {
     private:
         /// Cached world transform data. Only used if in 'relative' mode.
-        /// TODO: Use a single matrix!
-        Vector3 worldPosition = Vector3::Zeroes;
-        Vector3 worldScale = Vector3::Ones;
+        Matrix<4, 4> world = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 
-        /// Has this transform been modified?
+        /// Has this transform or it's parent hierarchy been modified?
         bool dirty = true;
 
         /// Refresh the world position data
@@ -75,6 +73,9 @@ namespace Ossium
         void SetWorldPosition(Vector3 p);
         void SetWorldScale(Vector3 s);
         void SetWorld(Vector3 p, Vector3 s);
+
+        Matrix<4, 4>& GetLocalMatrix();
+        Matrix<4, 4>& GetWorldMatrix();
 
     };
 

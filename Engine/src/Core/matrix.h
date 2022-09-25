@@ -426,6 +426,7 @@ namespace Ossium
         struct Scale4x3 {
             Scale4x3() = default;
             Scale4x3(Matrix<3, 1> vec) : x(vec.x), y(vec.y), z(vec.z) {}
+            Scale4x3(Matrix<2, 1> vec) : x(vec.x), y(vec.y), z(1) {}
 
             public: float x;
             private: float _a[4];

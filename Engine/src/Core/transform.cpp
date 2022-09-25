@@ -30,14 +30,14 @@ namespace Ossium
             Entity* parent = entity->GetParent();
             if (parent != nullptr)
             {
-                worldPosition = (Matrix<3,1>)m.position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
+                world.position = (Matrix<3,1>)local.position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
                 Vector3 parentScale = parent->AddComponentOnce<Transform>()->GetWorldScale();
-                worldScale = Vector3(m.scale.x * parentScale.x, m.scale.y * parentScale.y, m.scale.z * parentScale.z);
+                world.scale = Vector3(local.scale.x * parentScale.x, local.scale.y * parentScale.y, local.scale.z * parentScale.z);
             }
             else
             {
-                worldPosition = (Vector3)m.position;
-                worldScale = m.scale;
+                world.position = (Vector3)local.position;
+                world.scale = local.scale;
             }
             dirty = false;
         }
@@ -67,30 +67,30 @@ namespace Ossium
 
     Vector3 Transform::GetLocalPosition()
     {
-        return (Vector3)m.position;
+        return (Vector3)local.position;
     }
 
     Vector3 Transform::GetLocalScale()
     {
-        return m.scale;
+        return local.scale;
     }
 
     void Transform::SetLocalPosition(Vector3 p)
     {
-        m.position = p;
+        local.position = p;
         SetDirty();
     }
 
     void Transform::SetLocalScale(Vector3 s)
     {
-        m.scale = s;
+        local.scale = s;
         SetDirty();
     }
 
     void Transform::SetLocal(Vector3 p, Vector3 s)
     {
-        m.position = p;
-        m.scale = s;
+        local.position = p;
+        local.scale = s;
         SetDirty();
     }
 
@@ -98,39 +98,49 @@ namespace Ossium
     {
         if (!relative)
         {
-            return m.position;
+            return local.position;
         }
         RefreshData();
-        return worldPosition;
+        return world.position;
     }
 
     Vector3 Transform::GetWorldScale()
     {
         if (!relative)
         {
-            return m.scale;
+            return local.scale;
         }
         RefreshData();
-        return worldScale;
+        return world.scale;
     }
 
     void Transform::SetWorldPosition(Vector3 p)
     {
-        m.position += p - GetWorldPosition();
+        local.position += p - GetWorldPosition();
         SetDirty();
     }
 
     void Transform::SetWorldScale(Vector3 s)
     {
-        m.scale += s - GetWorldScale();
+        local.scale += s - GetWorldScale();
         SetDirty();
     }
 
     void Transform::SetWorld(Vector3 p, Vector3 s)
     {
-        m.position += p - GetWorldPosition();
-        m.scale += s - GetWorldScale();
+        local.position += p - GetWorldPosition();
+        local.scale += s - GetWorldScale();
         SetDirty();
+    }
+
+    Matrix<4, 4>& Transform::GetLocalMatrix()
+    {
+        return local;
+    }
+
+    Matrix<4, 4>& Transform::GetWorldMatrix()
+    {
+        return world;
     }
 
 }
