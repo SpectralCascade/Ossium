@@ -44,6 +44,29 @@ namespace Ossium
         );
     }
 
+    string Vector3::ToString()
+    {
+        return "(" + Utilities::ToString(x) + ", " + Utilities::ToString(y) + ", " + Utilities::ToString(z) + ")";
+    }
+
+    void Vector3::FromString(const string& str)
+    {
+        unsigned int len = str.length();
+        if (len > 5)
+        {
+            /// Remove brackets
+            string converted = str.substr(1, len - 2);
+            /// Split and get the individual values
+            string xhalf = SplitLeft(converted, ',');
+            string yhalf = SplitRight(converted, ',');
+            string zhalf = SplitRight(yhalf, ',');
+            yhalf = SplitLeft(yhalf, ',');
+            x = ToFloat(xhalf);
+            y = ToFloat(yhalf);
+            z = ToFloat(zhalf);
+        }
+    }
+
     ///
     /// Vector2
     ///

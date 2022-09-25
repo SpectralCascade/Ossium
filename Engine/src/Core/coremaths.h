@@ -145,6 +145,10 @@ namespace Ossium
 
         Vector3 Cross(const Vector3& vec);
 
+        /// String conversion methods
+        std::string ToString();
+        void FromString(const std::string& str);
+
         const static Vector3 Zeroes;
         const static Vector3 Ones;
     };

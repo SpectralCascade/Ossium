@@ -25,13 +25,17 @@ namespace Ossium
 
     class Transform;
 
-    struct TransformSchema : public Schema<TransformSchema, 2>
+    struct TransformSchema : public Schema<TransformSchema, 4>
     {
     public:
-        DECLARE_BASE_SCHEMA(TransformSchema, 2);
+        DECLARE_BASE_SCHEMA(TransformSchema, 4);
 
     protected:
-        M(Matrix<4>, local) = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+        // TODO minor optimisation for full release/non-editor builds: don't initialise these
+        M(Vector3, position) = {{0, 0, 0}};
+        M(Vector3, scale) = {{1, 1, 1}};
+        // TODO use quaternion instead
+        M(Matrix<4>, rotation) = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 
         /// Does this transform move relative to the parent?
         M(bool, relative) = true;
@@ -42,14 +46,11 @@ namespace Ossium
     class OSSIUM_EDL Transform : public BaseComponent, public TransformSchema
     {
     private:
-        /// Cached world transform data. Only used if in 'relative' mode.
-        Matrix<4, 4> world = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+        // The only purpose of this matrix is to cache a transformation for whatever hierarchy is in use
+        Matrix<4, 4> cache = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 
         /// Has this transform or it's parent hierarchy been modified?
         bool dirty = true;
-
-        /// Refresh the world position data
-        void RefreshData();
 
     public:
         DECLARE_COMPONENT(BaseComponent, Transform);
@@ -58,24 +59,32 @@ namespace Ossium
         /// Set relative to the parent transform.
         void SetRelativeToParent(bool setRelative);
 
+        // Mark this transform as having changes
         void SetDirty();
 
+        // Check if this transform has changes
+        bool IsDirty();
+
+        // Get the local position of this transform
         Vector3 GetLocalPosition();
+
+        // Get the local scale of this transform
         Vector3 GetLocalScale();
 
+        // Set the local position of this transform
         void SetLocalPosition(Vector3 p);
+
+        // Set the local scale of this transform
         void SetLocalScale(Vector3 s);
-        void SetLocal(Vector3 p, Vector3 s);
 
+        // Get the position of this transform relative to parent transforms
         Vector3 GetWorldPosition();
-        Vector3 GetWorldScale();
 
+        // Set the position of this transform relative to parent transforms
         void SetWorldPosition(Vector3 p);
-        void SetWorldScale(Vector3 s);
-        void SetWorld(Vector3 p, Vector3 s);
-
-        Matrix<4, 4>& GetLocalMatrix();
-        Matrix<4, 4>& GetWorldMatrix();
+        
+        // Return the matrix representing this transform in world space
+        Matrix<4, 4> GetMatrix();
 
     };
 

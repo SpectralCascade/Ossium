@@ -23,124 +23,83 @@ namespace Ossium
 
     REGISTER_COMPONENT(Transform);
 
-    void Transform::RefreshData()
-    {
-        if (dirty)
-        {
-            Entity* parent = entity->GetParent();
-            if (parent != nullptr)
-            {
-                world.position = (Matrix<3,1>)local.position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
-                Vector3 parentScale = parent->AddComponentOnce<Transform>()->GetWorldScale();
-                world.scale = Vector3(local.scale.x * parentScale.x, local.scale.y * parentScale.y, local.scale.z * parentScale.z);
-            }
-            else
-            {
-                world.position = (Vector3)local.position;
-                world.scale = local.scale;
-            }
-            dirty = false;
-        }
-    }
-
     void Transform::SetRelativeToParent(bool setRelative)
     {
         if (relative != setRelative)
         {
             relative = setRelative;
-            SetDirty();
+            dirty = true;
         }
     }
 
     void Transform::SetDirty()
     {
-        if (!dirty)
-        {
-            dirty = true;
-            vector<Transform*> children = entity->GetComponentsInChildren<Transform>();
-            for (auto t : children)
-            {
-                t->SetDirty();
-            }
-        }
+        dirty = true;
+    }
+
+    bool Transform::IsDirty()
+    {
+        Entity* parent = entity->GetParent();
+        dirty = dirty || (parent != nullptr && parent->AddComponentOnce<Transform>()->IsDirty());
+        return dirty;
     }
 
     Vector3 Transform::GetLocalPosition()
     {
-        return (Vector3)local.position;
+        return position;
     }
 
     Vector3 Transform::GetLocalScale()
     {
-        return local.scale;
+        return scale;
     }
 
     void Transform::SetLocalPosition(Vector3 p)
     {
-        local.position = p;
-        SetDirty();
+        position = p;
+        dirty = true;
     }
 
     void Transform::SetLocalScale(Vector3 s)
     {
-        local.scale = s;
-        SetDirty();
-    }
-
-    void Transform::SetLocal(Vector3 p, Vector3 s)
-    {
-        local.position = p;
-        local.scale = s;
-        SetDirty();
+        scale = s;
+        dirty = true;
     }
 
     Vector3 Transform::GetWorldPosition()
     {
         if (!relative)
         {
-            return local.position;
+            return position;
         }
-        RefreshData();
-        return world.position;
-    }
-
-    Vector3 Transform::GetWorldScale()
-    {
-        if (!relative)
-        {
-            return local.scale;
-        }
-        RefreshData();
-        return world.scale;
+        return GetMatrix().position;
     }
 
     void Transform::SetWorldPosition(Vector3 p)
     {
-        local.position += p - GetWorldPosition();
-        SetDirty();
+        position += p - GetWorldPosition();
+        dirty = true;
     }
 
-    void Transform::SetWorldScale(Vector3 s)
+    Matrix<4, 4> Transform::GetMatrix()
     {
-        local.scale += s - GetWorldScale();
-        SetDirty();
-    }
+        Entity* parent = entity->GetParent();
+        if (parent != nullptr)
+        {
+            Transform* parentT = parent->GetComponent<Transform>();
+            if (parentT != nullptr && IsDirty())
+            {
+                // Build cache from local transform data and parent transform
+                cache = {{scale.x, 0, 0, 0}, {0, scale.y, 0, 0}, {0, 0, scale.z, 0}, {0, 0, 0, 1}};
+                Matrix<4, 4> translation = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+                translation.position = position;
+                cache = (relative ? parentT->GetMatrix() : (Matrix<4, 4>){{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}) 
+                    * (translation * (rotation * cache));
 
-    void Transform::SetWorld(Vector3 p, Vector3 s)
-    {
-        local.position += p - GetWorldPosition();
-        local.scale += s - GetWorldScale();
-        SetDirty();
-    }
-
-    Matrix<4, 4>& Transform::GetLocalMatrix()
-    {
-        return local;
-    }
-
-    Matrix<4, 4>& Transform::GetWorldMatrix()
-    {
-        return world;
+                dirty = false;
+            }
+        }
+        return cache;
     }
 
 }

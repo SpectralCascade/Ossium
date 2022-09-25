@@ -88,7 +88,7 @@ namespace Ossium
         }
 
         Vector2 worldPos = trans->GetWorldPosition();
-        Vector2 worldScale = trans->GetWorldScale();
+        Vector2 worldScale = trans->GetLocalScale();
         SDL_Rect dest = GetSDL(worldPos, worldScale);
         if (source == nullptr || source->GetTexture() == NULL)
         {
@@ -100,8 +100,8 @@ namespace Ossium
         if (!tiled)
         {
             SDL_Point trueOrigin = {
-                (int)(origin.x * width * trans->GetWorldScale().x),
-                (int)(origin.y * height * trans->GetWorldScale().y)
+                (int)(origin.x * width * worldScale.x),
+                (int)(origin.y * height * worldScale.y)
             };
 
             SDL_Rect srcClip = clip.w > 0 && clip.h > 0 ? 
@@ -235,13 +235,13 @@ namespace Ossium
                 trueClip.h = texClip.h;
             }
             // Texture 'clip' is also scaled (not actually used as a clip rect)
-            texClip.w *= trans->GetWorldScale().x;
-            texClip.h *= trans->GetWorldScale().y;
+            texClip.w *= worldScale.x;
+            texClip.h *= worldScale.y;
 
-            float sWidth = width * trans->GetWorldScale().x;
-            float sHeight = height * trans->GetWorldScale().y;
+            float sWidth = width * worldScale.x;
+            float sHeight = height * worldScale.y;
 
-            Vector2 minPos = trans->GetWorldPosition() - Vector3(sWidth / 2.0f, sHeight / 2.0f, 0);
+            Vector2 minPos = worldPos - Vector3(sWidth / 2.0f, sHeight / 2.0f, 0);
 
             Vector2 screenOrigin = Vector2::Zero;
             SDL_Point converted;

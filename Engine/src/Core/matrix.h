@@ -202,7 +202,12 @@ namespace Ossium
         operator*(const MatType& operand)
         {
             // Make sure resultant matrix always starts initialised to zeroes.
-            Matrix<Dimensions, MatType::TotalVectors> result = {0};
+            Matrix<Dimensions, MatType::TotalVectors> result;
+            for (unsigned int i = 0; i < MatType::TotalVectors; i++) {
+                for (unsigned int j = 0; j < Dimensions; j++) {
+                    result.data[i][j] = 0;
+                }
+            }
 
             // Iterate over each vector in the operand matrix.
             for (unsigned int operandVec = 0; operandVec < MatType::TotalVectors; operandVec++)
@@ -385,7 +390,7 @@ namespace Ossium
             {
                 if (str[i] == ',')
                 {
-                    Utilities::FromString(Base::data[vec][dim], str);
+                    Utilities::FromString(Base::data[vec][dim], value);
                     value.clear();
                     dim++;
                 }
@@ -461,10 +466,6 @@ namespace Ossium
 
             // The underlying data, in row-major order (for contiguous memory layout).
             float data[Vectors][Dimensions];
-        };
-
-        inline const static MatrixBase<4, 4> Identity = {
-            {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}
         };
 
     };
