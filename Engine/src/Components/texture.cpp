@@ -30,7 +30,7 @@ namespace Ossium
 
     void Texture::Render(Renderer& renderer)
     {
-        if (width <= 0 || height <= 0 || !IsEnabled() && source != nullptr)
+        if (width <= 0 || height <= 0 || (!IsEnabled() && source != nullptr))
         {
             // Early out
             return;
@@ -241,7 +241,7 @@ namespace Ossium
             float sWidth = width * trans->GetWorldScale().x;
             float sHeight = height * trans->GetWorldScale().y;
 
-            Vector2 minPos = trans->GetWorldPosition() - Vector2(sWidth / 2.0f, sHeight / 2.0f);
+            Vector2 minPos = trans->GetWorldPosition() - Vector3(sWidth / 2.0f, sHeight / 2.0f, 0);
 
             Vector2 screenOrigin = Vector2::Zero;
             SDL_Point converted;
@@ -408,14 +408,14 @@ namespace Ossium
         return clip;
     }
 
-    Point Texture::ScreenToLocalPoint(Point source)
+    Vector2 Texture::ScreenToLocalPoint(Vector2 source)
     {
         source.x = (source.x - GetTransform()->GetWorldPosition().x + (width * 0.5f)) / (width / (float)(clip.w == 0 ? 0 : clip.w));
         source.y = (source.y - GetTransform()->GetWorldPosition().y + (height * 0.5f)) / (height / (float)(clip.h == 0 ? 0 : clip.h));
         return source;
     }
 
-    bool Texture::Contains(Point p)
+    bool Texture::Contains(Vector2 p)
     {
         return GetRect(GetTransform()->GetWorldPosition()).Contains(p);
     }

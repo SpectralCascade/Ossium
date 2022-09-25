@@ -12,7 +12,6 @@
 				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
 				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
 				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
-				"${workspaceFolder}/../Ossium/Engine/Box2D"
             ],
             "defines": [
                 "_DEBUG",
@@ -36,8 +35,7 @@
                     "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
                     "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
                     "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
-                    "${workspaceFolder}/../Ossium/Engine/Box2D"
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }
@@ -53,8 +51,7 @@
 				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
 				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
 				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
-				"${workspaceFolder}/../Ossium/Engine/Box2D"
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
             ],
             "defines": [
                 "_DEBUG",
@@ -77,8 +74,7 @@
                     "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
                     "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
                     "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
-                    "${workspaceFolder}/../Ossium/Engine/Box2D"
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }
@@ -94,8 +90,7 @@
 				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
 				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
 				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
-				"${workspaceFolder}/../Ossium/Engine/Box2D"
+				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
             ],
             "defines": [
                 "_DEBUG",
@@ -120,8 +115,7 @@
                     "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
                     "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
                     "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
-				    "${workspaceFolder}/../Ossium/Engine/Box2D"
+                    "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }

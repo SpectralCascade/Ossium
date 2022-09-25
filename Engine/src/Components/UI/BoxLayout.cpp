@@ -89,7 +89,7 @@ namespace Ossium
         return boxRect.Contains(worldPoint);
     }
 
-    bool BoxLayout::Contains(Point p)
+    bool BoxLayout::Contains(Vector2 p)
     {
         return Contains(p, true);
     }

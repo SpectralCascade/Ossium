@@ -25,17 +25,13 @@ namespace Ossium
 
     class Transform;
 
-    struct TransformSchema : public Schema<TransformSchema, 4>
+    struct TransformSchema : public Schema<TransformSchema, 2>
     {
     public:
-        DECLARE_BASE_SCHEMA(TransformSchema, 4);
+        DECLARE_BASE_SCHEMA(TransformSchema, 2);
 
     protected:
-        /// TODO: use a single matrix!
-        /// Local/relative position to parent.
-        M(Point, position) = Point(0, 0);
-        /// Local/relative scale to parent.
-        M(Vector2, scale) = Vector2(1, 1);
+        M(Matrix<4>, m) = {0};
 
         /// Does this transform move relative to the parent?
         M(bool, relative) = true;
@@ -48,8 +44,8 @@ namespace Ossium
     private:
         /// Cached world transform data. Only used if in 'relative' mode.
         /// TODO: Use a single matrix!
-        Point worldPosition = Point(0, 0);
-        Vector2 worldScale = Vector2(1, 1);
+        Vector3 worldPosition = Vector3::Zeroes;
+        Vector3 worldScale = Vector3::Ones;
 
         /// Has this transform been modified?
         bool dirty = true;
@@ -66,19 +62,19 @@ namespace Ossium
 
         void SetDirty();
 
-        Point GetLocalPosition();
-        Vector2 GetLocalScale();
+        Vector3 GetLocalPosition();
+        Vector3 GetLocalScale();
 
-        void SetLocalPosition(Point p);
-        void SetLocalScale(Vector2 s);
-        void SetLocal(Point p, Vector2 s);
+        void SetLocalPosition(Vector3 p);
+        void SetLocalScale(Vector3 s);
+        void SetLocal(Vector3 p, Vector3 s);
 
-        Point GetWorldPosition();
-        Vector2 GetWorldScale();
+        Vector3 GetWorldPosition();
+        Vector3 GetWorldScale();
 
-        void SetWorldPosition(Point p);
-        void SetWorldScale(Vector2 s);
-        void SetWorld(Point p, Vector2 s);
+        void SetWorldPosition(Vector3 p);
+        void SetWorldScale(Vector3 s);
+        void SetWorld(Vector3 p, Vector3 s);
 
     };
 

@@ -24,7 +24,7 @@ namespace Ossium
     class IContainsPoint
     {
     public:
-        virtual bool Contains(Point p) = 0;
+        virtual bool Contains(Vector2 p) = 0;
     };
 
 }

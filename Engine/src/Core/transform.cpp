@@ -30,14 +30,14 @@ namespace Ossium
             Entity* parent = entity->GetParent();
             if (parent != nullptr)
             {
-                worldPosition = position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
-                Vector2 parentScale = parent->AddComponentOnce<Transform>()->GetWorldScale();
-                worldScale = Vector2(scale.x * parentScale.x, scale.y * parentScale.y);
+                worldPosition = (Matrix<3,1>)m.position + parent->AddComponentOnce<Transform>()->GetWorldPosition();
+                Vector3 parentScale = parent->AddComponentOnce<Transform>()->GetWorldScale();
+                worldScale = Vector3(m.scale.x * parentScale.x, m.scale.y * parentScale.y, m.scale.z * parentScale.z);
             }
             else
             {
-                worldPosition = position;
-                worldScale = scale;
+                worldPosition = (Vector3)m.position;
+                worldScale = m.scale;
             }
             dirty = false;
         }
@@ -65,71 +65,71 @@ namespace Ossium
         }
     }
 
-    Point Transform::GetLocalPosition()
+    Vector3 Transform::GetLocalPosition()
     {
-        return position;
+        return (Vector3)m.position;
     }
 
-    Vector2 Transform::GetLocalScale()
+    Vector3 Transform::GetLocalScale()
     {
-        return scale;
+        return m.scale;
     }
 
-    void Transform::SetLocalPosition(Point p)
+    void Transform::SetLocalPosition(Vector3 p)
     {
-        position = p;
+        m.position = p;
         SetDirty();
     }
 
-    void Transform::SetLocalScale(Vector2 s)
+    void Transform::SetLocalScale(Vector3 s)
     {
-        scale = s;
+        m.scale = s;
         SetDirty();
     }
 
-    void Transform::SetLocal(Point p, Vector2 s)
+    void Transform::SetLocal(Vector3 p, Vector3 s)
     {
-        position = p;
-        scale = s;
+        m.position = p;
+        m.scale = s;
         SetDirty();
     }
 
-    Point Transform::GetWorldPosition()
+    Vector3 Transform::GetWorldPosition()
     {
         if (!relative)
         {
-            return position;
+            return m.position;
         }
         RefreshData();
         return worldPosition;
     }
 
-    Vector2 Transform::GetWorldScale()
+    Vector3 Transform::GetWorldScale()
     {
         if (!relative)
         {
-            return scale;
+            return m.scale;
         }
         RefreshData();
         return worldScale;
     }
 
-    void Transform::SetWorldPosition(Point p)
+    void Transform::SetWorldPosition(Vector3 p)
     {
-        position += p - GetWorldPosition();
+        m.position += p - GetWorldPosition();
         SetDirty();
     }
 
-    void Transform::SetWorldScale(Vector2 s)
+    void Transform::SetWorldScale(Vector3 s)
     {
-        scale += s - GetWorldScale();
+        m.scale += s - GetWorldScale();
         SetDirty();
     }
 
-    void Transform::SetWorld(Point p, Vector2 s)
+    void Transform::SetWorld(Vector3 p, Vector3 s)
     {
-        position += p - GetWorldPosition();
-        scale += s - GetWorldScale();
+        m.position += p - GetWorldPosition();
+        m.scale += s - GetWorldScale();
         SetDirty();
     }
 

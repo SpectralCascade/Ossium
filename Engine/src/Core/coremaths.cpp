@@ -48,6 +48,12 @@ namespace Ossium
     /// Vector2
     ///
 
+    Vector2::Vector2(const Vector3& vec)
+    {
+        x = vec.x;
+        y = vec.y;
+    }
+
     float Vector2::Dot(Vector2 vec)
     {
         return (x * vec.x) + (y * vec.y);
@@ -208,6 +214,9 @@ namespace Ossium
     const Vector2 Vector2::NegOneNegOne =   {-1, -1};
     const Vector2 Vector2::NegOneZero   =   {-1, 0};
     const Vector2 Vector2::ZeroNegOne   =   {0, -1};
+
+    const Vector3 Vector3::Zeroes       =   {0, 0, 0};
+    const Vector3 Vector3::Ones         =   {1, 1, 1};
 
     ///
     /// Rotation

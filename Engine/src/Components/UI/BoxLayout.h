@@ -58,10 +58,10 @@ namespace Ossium
         Vector2 GetInnerDimensions();
 
         // Returns true if the layout contains a given world point.
-        bool Contains(Vector2 worldPoint, bool innerDimensions = false);
+        bool Contains(Vector2 worldPoint, bool innerDimensions);
 
         // IContainsPoint implementation, calls default Contains().
-        bool Contains(Point p);
+        bool Contains(Vector2 p);
 
     private:
         // Cached percent of anchorMin.

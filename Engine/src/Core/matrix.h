@@ -45,6 +45,18 @@ namespace Ossium
             float data[Vectors][Dimensions];
         };
 
+        inline void operator+=(const MatrixBase<3, 1>& operand) {
+            x += operand.x;
+            y += operand.y;
+            z += operand.z;
+        }
+
+        inline void operator-=(const MatrixBase<3, 1>& operand) {
+            x -= operand.x;
+            y -= operand.y;
+            z -= operand.z;
+        }
+
     };
 
     // 4D vector union allows easy access to individual x, y, z and w components of a matrix
@@ -126,12 +138,6 @@ namespace Ossium
     struct Matrix : public MatrixBase<Dimensions, Vectors>
     {
     private:
-        // A matrix full of zeroes.
-        static Matrix<Dimensions, Vectors> zeroes;
-
-        // A matrix full of ones.
-        static Matrix<Dimensions, Vectors> ones;
-
         // Base type shorthand
         typedef MatrixBase<Dimensions, Vectors> Base;
 
@@ -148,8 +154,16 @@ namespace Ossium
         // Create a matrix with a 2D array
         Matrix(float init[Vectors][Dimensions])
         {
-            memcpy(Base::data, init, Vectors * Dimensions);
+            for (unsigned int i = 0; i < Dimensions; i++)
+            {
+                for (unsigned int j = 0; j < Vectors; j++)
+                {
+                    Base::data[i][j] = 0;
+                }
+            }
         }
+
+        Matrix(const Base& init) : Base(init) {}
 
         // Create a matrix with an inline 2D array
         Matrix(std::initializer_list<std::initializer_list<float>> init)
@@ -188,7 +202,7 @@ namespace Ossium
         operator*(const MatType& operand)
         {
             // Make sure resultant matrix always starts initialised to zeroes.
-            auto result = Matrix<Dimensions, MatType::TotalVectors>::Zeroes();
+            Matrix<Dimensions, MatType::TotalVectors> result = {0};
 
             // Iterate over each vector in the operand matrix.
             for (unsigned int operandVec = 0; operandVec < MatType::TotalVectors; operandVec++)
@@ -396,28 +410,6 @@ namespace Ossium
             }
         }
 
-        // Get a matrix filled with zeroes
-        static Matrix<Dimensions, Vectors> Zeroes()
-        {
-            return zeroes;
-        }
-
-        // Get a matrix filled with ones
-        static Matrix<Dimensions, Vectors> Ones()
-        {
-            return ones;
-        }
-
-        static Matrix<Dimensions, Vectors> Identity()
-        {
-            Matrix<Dimensions, Vectors> identity = zeroes;
-            for (unsigned int i = 0; i < Vectors && i < Dimensions; i++)
-            {
-                identity(i, i) = 1;
-            }
-            return identity;
-        }
-
     };
 
     // Multiply a matrix by a scalar
@@ -426,11 +418,51 @@ namespace Ossium
         return mat * scalar;
     }
 
+    // 4x4 matrix union allows easy access to individual components of a 4x4 matrix
     template<unsigned int Dimensions, unsigned int Vectors>
-    Matrix<Dimensions, Vectors> Matrix<Dimensions, Vectors>::zeroes = Matrix<Dimensions, Vectors>((float[Vectors][Dimensions]){0});
+    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 4 && Vectors == 4>>
+    {
+        // Helper struct for ease of use when dealing with 4x4 transform matrices
+        struct Scale4x3 {
+            Scale4x3() = default;
+            Scale4x3(Matrix<3, 1> vec) : x(vec.x), y(vec.y), z(vec.z) {}
 
-    template<unsigned int Dimensions, unsigned int Vectors>
-    Matrix<Dimensions, Vectors> Matrix<Dimensions, Vectors>::ones = Matrix<Dimensions, Vectors>((float[Vectors][Dimensions]){1});
+            public: float x;
+            private: float _a[4];
+            public: float y;
+            private: float _b[4];
+            public: float z;
+            private: float _c;
+
+        public:
+            inline void operator+=(const Matrix<3, 1>& operand) {
+                x += operand.x;
+                y += operand.y;
+                z += operand.z;
+            }
+
+            inline void operator-=(const Matrix<3, 1>& operand) {
+                x -= operand.x;
+                y -= operand.y;
+                z -= operand.z;
+            }
+        };
+
+        union {
+            struct {
+                union {
+                    MatrixBase<4, 3> rotation;
+                    Scale4x3 scale;
+                };
+                MatrixBase<3, 1> position;
+                float w;
+            };
+
+            // The underlying data, in row-major order (for contiguous memory layout).
+            float data[Vectors][Dimensions];
+        };
+
+    };
 
 }
 

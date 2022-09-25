@@ -38,15 +38,7 @@ namespace Ossium
         return (Constants::pi / 180.0f) * angle;
     }
 
-    struct Vector3 : public Matrix<3, 1>
-    {
-        Vector3() = default;
-        Vector3(float x, float y, float z);
-        Vector3(const Matrix<3, 1>& matrix) : Matrix(matrix) {}
-        Vector3(const Matrix<2, 1>& matrix) : Matrix(Matrix<3, 1>({{matrix.x, matrix.y, z}})) {}
-
-        Vector3 Cross(const Vector3& vec);
-    };
+    struct Vector3;
 
     /// Represents a 2D vector.
     struct Vector2 : public Matrix<2, 1>
@@ -55,6 +47,7 @@ namespace Ossium
         Vector2(float x, float y) : Matrix({{x, y}}) {}
         Vector2(const Matrix<2, 1>& matrix) : Matrix(matrix) {}
         Vector2(const Matrix<3, 1>& matrix) : Matrix(Matrix<2, 1>({{matrix.x, matrix.y}})) {}
+        Vector2(const Vector3& vec);
 
         /// Dot product of this and another vector
         float Dot(Vector2 vec);
@@ -138,6 +131,22 @@ namespace Ossium
         const static Vector2 NegOneZero;
         const static Vector2 ZeroNegOne;
 
+    };
+
+    struct Vector3 : public Matrix<3, 1>
+    {
+        Vector3() = default;
+        Vector3(float x, float y, float z);
+        Vector3(const Matrix<3, 1>& matrix) : Matrix(matrix) {}
+        Vector3(const Matrix<2, 1>& matrix) : Matrix(Matrix<3, 1>({{matrix.x, matrix.y, z}})) {}
+        Vector3(const Vector2& vec) : Matrix(Matrix<3, 1>({{vec.x, vec.y, 0}})) {}
+        Vector3(const Matrix<4, 4>::Scale4x3& scale) : Matrix(Matrix<3, 1>({{scale.x, scale.y, scale.z}})) {}
+        Vector3(const MatrixBase<3, 1>& matrix) : Matrix(Matrix<3, 1>(matrix)) {}
+
+        Vector3 Cross(const Vector3& vec);
+
+        const static Vector3 Zeroes;
+        const static Vector3 Ones;
     };
 
     // Get the result of scaling this vector

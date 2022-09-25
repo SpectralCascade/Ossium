@@ -132,10 +132,10 @@ namespace Ossium
         SDL_Rect GetClip();
 
         /// Takes a point from UI space and transforms it to the local texture space
-        Point ScreenToLocalPoint(Point source);
+        Vector2 ScreenToLocalPoint(Vector2 source);
 
         /// Implementation of IContainsPoint.
-        bool Contains(Point p);
+        bool Contains(Vector2 p);
 
     protected:
         /// The source image that this texture renders a copy of

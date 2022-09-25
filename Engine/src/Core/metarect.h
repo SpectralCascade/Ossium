@@ -39,7 +39,7 @@ namespace Ossium
         M(float, height) = 0;
 
         /// The origin point around which the rect rotates, as a percentage of the dimensions
-        M(Point, origin);
+        M(Vector2, origin);
 
 //        M(Entity*, testEnt) = nullptr;
 //
@@ -60,7 +60,7 @@ namespace Ossium
         }
 
         /// Returns the SDL_Rect equivalent of the rect (with rounding).
-        SDL_Rect GetSDL(const Point& position, Vector2 scale = Vector2::OneOne)
+        SDL_Rect GetSDL(const Vector2& position, Vector2 scale = Vector2::OneOne)
         {
             float w = round(width * scale.x);
             float h = round(height * scale.y);
@@ -68,7 +68,7 @@ namespace Ossium
             return output;
         }
 
-        Rect GetRect(const Point& position)
+        Rect GetRect(const Vector2& position)
         {
             return Rect(position.x - (width * 0.5f), position.y - (height * 0.5f), width, height);
         }
