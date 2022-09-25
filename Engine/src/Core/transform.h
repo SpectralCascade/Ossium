@@ -31,7 +31,7 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(TransformSchema, 2);
 
     protected:
-        M(Matrix<4>, m) = {0};
+        M(Matrix<4>, m) = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 
         /// Does this transform move relative to the parent?
         M(bool, relative) = true;
