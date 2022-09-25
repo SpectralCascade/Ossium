@@ -24,6 +24,7 @@ extern "C"
 {
     #include <SDL.h>
 }
+#include "bgfx/bgfx.h"
 
 #include "colors.h"
 #include "helpermacros.h"

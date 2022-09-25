@@ -46,7 +46,7 @@ namespace Ossium
         Vector2() = default;
         Vector2(float x, float y) : Matrix({{x, y}}) {}
         Vector2(const Matrix<2, 1>& matrix) : Matrix(matrix) {}
-        Vector2(const Matrix<3, 1>& matrix) : Matrix(Matrix<2, 1>({{matrix.x, matrix.y}})) {}
+        Vector2(const Matrix<3, 1>& matrix) : Matrix({{matrix.x, matrix.y}}) {}
         Vector2(const Vector3& vec);
 
         /// Dot product of this and another vector

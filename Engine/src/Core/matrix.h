@@ -463,6 +463,10 @@ namespace Ossium
             float data[Vectors][Dimensions];
         };
 
+        inline const static MatrixBase<4, 4> Identity = {
+            {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}
+        };
+
     };
 
 }

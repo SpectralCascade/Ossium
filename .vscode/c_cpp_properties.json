@@ -5,13 +5,13 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
             ],
             "defines": [
                 "_DEBUG",
@@ -45,13 +45,13 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
+                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
             ],
             "defines": [
                 "_DEBUG",
@@ -84,13 +84,14 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
-				"C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-				"C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
+                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
+                "../bgfx-2022.09.12/include",
+                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
+                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
+                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
             ],
             "defines": [
                 "_DEBUG",
