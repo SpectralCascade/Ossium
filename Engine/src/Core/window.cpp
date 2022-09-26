@@ -14,6 +14,8 @@
  *  3. This notice may not be removed or altered from any source distribution.
  *
 **/
+#include <SDL_syswm.h>
+
 #include "funcutils.h"
 #include "window.h"
 #include "coremaths.h"
@@ -293,6 +295,14 @@ namespace Ossium
     bool Window::IsShown()
     {
         return shown;
+    }
+
+    void* Window::GetNativeHandle()
+    {        
+        SDL_SysWMinfo info;
+        SDL_VERSION(&info.version);
+        SDL_GetWindowWMInfo(window, &info);
+        return info.info.win.window;
     }
 
 /*

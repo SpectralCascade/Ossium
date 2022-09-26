@@ -99,6 +99,9 @@ namespace Ossium
         /// Is this window shown or hidden?
         bool IsShown();
 
+        // Returns the native window handle
+        void* GetNativeHandle();
+
         // Callbacks for window state changes
         /// Called when the window size has been changed; this includes cases the size is changed directly by the API.
         Callback<Window&> OnSizeChanged;
