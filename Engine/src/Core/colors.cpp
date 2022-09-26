@@ -57,6 +57,7 @@ namespace Ossium
 
     SDL_Color Color(HexCode rgb)
     {
+        // TODO check this bit shifting correctly; shouldn't these shift numbers be in bits, not half bytes?
         #if SDL_BYTEORDER == SDL_BIG_ENDIAN
         return (SDL_Color){(Uint8)((rgb & Colors::RED_MASK) >> 6), (Uint8)((rgb & Colors::GREEN_MASK) >> 4), (Uint8)((rgb & Colors::BLUE_MASK) >> 2), 0xFF};
         #else
@@ -76,6 +77,15 @@ namespace Ossium
             return Color((converted & 0xFF000000) >> 24, (converted & 0x00FF0000) >> 16, (converted & 0x0000FF00) >> 8, converted & 0x000000FF);
         }
         return Colors::TRANSPARENT;
+    }
+
+    Uint32 ColorToUint32(SDL_Color color)
+    {
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        return ((Uint32)color.a || (Uint32)color.b >> 8 || (Uint32)color.g >> 16 || (Uint32)color.r >> 24);
+#else
+        return ((Uint32)color.a || (Uint32)color.b << 8 || (Uint32)color.g << 16 || (Uint32)color.r << 24);
+#endif
     }
 
     bool IsValidColor(string hexCode)

@@ -84,6 +84,9 @@ namespace Ossium
     /// Attempts to return an SDL_Color from a 6-character or 8-character string. Returns Colors::TRANSPARENT on failure.
     OSSIUM_EDL SDL_Color Color(std::string hexCode);
 
+    // Convert an SDL_Color to Uint32
+    OSSIUM_EDL Uint32 ColorToUint32(SDL_Color color);
+
     OSSIUM_EDL bool IsValidColor(std::string hexCode);
 
     OSSIUM_EDL inline bool operator==(const SDL_Color& a, const SDL_Color& b)
