@@ -21,72 +21,136 @@
 #include "renderer.h"
 #include "window.h"
 #include "coremaths.h"
+#include "colors.h"
 
 using namespace std;
 
 namespace Ossium
 {
 
-    Renderer::Renderer(Window* window, int numLayers, Uint32 flags, int driver)
+    bool Renderer::InitBGFX()
     {
-        #ifdef OSSIUM_DEBUG
+        bgfx::PlatformData config;
+        config.ndt = nullptr;
+        config.nwh = renderWindow->GetNativeHandle();
+
+        bgfx::Init init;
+        // TODO select renderer based on platform
+        init.type = 
+#ifdef OSSIUM_WINDOWS
+            bgfx::RendererType::OpenGL;
+#else
+            bgfx::RendererType::Count;
+#endif
+        // Set rendering resolution
+        init.platformData = config;
+        init.resolution.width = renderWindow->GetWidth();
+        init.resolution.height = renderWindow->GetHeight();
+        init.resolution.reset = backbufferFlags;
+
+        bool success = bgfx::init(init);
+        if (!success)
+        {
+            if (init.type != bgfx::RendererType::Count)
+            {
+                Log.Error("[Renderer] Could not initialise bgfx, retrying with renderer auto-select...");
+                init.type = bgfx::RendererType::Count;
+                success = bgfx::init(init);
+            }
+            if (!success)
+            {
+                Log.Error("[Renderer] Failed to initialise bgfx.");
+            }
+        }
+        return success;
+    }
+
+    Renderer::Renderer(Window* window, RenderViewPool* pool, int numLayers, int driver, int backbufferFlags, bool mainRenderer)
+    {
+#ifdef OSSIUM_DEBUG
         SDL_assert(window != NULL);
-        #endif // DEBUG
+#endif
+        renderWindow = window;
+        viewPool = pool;
 
         aspect_width = 0;
         aspect_height = 0;
         fixed_aspect = false;
-
-        renderer = SDL_CreateRenderer(window->GetWindowSDL(), driver, flags);
-        if (renderer == NULL)
-        {
-            Log.Error("[Renderer] Could not create renderer! SDL_Error: {0}", SDL_GetError());
-            int n_drivers = SDL_GetNumRenderDrivers();
-            SDL_RendererInfo driver_data;
-            string drivers_available;
-            for (int i = 0; i < n_drivers; i++)
-            {
-                SDL_GetRenderDriverInfo(i, &driver_data);
-                drivers_available = drivers_available + driver_data.name + ", ";
-            }
-            Log.Info("Available render drivers are: {0}", drivers_available);
-            Log.Info("Falling back to software renderer by default.");
-            renderer = SDL_CreateRenderer(window->GetWindowSDL(), driver, SDL_RENDERER_SOFTWARE);
-            if (renderer == NULL)
-            {
-                Log.Error("[Renderer] Fallback software renderer could not be created! SDL_Error: {0}", SDL_GetError());
-            }
-        }
-        if (renderer != NULL)
-        {
-            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-        }
-        registeredGraphics = new set<Graphic*>[numLayers];
-        queuedGraphics = new queue<Graphic*>[numLayers];
-
-        windowDestroyedHandle = window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
+        numLayersActive = numLayers;
 
         viewportRect.x = 0;
         viewportRect.y = 0;
         viewportRect.w = window->GetWidth();
         viewportRect.h = window->GetHeight();
 
-        numLayersActive = numLayers;
-        renderWindow = window;
+        registeredGraphics = new set<Graphic*>[numLayers];
+        queuedGraphics = new queue<Graphic*>[numLayers];
+
+        if (mainRenderer)
+        {
+            this->backbufferFlags = backbufferFlags;
+            InitBGFX();
+            frameBuffer.idx = bgfx::kInvalidHandle;
+        }
+        else
+        {
+            // Now create a frame buffer for the associated window
+            // TODO note this frame buffer function doesn't support sampling,
+            // see https://bkaradzic.github.io/bgfx/bgfx.html#views
+            // Note this frame buffer should be recreated whenever the window size changes.
+            frameBuffer = bgfx::createFrameBuffer(
+                window->GetNativeHandle(),
+                window->GetWidth(),
+                window->GetHeight()
+            );
+        }
+        // Setup main RenderView instance
+        mainView = viewPool->Create(viewportRect, frameBuffer, "Renderer_" + Utilities::ToString(this));
+        
+        windowDestroyedHandle = window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
+        windowSizeChangedHandle = window->OnSizeChanged += [&] (Window& win) { this->OnWindowSizeChanged(win); };
     }
 
     Renderer::~Renderer()
     {
-        if (renderWindow != nullptr)
+        // Destroy frame buffer
+        if (bgfx::isValid(frameBuffer))
         {
-            // Clean up callback
-            renderWindow->OnDestroyed -= windowDestroyedHandle;
-            renderWindow = nullptr;
+            bgfx::destroy(frameBuffer);
+            frameBuffer.idx = bgfx::kInvalidHandle;
+            viewPool->Free(mainView);
         }
 
-        SDL_RenderClear(renderer);
-        SDL_DestroyRenderer(renderer);
-        renderer = NULL;
+        // Destroy other frame buffers and views setup by this renderer
+        for (unsigned int i = 0, counti = views.size(); i < counti; i++)
+        {
+            bgfx::FrameBufferHandle handle = viewPool->Get(views[i]).GetRenderTarget();
+            if (bgfx::isValid(handle))
+            {
+                bgfx::destroy(handle);
+                handle.idx = bgfx::kInvalidHandle;
+            }
+            viewPool->Free(views[i]);
+        }
+
+        // Flush destruction of swap chain (framebuffers for windows are double buffered)
+        // Based on https://github.com/bkaradzic/bgfx/blob/master/examples/22-windows/windows.cpp
+        bgfx::frame();
+        bgfx::frame();
+
+        // No framebuffer means this must be associated with the main window, therefore the initialiser
+        if (!bgfx::isValid(frameBuffer))
+        {
+            bgfx::shutdown();
+        }
+
+        if (renderWindow != nullptr)
+        {
+            // Clean up callbacks
+            renderWindow->OnDestroyed -= windowDestroyedHandle;
+            renderWindow->OnSizeChanged -= windowSizeChangedHandle;
+            renderWindow = nullptr;
+        }
 
         delete[] registeredGraphics;
         delete[] queuedGraphics;
@@ -94,8 +158,47 @@ namespace Ossium
 
     void Renderer::OnWindowDestroyed(Window& windowCaller)
     {
+        // Clean up bgfx rendering bits
+        if (bgfx::isValid(frameBuffer))
+        {
+            bgfx::destroy(frameBuffer);
+            frameBuffer.idx = bgfx::kInvalidHandle;
+            viewPool->Free(mainView);
+
+            // Flush destruction of swap chain (framebuffers for windows are double buffered)
+            // Based on https://github.com/bkaradzic/bgfx/blob/master/examples/22-windows/windows.cpp
+            bgfx::frame();
+            bgfx::frame();
+        }
         renderWindow = nullptr;
         /// No need to actually unregister the callbacks as the window will destroy it's callback objects.
+    }
+
+    void Renderer::OnWindowSizeChanged(Window& windowCaller)
+    {
+        // Must recreate the frame buffer
+        // TODO check if necessary for OpenGL, doesn't seem to be for SDL2 when using OpenGL backend
+        if (bgfx::isValid(frameBuffer))
+        {
+            bgfx::destroy(frameBuffer);
+            frameBuffer.idx = bgfx::kInvalidHandle;
+
+            frameBuffer = bgfx::createFrameBuffer(
+                windowCaller.GetNativeHandle(),
+                windowCaller.GetWidth(),
+                windowCaller.GetHeight()
+            );
+
+            // Update main view target
+            viewPool->Get(mainView).SetRenderTarget(frameBuffer);
+        }
+        else
+        {
+            // Reset the backbuffer to match the window resolution
+            bgfx::reset(windowCaller.GetWidth(), windowCaller.GetHeight(), backbufferFlags);
+            // TODO might need to do something after
+        }
+
     }
 
     int Renderer::Register(Graphic* graphic, int layer)
@@ -156,7 +259,7 @@ namespace Ossium
     {
         if (!manualMode)
         {
-            SDL_RenderClear(renderer);
+            bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, ColorToUint32(bufferColour));
         }
         for (int layer = 0; layer < numLayersActive; layer++)
         {
@@ -180,7 +283,7 @@ namespace Ossium
         SetDrawColor(bufferColour);
         if (!manualMode)
         {
-            SDL_RenderPresent(renderer);
+            bgfx::frame();
         }
     }
 
@@ -241,7 +344,7 @@ namespace Ossium
         aspect_width = (int)rect.w;
         aspect_height = (int)rect.h;
         viewportRect = rect;
-        SDL_RenderSetViewport(renderer, &viewportRect);
+        bgfx::setViewRect(mainView, viewportRect.x, viewportRect.y, viewportRect.w, viewportRect.h);
     }
 
     void Renderer::WindowToViewportPoint(int& x, int& y)
@@ -323,10 +426,7 @@ namespace Ossium
             viewRect.h = renderWindow->GetHeight();
         }
 
-        if (SDL_RenderSetViewport(renderer, &viewRect) < 0)
-        {
-            Log.Error("Failed to set viewport! SDL_Error: {0}", SDL_GetError());
-        }
+        bgfx::setViewRect(mainView, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
 
         viewportRect = viewRect;
     }
@@ -361,6 +461,35 @@ namespace Ossium
         numLayersActive = numLayers;
     }
 
+    bgfx::ViewId Renderer::CreateView(SDL_Rect viewport)
+    {
+        bgfx::ViewId created = viewPool->Create(
+            viewport,
+            frameBuffer,
+            "Renderer_" + Utilities::ToString(this) + "_RenderView"
+        );
+        views.push_back(created);
+        return created;
+    }
+
+    void Renderer::FreeView(bgfx::ViewId id)
+    {
+        for (unsigned int i = views.size(); i > 0; i--)
+        {
+            if (views[i - 1] == id)
+            {
+                viewPool->Free(id);
+                return;
+            }
+        }
+        Log.Warning("[Renderer] Failed to free RenderView as instance with id {0} does not exist.", id);
+    }
+
+    bgfx::ViewId Renderer::GetMainView()
+    {
+        return mainView;
+    }
+
     // GENERAL
 
     #ifdef OSSIUM_DEBUG
@@ -373,11 +502,6 @@ namespace Ossium
     int Renderer::GetNumLayers()
     {
         return numLayersActive;
-    }
-
-    SDL_Renderer* Renderer::GetRendererSDL()
-    {
-        return renderer;
     }
 
     SDL_Color Renderer::GetBackgroundColor()

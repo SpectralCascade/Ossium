@@ -85,7 +85,7 @@ namespace Ossium
     OSSIUM_EDL SDL_Color Color(std::string hexCode);
 
     // Convert an SDL_Color to Uint32
-    OSSIUM_EDL Uint32 ColorToUint32(SDL_Color color);
+    OSSIUM_EDL Uint32 ColorToUint32(SDL_Color color, Uint32 format);
 
     OSSIUM_EDL bool IsValidColor(std::string hexCode);
 

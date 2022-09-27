@@ -25,7 +25,7 @@ namespace Ossium
     EngineSystem::EngineSystem(const Config& config)
     {
         window = new Window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags);
-        renderer = new Renderer(window, config.totalRenderLayers, (config.vsync ? SDL_RENDERER_PRESENTVSYNC : 0) | (config.hardwareAcceleration ? SDL_RENDERER_ACCELERATED : 0));
+        renderer = new Renderer(window, config.totalRenderLayers, -1, true);
         input = new InputController();
         services = new ServicesProvider(renderer, &resources, input);
         Init(config);

@@ -29,6 +29,7 @@ extern "C"
 #include "colors.h"
 #include "helpermacros.h"
 #include "services.h"
+#include "renderview.h"
 
 namespace Ossium
 {
@@ -36,7 +37,6 @@ namespace Ossium
 
     class Window;
     class Renderer;
-    struct Vector2;
 
     /// Anything that can be rendered should inherit from this interface and implement the Render method
     class OSSIUM_EDL Graphic
@@ -52,8 +52,13 @@ namespace Ossium
     // Wrapper class for SDL_Renderer - also supports layering
     class OSSIUM_EDL Renderer : public Service<Renderer>
     {
+    private:
+        // Attempt to initialise bgfx
+        bool InitBGFX();
+
     public:
-        Renderer(Window* window, int numLayers = 1, Uint32 flags = SDL_RENDERER_ACCELERATED, int driver = -1);
+        // Create a renderer. NOTE: Always create the main renderer first as it initialises bgfx.
+        Renderer(Window* window, RenderViewPool* pool, int numLayers = 1, int driver = -1, int backbufferFlags = BGFX_RESET_VSYNC, bool mainRenderer = false);
         virtual ~Renderer();
 
         /// Registers a graphic for rendering. Note that you cannot change the layer or forceCull parameter once registered;
@@ -128,9 +133,6 @@ namespace Ossium
         /// Renders a specific layer of graphics; renders everything if layer < 0
         void RenderLayer(int layer = -1);
 
-        /// Returns the SDL renderer context associated with this renderer
-        SDL_Renderer* GetRendererSDL();
-
         /// This does what it says on the tin. Ideally, this will only be used when loading levels
         /// (if at all). Note that enqueued and registered graphics are removed and unregistered upon calling this method!
         void ReallocateLayers(int numLayers);
@@ -151,20 +153,48 @@ namespace Ossium
 
         /// Updates the renderer viewport dimensions according to the current aspect of the associated window.
         void ResetViewport();
+        
+        // Add a RenderView to this renderer
+        bgfx::ViewId CreateView(SDL_Rect viewport);
+
+        // Free a RenderView attached to this renderer
+        void FreeView(bgfx::ViewId id);
+
+        // Return the main view id
+        bgfx::ViewId GetMainView();
 
     private:
         NOCOPY(Renderer);
 
-        /// Deals with the actual rendering
-        SDL_Renderer* renderer;
+        // Flags for the backbuffer, only applicable to the main renderer
+        int backbufferFlags = BGFX_RESET_NONE;
+
+        // Handle to the frame buffer for this renderer and it's associated window
+        bgfx::FrameBufferHandle frameBuffer;
+
+        // Main rendering view handle for the window frame buffer
+        bgfx::ViewId mainView;
+
+        // Collection of views to be rendered each frame, not including the main view
+        std::vector<bgfx::ViewId> views;
 
         /// Pointer to the window associated with this renderer
         Window* renderWindow;
-        /// Handle to clean up the window's OnDestroy callback if this renderer gets destroyed before the window.
+
+        // Pool of views available to renderers
+        RenderViewPool* viewPool;
+        
+        /// Handle to clean up the window's OnDestroy callback.
         int windowDestroyedHandle;
 
         /// Called when the associated window is destroyed.
         void OnWindowDestroyed(Window& windowCaller);
+
+        // Handle to clean up the window's OnSizeChanged callback.
+        int windowSizeChangedHandle;
+
+        // Called when the associated window size is changed.
+        void OnWindowSizeChanged(Window& windowCaller);
 
         /// Renderer viewport target width/height or aspect ratio
         int aspect_width = 0;
@@ -197,6 +227,15 @@ namespace Ossium
         /// Graphics queued to be rendered for this frame only
         std::queue<Graphic*>* queuedGraphics;
 
+    };
+
+    // Defines a simple position vertex with a colour
+    struct PositionVertex
+    {
+        float x;
+        float y;
+        float z;
+        uint32_t abgr;
     };
 
 }
