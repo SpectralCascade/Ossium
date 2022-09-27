@@ -3,15 +3,12 @@
         {
             "name": "Debug",
             "includePath": [
-                "${workspaceFolder}/**",
-                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
-                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
+                "${workspaceFolder}/Engine/src",
+                "${env:localappdata}/Soupbuild/source/SDL2-2.0.22/x86_64-w64-mingw32/include/**",
+                "${env:localappdata}/Soupbuild/source/SDL2_image-2.6.2/x86_64-w64-mingw32/include",
+                "${env:localappdata}/Soupbuild/source/SDL2_mixer-2.6.2/x86_64-w64-mingw32/include",
+                "${env:localappdata}/Soupbuild/source/SDL2_ttf-2.20.1/x86_64-w64-mingw32/include",
+                "${env:localappdata}/Soupbuild/source/bgfx-2022.09.12/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -27,7 +24,7 @@
             "compilerArgs": [],
             "browse": {
                 "path": [
-                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/Engine/src",
                     "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
                     "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
                     "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
@@ -43,7 +40,7 @@
         {
             "name": "Release",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/Engine/src",
                 "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
                 "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
                 "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
@@ -66,7 +63,7 @@
             "compilerArgs": [],
             "browse": {
                 "path": [
-                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/Engine/src",
                     "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
                     "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
                     "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
@@ -82,7 +79,7 @@
         {
             "name": "Debug Editor",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/Engine/src",
                 "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
                 "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
                 "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
@@ -108,7 +105,7 @@
             "compilerArgs": [],
             "browse": {
                 "path": [
-                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/Engine/src",
                     "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
                     "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
                     "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
