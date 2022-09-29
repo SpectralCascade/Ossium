@@ -26,7 +26,7 @@ using namespace std;
 namespace Ossium
 {
 
-    Window::Window(const char* title, int w, int h, bool fullscrn, Uint32 flags)
+    Window::Window(const char* title, int w, int h, bool fullscrn, Uint32 flags, bool useBackBuffer)
     {
         window = NULL;
         minimized = false;
@@ -44,6 +44,10 @@ namespace Ossium
             return;
         }
 
+        // TODO set vsync and other options such as MSAA according to settings
+        backbufferFlags = BGFX_RESET_VSYNC;
+        Init(w, h, backbufferFlags, useBackBuffer ? nullptr : GetNativeHandle());
+
         if (fullscreen)
         {
             SDL_SetWindowFullscreen(window, SDL_TRUE);
@@ -55,6 +59,7 @@ namespace Ossium
     Window::~Window()
     {
         OnDestroyed(*this);
+        OnWindowDestroyed();
         SDL_DestroyWindow(window);
         window = NULL;
     }
@@ -303,6 +308,16 @@ namespace Ossium
         SDL_VERSION(&info.version);
         SDL_GetWindowWMInfo(window, &info);
         return info.info.win.window;
+    }
+
+    bgfx::FrameBufferHandle Window::CreateFrameBuffer()
+    {
+        if (!useBackBuffer)
+        {
+            return bgfx::createFrameBuffer(GetNativeHandle(), (uint16_t)width, (uint16_t)height);
+        }
+        bgfx::reset(width, height, backbufferFlags);
+        return BGFX_INVALID_HANDLE;
     }
 
 /*

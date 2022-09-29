@@ -13,58 +13,63 @@
 namespace Ossium
 {
 
+    class RenderTarget;
     class RenderViewPool;
+    class Renderer;
 
-    // A view which graphics can be rendered to.
+    // A view in which multiple objects can be rendered.
     class RenderView
     {
     private:
-        friend RenderViewPool;
+        friend class RenderViewPool;
 
         // Create a RenderView instance. You must provide a unique id.
         RenderView(
+            RenderViewPool* pool,
             bgfx::ViewId id,
-            SDL_Rect rect,
-            bgfx::FrameBufferHandle target = BGFX_INVALID_HANDLE,
+            SDL_Rect viewport,
+            RenderTarget* target,
             std::string name = "RenderView"
         );
 
         NOCOPY(RenderView);
 
     public:
-        // Set the target frame buffer that should be rendered to by this view.
-        // If the given target is invalid, the main window backbuffer is used instead by default.
-        void SetRenderTarget(bgfx::FrameBufferHandle target);
-
-        // Returns the target frame buffer handle
-        bgfx::FrameBufferHandle GetRenderTarget();
-
-        // Set the render view bounding rect
-        void SetRenderRect(SDL_Rect rect);
-
-        // Return the render view bounding rect
-        SDL_Rect GetRenderRect();
-
-        // Get this view's identifier
+        // Get the unique id for this view.
         bgfx::ViewId GetID();
 
-        // Set the name of this view for graphics debugging purposes
+        // Set the render target.
+        void SetRenderTarget(RenderTarget* target);
+
+        // Return the render target.
+        RenderTarget* GetRenderTarget();
+
+        // Set the render viewport rect.
+        void SetViewport(SDL_Rect viewport);
+
+        // Return the render viewport rect.
+        SDL_Rect GetViewport();
+
+        // Set the name of this view for graphics debugging purposes.
         void SetDebugName(std::string name);
 
-        // Get the name of this view used for graphics debugging purposes
+        // Get the name of this view used for graphics debugging purposes.
         std::string GetDebugName();
 
     private:
-        // View identifier
+        // The pool which was used to create this render view.
+        RenderViewPool* pool;
+
+        // The render target for this view.
+        RenderTarget* target;
+
+        // View identifier.
         bgfx::ViewId id;
 
-        // The target frame buffer
-        bgfx::FrameBufferHandle target;
+        // Defines the bounding area of this view.
+        SDL_Rect viewport;
 
-        // Defines the bounding area of this view
-        SDL_Rect rect;
-
-        // Name of this view (for debugging purposes only)
+        // Name of this view (for debugging purposes only).
         std::string name;
 
     };
@@ -72,34 +77,29 @@ namespace Ossium
     // Used to create RenderView instances
     class RenderViewPool
     {
-    public:
-        // Initialise the render view pool
-        RenderViewPool(size_t prealloc = 8);
+    private:
+        friend class Renderer;
 
-        // Create a render view
-        bgfx::ViewId Create(
-            SDL_Rect rect,
-            bgfx::FrameBufferHandle target = BGFX_INVALID_HANDLE,
+        // Create a render view in first-come-first-serve order
+        RenderView* Create(
+            SDL_Rect viewport,
+            RenderTarget* target,
             std::string name = "RenderView"
         );
 
-        // Free a render view
+        // Free a RenderView instance by id.
         void Free(bgfx::ViewId id);
 
+        // Free a RenderView instance.
+        void Free(RenderView* view);
+
         // Get a render view by id
-        RenderView& Get(bgfx::ViewId id);
-
-    private:
-        // Head of the pool
-        size_t head = 0;
-
+        RenderView* Get(bgfx::ViewId id);
+        
         // Array of all render view instances
-        std::vector<RenderView> views;
+        std::vector<RenderView*> views;
 
-        // Stack of freed ids
-        std::stack<size_t> ids;
-
-    }
+    };
 
 }
 

@@ -26,6 +26,7 @@ extern "C"
 
 #include "services.h"
 #include "callback.h"
+#include "windowtarget.h"
 
 namespace Ossium
 {
@@ -35,10 +36,17 @@ namespace Ossium
     class Image;
 
     /// Wrapper class for SDL_Window
-    class OSSIUM_EDL Window
+    class OSSIUM_EDL Window : WindowTarget
     {
     public:
-        Window(const char* title = "Ossium Engine", int w = 640, int h = 480, bool fullscrn = false, Uint32 flags = SDL_WINDOW_SHOWN);
+        Window(
+            const char* title = "Ossium Engine",
+            int w = 640,
+            int h = 480,
+            bool fullscrn = false,
+            Uint32 flags = SDL_WINDOW_SHOWN,
+            bool useBackBuffer = false
+        );
         ~Window();
 
         /// Handles a window event. Returns true if the event for this specific window.
@@ -128,6 +136,10 @@ namespace Ossium
         /// Called when the window is destroyed so any associated renderers can null their window pointers.
         Callback<Window&> OnDestroyed;
 
+    protected:
+        // Implementation of RenderTarget method to create the frame buffer for the window
+        bgfx::FrameBufferHandle CreateFrameBuffer();
+
     private:
         // Prohibited copying of windows
         Window(const Window& src);
@@ -136,9 +148,14 @@ namespace Ossium
         // Individual window instance
         SDL_Window* window;
 
-        // Window dimensions
+        // Window width
         int width;
+
+        // Window height
         int height;
+
+        // Flags for the backbuffer, only applicable to the main renderer
+        int backbufferFlags = BGFX_RESET_NONE;
 
         // Active flags
         bool minimized;

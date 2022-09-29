@@ -28,50 +28,14 @@ using namespace std;
 namespace Ossium
 {
 
-    bool Renderer::InitBGFX()
-    {
-        bgfx::PlatformData config;
-        config.ndt = nullptr;
-        config.nwh = renderWindow->GetNativeHandle();
-
-        bgfx::Init init;
-        // TODO select renderer based on platform
-        init.type = 
-#ifdef OSSIUM_WINDOWS
-            bgfx::RendererType::OpenGL;
-#else
-            bgfx::RendererType::Count;
-#endif
-        // Set rendering resolution
-        init.platformData = config;
-        init.resolution.width = renderWindow->GetWidth();
-        init.resolution.height = renderWindow->GetHeight();
-        init.resolution.reset = backbufferFlags;
-
-        bool success = bgfx::init(init);
-        if (!success)
-        {
-            if (init.type != bgfx::RendererType::Count)
-            {
-                Log.Error("[Renderer] Could not initialise bgfx, retrying with renderer auto-select...");
-                init.type = bgfx::RendererType::Count;
-                success = bgfx::init(init);
-            }
-            if (!success)
-            {
-                Log.Error("[Renderer] Failed to initialise bgfx.");
-            }
-        }
-        return success;
-    }
-
-    Renderer::Renderer(Window* window, RenderViewPool* pool, int numLayers, int driver, int backbufferFlags, bool mainRenderer)
+    Renderer::Renderer(RenderTarget* target, RenderViewPool* renderViewPool, int numLayers)
     {
 #ifdef OSSIUM_DEBUG
-        SDL_assert(window != NULL);
+        SDL_assert(target != NULL);
+        SDL_assert(renderViewPool != NULL);
 #endif
-        renderWindow = window;
-        viewPool = pool;
+        this->target = target;
+        this->renderViewPool = renderViewPool;
 
         aspect_width = 0;
         aspect_height = 0;
@@ -80,125 +44,17 @@ namespace Ossium
 
         viewportRect.x = 0;
         viewportRect.y = 0;
-        viewportRect.w = window->GetWidth();
-        viewportRect.h = window->GetHeight();
+        viewportRect.w = target->GetWidth();
+        viewportRect.h = target->GetHeight();
 
         registeredGraphics = new set<Graphic*>[numLayers];
         queuedGraphics = new queue<Graphic*>[numLayers];
-
-        if (mainRenderer)
-        {
-            this->backbufferFlags = backbufferFlags;
-            InitBGFX();
-            frameBuffer.idx = bgfx::kInvalidHandle;
-        }
-        else
-        {
-            // Now create a frame buffer for the associated window
-            // TODO note this frame buffer function doesn't support sampling,
-            // see https://bkaradzic.github.io/bgfx/bgfx.html#views
-            // Note this frame buffer should be recreated whenever the window size changes.
-            frameBuffer = bgfx::createFrameBuffer(
-                window->GetNativeHandle(),
-                window->GetWidth(),
-                window->GetHeight()
-            );
-        }
-        // Setup main RenderView instance
-        mainView = viewPool->Create(viewportRect, frameBuffer, "Renderer_" + Utilities::ToString(this));
-        
-        windowDestroyedHandle = window->OnDestroyed += [&] (Window& win) { this->OnWindowDestroyed(win); };
-        windowSizeChangedHandle = window->OnSizeChanged += [&] (Window& win) { this->OnWindowSizeChanged(win); };
     }
 
     Renderer::~Renderer()
     {
-        // Destroy frame buffer
-        if (bgfx::isValid(frameBuffer))
-        {
-            bgfx::destroy(frameBuffer);
-            frameBuffer.idx = bgfx::kInvalidHandle;
-            viewPool->Free(mainView);
-        }
-
-        // Destroy other frame buffers and views setup by this renderer
-        for (unsigned int i = 0, counti = views.size(); i < counti; i++)
-        {
-            bgfx::FrameBufferHandle handle = viewPool->Get(views[i]).GetRenderTarget();
-            if (bgfx::isValid(handle))
-            {
-                bgfx::destroy(handle);
-                handle.idx = bgfx::kInvalidHandle;
-            }
-            viewPool->Free(views[i]);
-        }
-
-        // Flush destruction of swap chain (framebuffers for windows are double buffered)
-        // Based on https://github.com/bkaradzic/bgfx/blob/master/examples/22-windows/windows.cpp
-        bgfx::frame();
-        bgfx::frame();
-
-        // No framebuffer means this must be associated with the main window, therefore the initialiser
-        if (!bgfx::isValid(frameBuffer))
-        {
-            bgfx::shutdown();
-        }
-
-        if (renderWindow != nullptr)
-        {
-            // Clean up callbacks
-            renderWindow->OnDestroyed -= windowDestroyedHandle;
-            renderWindow->OnSizeChanged -= windowSizeChangedHandle;
-            renderWindow = nullptr;
-        }
-
         delete[] registeredGraphics;
         delete[] queuedGraphics;
-    }
-
-    void Renderer::OnWindowDestroyed(Window& windowCaller)
-    {
-        // Clean up bgfx rendering bits
-        if (bgfx::isValid(frameBuffer))
-        {
-            bgfx::destroy(frameBuffer);
-            frameBuffer.idx = bgfx::kInvalidHandle;
-            viewPool->Free(mainView);
-
-            // Flush destruction of swap chain (framebuffers for windows are double buffered)
-            // Based on https://github.com/bkaradzic/bgfx/blob/master/examples/22-windows/windows.cpp
-            bgfx::frame();
-            bgfx::frame();
-        }
-        renderWindow = nullptr;
-        /// No need to actually unregister the callbacks as the window will destroy it's callback objects.
-    }
-
-    void Renderer::OnWindowSizeChanged(Window& windowCaller)
-    {
-        // Must recreate the frame buffer
-        // TODO check if necessary for OpenGL, doesn't seem to be for SDL2 when using OpenGL backend
-        if (bgfx::isValid(frameBuffer))
-        {
-            bgfx::destroy(frameBuffer);
-            frameBuffer.idx = bgfx::kInvalidHandle;
-
-            frameBuffer = bgfx::createFrameBuffer(
-                windowCaller.GetNativeHandle(),
-                windowCaller.GetWidth(),
-                windowCaller.GetHeight()
-            );
-
-            // Update main view target
-            viewPool->Get(mainView).SetRenderTarget(frameBuffer);
-        }
-        else
-        {
-            // Reset the backbuffer to match the window resolution
-            bgfx::reset(windowCaller.GetWidth(), windowCaller.GetHeight(), backbufferFlags);
-            // TODO might need to do something after
-        }
-
     }
 
     int Renderer::Register(Graphic* graphic, int layer)
@@ -259,7 +115,13 @@ namespace Ossium
     {
         if (!manualMode)
         {
-            bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, ColorToUint32(bufferColour));
+            // Always clear the render target view
+            // TODO this may not be necessary
+            bgfx::setViewClear(
+                , // 0 is always the render target view
+                BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
+                ColorToUint32(bufferColour, SDL_PIXELFORMAT_ABGR8888) // TODO check this is correct
+            );
         }
         for (int layer = 0; layer < numLayersActive; layer++)
         {
@@ -289,29 +151,38 @@ namespace Ossium
 
     void Renderer::SetDrawColor(SDL_Color color)
     {
-        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        drawColour = color;
     }
 
     void Renderer::SetDrawColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
     {
-        SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+        drawColour = { .r=red, .g=green, .b=blue, .a=alpha };
     }
 
     SDL_Color Renderer::GetDrawColor()
     {
-        SDL_Color c;
-        SDL_GetRenderDrawColor(renderer, &c.r, &c.g, &c.b, &c.a);
-        return c;
+        return drawColour;
     }
 
-    void Renderer::SetBlendmode(SDL_BlendMode blending)
+    Uint32 Renderer::GetDrawColorUint32()
     {
-        SDL_SetRenderDrawBlendMode(renderer, blending);
+        return ColorToUint32(drawColour, SDL_PIXELFORMAT_ABGR8888);
     }
 
-    Window* Renderer::GetWindow()
+    void Renderer::SetState(uint64_t state)
     {
-        return renderWindow;
+        this->state = state;
+    }
+
+    uint64_t Renderer::GetState()
+    {
+        return state;
+    }
+
+    void Renderer::UpdateStateAndColor()
+    {
+        // TODO check pixel format is correct
+        bgfx::setState(state, GetDrawColorUint32());
     }
 
     int Renderer::GetWidth()
@@ -344,10 +215,10 @@ namespace Ossium
         aspect_width = (int)rect.w;
         aspect_height = (int)rect.h;
         viewportRect = rect;
-        bgfx::setViewRect(mainView, viewportRect.x, viewportRect.y, viewportRect.w, viewportRect.h);
+        bgfx::setViewRect(0, viewportRect.x, viewportRect.y, viewportRect.w, viewportRect.h);
     }
 
-    void Renderer::WindowToViewportPoint(int& x, int& y)
+    void Renderer::TargetToViewportPoint(int& x, int& y)
     {
         y -= viewportRect.y;
         x -= viewportRect.x;
@@ -355,17 +226,18 @@ namespace Ossium
 
     void Renderer::ResetViewport()
     {
-        if (renderWindow == nullptr)
+        // TODO
+        /*if (target == nullptr)
         {
-            Log.Warning("Failed to reset renderer viewport! Associated window is NULL.");
+            Log.Warning("Failed to reset renderer viewport! Associated target is NULL.");
             // Early out
             return;
         }
         SDL_Rect viewRect;
         float percent_width = 1.0f;
         float percent_height = 1.0f;
-        int width = renderWindow->GetWidth();
-        int height = renderWindow->GetHeight();
+        int width = target->GetWidth();
+        int height = target->GetHeight();
         Rect displayRect = renderWindow->GetDisplayBounds();
 
         if (aspect_width > 0 && aspect_height > 0)
@@ -422,13 +294,14 @@ namespace Ossium
             /// No aspect ratio is set
             viewRect.x = 0;
             viewRect.y = 0;
-            viewRect.w = renderWindow->GetWidth();
-            viewRect.h = renderWindow->GetHeight();
+            viewRect.w = target->GetWidth();
+            viewRect.h = target->GetHeight();
         }
 
         bgfx::setViewRect(mainView, viewRect.x, viewRect.y, viewRect.w, viewRect.h);
 
         viewportRect = viewRect;
+        */
     }
 
     void Renderer::SetAspectRatio(int aspect_w, int aspect_h, bool fixed, bool resetViewport)
@@ -461,33 +334,34 @@ namespace Ossium
         numLayersActive = numLayers;
     }
 
-    bgfx::ViewId Renderer::CreateView(SDL_Rect viewport)
+    void Renderer::AddInput(RenderInput* input)
     {
-        bgfx::ViewId created = viewPool->Create(
-            viewport,
-            frameBuffer,
-            "Renderer_" + Utilities::ToString(this) + "_RenderView"
-        );
-        views.push_back(created);
-        return created;
+        input->view = renderViewPool->Create(viewportRect, target, input->GetRenderDebugName());
+        inputs.push_back(input);
     }
 
-    void Renderer::FreeView(bgfx::ViewId id)
+    void Renderer::RemoveInput(RenderInput* input)
     {
-        for (unsigned int i = views.size(); i > 0; i--)
+        unsigned int i = 0;
+        unsigned int counti = inputs.size();
+        for (; i < counti; i++)
         {
-            if (views[i - 1] == id)
+            if (input == inputs[i])
             {
-                viewPool->Free(id);
+                // Shift down the render inputs chain
+                for (; i < counti - 1; i++)
+                {
+                    inputs[i] = inputs[i + 1];
+                }
+                inputs.pop_back();
+                renderViewPool->Free(input->view);
                 return;
             }
         }
-        Log.Warning("[Renderer] Failed to free RenderView as instance with id {0} does not exist.", id);
-    }
-
-    bgfx::ViewId Renderer::GetMainView()
-    {
-        return mainView;
+        Log.Error(
+            "Failed to locate RenderInput instance \"{0}\" in Renderer instance.",
+            input->GetRenderDebugName()
+        );
     }
 
     // GENERAL

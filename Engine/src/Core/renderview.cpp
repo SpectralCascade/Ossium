@@ -1,36 +1,39 @@
 #include "renderview.h"
+#include "logging.h"
+#include "rendertarget.h"
 
 namespace Ossium
 {
 
-    RenderView::RenderView(bgfx::ViewId id, SDL_Rect rect, bgfx::FrameBufferHandle target, std::string name)
+    RenderView::RenderView(RenderViewPool* pool, bgfx::ViewId id, SDL_Rect viewport, RenderTarget* target, std::string name)
     {
+        this->pool = pool;
         this->id = id;
         SetDebugName(name);
         SetRenderTarget(target);
-        SetRenderRect(rect);
+        SetViewport(viewport);
     }
 
-    void RenderView::SetRenderTarget(bgfx::FrameBufferHandle target)
+    void RenderView::SetRenderTarget(RenderTarget* target)
     {
         this->target = target;
-        bgfx::setViewFrameBuffer(id, target);
+        bgfx::setViewFrameBuffer(id, target->GetFrameBuffer());
     }
 
-    bgfx::FrameBufferHandle RenderView::GetRenderTarget()
+    RenderTarget* RenderView::GetRenderTarget()
     {
-        return target;        
+        return target;
     }
 
-    void RenderView::SetRenderRect(SDL_Rect rect)
+    void RenderView::SetViewport(SDL_Rect rect)
     {
-        this->rect = rect;
+        this->viewport = rect;
         bgfx::setViewRect(id, (uint16_t)rect.x, (uint16_t)rect.y, (uint16_t)rect.w, (uint16_t)rect.h);
     }
 
-    SDL_Rect RenderView::GetRenderRect()
+    SDL_Rect RenderView::GetViewport()
     {
-        return rect;
+        return viewport;
     }
 
     bgfx::ViewId RenderView::GetID()
@@ -49,57 +52,39 @@ namespace Ossium
         return name;
     }
 
-    RenderViewPool::RenderViewPool(size_t prealloc)
-    {
-        views.reserve(prealloc);
-    }
-
-    bgfx::ViewId RenderViewPool::Create(SDL_Rect rect, bgfx::FrameBufferHandle target, std::string name) {
-        if (head < views.size())
-        {
-            // Use head as id
-            views[head] = RenderView(head, rect, target, name);
-        }
-        else
-        {
-            views.push_back(RenderView(head, rect, target, name));
-        }
-        return head++;
+    RenderView* RenderViewPool::Create(SDL_Rect viewport, RenderTarget* target, std::string name) {
+        RenderView* created = new RenderView(this, views.size(), viewport, target, name);
+        views.push_back(created);
+        return created;
     }
 
     void RenderViewPool::Free(bgfx::ViewId id)
     {
-        if (id >= head)
+        DEBUG_ASSERT(id < views.size() && id >= 0, "RenderView id " + Utilities::ToString((int)id) + " out of range");
+        
+        // Destroy the view
+        delete views[id];
+        
+        // Shift pointers and ids down to maintain contiguous view order
+        for (unsigned int i = id, counti = views.size() - 1; i < counti; i++)
         {
-            throw ("RenderView id " + Utilities::ToString((int)id) + " out of range").c_str();
+            views[i] = views[i + 1];
+            // TODO refresh view?
+            views[i]->id = i;
         }
-        if (bgfx::isValid(views[id].GetRenderTarget()))
-        {
-            // Assume destruction of frame buffer target happens elsewhere
-            views[id].SetRenderTarget(BGFX_INVALID_HANDLE);
-        }
-        if (id == head - 1)
-        {
-            head--;
-            // Cycle back through unused ids; not smart but simple.
-            while (!ids.empty() && head - 1 == ids.top())
-            {
-                ids.pop();
-                head--;
-            }
-        }
-        else
-        {
-            ids.push(id);
-        }
+
+        // Remove the (now unused) last element
+        views.pop_back();
+    }
+
+    void RenderViewPool::Free(RenderView* view)
+    {
+        Free(view->id);
     }
     
-    RenderView& RenderViewPool::Get(bgfx::ViewId id)
+    RenderView* RenderViewPool::Get(bgfx::ViewId id)
     {
-        if (id >= head)
-        {
-            throw ("RenderView id " + Utilities::ToString((int)id) + " out of range").c_str();
-        }
+        DEBUG_ASSERT(id < views.size() && id >= 0, "RenderView id " + Utilities::ToString((int)id) + " out of range");
         return views[id];
     }
 
