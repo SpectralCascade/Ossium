@@ -117,12 +117,25 @@ namespace Ossium
         {
             // Always clear the render target view
             // TODO this may not be necessary
-            bgfx::setViewClear(
-                , // 0 is always the render target view
-                BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
-                ColorToUint32(bufferColour, SDL_PIXELFORMAT_ABGR8888) // TODO check this is correct
-            );
+            for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
+            {
+                bgfx::setViewClear(
+                    inputs[i]->renderView->GetID(),
+                    BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
+                    ColorToUint32(bufferColour, SDL_PIXELFORMAT_ABGR8888) // TODO check this is correct
+                );
+            }
         }
+        
+        // Render pipeline inputs
+        for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
+        {
+            if (inputs[i]->IsRenderEnabled())
+            {
+                inputs[i]->Render(target);
+            }
+        }
+
         for (int layer = 0; layer < numLayersActive; layer++)
         {
             for (auto i : registeredGraphics[layer])
@@ -336,7 +349,7 @@ namespace Ossium
 
     void Renderer::AddInput(RenderInput* input)
     {
-        input->view = renderViewPool->Create(viewportRect, target, input->GetRenderDebugName());
+        input->renderView = renderViewPool->Create(viewportRect, target, input->GetRenderDebugName());
         inputs.push_back(input);
     }
 
@@ -354,7 +367,8 @@ namespace Ossium
                     inputs[i] = inputs[i + 1];
                 }
                 inputs.pop_back();
-                renderViewPool->Free(input->view);
+                renderViewPool->Free(input->renderView);
+                input->renderView = nullptr;
                 return;
             }
         }

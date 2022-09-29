@@ -18,17 +18,21 @@ namespace Ossium
         friend class Renderer;
 
         // Should this input be rendered?
-        virtual bool IsRenderEnabled() { return true; }
+        virtual bool IsRenderEnabled();
 
         // Return the render debugging name for this input
         virtual std::string GetRenderDebugName() = 0;
+
+    protected:
+        // Return the associated render view
+        RenderView* GetRenderView();
 
     private:
         // Render the input to a target
         virtual void Render(RenderTarget* target) = 0;
 
-        // View to render with
-        RenderView* view = nullptr;
+        // View to render
+        RenderView* renderView = nullptr;
 
     };
 

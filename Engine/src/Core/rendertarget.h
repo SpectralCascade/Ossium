@@ -4,13 +4,12 @@
 #include "bgfx/bgfx.h"
 
 #include "callback.h"
-#include "renderinput.h"
 
 namespace Ossium
 {
     
     // Abstract class as the target for a renderer
-    class RenderTarget : RenderInput
+    class RenderTarget
     {
     public:
         // The passed framebuffer will be destroyed automatically when this instance is destroyed, if valid

@@ -29,6 +29,7 @@ extern "C"
 #include "colors.h"
 #include "helpermacros.h"
 #include "services.h"
+#include "renderinput.h"
 #include "renderview.h"
 #include "rendertarget.h"
 
