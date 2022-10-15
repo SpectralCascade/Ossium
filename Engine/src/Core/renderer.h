@@ -53,37 +53,13 @@ namespace Ossium
     // Wrapper class for SDL_Renderer - also supports layering
     class OSSIUM_EDL Renderer : public Service<Renderer>
     {
-    private:
-        // Attempt to initialise bgfx
-        bool InitBGFX();
-
     public:
         // Create a renderer.
         Renderer(RenderTarget* renderTarget, RenderViewPool* renderViewPool, int numLayers = 1);
         virtual ~Renderer();
 
-        // Registers a graphic for rendering. Note that you cannot change the layer or forceCull parameter once registered;
-        // to do so you must unregister the graphic and re-register it with the modified arguments. Returns the layer used.
-        int Register(Graphic* graphic, int layer = 0);
-        // Unregisters a graphic so it no longer renders.
-        void Unregister(Graphic* graphic, int layer = 0);
-
-        // Unregisters all graphics
-        void UnregisterAll();
-
-        // Clears the render queue
-        void ClearQueue();
-
-        // Enqueues a graphic to be rendered in the next frame only. Returns the layer used.
-        int Enqueue(Graphic* graphic, int layer = 0);
-
-        // Renders all registered and enqueued graphics in the current frame.
-        // Note that enqueued graphics are rendered last in each layer,
-        // so they appear on top of registered graphics if they overlap in the same layer.
-        // Set manualMode to true if you don't want to automatically clear the video buffer before drawing stuff
-        // and/or you wish to draw stuff after calling RenderPresent(). Note you will have to manually call
-        // SDL_RenderClear() and SDL_RenderPresent!
-        void RenderPresent(bool manualMode = false);
+        // Renders all RenderInput instances in the current frame.
+        void RenderPresent();
 
         // Sets the default rendering color.
         void SetDrawColor(SDL_Color color);
@@ -139,13 +115,6 @@ namespace Ossium
             If resetViewport == false, the viewport is not automatically reset.
         **/
         void SetAspectRatio(int aspect_w, int aspect_h, bool fixed = false, bool resetViewport = true);
-
-        // Renders a specific layer of graphics; renders everything if layer < 0
-        void RenderLayer(int layer = -1);
-
-        // This does what it says on the tin. Ideally, this will only be used when loading levels
-        // (if at all). Note that enqueued and registered graphics are removed and unregistered upon calling this method!
-        void ReallocateLayers(int numLayers);
 
         #ifdef OSSIUM_DEBUG
         // Returns the number of rendered graphics in the previous frame
@@ -204,20 +173,12 @@ namespace Ossium
         // The bgfx state to use for this renderer, defaults to BGFX_STATE_DEFAULT.
         uint64_t state = BGFX_STATE_DEFAULT;
 
-        /// Number of layers this renderer has
-        int numLayersActive;
-
         #ifdef OSSIUM_DEBUG
         /// Number of graphics rendered in the current frame
         int numRendered;
         /// Number of graphics rendered in the previous frame
         int numRenderedPrevious;
         #endif // DEBUG
-
-        /// Registered graphics
-        std::set<Graphic*>* registeredGraphics;
-        /// Graphics queued to be rendered for this frame only
-        std::queue<Graphic*>* queuedGraphics;
 
     };
 

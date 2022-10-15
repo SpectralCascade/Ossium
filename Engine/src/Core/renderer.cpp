@@ -22,6 +22,7 @@
 #include "window.h"
 #include "coremaths.h"
 #include "colors.h"
+#include "logging.h"
 
 using namespace std;
 
@@ -31,8 +32,8 @@ namespace Ossium
     Renderer::Renderer(RenderTarget* target, RenderViewPool* renderViewPool, int numLayers)
     {
 #ifdef OSSIUM_DEBUG
-        SDL_assert(target != NULL);
-        SDL_assert(renderViewPool != NULL);
+        DEBUG_ASSERT(target != NULL, "Render target must not be null.");
+        DEBUG_ASSERT(renderViewPool != NULL, "Render view pool must not be null.");
 #endif
         this->target = target;
         this->renderViewPool = renderViewPool;
@@ -40,91 +41,28 @@ namespace Ossium
         aspect_width = 0;
         aspect_height = 0;
         fixed_aspect = false;
-        numLayersActive = numLayers;
 
         viewportRect.x = 0;
         viewportRect.y = 0;
         viewportRect.w = target->GetWidth();
         viewportRect.h = target->GetHeight();
-
-        registeredGraphics = new set<Graphic*>[numLayers];
-        queuedGraphics = new queue<Graphic*>[numLayers];
     }
 
     Renderer::~Renderer()
     {
-        delete[] registeredGraphics;
-        delete[] queuedGraphics;
     }
 
-    int Renderer::Register(Graphic* graphic, int layer)
+    void Renderer::RenderPresent()
     {
-        int intendedLayer = layer;
-        layer = Clamp(layer, 0, numLayersActive);
-        if (layer != intendedLayer)
+        // Always clear the render target view
+        // TODO this may not be necessary
+        for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
         {
-            Log.Warning("[Renderer] Registered graphic on layer [{0}] because the intended layer [{1}] is out of bounds (max layer is [{2}]).", layer, intendedLayer, numLayersActive - 1);
-        }
-        registeredGraphics[layer].insert(graphic);
-        return layer;
-    }
-
-    void Renderer::Unregister(Graphic* graphic, int layer)
-    {
-        if (!(layer >= 0 && layer < numLayersActive))
-        {
-            Log.Error("[Renderer] Failed to unregister a graphic because the intended layer [{0}] is out of bounds (max layer is {1}).", layer, numLayersActive - 1);
-            return;
-        }
-        registeredGraphics[layer].erase(graphic);
-    }
-
-    void Renderer::UnregisterAll()
-    {
-        for (int i = 0; i < numLayersActive; i++)
-        {
-            registeredGraphics[i].clear();
-        }
-    }
-
-    void Renderer::ClearQueue()
-    {
-        for (int i = 0; i < numLayersActive; i++)
-        {
-            /// Queue created on stack
-            queue<Graphic*> emptyQueue;
-            /// Swap the data
-            swap(queuedGraphics[i], emptyQueue);
-            /// Swapped queue goes out of scope and memory is destroyed
-        }
-    }
-
-    int Renderer::Enqueue(Graphic* graphic, int layer)
-    {
-        int intendedLayer = layer;
-        layer = Clamp(layer, 0, numLayersActive);
-        if (layer != intendedLayer)
-        {
-            Log.Warning("[Renderer] Enqueued graphic on layer [{0}] because the intended layer [{1}] is out of bounds (max layer is [{2}]).", layer, intendedLayer, numLayersActive - 1);
-        }
-        queuedGraphics[layer].push(graphic);
-        return layer;
-    }
-
-    void Renderer::RenderPresent(bool manualMode)
-    {
-        if (!manualMode)
-        {
-            // Always clear the render target view
-            // TODO this may not be necessary
-            for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
-            {
-                bgfx::setViewClear(
-                    inputs[i]->renderView->GetID(),
-                    BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
-                    ColorToUint32(bufferColour, SDL_PIXELFORMAT_ABGR8888) // TODO check this is correct
-                );
-            }
+            bgfx::setViewClear(
+                inputs[i]->renderView->GetID(),
+                BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
+                ColorToUint32(bufferColour, SDL_PIXELFORMAT_ABGR8888) // TODO check this is correct
+            );
         }
         
         // Render pipeline inputs
@@ -132,34 +70,18 @@ namespace Ossium
         {
             if (inputs[i]->IsRenderEnabled())
             {
-                inputs[i]->Render(target);
+                inputs[i]->Render(this);
             }
         }
 
-        for (int layer = 0; layer < numLayersActive; layer++)
-        {
-            for (auto i : registeredGraphics[layer])
-            {
-                i->Render(*this);
-            }
-            for (int i = 0, counti = queuedGraphics[layer].empty() ? 0 : queuedGraphics[layer].size(); i < counti; i++)
-            {
-                (queuedGraphics[layer].front())->Render(*this);
-                queuedGraphics[layer].pop();
-                #ifdef OSSIUM_DEBUG
-                numRendered++;
-                #endif // DEBUG
-            }
-        }
         #ifdef OSSIUM_DEBUG
         numRenderedPrevious = numRendered;
         numRendered = 0;
         #endif // DEBUG
         SetDrawColor(bufferColour);
-        if (!manualMode)
-        {
-            bgfx::frame();
-        }
+
+        // Actually render everything
+        bgfx::frame();
     }
 
     void Renderer::SetDrawColor(SDL_Color color)
@@ -336,17 +258,6 @@ namespace Ossium
         }
     }
 
-    void Renderer::ReallocateLayers(int numLayers)
-    {
-        delete[] registeredGraphics;
-        delete[] queuedGraphics;
-
-        registeredGraphics = new set<Graphic*>[numLayers];
-        queuedGraphics = new queue<Graphic*>[numLayers];
-
-        numLayersActive = numLayers;
-    }
-
     void Renderer::AddInput(RenderInput* input)
     {
         input->renderView = renderViewPool->Create(viewportRect, target, input->GetRenderDebugName());
@@ -386,11 +297,6 @@ namespace Ossium
         return numRenderedPrevious;
     }
     #endif // DEBUG
-
-    int Renderer::GetNumLayers()
-    {
-        return numLayersActive;
-    }
 
     SDL_Color Renderer::GetBackgroundColor()
     {

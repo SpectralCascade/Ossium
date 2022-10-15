@@ -316,54 +316,8 @@ namespace Ossium
         {
             return bgfx::createFrameBuffer(GetNativeHandle(), (uint16_t)width, (uint16_t)height);
         }
-        bgfx::reset(width, height, backbufferFlags);
+        bgfx::reset((uint32_t)width, (uint32_t)height, backbufferFlags);
         return BGFX_INVALID_HANDLE;
     }
-
-/*
-    ///
-    /// WindowManager
-    ///
-
-    WindowManager::~WindowManager()
-    {
-        /// Remove all callbacks
-        for (auto i : windows)
-        {
-            /// Prevent invalid callbacks.
-            i.first->OnDestroyed -= i.second;
-        }
-    }
-
-    /// Creates a new window
-    Window* WindowManager::CreateWindow(const char* title, int w, int h, bool fullscrn, Uint32 flags)
-    {
-        Window* window = new Window(title, w, h, fullscrn, flags);
-        windows[window] = window->OnDestroyed += [this] (Window& w) { OnWindowDestroyed(w); };
-        return window;
-    }
-
-    Window* WindowManager::HandleEvent(SDL_Event& event)
-    {
-        for (auto window : windows)
-        {
-            if (window.first->HandleEvent(event) < 0)
-            {
-                return window.first;
-            }
-        }
-        return nullptr;
-    }
-
-    void WindowManager::OnWindowDestroyed(Window& window)
-    {
-        /// Remove the window reference and callback handle.
-        auto itr = windows.find(&window);
-        if (itr != windows.end())
-        {
-            windows.erase(itr);
-        }
-    }
-*/
 
 }

@@ -27,9 +27,12 @@ namespace Ossium
         // Return the associated render view
         RenderView* GetRenderView();
 
+        // Return the mode that determines draw call order, e.g. z-buffer depth or sequential rendering
+        virtual int GetViewMode() = 0;
+
     private:
-        // Render the input to a target
-        virtual void Render(RenderTarget* target) = 0;
+        // Render this RenderInput to a target
+        virtual void Render(Renderer* renderer) = 0;
 
         // View to render
         RenderView* renderView = nullptr;
@@ -37,6 +40,5 @@ namespace Ossium
     };
 
 }
-
 
 #endif // RENDERINPUT_H

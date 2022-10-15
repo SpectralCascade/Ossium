@@ -83,8 +83,6 @@ namespace Ossium
         // Update services after the main logic update.
         services->PostUpdate();
 
-        SDL_RenderClear(renderer->GetRendererSDL());
-
         for (auto itr : resources.GetAll<Scene>())
         {
             Scene* scene = (Scene*)itr.second;
@@ -107,8 +105,7 @@ namespace Ossium
         }
 
         // Render everything
-        renderer->RenderPresent(true);
-        SDL_RenderPresent(renderer->GetRendererSDL());
+        renderer->RenderPresent();
 
         // Destroy entities and components pending destruction.
         for (auto itr : resources.GetAll<Scene>())
