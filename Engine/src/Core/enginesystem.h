@@ -54,6 +54,9 @@ namespace Ossium
         /// Native window.
         Window* window = nullptr;
 
+        /// Pool of RenderView instances for the renderer to utilise
+        RenderViewPool* renderViewPool = nullptr;
+
         /// Main renderer associated with the window.
         Renderer* renderer = nullptr;
 

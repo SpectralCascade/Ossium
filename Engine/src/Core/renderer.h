@@ -36,7 +36,6 @@ extern "C"
 namespace Ossium
 {
     // Forward declarations
-
     class Renderer;
 
     // Anything that can be rendered should inherit from this interface and implement the Render method
@@ -46,7 +45,7 @@ namespace Ossium
         friend class Renderer;
 
     protected:
-        virtual void Render(Renderer& renderer) = 0;
+        virtual void Render(RenderInput* pass) = 0;
 
     };
 
@@ -55,7 +54,7 @@ namespace Ossium
     {
     public:
         // Create a renderer.
-        Renderer(RenderTarget* renderTarget, RenderViewPool* renderViewPool, int numLayers = 1);
+        Renderer(RenderTarget* renderTarget, RenderViewPool* renderViewPool);
         virtual ~Renderer();
 
         // Renders all RenderInput instances in the current frame.

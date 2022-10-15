@@ -681,32 +681,6 @@ namespace Ossium
         }
     }
 
-    void Scene::Render()
-    {
-        Renderer* renderer = GetService<Renderer>();
-        if (renderer != nullptr)
-        {
-            entityTree.WalkBreadth(
-                [&] (Node<Entity*>* node) {
-                    if (!node->data->IsActive())
-                    {
-                        return false;
-                    }
-                    vector<GraphicComponent*> graphics = node->data->GetComponents<GraphicComponent>();
-                    for (auto graphic : graphics)
-                    {
-                        if (graphic->IsEnabled())
-                        {
-                            // Only render active and enabled graphics
-                            graphic->Render(*renderer);
-                        }
-                    }
-                    return true;
-                }
-            );
-        }
-    }
-
     Entity* Scene::CreateEntity(Entity* parent)
     {
         Node<Entity*>* node = nullptr;

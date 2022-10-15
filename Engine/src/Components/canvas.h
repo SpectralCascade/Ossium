@@ -36,7 +36,7 @@ namespace Ossium
         int GetViewMode();
 
         // Render all child graphics
-        void Render(Renderer* renderer);
+        void Render();
         
     };
     

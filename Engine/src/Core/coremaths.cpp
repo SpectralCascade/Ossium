@@ -19,6 +19,7 @@
 #include "funcutils.h"
 #include "stringconvert.h"
 #include "coremaths.h"
+#include "shader.h"
 
 using namespace std;
 
@@ -296,15 +297,59 @@ namespace Ossium
         y = vec.y;
     }
 
-    void Point::Draw(Renderer& renderer)
+    void Point::Draw(RenderInput* pass)
     {
-        SDL_RenderDrawPoint(renderer.GetRendererSDL(), round(x), round(y));
+        Renderer* renderer = pass->GetRenderer();
+
+        // First, specify the layout of the data to pass to the GPU
+        bgfx::VertexLayout layout;
+        layout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+        .end();
+        
+        // Create the vertices
+        float vertices[1][4] = {
+            { round(x), round(y), 0.0f, (float)ColorToUint32(renderer->GetDrawColor(), SDL_PIXELFORMAT_ABGR8888) }
+        };
+        // Create index array
+        uint16_t indices[1] = { 0 };
+
+        // Draw points rather than triangles
+        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
+
+        // Create a VBO
+        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
+            bgfx::copy(&vertices, sizeof(vertices)),
+            layout
+        );
+
+        // Create an IBO
+        // TODO: check if this is necessary for points?
+        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
+
+        // Load the vertex and fragment shaders
+        // TODO load shaders elsewhere
+        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("v_default.bin"));
+        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("f_default.bin"));
+        bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
+
+        // Setup transform and projection matrix
+        Matrix<4, 4> view = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+
+        bgfx::setViewTransform(pass->GetID(), &view, &proj);
+        bgfx::setVertexBuffer(0, vbo);
+        bgfx::setIndexBuffer(ibo);
+
+        // Submit the draw call
+        bgfx::submit(pass->GetID(), program);
     }
 
-    void Point::Draw(Renderer& renderer, SDL_Color color)
+    void Point::Draw(RenderInput* pass, SDL_Color color)
     {
-        renderer.SetDrawColor(color);
-        Draw(renderer);
+        pass->GetRenderer()->SetDrawColor(color);
+        Draw(pass);
     }
 
     bool Point::Intersects(Circle circle)
@@ -359,22 +404,22 @@ namespace Ossium
     ///
 
     /// TODO: use a more efficient drawing algorithm
-    void Circle::Draw(Renderer& renderer, float smoothness)
+    void Circle::Draw(RenderInput* pass, float smoothness)
     {
         int segments = r * r * Utilities::Clamp(smoothness);
         for (int i = 0; i < segments; i++)
         {
-            SDL_RenderDrawLine(renderer.GetRendererSDL(),
-                               x + r * sin(((Constants::pi * 2) / segments) * i), y + r * cos(((Constants::pi * 2) / segments) * i),
-                               x + r * sin(((Constants::pi * 2) / segments) * (i + 1)), y + r * cos(((Constants::pi * 2) / segments) * (i + 1))
-            );
+            Line(
+                Point(x + r * sin(((Constants::pi * 2) / segments) * i), y + r * cos(((Constants::pi * 2) / segments) * i)),
+                Point(x + r * sin(((Constants::pi * 2) / segments) * (i + 1)), y + r * cos(((Constants::pi * 2) / segments) * (i + 1)))
+            ).Draw(pass);
         }
     }
 
-    void Circle::Draw(Renderer& renderer, SDL_Color color, float smoothness)
+    void Circle::Draw(RenderInput* pass, SDL_Color color, float smoothness)
     {
-        renderer.SetDrawColor(color);
-        Draw(renderer, smoothness);
+        pass->GetRenderer()->SetDrawColor(color);
+        Draw(pass, smoothness);
     }
 
     bool Circle::Intersects(Circle circle)
@@ -441,15 +486,65 @@ namespace Ossium
         b = end;
     }
 
-    void Line::Draw(Renderer& renderer)
+    void Line::Draw(RenderInput* pass)
     {
-        SDL_RenderDrawLine(renderer.GetRendererSDL(), round(a.x), round(a.y), round(b.x), round(b.y));
+        Renderer* renderer = pass->GetRenderer();
+
+        // First, specify the layout of the data to pass to the GPU
+        bgfx::VertexLayout layout;
+        layout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+        .end();
+        
+        // Create the vertices
+        float color0 = (float)ColorToUint32(renderer->GetDrawColor(), SDL_PIXELFORMAT_ABGR8888);
+        float vertices[2][4] = {
+            { round(a.x), round(a.y), 0.0f, color0 },
+            { round(b.x), round(b.y), 0.0f, color0 }
+        };
+        // Create index array
+        uint16_t indices[2] = { 0, 1 };
+
+        // Draw line rather than triangles or points
+        if (!(renderer->GetState() & BGFX_STATE_PT_LINES))
+        {
+            renderer->SetState(renderer->GetState() | BGFX_STATE_PT_LINES);
+        }
+        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
+
+        // Create a VBO
+        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
+            bgfx::copy(&vertices, sizeof(vertices)),
+            layout
+        );
+
+        // Create an IBO
+        // TODO: check if this is necessary for lines?
+        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
+
+        // Load the vertex and fragment shaders
+        // TODO load shaders elsewhere
+        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("v_default.bin"));
+        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("f_default.bin"));
+        bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
+
+        // Setup transform and projection matrix
+        Matrix<4, 4> view = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+
+        bgfx::setViewTransform(pass->GetID(), &view, &proj);
+        bgfx::setVertexBuffer(0, vbo);
+        bgfx::setIndexBuffer(ibo);
+
+        // Submit the draw call
+        bgfx::submit(pass->GetID(), program);
     }
 
-    void Line::Draw(Renderer& renderer, SDL_Color color)
+    void Line::Draw(RenderInput* pass, SDL_Color color)
     {
-        renderer.SetDrawColor(color);
-        Draw(renderer);
+        pass->GetRenderer()->SetDrawColor(color);
+        Draw(pass);
     }
 
     ///
@@ -484,28 +579,90 @@ namespace Ossium
         h = (float)rect.h;
     }
 
-    void Rect::DrawFilled(Renderer& renderer)
+    void Rect::DrawFilled(RenderInput* pass)
     {
-        SDL_Rect rect = SDL();
-        SDL_RenderFillRect(renderer.GetRendererSDL(), &rect);
+        Renderer* renderer = pass->GetRenderer();
+
+        // First, specify the layout of the data to pass to the GPU
+        bgfx::VertexLayout layout;
+        layout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+        .end();
+        
+        // Create the vertices
+        float color0 = (float)ColorToUint32(renderer->GetDrawColor(), SDL_PIXELFORMAT_ABGR8888);
+        float vertices[4][4] = {
+            { round(x), round(y), 0.0f, color0 },
+            { round(x + w), round(y), 0.0f, color0 },
+            { round(x + w), round(y + h), 0.0f, color0 },
+            { round(x), round(y + h), 0.0f, color0 }
+        };
+        // Create index array
+        uint16_t indices[] = {
+            0, 1, 2,
+            0, 2, 3
+        };
+
+        // Draw triangles
+        if (!(renderer->GetState() & (~BGFX_STATE_PT_MASK)))
+        {
+            renderer->SetState(renderer->GetState() | BGFX_STATE_PT_LINES);
+        }
+        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
+
+        // Create a VBO
+        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
+            bgfx::copy(&vertices, sizeof(vertices)),
+            layout
+        );
+
+        // Create an IBO
+        // TODO: check if this is necessary for lines?
+        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
+
+        // Load the vertex and fragment shaders
+        // TODO load shaders elsewhere
+        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("v_default.bin"));
+        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("f_default.bin"));
+        bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
+
+        // Setup transform and projection matrix
+        Matrix<4, 4> view = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+
+        bgfx::setViewTransform(pass->GetID(), &view, &proj);
+        bgfx::setVertexBuffer(0, vbo);
+        bgfx::setIndexBuffer(ibo);
+        
+        // Submit the draw call
+        bgfx::submit(pass->GetID(), program);
     }
 
-    void Rect::DrawFilled(Renderer& renderer, SDL_Color color)
+    void Rect::DrawFilled(RenderInput* pass, SDL_Color color)
     {
-        renderer.SetDrawColor(color);
-        DrawFilled(renderer);
+        pass->GetRenderer()->SetDrawColor(color);
+        DrawFilled(pass);
     }
 
-    void Rect::Draw(Renderer& renderer)
+    void Rect::Draw(RenderInput* pass)
     {
-        SDL_Rect rect = SDL();
-        SDL_RenderDrawRect(renderer.GetRendererSDL(), &rect);
+        Point vertices[4] = {
+            Point(round(x), round(y)),
+            Point(round(x + w), round(y)),
+            Point(round(x + w), round(y + h)),
+            Point(round(x), round(y + h))
+        };
+        for (unsigned int v = 0; v < 4; v++)
+        {
+            Line(vertices[v], vertices[v > 2 ? 0 : v + 1]).Draw(pass);
+        }
     }
 
-    void Rect::Draw(Renderer& renderer, SDL_Color color)
+    void Rect::Draw(RenderInput* pass, SDL_Color color)
     {
-        renderer.SetDrawColor(color);
-        Draw(renderer);
+        pass->GetRenderer()->SetDrawColor(color);
+        Draw(pass);
     }
 
     bool Rect::Intersects(Circle circle)
@@ -574,34 +731,37 @@ namespace Ossium
     /// Polygon
     ///
 
-    void Polygon::DrawFilled(Renderer& renderer)
+    void Polygon::DrawFilled(RenderInput* pass)
     {
         /// TODO: this
     }
 
-    void Polygon::DrawFilled(Renderer& renderer, SDL_Color color)
+    void Polygon::DrawFilled(RenderInput* pass, SDL_Color color)
     {
-        renderer.SetDrawColor(color);
-        DrawFilled(renderer);
+        pass->GetRenderer()->SetDrawColor(color);
+        DrawFilled(pass);
     }
 
-    void Polygon::Draw(Renderer& renderer, SDL_Color color)
+    void Polygon::Draw(RenderInput* pass, SDL_Color color)
     {
-        renderer.SetDrawColor(color);
-        Draw(renderer);
+        pass->GetRenderer()->SetDrawColor(color);
+        Draw(pass);
     }
 
-    void Polygon::Draw(Renderer& renderer)
+    void Polygon::Draw(RenderInput* pass)
     {
         if (!vertices.empty())
         {
             Point previousPoint = vertices[0];
+            Line renderLine = Line(previousPoint, Vector2::Zero);
             for (unsigned int i = 1, counti = vertices.size(); i < counti; i++)
             {
-                SDL_RenderDrawLine(renderer.GetRendererSDL(), (int)previousPoint.x, (int)previousPoint.y, (int)vertices[i].x, (int)vertices[i].y);
+                renderLine.b = Point(vertices[i].x, vertices[i].y);
+                renderLine.Draw(pass);
                 previousPoint = vertices[i];
             }
-            SDL_RenderDrawLine(renderer.GetRendererSDL(), (int)previousPoint.x, (int)previousPoint.y, (int)vertices[0].x, (int)vertices[0].y);
+            renderLine.b = Point(vertices[0].x, vertices[0].y);
+            renderLine.Draw(pass);
         }
     }
 

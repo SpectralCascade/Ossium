@@ -1,4 +1,5 @@
 #include "renderinput.h"
+#include "renderview.h"
 
 namespace Ossium
 {
@@ -11,6 +12,16 @@ namespace Ossium
     RenderView* RenderInput::GetRenderView()
     {
         return renderView;
+    }
+
+    Renderer* RenderInput::GetRenderer()
+    {
+        return renderer;
+    }
+
+    uint16_t RenderInput::GetID()
+    {
+        return renderView->GetID();
     }
 
 }

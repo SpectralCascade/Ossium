@@ -28,25 +28,29 @@ namespace Ossium
 
     int Canvas::GetViewMode()
     {
-        // TODO: Consider using Z-buffer (depth) instead for 2D GUI
+        // TODO: Consider using Z-buffer instead for 2D GUI
         return bgfx::ViewMode::Sequential;
     }
 
-    void Canvas::Render(Renderer* renderer)
+    void Canvas::Render()
     {
         Entity* root = GetEntity();
         root->GetScene()->WalkEntities([&] (Entity* child) {
+            
             bool result = child->IsActive() && !child->HasComponent<Canvas>();
             if (result)
             {
                 auto graphics = child->GetComponents<GraphicComponent>();
                 for (GraphicComponent* graphic : graphics)
                 {
-                    graphic->Render(*renderer);
+                    if (graphic->IsEnabled())
+                    {
+                        graphic->Render(this);
+                    }
                 }
             }
             return result;
-        }, false, root);
+        }, true, root);
     }
 
 }

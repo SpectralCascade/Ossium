@@ -140,7 +140,6 @@ namespace Ossium
         Vector3(const Matrix<3, 1>& matrix) : Matrix(matrix) {}
         Vector3(const Matrix<2, 1>& matrix) : Matrix(Matrix<3, 1>({{matrix.x, matrix.y, z}})) {}
         Vector3(const Vector2& vec) : Matrix(Matrix<3, 1>({{vec.x, vec.y, 0}})) {}
-        Vector3(const Matrix<4, 4>::Scale4x3& scale) : Matrix(Matrix<3, 1>({{scale.x, scale.y, scale.z}})) {}
         Vector3(const MatrixBase<3, 1>& matrix) : Matrix(Matrix<3, 1>(matrix)) {}
 
         Vector3 Cross(const Vector3& vec);
@@ -205,8 +204,8 @@ namespace Ossium
         Point(const Vector2& vec);
         Point(const Matrix<2, 1>& mat) : Point(Vector2(mat)) {}
 
-        void Draw(Renderer& renderer);
-        void Draw(Renderer& renderer, SDL_Color color);
+        void Draw(RenderInput* pass);
+        void Draw(RenderInput* pass, SDL_Color color);
 
         /// Whether or not this point is intersecting a circle
         bool Intersects(Circle circle);
@@ -227,8 +226,8 @@ namespace Ossium
         float y;
         float r;
 
-        void Draw(Renderer& renderer, float smoothness = 1.0f);
-        void Draw(Renderer& renderer, SDL_Color color, float smoothness = 1.0f);
+        void Draw(RenderInput* pass, float smoothness = 1.0f);
+        void Draw(RenderInput* pass, SDL_Color color, float smoothness = 1.0f);
 
         /// Whether or not this rect is intersecting a circle
         bool Intersects(Circle circle);
@@ -263,12 +262,13 @@ namespace Ossium
     {
         Line() = default;
         Line(Point start, Point end);
+        Line(float ax, float ay, float az, float bx, float by, float bz);
 
         Point a;
         Point b;
 
-        void Draw(Renderer& renderer);
-        void Draw(Renderer& renderer, SDL_Color color);
+        void Draw(RenderInput* pass);
+        void Draw(RenderInput* pass, SDL_Color color);
 
     };
 
@@ -285,11 +285,11 @@ namespace Ossium
         float w;
         float h;
 
-        void Draw(Renderer& renderer);
-        void Draw(Renderer& renderer, SDL_Color color);
+        void Draw(RenderInput* pass);
+        void Draw(RenderInput* pass, SDL_Color color);
 
-        void DrawFilled(Renderer& renderer);
-        void DrawFilled(Renderer& renderer, SDL_Color color);
+        void DrawFilled(RenderInput* pass);
+        void DrawFilled(RenderInput* pass, SDL_Color color);
 
         /// Whether or not this rect is intersecting a circle
         bool Intersects(Circle circle);
@@ -336,11 +336,11 @@ namespace Ossium
         Point b;
         Point c;
 
-        void Draw(Renderer& renderer);
-        void Draw(Renderer& renderer, SDL_Color color);
+        void Draw(RenderInput* pass);
+        void Draw(RenderInput* pass, SDL_Color color);
 
-        void DrawFilled(Renderer& renderer);
-        void DrawFilled(Renderer& renderer, SDL_Color color);
+        void DrawFilled(RenderInput* pass);
+        void DrawFilled(RenderInput* pass, SDL_Color color);
 
     };
 
@@ -348,13 +348,13 @@ namespace Ossium
     struct OSSIUM_EDL Polygon
     {
         /// Renders the edges of the polygon
-        void Draw(Renderer& renderer);
+        void Draw(RenderInput* pass);
 
         /// Renders the polygon in a solid color
-        void DrawFilled(Renderer& renderer);
+        void DrawFilled(RenderInput* pass);
 
-        void Draw(Renderer& renderer, SDL_Color color);
-        void DrawFilled(Renderer& renderer, SDL_Color color);
+        void Draw(RenderInput* pass, SDL_Color color);
+        void DrawFilled(RenderInput* pass, SDL_Color color);
 
         /// The vertices of the polygon
         std::vector<Point> vertices;

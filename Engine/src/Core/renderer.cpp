@@ -29,7 +29,7 @@ using namespace std;
 namespace Ossium
 {
 
-    Renderer::Renderer(RenderTarget* target, RenderViewPool* renderViewPool, int numLayers)
+    Renderer::Renderer(RenderTarget* target, RenderViewPool* renderViewPool)
     {
 #ifdef OSSIUM_DEBUG
         DEBUG_ASSERT(target != NULL, "Render target must not be null.");
@@ -70,7 +70,7 @@ namespace Ossium
         {
             if (inputs[i]->IsRenderEnabled())
             {
-                inputs[i]->Render(this);
+                inputs[i]->Render();
             }
         }
 
@@ -261,6 +261,7 @@ namespace Ossium
     void Renderer::AddInput(RenderInput* input)
     {
         input->renderView = renderViewPool->Create(viewportRect, target, input->GetRenderDebugName());
+        input->renderer = this;
         inputs.push_back(input);
     }
 
@@ -280,6 +281,7 @@ namespace Ossium
                 inputs.pop_back();
                 renderViewPool->Free(input->renderView);
                 input->renderView = nullptr;
+                input->renderer = nullptr;
                 return;
             }
         }

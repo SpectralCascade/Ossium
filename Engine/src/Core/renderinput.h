@@ -23,19 +23,30 @@ namespace Ossium
         // Return the render debugging name for this input
         virtual std::string GetRenderDebugName() = 0;
 
-    protected:
-        // Return the associated render view
-        RenderView* GetRenderView();
+        // Return the associated renderer
+        Renderer* GetRenderer();
 
+        // Return the associated ViewID for this input
+        uint16_t GetID();
+
+    protected:
         // Return the mode that determines draw call order, e.g. z-buffer depth or sequential rendering
         virtual int GetViewMode() = 0;
 
+        // Return the associated render view
+        RenderView* GetRenderView();
+
     private:
         // Render this RenderInput to a target
-        virtual void Render(Renderer* renderer) = 0;
+        virtual void Render() = 0;
 
         // View to render
+        // There may only be one view per RenderInput instance
         RenderView* renderView = nullptr;
+
+        // The associated renderer accepting this input
+        // There may only be one renderer per RenderInput instance
+        Renderer* renderer = nullptr;
 
     };
 

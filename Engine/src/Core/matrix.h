@@ -151,18 +151,6 @@ namespace Ossium
         // Nothing special constructor
         Matrix() = default;
 
-        // Create a matrix with a 2D array
-        Matrix(float init[Vectors][Dimensions])
-        {
-            for (unsigned int i = 0; i < Dimensions; i++)
-            {
-                for (unsigned int j = 0; j < Vectors; j++)
-                {
-                    Base::data[i][j] = 0;
-                }
-            }
-        }
-
         Matrix(const Base& init) : Base(init) {}
 
         // Create a matrix with an inline 2D array
@@ -360,6 +348,44 @@ namespace Ossium
             return !(*this == operand);
         }
 
+        // Identity matrix
+        inline static Matrix Identity()
+        {
+            Matrix<TotalDimensions, TotalVectors> mat;
+            for (unsigned int i = 0; i < TotalVectors; i++)
+            {
+                for (unsigned int dim = 0; dim < TotalDimensions; dim++)
+                {
+                    mat.data[i][dim] = (float)(i == dim);
+                }
+            }
+            return mat;
+        }
+
+        // Perspective projection matrix
+        inline static Matrix<4, 4> Perspective(float fov, float aspectRatio, float near, float far)
+        {
+            float invertTan = (1.0f / tan(fov / 2.0f));
+            float zscale = far / (far - near);
+            return {
+                {aspectRatio * invertTan, 0, 0, 0},
+                {0, invertTan, 0, 0},
+                {0, 0, zscale, 1},
+                {0, 0, -zscale * near, 0}
+            };
+        }
+
+        // Orthographic projection matrix
+        inline static Matrix<4, 4> Orthographic(float top, float bottom, float left, float right, float near, float far)
+        {
+            return {
+                {2.0f / (right - left), 0, 0, 0},
+                {0, 2.0f / (top - bottom), 0, 0},
+                {0, 0, -2.0f / (far - near), 0},
+                {(left + right) / 2.0f, (top + bottom) / 2.0f, -((far + near) / 2.0f), 1}
+            };
+        }
+
         // Generate a string representation of this matrix
         std::string ToString()
         {
@@ -422,53 +448,6 @@ namespace Ossium
     Matrix<Dimensions, Vectors> operator*(float scalar, Matrix<Dimensions, Vectors> mat) {
         return mat * scalar;
     }
-
-    // 4x4 matrix union allows easy access to individual components of a 4x4 matrix
-    template<unsigned int Dimensions, unsigned int Vectors>
-    struct MatrixBase<Dimensions, Vectors, std::enable_if_t<Dimensions == 4 && Vectors == 4>>
-    {
-        // Helper struct for ease of use when dealing with 4x4 transform matrices
-        struct Scale4x3 {
-            Scale4x3() = default;
-            Scale4x3(Matrix<3, 1> vec) : x(vec.x), y(vec.y), z(vec.z) {}
-            Scale4x3(Matrix<2, 1> vec) : x(vec.x), y(vec.y), z(1) {}
-
-            public: float x;
-            private: float _a[4];
-            public: float y;
-            private: float _b[4];
-            public: float z;
-            private: float _c;
-
-        public:
-            inline void operator+=(const Matrix<3, 1>& operand) {
-                x += operand.x;
-                y += operand.y;
-                z += operand.z;
-            }
-
-            inline void operator-=(const Matrix<3, 1>& operand) {
-                x -= operand.x;
-                y -= operand.y;
-                z -= operand.z;
-            }
-        };
-
-        union {
-            struct {
-                union {
-                    MatrixBase<4, 3> rotation;
-                    Scale4x3 scale;
-                };
-                MatrixBase<3, 1> position;
-                float w;
-            };
-
-            // The underlying data, in row-major order (for contiguous memory layout).
-            float data[Vectors][Dimensions];
-        };
-
-    };
 
 }
 

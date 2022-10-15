@@ -36,7 +36,7 @@ namespace Ossium
     class Image;
 
     /// Wrapper class for SDL_Window
-    class OSSIUM_EDL Window : WindowTarget
+    class OSSIUM_EDL Window : public WindowTarget
     {
     public:
         Window(

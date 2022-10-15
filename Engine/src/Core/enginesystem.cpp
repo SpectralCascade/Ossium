@@ -25,7 +25,8 @@ namespace Ossium
     EngineSystem::EngineSystem(const Config& config)
     {
         window = new Window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags);
-        renderer = new Renderer(window, config.totalRenderLayers, -1, true);
+        renderViewPool = new RenderViewPool();
+        renderer = new Renderer(window, renderViewPool);
         input = new InputController();
         services = new ServicesProvider(renderer, &resources, input);
         Init(config);
@@ -36,6 +37,7 @@ namespace Ossium
         delete services;
         delete input;
         delete renderer;
+        delete renderViewPool;
         delete window;
     }
 
@@ -99,9 +101,6 @@ namespace Ossium
                 }
                 return false;
             });
-
-            // Finally, render the scene.
-            scene->Render();
         }
 
         // Render everything
