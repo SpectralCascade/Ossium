@@ -20,6 +20,9 @@ extern "C"
 }
 
 #include "image.h"
+#include "coremaths.h"
+#include "colors.h"
+#include "shader.h"
 
 using namespace std;
 
@@ -32,6 +35,12 @@ namespace Ossium
     {
         PopGPU();
         FreeSurface();
+        if (shaderProgram.idx != bgfx::kInvalidHandle)
+        {
+            bgfx::destroy(shaderProgram);
+            bgfx::destroy(shaderVertex);
+            bgfx::destroy(shaderFrag);
+        }
     }
 
     void Image::FreeSurface()
@@ -41,6 +50,7 @@ namespace Ossium
             SDL_FreeSurface(tempSurface);
             tempSurface = NULL;
         }
+        format = SDL_PIXELFORMAT_UNKNOWN;
     }
 
     bool Image::Load(string guid_path)
@@ -62,44 +72,58 @@ namespace Ossium
         else
         {
             pathname = guid_path;
+            format = SDL_MasksToPixelFormatEnum(
+                tempSurface->format->BitsPerPixel,
+                tempSurface->format->Rmask,
+                tempSurface->format->Gmask,
+                tempSurface->format->Bmask,
+                tempSurface->format->Amask
+            );
+            // Use this format by default
+            SetSurfaceFormat(SDL_PIXELFORMAT_RGBA32);
         }
+        
+        // Load shaders
+        shaderVertex = LoadShader(GetShaderPath("v_image.bin"));
+        shaderFrag = LoadShader(GetShaderPath("f_image.bin"));
+        shaderProgram = bgfx::createProgram(shaderVertex, shaderFrag, false);
+
         return tempSurface != NULL;
     }
 
-    SDL_Surface* Image::CreateEmptySurface(int w, int h, Uint32 pixelFormat, SDL_Color color)
+    SDL_Surface* Image::CreateEmptySurface(int w, int h, SDL_Color color)
     {
-        if (pixelFormat == SDL_PIXELFORMAT_UNKNOWN)
-        {
-            // Default to this, it's fairly likely to be what the caller really wants.
-            pixelFormat = SDL_PIXELFORMAT_ARGB8888;
-        }
-        SDL_Surface* emptySurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, pixelFormat);
+        auto format = SDL_PIXELFORMAT_RGBA32;
+        SDL_Surface* emptySurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format);
         if (emptySurface != NULL && color != Colors::TRANSPARENT)
         {
             SDL_Rect rect = {0, 0, w, h};
-            SDL_PixelFormat* format = SDL_AllocFormat(pixelFormat);
-            if (format != NULL)
+            SDL_PixelFormat* allocatedFormat = SDL_AllocFormat(format);
+            if (allocatedFormat != NULL)
             {
-                SDL_FillRect(emptySurface, &rect, SDL_MapRGBA(format, color.r, color.g, color.b, color.a));
-                SDL_FreeFormat(format);
+                SDL_FillRect(
+                    emptySurface,
+                    &rect,
+                    SDL_MapRGBA(allocatedFormat, color.r, color.g, color.b, color.a)
+                );
+                SDL_FreeFormat(allocatedFormat);
             }
         }
         return emptySurface;
     }
 
-    void Image::SetSurface(SDL_Surface* loadedSurface, Uint32 pixelFormat)
+    void Image::SetSurface(SDL_Surface* loadedSurface)
     {
         FreeSurface();
         tempSurface = loadedSurface;
-        if (pixelFormat != SDL_PIXELFORMAT_UNKNOWN)
-        {
-            SetSurfaceFormat(pixelFormat);
-            format = pixelFormat;
-        }
-        else
-        {
-            SetSurfaceFormat(format);
-        }
+        format = SDL_MasksToPixelFormatEnum(
+            tempSurface->format->BitsPerPixel,
+            tempSurface->format->Rmask,
+            tempSurface->format->Gmask,
+            tempSurface->format->Bmask,
+            tempSurface->format->Amask
+        );
+        SetSurfaceFormat(SDL_PIXELFORMAT_RGBA32);
     }
 
     void Image::SetSurfaceFormat(Uint32 pixelFormat)
@@ -129,36 +153,31 @@ namespace Ossium
         }
     }
 
-    Uint32 Image::GetSurfacePixelFormat()
+    Uint32 Image::GetPixelFormat()
     {
         return format;
     }
 
-    Uint32 Image::GetTexturePixelFormat()
-    {
-        return textureFormat;
-    }
-
-    bool Image::Init(Renderer& renderer, Uint32 pixelFormatting, int accessMode)
+    bool Image::Init(Uint64 flags)
     {
         PopGPU();
-        bool success = PushGPU(renderer, accessMode) != NULL;
+        bool success = PushGPU(flags).idx != bgfx::kInvalidHandle;
         FreeSurface();
         return success;
     }
 
-    bool Image::LoadAndInit(string guid_path, Renderer& renderer, Uint32 pixelFormatting, int accessMode)
+    bool Image::LoadAndInit(string guid_path, Uint64 flags)
     {
-        return Load(guid_path) && Init(renderer, pixelFormatting, accessMode);
+        return Load(guid_path) && Init(flags);
     }
 
     bool Image::Initialised()
     {
-        return texture != NULL;
+        return texture.idx != bgfx::kInvalidHandle;
     }
 
     void Image::Render(
-        SDL_Renderer* renderer,
+        RenderInput* pass,
         SDL_Rect dest,
         SDL_Rect* clip,
         SDL_Point* origin,
@@ -167,36 +186,88 @@ namespace Ossium
         SDL_BlendMode blending,
         SDL_RendererFlip flip)
     {
-        if (texture == NULL)
+        if (texture.idx == bgfx::kInvalidHandle)
         {
-            SDL_SetRenderDrawColor(renderer, 255, 100, 255, 255);
-            SDL_RenderFillRect(renderer, &dest);
+            // Draw error
+            // TODO draw a tiled error texture?
+            Rect(dest).DrawFilled(pass, Color(255, 100, 255, 255));
             return;
         }
 
-        SDL_SetTextureBlendMode(texture, blending);
-        SDL_SetTextureColorMod(texture, modulation.r, modulation.g, modulation.b);
-        SDL_SetTextureAlphaMod(texture, modulation.a);
+        // TODO setup these texture effects
+        //SDL_SetTextureBlendMode(texture, blending);
+        //SDL_SetTextureColorMod(texture, modulation.r, modulation.g, modulation.b);
+        //SDL_SetTextureAlphaMod(texture, modulation.a);
 
-        /// Rendering time!
+        Renderer* renderer = pass->GetRenderer();
+
+        // First, specify the layout of the data to pass to the GPU
+        bgfx::VertexLayout layout;
+        layout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+        .end();
+        
+        // Create the quad vertices
+        float xflip = (float)((bool)(flip & SDL_FLIP_HORIZONTAL));
+        float yflip = (float)((bool)(flip & SDL_FLIP_VERTICAL));
+        float vertices[4][5] = {
+            { dest.x, dest.y, 0.0f, xflip, yflip },
+            { dest.x + dest.w, dest.y, 0.0f, !xflip, yflip },
+            { dest.x + dest.w, dest.y + dest.h, 0.0f, !xflip, !yflip },
+            { dest.x, dest.y + dest.h, 0.0f, xflip, !yflip }
+        };
+
         if (clip && clip->w > 0 && clip->h > 0)
         {
-            SDL_RenderCopyEx(renderer, texture, clip, &dest, rotation, origin, flip);
+            // Modify UV coords to implement texture clipping
+            for (unsigned int i = 0, counti = 4; i < counti; i++)
+            {
+                vertices[i][3] = ((widthGPU - clip->x) / widthGPU) + (clip->w / widthGPU) * vertices[i][3];
+                vertices[i][4] = ((heightGPU - clip->y) / heightGPU) + (clip->h / heightGPU) * vertices[i][4];
+            }
         }
-        else
-        {
-            SDL_RenderCopyEx(renderer, texture, NULL, &dest, rotation, origin, flip);
-        }
+
+        // Create index array (quad formed of two triangles)
+        uint16_t indices[] = {
+            0, 1, 2, 
+            0, 2, 3
+        };
+
+        // Draw points rather than triangles
+        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
+
+        // Create a VBO
+        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
+            bgfx::copy(&vertices, sizeof(vertices)),
+            layout
+        );
+
+        // Create an IBO
+        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
+
+        // Setup transform and projection matrix
+        Matrix<4, 4> view = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+
+        bgfx::setViewTransform(pass->GetID(), &view, &proj);
+        bgfx::setVertexBuffer(0, vbo);
+        bgfx::setIndexBuffer(ibo);
+        // Set the first (and only) uniform - stage 0 - to the created sampler
+        bgfx::setTexture(0, uniform, texture);
+
+        // Submit the draw call
+        bgfx::submit(pass->GetID(), shaderProgram);
     }
 
     int Image::GetWidth()
     {
-        return GetTexture() != NULL ? GetWidthGPU() : GetWidthSurface();
+        return GetTexture().idx != bgfx::kInvalidHandle ? GetWidthGPU() : GetWidthSurface();
     }
 
     int Image::GetHeight()
     {
-        return GetTexture() != NULL ? GetHeightGPU() : GetHeightSurface();
+        return GetTexture().idx != bgfx::kInvalidHandle ? GetHeightGPU() : GetHeightSurface();
     }
 
     int Image::GetWidthGPU()
@@ -224,7 +295,7 @@ namespace Ossium
         return pathname;
     }
 
-    SDL_Texture* Image::GetTexture()
+    bgfx::TextureHandle Image::GetTexture()
     {
         return texture;
     }
@@ -234,117 +305,66 @@ namespace Ossium
         return tempSurface;
     }
 
-    SDL_Texture* Image::PushGPU(Renderer& renderer, int accessMode)
+    bgfx::TextureHandle Image::PushGPU(Uint64 flags)
     {
         // Free GPU memory if in use
         PopGPU();
 
-        // Set the access mode
-        access = accessMode;
+        // Set the texture flags
+        this->flags = flags;
 
         if (tempSurface == NULL)
         {
             Log.Error("No surface loaded, cannot copy to GPU memory!");
-        }
-        else if (accessMode != SDL_TEXTUREACCESS_STATIC)
-        {
-            texture = SDL_CreateTexture(renderer.GetRendererSDL(), format, accessMode, tempSurface->w, tempSurface->h);
-            if (texture == NULL)
-            {
-                Log.Error("Failed to create GPU texture from surface! SDL_Error: {0}", SDL_GetError());
-            }
-            else if (accessMode == SDL_TEXTUREACCESS_STREAMING)
-            {
-                // Copy surface pixels to texture
-                SDL_LockTexture(texture, NULL, &pixels, &pitch);
-                memcpy(pixels, tempSurface->pixels, tempSurface->pitch * tempSurface->h);
-                SDL_UnlockTexture(texture);
-            }
-            pixels = NULL;
-            textureFormat = format;
-            widthGPU = tempSurface->w;
-            heightGPU = tempSurface->h;
+            texture = BGFX_INVALID_HANDLE;
         }
         else
         {
-            texture = SDL_CreateTextureFromSurface(renderer.GetRendererSDL(), tempSurface);
-            if (texture == NULL)
+            texture = bgfx::createTexture2D(
+                tempSurface->w,
+                tempSurface->h,
+                false,
+                1,
+                bgfx::TextureFormat::RGBA8,
+                flags,
+                bgfx::makeRef(tempSurface->pixels, tempSurface->pitch * tempSurface->h)
+            );
+            if (texture.idx == bgfx::kInvalidHandle)
             {
-                Log.Error("Failed to create Image from surface! SDL_Error: {0}", SDL_GetError());
+                Log.Error("Failed to create GPU texture from surface! Unknown BGFX error.");
+                widthGPU = 0;
+                heightGPU = 0;
             }
             else
             {
                 widthGPU = tempSurface->w;
                 heightGPU = tempSurface->h;
+                uniform = bgfx::createUniform("tex0", bgfx::UniformType::Sampler);
             }
         }
-        // In error case, reset access mode
-        if (texture == NULL)
-        {
-            access = -1;
-        }
+        
         return texture;
     }
 
     void Image::PopGPU()
     {
-        if (pixels != NULL)
+        if (texture.idx != bgfx::kInvalidHandle)
         {
-            UnlockPixels();
+            bgfx::destroy(texture);
+            texture = BGFX_INVALID_HANDLE;
         }
-        if (texture != NULL)
+        if (uniform.idx != bgfx::kInvalidHandle)
         {
-            SDL_DestroyTexture(texture);
-            texture = NULL;
+            bgfx::destroy(uniform);
+            uniform = BGFX_INVALID_HANDLE;
         }
-        textureFormat = SDL_PIXELFORMAT_UNKNOWN;
-        access = -1;
         widthGPU = 0;
         heightGPU = 0;
     }
 
-    void* Image::GetPixels()
+    Uint64 Image::GetTextureFlags()
     {
-        return pixels;
-    }
-
-    int Image::GetPitch()
-    {
-        return pitch;
-    }
-
-    int Image::GetTextureAccessMode()
-    {
-        return access;
-    }
-
-    bool Image::LockPixels()
-    {
-        if (texture == NULL)
-        {
-            return false;
-        }
-        else if (pixels == NULL && SDL_LockTexture(texture, NULL, &pixels, &pitch) != 0)
-        {
-            Log.Error("Failed to lock GPU texture! {0}", SDL_GetError());
-            return false;
-        }
-        return true;
-    }
-
-    bool Image::UnlockPixels()
-    {
-        if (texture == NULL)
-        {
-            return false;
-        }
-        else if (pixels != NULL)
-        {
-            SDL_UnlockTexture(texture);
-            pixels = NULL;
-            pitch = 0;
-        }
-        return true;
+        return flags;
     }
 
 }

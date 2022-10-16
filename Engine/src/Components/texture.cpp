@@ -16,6 +16,7 @@
 **/
 #include <memory>
 #include <string>
+#include "bgfx/bgfx.h"
 
 #include "texture.h"
 #include "UI/BoxLayout.h"
@@ -28,13 +29,15 @@ namespace Ossium
 
     REGISTER_COMPONENT(Texture);
 
-    void Texture::Render(Renderer& renderer)
+    void Texture::Render(RenderInput* pass)
     {
         if (width <= 0 || height <= 0 || (!IsEnabled() && source != nullptr))
         {
             // Early out
             return;
         }
+
+        Renderer* renderer = pass->GetRenderer();
 
         Transform* trans = GetTransform();
 
@@ -90,10 +93,10 @@ namespace Ossium
         Vector2 worldPos = trans->GetWorldPosition();
         Vector2 worldScale = trans->GetLocalScale();
         SDL_Rect dest = GetSDL(worldPos, worldScale);
-        if (source == nullptr || source->GetTexture() == NULL)
+        if (source == nullptr || source->GetTexture().idx == bgfx::kInvalidHandle)
         {
-            SDL_SetRenderDrawColor(renderer.GetRendererSDL(), 255, 100, 255, 255);
-            SDL_RenderFillRect(renderer.GetRendererSDL(), &dest);
+            renderer->SetDrawColor(255, 100, 255, 255);
+            Rect(dest).DrawFilled(pass);
             return;
         }
 
@@ -197,7 +200,7 @@ namespace Ossium
 
                         SDL_Rect finalClip = { clip.x + slices[i].x, clip.y + slices[i].y, slices[i].w, slices[i].h };
                         source->Render(
-                            renderer.GetRendererSDL(),
+                            pass,
                             sliceDest,
                             &finalClip,
                             &trueOrigin,
@@ -212,7 +215,7 @@ namespace Ossium
             else
             {
                 source->Render(
-                    renderer.GetRendererSDL(),
+                    pass,
                     dest,
                     &srcClip,
                     &trueOrigin,
@@ -260,7 +263,7 @@ namespace Ossium
 
                     // Render a tile
                     source->Render(
-                        renderer.GetRendererSDL(),
+                        pass,
                         dest,
                         &trueClip,
                         &converted,
@@ -283,7 +286,7 @@ namespace Ossium
         }
         /// Don't configure dimensions unless the width and height are zero, they should be specified by the schema data.
         SetSource(
-            GetService<ResourceController>()->Get<Image>(imgPath, *GetService<Renderer>()),
+            GetService<ResourceController>()->Get<Image>(imgPath),
             width == 0 || height == 0
         );
         /// Set clip to fit loaded image

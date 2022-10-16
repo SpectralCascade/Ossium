@@ -183,7 +183,12 @@ namespace Ossium::Editor
 
     Font* EditorController::GetFont()
     {
-        return resources->Get<Font>("assets/Orkney Regular.ttf", 12);
+        return resources->Get<Font>(
+            "assets/Orkney Regular.ttf",
+            12,
+            // TODO provide valid renderer!
+            nullptr
+        );
     }
 
     Project* EditorController::GetProject()

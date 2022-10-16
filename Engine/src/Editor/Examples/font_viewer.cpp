@@ -49,7 +49,7 @@ namespace Ossium::Editor
 
         Space(5);
 
-        Font* font = resources->Get<Font>(currentFontPath, EditorStyle::StandardText.ptsize);
+        Font* font = resources->Get<Font>(currentFontPath, EditorStyle::StandardText.ptsize, renderer);
         if (font != nullptr)
         {
             font->Render(*renderer, Rect(0, GetLayoutPosition().y, scale * min((float)viewport.w, (float)font->GetAtlasSize()), scale * min((float)viewport.h, (float)font->GetAtlasSize())).SDL(), NULL, color);

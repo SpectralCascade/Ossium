@@ -73,10 +73,10 @@ namespace Ossium
         Uint32 GetDrawColorUint32();
 
         // Set the bgfx state for this renderer
-        void SetState(uint64_t state);
+        void SetState(Uint64 state);
 
         // Returns the bgfx state for this renderer
-        uint64_t GetState();
+        Uint64 GetState();
 
         // Updates the bgfx state and draw colour.
         void UpdateStateAndColor();
@@ -170,7 +170,7 @@ namespace Ossium
         SDL_Color drawColour = Colors::WHITE;
 
         // The bgfx state to use for this renderer, defaults to BGFX_STATE_DEFAULT.
-        uint64_t state = BGFX_STATE_DEFAULT;
+        Uint64 state = BGFX_STATE_DEFAULT;
 
         #ifdef OSSIUM_DEBUG
         /// Number of graphics rendered in the current frame

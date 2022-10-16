@@ -104,12 +104,12 @@ namespace Ossium
         return ColorToUint32(drawColour, SDL_PIXELFORMAT_ABGR8888);
     }
 
-    void Renderer::SetState(uint64_t state)
+    void Renderer::SetState(Uint64 state)
     {
         this->state = state;
     }
 
-    uint64_t Renderer::GetState()
+    Uint64 Renderer::GetState()
     {
         return state;
     }

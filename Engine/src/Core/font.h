@@ -161,6 +161,18 @@ namespace Ossium
         Uint32 cp;
     };
 
+    // This is only separate to Font due to Resource class being only allowed base class
+    class FontRenderInput : public RenderInput
+    {
+    public:
+        // Return the name of this font for graphics debugging purposes
+        std::string GetRenderDebugName();
+
+        // RenderInput override
+        void Render();
+
+    };
+
     class OSSIUM_EDL Font : public Resource
     {
     public:
@@ -176,10 +188,10 @@ namespace Ossium
 
         /// Loads a TrueType Font at the specified point size. Lower point sizes are rendered by downscaling this point size with mip maps.
         bool Load(std::string guid_path, int maxPointSize = 96);
-        bool LoadAndInit(std::string guid_path, int maxPointSize, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        bool LoadAndInit(std::string guid_path, int maxPointSize, Renderer* renderer, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0);
 
         /// Takes a target size for the atlas texture, as well as how much padding there should be per glyph. If mipDepth == 0, automatically computes the mipmap depth based on a minimum point size of 8 points.
-        bool Init(std::string guid_path, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0, Uint32 pixelFormat = SDL_PIXELFORMAT_ARGB8888);
+        bool Init(std::string guid_path, Renderer* renderer, Uint32 glyphCacheLimit = 0, int mipDepth = 0, Uint32 targetTextureSize = 0);
 
         /// Renders with a text string from a TrueType font to a single surface on the fly.
         /**
@@ -213,12 +225,11 @@ namespace Ossium
         Uint32 GetBatchPackTotal();
 
         /// Renders the font atlas texture at a given point size.
-        void Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void Render(SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Renders a single glyph at the chosen position. Returns true if the glyph is valid and rendered successfully, otherwise renders an invalid glyph box and returns false.
         /// TODO: provide alternate method to render the invalid glyph box
         bool RenderGlyph(
-            Renderer& renderer,
             GlyphID id,
             Vector2 position,
             float pointSize,
@@ -325,8 +336,7 @@ namespace Ossium
         Uint32 BatchPackGlyph(GlyphID id, Glyph* glyph);
 
         /// Copying is not permitted.
-        Font(const Font& thisCopy);
-        Font operator=(const Font& thisCopy);
+        NOCOPY(Font);
 
         /// Path to the font so it can be reloaded if necessary
         std::string path;
@@ -403,8 +413,8 @@ namespace Ossium
         /// The number of glyphs that have been batched so far. This is reset to zero when BatchPackBegin() or BatchPackEnd() are called.
         Uint32 batched = 0;
 
-        /// The renderer that is currently associated with the font atlas.
-        Renderer* currentRenderer = nullptr;
+        // RenderInput instance for creating the atlas
+        FontRenderInput pass;
 
     };
 

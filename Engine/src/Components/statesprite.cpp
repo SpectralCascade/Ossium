@@ -72,7 +72,7 @@ namespace Ossium
             {
                 if (data[i] == ',')
                 {
-                    Image* loadedImage = resources->Get<Image>(valueStr, *renderer);
+                    Image* loadedImage = resources->Get<Image>(valueStr);
                     value.first = loadedImage;
                 }
                 else

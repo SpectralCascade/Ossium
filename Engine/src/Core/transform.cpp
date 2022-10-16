@@ -72,7 +72,8 @@ namespace Ossium
         {
             return position;
         }
-        return GetMatrix().position;
+        auto mat = GetMatrix();
+        return Vector3(mat(3, 0), mat(3, 1), mat(3, 2));
     }
 
     void Transform::SetWorldPosition(Vector3 p)
@@ -90,11 +91,15 @@ namespace Ossium
             if (parentT != nullptr && IsDirty())
             {
                 // Build cache from local transform data and parent transform
-                cache = {{scale.x, 0, 0, 0}, {0, scale.y, 0, 0}, {0, 0, scale.z, 0}, {0, 0, 0, 1}};
-                Matrix<4, 4> translation = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-                translation.position = position;
-                cache = (relative ? parentT->GetMatrix() : (Matrix<4, 4>){{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}) 
-                    * (translation * (rotation * cache));
+                cache = {
+                    {scale.x, 0, 0, 0}, {0, scale.y, 0, 0}, {0, 0, scale.z, 0}, {0, 0, 0, 1}
+                };
+                Matrix<4, 4> translation = {
+                    {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {position.x, position.y, position.z, 1}
+                };
+                cache = (relative ? parentT->GetMatrix() : (Matrix<4, 4>){
+                    {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}
+                }) * (translation * (rotation * cache));
 
                 dirty = false;
             }

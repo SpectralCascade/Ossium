@@ -145,7 +145,7 @@ namespace Ossium
         CONSTRUCT_SCHEMA(SchemaRoot, TextLayoutSchema);
 
         /// Renders the text in the current layout.
-        void Render(Renderer& renderer, Font& font, Vector2 startPos);
+        void Render(RenderInput* pass, Font& font, Vector2 startPos);
 
         /// Sets the bounding box. Note that this method triggers computation of layout on the next Update() or Render() method call.
         void SetBounds(Vector2 bounds);
@@ -162,7 +162,7 @@ namespace Ossium
             Alternatively, you can disable these features entirely by passing 'false' as the applyMarkup argument.
             Also takes natural line break characters (ASCII only) that are used for line wrapping without breaking words.
         */
-        void SetText(Renderer& renderer, Font& font, std::string str, bool applyMarkup);
+        void SetText(Font& font, std::string str, bool applyMarkup);
 
         /// Recomputes layout if any changes have been made. This must be called before rendering or glyph location.
         void Update(Font& font);
@@ -221,7 +221,7 @@ namespace Ossium
 
         /// Computes the text layout and batch packs as many glyphs from the text string as possible.
         // Other common line break characters may include '/', '!', '?' and '|'. By default only white space is broken.
-        void ComputeLayout(Renderer& renderer, Font& font, std::string& text, bool applyMarkup, std::string lineBreakCharacters = " ");
+        void ComputeLayout(Font& font, std::string& text, bool applyMarkup, std::string lineBreakCharacters = " ");
 
         /// Computes the text layout using the pre-existing glyphs array. Useful when the bounds change.
         void ComputeLayout(TextLine& startLine, std::string lineBreakCharacters = " ");

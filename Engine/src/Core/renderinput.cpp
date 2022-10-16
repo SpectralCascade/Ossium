@@ -24,4 +24,9 @@ namespace Ossium
         return renderView->GetID();
     }
 
+    int RenderInput::GetViewMode()
+    {
+        return bgfx::ViewMode::Default;
+    }
+
 }

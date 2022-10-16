@@ -28,7 +28,7 @@ namespace Ossium
     // TextLayout
     //
 
-    void TextLayout::Render(Renderer& renderer, Font& font, Vector2 startPos)
+    void TextLayout::Render(RenderInput* pass, Font& font, Vector2 startPos)
     {
         GlyphGroup& currentGroup = groups.front();
         GlyphGroup& previousGroup = currentGroup;
@@ -53,7 +53,6 @@ namespace Ossium
                     // Render outline first
                     GlyphID glyph = CreateGlyphID(glyphs[glyphIndex].GetCodepoint(), currentGroup.style, currentGroup.hinting, currentGroup.outline);
                     font.RenderGlyph(
-                        renderer,
                         glyph,
                         position,
                         currentGroup.pointSize,
@@ -65,7 +64,6 @@ namespace Ossium
                 // Render the glyph with the current group styling.
                 GlyphID glyph = CreateGlyphID(glyphs[glyphIndex].GetCodepoint(), currentGroup.style, currentGroup.hinting, 0);
                 font.RenderGlyph(
-                    renderer,
                     glyph,
                     position,
                     currentGroup.pointSize,
@@ -81,13 +79,13 @@ namespace Ossium
                     {
                         Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(currentGroup.pointSize));
                         Line underline(currentGroupPosition + underlinePos, position + underlinePos);
-                        underline.Draw(renderer, currentGroup.color);
+                        underline.Draw(pass, currentGroup.color);
                     }
                     if ((currentGroup.style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
                     {
                         Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(currentGroup.pointSize));
                         Line strikethrough(currentGroupPosition + strikethroughPos, position + strikethroughPos);
-                        strikethrough.Draw(renderer, currentGroup.color);
+                        strikethrough.Draw(pass, currentGroup.color);
                     }
                     group++;
                     if (&previousGroup != &groups[group])
@@ -106,13 +104,13 @@ namespace Ossium
                 {
                     Vector2 underlinePos = Vector2(0, font.GetUnderlinePosition(currentGroup.pointSize));
                     Line underline(currentGroupPosition + underlinePos, position + underlinePos);
-                    underline.Draw(renderer, currentGroup.color);
+                    underline.Draw(pass, currentGroup.color);
                 }
                 if ((currentGroup.style | mainStyle) & TTF_STYLE_STRIKETHROUGH)
                 {
                     Vector2 strikethroughPos = Vector2(0, font.GetStrikethroughPosition(currentGroup.pointSize));
                     Line strikethrough(currentGroupPosition + strikethroughPos, position + strikethroughPos);
-                    strikethrough.Draw(renderer, currentGroup.color);
+                    strikethrough.Draw(pass, currentGroup.color);
                 }
             }
 
@@ -177,7 +175,7 @@ namespace Ossium
         updateFlags = 0;
     }
 
-    void TextLayout::ComputeLayout(Renderer& renderer, Font& font, string& text, bool applyMarkup, string lineBreakCharacters)
+    void TextLayout::ComputeLayout(Font& font, string& text, bool applyMarkup, string lineBreakCharacters)
     {
         if (&font != lastFont)
         {
@@ -393,10 +391,10 @@ namespace Ossium
         return bbox;
     }
 
-    void TextLayout::SetText(Renderer& renderer, Font& font, string text, bool applyMarkup)
+    void TextLayout::SetText(Font& font, string text, bool applyMarkup)
     {
         updateFlags = UPDATE_ALL;
-        ComputeLayout(renderer, font, text, applyMarkup);
+        ComputeLayout(font, text, applyMarkup);
     }
 
     void TextLayout::Update(Font& font)

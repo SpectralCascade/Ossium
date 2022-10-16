@@ -17,6 +17,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include "bgfx/bgfx.h"
+
 #include "schemamodel.h"
 #include "resourcecontroller.h"
 #include "renderer.h"
@@ -25,10 +27,8 @@
 namespace Ossium
 {
 
-    /// Forward declaration
-    class TexturePack;
-
-    /// This class wraps a single SDL_Surface (an image stored in RAM) and/or a single SDL_Texture (an image usually stored in GPU memory).
+    // This class wraps a single SDL_Surface (an image stored in RAM)
+    // and/or a single texture on the GPU.
     class OSSIUM_EDL Image : public Resource
     {
     public:
@@ -36,9 +36,6 @@ namespace Ossium
 
         Image() = default;
         ~Image();
-
-        /// TODO: modify TexturePack and remove this friend statement
-        friend class Ossium::TexturePack;
 
         /// Destroys the image, freeing it from memory. Does not modify the temporary SDL_Surface
         void Free();
@@ -48,43 +45,36 @@ namespace Ossium
         /// Load an image and returns true if it was successful
         bool Load(std::string guid_path);
 
-        /// Creates an empty surface. Optionally specify a pixel format, if not specified the last set surface pixel format will be used.
-        /// You may also specify the colour of the empty surface.
-        static SDL_Surface* CreateEmptySurface(int w, int h, Uint32 pixelFormat = SDL_PIXELFORMAT_UNKNOWN, SDL_Color color = Colors::TRANSPARENT);
+        /// Creates an empty surface; you may also specify the colour of the empty surface.
+        static SDL_Surface* CreateEmptySurface(int w, int h, SDL_Color color = Colors::TRANSPARENT);
 
         /// Frees the current surface and sets it to this. Useful if you want to generate surfaces on the fly.
         /// NOTE: Does not make a copy of the surface data. Simply takes ownership of the reference.
-        /// Optionally specify a pixel format, if not specified the last set surface pixel format will be used.
-        void SetSurface(SDL_Surface* loadedSurface, Uint32 pixelFormat = SDL_PIXELFORMAT_UNKNOWN);
+        void SetSurface(SDL_Surface* loadedSurface);
 
+    private:
         /// Sets the surface pixel format to use. Whenever SetSurface() or CreateEmptySurface() are called, this method is automatically called.
         /// Recreates the surface with the specified format if it doesn't have the same format already.
         void SetSurfaceFormat(Uint32 pixelFormat);
 
+    public:
         /// Returns the surface pixel format. Returns SDL_PIXELFORMAT_UNKNOWN if no surface is loaded.
-        Uint32 GetSurfacePixelFormat();
+        Uint32 GetPixelFormat();
 
-        /// Returns the texture pixel format. Returns SDL_PIXELFORMAT_UNKNOWN if no texture is created.
-        /// Note the only way to set the texture format is to call SetSurfaceFormat() and then call PushGPU() again.
-        Uint32 GetTexturePixelFormat();
-
-        /// Post-load texture initialisation; pass the window pixel format if you wish to manipulate pixel data.
-        /// You MUST call this method after successfully calling Load() if you wish to render the image to the screen.
-        /// If cache is set to true, the original image is stored in memory as an SDL_Surface for quick initialisation without loading the image again
-        /// (in addition to the modifiable SDL_Texture in video memory)! This could be useful if you want to remove all applied effects on the image frequently,
-        /// as long as your target system has adequate memory capacity for storing the original image. Leave this set to false unless you know what you're doing!
-        bool Init(Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
+        // Post-load texture initialisation. You must call this method after successfully calling Load()
+        // if you wish to render the image to the screen.
+        bool Init(Uint64 flags = BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE);
 
         /// Shorthand method
-        bool LoadAndInit(std::string guid_path, Renderer& renderer, Uint32 pixelFormatting = SDL_PIXELFORMAT_ARGB8888, int accessMode = SDL_TEXTUREACCESS_STATIC);
+        bool LoadAndInit(std::string guid_path, Uint64 flags = BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE);
 
         /// Returns true if the texture is not NULL
         /// TODO: remove me, does same job as GetTexture().
         bool Initialised();
 
-        /// Renders the GPU texture if loaded (call PushGPU() first).
+        /// Renders the texture if pushed onto the GPU.
         void Render(
-            SDL_Renderer* renderer,
+            RenderInput* pass,
             SDL_Rect dest,
             SDL_Rect* clip = NULL,
             SDL_Point* origin = NULL,
@@ -114,96 +104,22 @@ namespace Ossium
         /// Returns the name of the loaded image, if it has one.
         std::string GetPathName();
 
-        /// Applies a pixel manipulation function to the image. The argument function accepts pixel data as an SDL_Color
-        /// in addition to an SDL_Point which indicates which pixel is being modified relative to the top left of the image.
-        /// It works by iterating over each pixel in the source image and giving your function relevant information. The function must return an SDL_Color value which is what the pixel
-        /// will be set to. Note that the image must be initialised with the window's pixel format to apply pixel manipulation effects!
-        /// Also note that this doesn't do it's work on the GPU, so be wary of using it frequently as it's pretty expensive
-        /// Returns false on failure.
-        /// TODO: pass std::function object instead of using template
-        template<class Func>
-        bool ApplyEffect(Func f, SDL_Rect* clipArea = nullptr)
-        {
-            if (LockPixels())
-            {
-                Uint32* pixelArray = reinterpret_cast<Uint32*>(pixels);
-                SDL_PixelFormat* pixelFormat = SDL_AllocFormat(format);
-                if (pixelFormat == NULL)
-                {
-                    Log.Error("Could not allocate pixel format to apply effect! SDL_Error: {0}", SDL_GetError());
-                    return false;
-                }
-                SDL_Color pixelData;
-                SDL_Point pixelPos;
-                if (clipArea == nullptr)
-                {
-                    for (int i = 0, counti = (pitch / 4) * heightGPU; i < counti; i++)
-                    {
-                        pixelData = ConvertToColor(pixelArray[i], pixelFormat);
-                        pixelPos.x = i % widthGPU;
-                        pixelPos.y = i / widthGPU;
-                        SDL_Color outputColor = f(pixelData, pixelPos);
-                        pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColor.r, outputColor.g, outputColor.b, outputColor.a);
-                    }
-                }
-                else
-                {
-                    int memwidth = (pitch / 4);
-                    int clipskipy = (memwidth * clipArea->y);
-                    int clipxw = clipArea->w + clipArea->x;
-                    int increment = (memwidth - clipArea->w);
-                    for (int i = clipskipy + clipArea->x, counti = memwidth * clipArea->h; i < counti; i++)
-                    {
-                        if (i >= clipxw + clipskipy)
-                        {
-                            i += increment;
-                            clipskipy += memwidth;
-                            if (i > counti)
-                            {
-                                break;
-                            }
-                        }
-                        pixelData = ConvertToColor(pixelArray[i], pixelFormat);
-                        pixelPos.x = i % widthGPU;
-                        pixelPos.y = i / widthGPU;
-                        SDL_Color outputColor = f(pixelData, pixelPos);
-                        pixelArray[i] = SDL_MapRGBA(pixelFormat, outputColor.r, outputColor.g, outputColor.b, outputColor.a);
-                    }
-                }
-                UnlockPixels();
-                SDL_FreeFormat(pixelFormat);
-                return true;
-            }
-            return false;
-        };
+        // Copies the surface data from RAM to GPU memory (creating a GPU texture).
+        // Returns BGFX_INVALID_HANDLE upon failure (e.g. no surface is loaded).
+        // Calling this method automatically destroys the current GPU texture if loaded.
+        bgfx::TextureHandle PushGPU(Uint64 flags = BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE);
 
-        /// Copies the surface data from RAM to GPU memory (creating a GPU texture). Returns NULL upon failure (e.g. no surface is loaded).
-        /// Calling this method automatically destroys the current GPU texture if loaded.
-        SDL_Texture* PushGPU(Renderer& renderer, int accessMode = SDL_TEXTUREACCESS_STREAMING);
-
-        /// Destroys the GPU texture if one .
+        // Destroys the GPU texture if one exists.
         void PopGPU();
 
-        /// Returns the GPU texture, or NULL if not pushed onto the GPU.
-        SDL_Texture* GetTexture();
+        // Returns the GPU texture, or BGFX_INVALID_HANDLE if not pushed onto the GPU.
+        bgfx::TextureHandle GetTexture();
 
-        /// Returns the loaded surface, or NULL if not loaded.
+        // Returns the loaded surface, or NULL if not loaded.
         SDL_Surface* GetSurface();
 
-        /// Locks the texture on the GPU so the raw pixels may be modified
-        bool LockPixels();
-
-        /// When locked, returns pixels from the GPU texture.
-        void* GetPixels();
-
-        /// When locked, returns the length of the pixel data in bytes.
-        int GetPitch();
-
-        /// Returns the texture access mode (whether the texture can be streamed or rendered upon or not).
-        int GetTextureAccessMode();
-
-        /// Unlocks the texture on the GPU so the raw pixels can no longer be modified
-        bool UnlockPixels();
+        // Returns the texture flags.
+        Uint64 GetTextureFlags();
 
     protected:
         NOCOPY(Image);
@@ -211,11 +127,19 @@ namespace Ossium
         /// The path used to load the current image.
         std::string pathname = "";
 
-        /// The image prior to being converted to an SDL_Texture
+        /// The image prior to being pushed to the GPU as a texture
         SDL_Surface* tempSurface = NULL;
 
-        /// A representation of the image in video memory
-        SDL_Texture* texture = NULL;
+        // Handle to the GPU texture
+        bgfx::TextureHandle texture = BGFX_INVALID_HANDLE;
+
+        // Handle to uniform associated with the GPU texture
+        bgfx::UniformHandle uniform = BGFX_INVALID_HANDLE;
+
+        // TODO move shader program somewhere shared
+        bgfx::ShaderHandle shaderVertex = BGFX_INVALID_HANDLE;
+        bgfx::ShaderHandle shaderFrag = BGFX_INVALID_HANDLE;
+        bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
 
         /// Dimensions of the GPU texture.
         int widthGPU = 0;
@@ -224,17 +148,8 @@ namespace Ossium
         /// The pixel format of the surface.
         Uint32 format = SDL_PIXELFORMAT_ARGB8888;
 
-        /// The pixel format of the texture.
-        Uint32 textureFormat = SDL_PIXELFORMAT_UNKNOWN;
-
-        /// The access mode used for the current GPU texture.
-        int access = -1;
-
-        /// Pixel data; NULL unless you have locked the pixels in GPU memory.
-        void* pixels = NULL;
-
-        /// Width (length of each line) of the image as laid out in GPU memory, in bytes.
-        int pitch = 0;
+        /// GPU texture and sampler flags
+        Uint64 flags;
 
     };
 

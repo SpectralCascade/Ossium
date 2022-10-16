@@ -31,7 +31,7 @@ namespace Ossium
 
     protected:
         // Return the mode that determines draw call order, e.g. z-buffer depth or sequential rendering
-        virtual int GetViewMode() = 0;
+        virtual int GetViewMode();
 
         // Return the associated render view
         RenderView* GetRenderView();

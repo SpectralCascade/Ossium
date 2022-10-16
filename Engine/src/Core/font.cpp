@@ -138,6 +138,19 @@ namespace Ossium
     }
 
     //
+    // FontRenderInput
+    //
+
+    std::string FontRenderInput::GetRenderDebugName()
+    {
+        return Utilities::Format("FONT: {0}", this);
+    }
+
+    void FontRenderInput::Render()
+    {
+    }
+
+    //
     // Font
     //
 
@@ -157,6 +170,11 @@ namespace Ossium
     {
         FreeGlyphs();
         FreeAtlas();
+        Renderer* renderer = pass.GetRenderer();
+        if (renderer != nullptr)
+        {
+            pass.GetRenderer()->RemoveInput(&pass);
+        }
         if (font != NULL)
         {
             TTF_CloseFont(font);
@@ -190,13 +208,15 @@ namespace Ossium
         return font != NULL;
     }
 
-    bool Font::LoadAndInit(string guid_path, int maxPointSize, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
+    bool Font::LoadAndInit(string guid_path, int maxPointSize, Renderer* renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
     {
-        return Load(guid_path, maxPointSize) && Init(guid_path, glyphCacheLimit, mipDepth, targetTextureSize, pixelFormat);
+        return Load(guid_path, maxPointSize) && Init(guid_path, renderer, glyphCacheLimit, mipDepth, targetTextureSize);
     }
 
-    bool Font::Init(string guid_path, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize, Uint32 pixelFormat)
+    bool Font::Init(string guid_path, Renderer* renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
     {
+        renderer->AddInput(&pass);
+
         updateAtlasTexture = true;
         mipOffsets.clear();
 
@@ -284,7 +304,7 @@ namespace Ossium
         Log.Verbose("Font {0} has atlas size: {1}, max glyphs: {2}, cache limit: {3}, mipmap depth: {4}", guid_path, actualTextureSize.x, maxAtlasGlyphs, cacheLimit, mipmapDepth);
 
         // Create the empty atlas surface in transparent white so color modulation works.
-        atlas.SetSurface(Image::CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, pixelFormat, Alpha(Colors::WHITE, 0)), pixelFormat);
+        atlas.SetSurface(Image::CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, Alpha(Colors::WHITE, 0)));
         return atlas.GetSurface() != NULL;
     }
 
@@ -393,7 +413,7 @@ namespace Ossium
                 // Render the glyph
                 // TODO: ditto regarding converting encoding from UCS-2 to UCS-4 when SDL_TTF gets updated
                 SDL_Surface* renderedGlyph = TTF_RenderGlyph_Blended(font, (Uint16)codepoint, Colors::WHITE);
-                SDL_Surface* created = Image::CreateEmptySurface(GetAtlasCellSize().x, GetAtlasCellSize().y, renderedGlyph->format->format, Alpha(Colors::WHITE, 0));
+                SDL_Surface* created = Image::CreateEmptySurface(GetAtlasCellSize().x, GetAtlasCellSize().y, Alpha(Colors::WHITE, 0));
                 if (created != NULL && renderedGlyph != NULL)
                 {
                     // First, get the scaling correct
@@ -631,24 +651,19 @@ namespace Ossium
         return batched;
     }
 
-    void Font::Render(Renderer& renderer, SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void Font::Render(SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        if (&renderer != currentRenderer)
-        {
-            currentRenderer = &renderer;
-            atlas.PopGPU();
-            updateAtlasTexture = true;
-        }
         if (updateAtlasTexture)
         {
-            atlas.PushGPU(renderer, SDL_TEXTUREACCESS_STATIC);
+            atlas.PushGPU(BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE);
             updateAtlasTexture = false;
         }
-        atlas.Render(renderer.GetRendererSDL(), dest, clip, origin, angle, color, blending, flip);
+        atlas.Render(&pass, dest, clip, origin, angle, color, blending, flip);
     }
 
-    bool Font::RenderGlyph(Renderer& renderer, GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    bool Font::RenderGlyph(GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
+        Renderer* renderer = pass.GetRenderer();
         Glyph* glyph = GetGlyph(id);
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         float scale = (pointSize / loadedPointSize);
@@ -659,10 +674,9 @@ namespace Ossium
             dest.w = invalidDimensions.x * scale;
             dest.h = invalidDimensions.y * scale;
             dest.y += invalidPadding * scale;
-            SDL_Color oldColor = renderer.GetDrawColor();
-            renderer.SetDrawColor(color);
-            SDL_RenderDrawRect(renderer.GetRendererSDL(), &dest);
-            renderer.SetDrawColor(oldColor);
+            SDL_Color oldColor = renderer->GetDrawColor();
+            Rect(dest).Draw(&pass, color);
+            renderer->SetDrawColor(oldColor);
             return false;
         }
         int size = round((float)glyph->cached.GetHeight() * scale * glyph->inverseScale);
@@ -680,7 +694,7 @@ namespace Ossium
         clip = GetMipMapClip(clip, (int)level);
 
         // Render the glyph
-        Render(renderer, dest, &clip, color, blending, angle, origin, flip);
+        Render(dest, &clip, color, blending, angle, origin, flip);
 
         return true;
     }

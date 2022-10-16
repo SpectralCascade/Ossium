@@ -41,7 +41,14 @@ namespace Ossium
             true // TODO: replace std::filesystem exists() check
 #endif
         ) {
-            font = GetService<ResourceController>()->Get<Font>(font_guid, 72, 0, 0, 2048);
+            font = GetService<ResourceController>()->Get<Font>(
+                font_guid,
+                72,
+                entity->GetService<Renderer>(),
+                0,
+                0,
+                2048
+            );
         }
         else
         {
@@ -50,7 +57,7 @@ namespace Ossium
         dirty = true;
     }
 
-    void Text::Render(Renderer& renderer)
+    void Text::Render(RenderInput* pass)
     {
         BoxLayout* boxLayout = entity->GetComponent<BoxLayout>();
         if (boxLayout != nullptr)
@@ -77,16 +84,16 @@ namespace Ossium
                 bounds.x + boxPaddingWidth,
                 bounds.y + boxPaddingHeight
             );
-            boxDest.DrawFilled(renderer, backgroundColor);
+            boxDest.DrawFilled(pass, backgroundColor);
         }
 
         if (font != nullptr)
         {
             /// TODO: figure out why we have to update every frame! Maybe the font atlas glyph cache breaks?
-            layout.SetText(renderer, *font, text, applyMarkup);
+            layout.SetText(*font, text, applyMarkup);
             layout.Update(*font);
 
-            layout.Render(renderer, *font, GetTransform()->GetWorldPosition());
+            layout.Render(pass, *font, GetTransform()->GetWorldPosition());
         }
     }
 

@@ -466,7 +466,7 @@ namespace Ossium::Editor
 
     void EditorGUI::TextLabel(string text, StyleText style)
     {
-        Font& font = *resources->Get<Font>(style.fontPath, style.ptsize);
+        Font& font = *resources->Get<Font>(style.fontPath, style.ptsize, renderer);
         Vector2 layoutPos = GetLayoutPosition();
         TextLayout tlayout;
         Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x, renderer->GetHeight());
@@ -501,7 +501,7 @@ namespace Ossium::Editor
             text = textinput->GetText();
         }
 
-        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize, renderer);
         TextLayout tlayout;
         Vector2 layoutPos = GetLayoutPosition();
         Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - 4, renderer->GetHeight() - 4);
@@ -650,7 +650,7 @@ namespace Ossium::Editor
 
     bool EditorGUI::Button(string text, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed)
     {
-        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize, renderer);
         TextLayout tlayout;
         Vector2 layoutPos = GetLayoutPosition();
         Vector2 limits = Vector2(renderer->GetWidth() - layoutPos.x - xpadding, renderer->GetHeight() - ypadding);
@@ -666,7 +666,7 @@ namespace Ossium::Editor
 
     bool EditorGUI::Button(string text, TextLayout& textLayout, StyleClickable style, bool invertOutline, Uint32 xpadding, Uint32 ypadding, bool useMaxWidth, bool* isHovered, bool* isPressed, bool parseTags)
     {
-        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+        Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize, renderer);
         Vector2 layoutPos = GetLayoutPosition();
 
         bool hovered;
@@ -950,7 +950,7 @@ namespace Ossium::Editor
             // Draw float value
             Image valueText;
             valueText.SetSurface(
-                resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize)->GenerateFromText(
+                resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize, renderer)->GenerateFromText(
                     Utilities::ToString(sliderValue), style.normalStyleText, (Uint32)renderer->GetWidth()
                 )
             );

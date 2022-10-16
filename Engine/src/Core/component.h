@@ -36,7 +36,7 @@ namespace Ossium
     protected:
         DECLARE_ABSTRACT_COMPONENT(Component, GraphicComponent);
 
-        virtual void Render(Renderer& renderer) = 0;
+        virtual void Render(RenderInput* pass) = 0;
 
     };
 

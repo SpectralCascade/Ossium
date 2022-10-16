@@ -100,7 +100,7 @@ namespace Ossium
         SDL_Color GetMod();
 
         /// Inherited Graphic::Render() method
-        void Render(Renderer& renderer);
+        void Render(RenderInput* pass);
 
         /// Sets the source image this texture should use. If configureDimensions is true, the width and height are set
         /// to the source image width and height

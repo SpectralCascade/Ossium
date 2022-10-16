@@ -192,7 +192,11 @@ namespace Ossium::Editor
             tlayout.mainColor = option.enabled ? EditorStyle::EDITOR_CONTEXT_OPTION_STYLE.normalStyleText.fg : EditorStyle::EDITOR_CONTEXT_OPTION_DISABLED_STYLE.normalStyleText.fg;
             tlayout.mainStyle = option.enabled ? EditorStyle::EDITOR_CONTEXT_OPTION_STYLE.normalStyleText.style : EditorStyle::EDITOR_CONTEXT_OPTION_DISABLED_STYLE.normalStyleText.style;
             tlayout.SetAlignment(Typographic::TextAlignment::LEFT_ALIGNED);
-            Font& font = *resources->Get<Font>(style.normalStyleText.fontPath, style.normalStyleText.ptsize);
+            Font& font = *resources->Get<Font>(
+                style.normalStyleText.fontPath,
+                style.normalStyleText.ptsize,
+                renderer
+            );
             tlayout.SetText(*renderer, font, option.text, true);
             tlayout.Update(font);
 

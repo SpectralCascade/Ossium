@@ -7,7 +7,7 @@ namespace Ossium
 {
     
     // RenderTarget for a window
-    class WindowTarget : RenderTarget
+    class WindowTarget : public RenderTarget
     {
     protected:
         WindowTarget() = default;

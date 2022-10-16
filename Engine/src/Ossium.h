@@ -37,7 +37,6 @@
 #include "Core/randutils.h"
 #include "Core/physics.h"
 #include "Core/enginesystem.h"
-#include "Core/texturepack.h"
 #include "Core/utf8.h"
 #include "Core/textlayout.h"
 #include "Core/osteon.h"
