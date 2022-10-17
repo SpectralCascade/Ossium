@@ -83,8 +83,8 @@ namespace Ossium
         }
         
         // Load shaders
-        shaderVertex = LoadShader(GetShaderPath("v_image.bin"));
-        shaderFrag = LoadShader(GetShaderPath("f_image.bin"));
+        shaderVertex = LoadShader(GetShaderPath("image.vert.bin"));
+        shaderFrag = LoadShader(GetShaderPath("image.frag.bin"));
         shaderProgram = bgfx::createProgram(shaderVertex, shaderFrag, false);
 
         return tempSurface != NULL;

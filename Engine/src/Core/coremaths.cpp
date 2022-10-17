@@ -330,8 +330,8 @@ namespace Ossium
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
-        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("v_default.bin"));
-        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("f_default.bin"));
+        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("default.vert.bin"));
+        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("default.frag.bin"));
         bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
 
         // Setup transform and projection matrix
@@ -525,8 +525,8 @@ namespace Ossium
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
-        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("v_default.bin"));
-        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("f_default.bin"));
+        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("default.vert.bin"));
+        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("default.frag.bin"));
         bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
 
         // Setup transform and projection matrix
@@ -623,8 +623,8 @@ namespace Ossium
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
-        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("v_default.bin"));
-        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("f_default.bin"));
+        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("default.vert.bin"));
+        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("default.frag.bin"));
         bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
 
         // Setup transform and projection matrix
