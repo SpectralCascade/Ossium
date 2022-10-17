@@ -571,12 +571,17 @@ if __name__ == "__main__":
             
             clean = "{clean}" in steps[i]
             if (clean):
+                print("Cleaning output and work directories...")
                 os.chdir(cwd)
                 output_rm = config["output"] + "/" + platform
                 if (os.path.exists(output_rm)):
                     shutil.rmtree(output_rm)
                 
                 work_rm = config["work"] + "/" + platform + "/obj"
+                if (os.path.exists(work_rm)):
+                    shutil.rmtree(work_rm)
+                
+                work_rm = config["work"] + "/" + platform + "/bin"
                 if (os.path.exists(work_rm)):
                     shutil.rmtree(work_rm)
                 

@@ -3,6 +3,8 @@
 namespace Ossium
 {
 
+    REGISTER_COMPONENT(Canvas);
+
     void Canvas::OnCreate()
     {
         Renderer* renderer = GetEntity()->GetService<Renderer>();

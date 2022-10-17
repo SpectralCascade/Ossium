@@ -24,7 +24,7 @@ namespace Ossium
 
     EngineSystem::EngineSystem(const Config& config)
     {
-        window = new Window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags);
+        window = new Window(config.windowTitle.c_str(), config.windowWidth, config.windowHeight, config.fullscreen, config.windowFlags, true);
         renderViewPool = new RenderViewPool();
         renderer = new Renderer(window, renderViewPool);
         input = new InputController();
