@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!python3
 
 import sys
 import os
@@ -212,7 +212,7 @@ def retrieve_archive(url, name, root=".", v="", force=False, info_url="", date_m
     return extracted, rebuild
 
 # Standard execution (in directory with a .soup file):
-# python3 soupbuild.py [platform] task [mode]
+# py soupbuild.py [platform] task [mode]
 if __name__ == "__main__":
     # Initial variables setup
     start_time = time.time()
@@ -388,7 +388,7 @@ if __name__ == "__main__":
                                 build_step = build_step.replace("{version}", version)
                                 soupbuild = "{soupbuild}" in build_step
                                 if (soupbuild):
-                                    build_step = build_step.replace("{soupbuild}", "python3 \"" + script_path + "\" ")
+                                    build_step = build_step.replace("{soupbuild}", "py \"" + script_path + "\" ")
                                 execute(build_step, ps=True)
                                 os.chdir(dep_run_dir)
                         os.chdir(app_data)
@@ -561,13 +561,13 @@ if __name__ == "__main__":
             run_task = "{run_task}" in steps[i]
             if (run_task):
                 os.chdir(cwd)
-                steps[i] = steps[i].replace("{run_task}", "python3 \"" + script_path + "\" --quiet --task-only \"--build-config=" + config_path + "\"")
+                steps[i] = steps[i].replace("{run_task}", "py \"" + script_path + "\" --quiet --task-only \"--build-config=" + config_path + "\"")
 
             # Run another soupbuild instance
             soupbuild = "{soupbuild}" in steps[i]
             if (soupbuild):
                 os.chdir(cwd)
-                steps[i] = steps[i].replace("{soupbuild}", "python3 \"" + script_path + "\" ")
+                steps[i] = steps[i].replace("{soupbuild}", "py \"" + script_path + "\" ")
             
             clean = "{clean}" in steps[i]
             if (clean):
@@ -598,8 +598,8 @@ if __name__ == "__main__":
                             # Config has a specific cleaning process for the dependency
                             for clean_step_index in range(len(dep["clean"])):
                                 clean_step = dep["clean"][clean_step_index]
-                                clean_step = clean_step.replace("{soupbuild}", "python3 \"" + script_path + "\" ")
-                                clean_step = clean_step.replace("{run_task}", "python3 \"" + script_path + "\" --quiet --task-only \"--build-config=" + os.path.normpath(os.path.join(original_dir, config_path)) + "\"")
+                                clean_step = clean_step.replace("{soupbuild}", "py \"" + script_path + "\" ")
+                                clean_step = clean_step.replace("{run_task}", "py \"" + script_path + "\" --quiet --task-only \"--build-config=" + os.path.normpath(os.path.join(original_dir, config_path)) + "\"")
                                 log("Executing clean step " + str(clean_step_index + 1) + " of " + str(len(dep["clean"])) + " in " + os.getcwd())
                                 execute(clean_step)
                         else:
