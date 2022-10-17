@@ -162,6 +162,7 @@
                 },
                 "compile_shaders": {
                     "steps": [
+                        ""
                     ],
                     "abort_on_error": false
                 },
@@ -169,7 +170,7 @@
                     "steps": [
                         "{run_task} Windows generate_makefile {mode}",
                         "cmd /c mingw32-make {mode} -j {cpu_count}",
-                        "{run_task} Windows compile_shaders {mode}"
+                        "py \"{root}/../tools/buildshaders.py\" -p windows -c \"{root}/{output}/{platform}/{mode}/shaderc.exe\" -i src/Shaders -o \"{root}/{output}/{platform}/{mode}/Shaders\""
                     ],
                     "outputs": ["bin/{mode}/lib{name}.a"],
                     "output_shared": false
