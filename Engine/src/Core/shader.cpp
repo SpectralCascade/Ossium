@@ -13,20 +13,20 @@ namespace Ossium
         switch (backend) {
             case bgfx::RendererType::Noop:
             case bgfx::RendererType::Direct3D9:
-                return "assets/shaders/dx9/" + file;
+                return "assets/Shaders/dx9/" + file;
             case bgfx::RendererType::Direct3D11:
             case bgfx::RendererType::Direct3D12:
-                return "assets/shaders/dx11/" + file;
+                return "assets/Shaders/dx11/" + file;
             case bgfx::RendererType::Gnm:
-                return "assets/shaders/pssl/" + file;
+                return "assets/Shaders/pssl/" + file;
             case bgfx::RendererType::Metal:
-                return "assets/shaders/metal/" + file;
+                return "assets/Shaders/metal/" + file;
             case bgfx::RendererType::OpenGL:
-                return "assets/shaders/glsl/" + file;
+                return "assets/Shaders/glsl/" + file;
             case bgfx::RendererType::OpenGLES:
-                return "assets/shaders/essl/" + file;
+                return "assets/Shaders/essl/" + file;
             case bgfx::RendererType::Vulkan:
-                return "assets/shaders/spirv/" + file;
+                return "assets/Shaders/spirv/" + file;
             default:
                 std::string error = Utilities::Format(
                     "Failed to obtain path to shader \"{0}\" for current renderer backend: {1}",

@@ -3,7 +3,7 @@
     "source": "src",
     "source-ext": [".cpp", ".c"],
     "header-ext": [".h"],
-    "source-ignore": [".Unused", "Tests"],
+    "source-ignore": [".Unused", "Tests", "Shaders"],
     "output": "soupbuild/outputs",
     "work": "soupbuild/work",
     "default-platform": "Windows",
@@ -83,13 +83,17 @@
                     "includes": ["include"],
                     "libs": ["libs"],
                     "build": [
-                        "../bx/tools/bin/windows/genie --with-shared-lib --gcc=mingw-gcc gmake",
+                        "../bx/tools/bin/windows/genie --with-shared-lib --with-tools --gcc=mingw-gcc gmake",
                         "mingw32-make config=release bgfx -C .build/projects/gmake-mingw-gcc/ -j {cpu_count}",
                         "mingw32-make config=release bgfx-shared-lib -C .build/projects/gmake-mingw-gcc/ -j {cpu_count}",
+                        "mingw32-make config=release shaderc -C .build/projects/gmake-mingw-gcc/ -j {cpu_count}",
                         "mkdir libs > nul",
                         "robocopy -IT ../bx/scripts ./libs libbxRelease.a > nul",
                         "robocopy -IT ../bimg/scripts ./libs libbimgRelease.a > nul",
-                        "robocopy -IT ./scripts ./libs libbgfxRelease.a > nul"
+                        "robocopy -IT ./scripts ./libs libbgfxRelease.a > nul",
+                        "mkdir \"{root}/{output}/{platform}/{mode}\" > nul",
+                        "robocopy -IT ./scripts \"{root}/{output}/{platform}/{mode}\" shadercRelease.exe > nul",
+                        "ren \"{root}/{output}/{platform}/{mode}/shadercRelease.exe\" shaderc.exe > nul"
                     ]
                 }
             ],
@@ -156,10 +160,16 @@
                         "cmd /c cbp2make.exe -in ossium.cbp -out makefile.mak"
                     ]
                 },
+                "compile_shaders": {
+                    "steps": [
+                    ],
+                    "abort_on_error": false
+                },
                 "build": {
                     "steps": [
                         "{run_task} Windows generate_makefile {mode}",
-                        "cmd /c mingw32-make {mode} -j {cpu_count}"
+                        "cmd /c mingw32-make {mode} -j {cpu_count}",
+                        "{run_task} Windows compile_shaders {mode}"
                     ],
                     "outputs": ["bin/{mode}/lib{name}.a"],
                     "output_shared": false
