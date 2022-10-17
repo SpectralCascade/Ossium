@@ -21,12 +21,12 @@ namespace Ossium::Editor
         BeginHorizontal();
 
         StyleClickable redStyle = EditorStyle::StandardButton;
-        redStyle.hoverColor = Colors::RED;
+        redStyle.hoverColor = Colors::Red;
         redStyle.normalColor = Color(230, 0, 0);
         redStyle.clickColor = Color(255, 80, 80);
-        redStyle.normalStyleText.fg = Colors::WHITE;
-        redStyle.hoverStyleText.fg = Colors::WHITE;
-        redStyle.clickStyleText.fg = Colors::WHITE;
+        redStyle.normalStyleText.fg = Colors::White;
+        redStyle.hoverStyleText.fg = Colors::White;
+        redStyle.clickStyleText.fg = Colors::White;
 
         if (selected != nullptr)
         {
@@ -65,7 +65,7 @@ namespace Ossium::Editor
         EndHorizontal();
 
         Space(2);
-        Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Colors::BLACK);
+        Line(Vector2(0, GetLayoutPosition().y), Vector2(viewport.w, GetLayoutPosition().y)).Draw(*renderer, Colors::Black);
         Space(2);
 
         if (selected != nullptr)

@@ -14,12 +14,16 @@
  *  3. This notice may not be removed or altered from any source distribution.
  *
 **/
-#include <SDL_syswm.h>
 
 #include "funcutils.h"
 #include "window.h"
 #include "coremaths.h"
 #include "image.h"
+
+// DO NOT MOVE THIS INCLUDE
+// ALWAYS INCLUDE THIS *AFTER* OTHERS due to MinGW declaring macros with conflicting names.
+// Don't name anything "near" or "far" or "TRANSPARENT" after this include.
+#include <SDL_syswm.h>
 
 using namespace std;
 

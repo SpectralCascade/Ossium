@@ -59,9 +59,9 @@ namespace Ossium
     {
         // TODO check this bit shifting correctly; shouldn't these shift numbers be in bits, not half bytes?
         #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        return (SDL_Color){(Uint8)((rgb & Colors::RED_MASK) >> 6), (Uint8)((rgb & Colors::GREEN_MASK) >> 4), (Uint8)((rgb & Colors::BLUE_MASK) >> 2), 0xFF};
+        return (SDL_Color){(Uint8)((rgb & Colors::MaskRed) >> 6), (Uint8)((rgb & Colors::MaskGreen) >> 4), (Uint8)((rgb & Colors::MaskBlue) >> 2), 0xFF};
         #else
-        return (SDL_Color){(Uint8)(rgb & Colors::RED_MASK), (Uint8)((rgb & Colors::GREEN_MASK) << 2), (Uint8)((rgb & Colors::BLUE_MASK) << 4), 0xFF};
+        return (SDL_Color){(Uint8)(rgb & Colors::MaskRed), (Uint8)((rgb & Colors::MaskGreen) << 2), (Uint8)((rgb & Colors::MaskBlue) << 4), 0xFF};
         #endif
     }
 
@@ -76,7 +76,7 @@ namespace Ossium
         case 8:
             return Color((converted & 0xFF000000) >> 24, (converted & 0x00FF0000) >> 16, (converted & 0x0000FF00) >> 8, converted & 0x000000FF);
         }
-        return Colors::TRANSPARENT;
+        return Colors::Transparent;
     }
 
     Uint32 ColorToUint32(SDL_Color color, Uint32 format)

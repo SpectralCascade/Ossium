@@ -164,10 +164,10 @@ namespace Ossium
         SDL_Rect viewportRect;
 
         // The render clear colour, defaults to black.
-        SDL_Color bufferColour = Colors::BLACK;
+        SDL_Color bufferColour = Colors::Black;
 
         // The render draw colour, defaults to white.
-        SDL_Color drawColour = Colors::WHITE;
+        SDL_Color drawColour = Colors::White;
 
         // The bgfx state to use for this renderer, defaults to BGFX_STATE_DEFAULT.
         Uint64 state = BGFX_STATE_DEFAULT;

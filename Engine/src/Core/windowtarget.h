@@ -5,7 +5,7 @@
 
 namespace Ossium
 {
-    
+
     // RenderTarget for a window
     class WindowTarget : public RenderTarget
     {

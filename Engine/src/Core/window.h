@@ -47,7 +47,7 @@ namespace Ossium
             Uint32 flags = SDL_WINDOW_SHOWN,
             bool useBackBuffer = false
         );
-        ~Window();
+        virtual ~Window();
 
         /// Handles a window event. Returns true if the event for this specific window.
         bool HandleEvent(SDL_Event &event);

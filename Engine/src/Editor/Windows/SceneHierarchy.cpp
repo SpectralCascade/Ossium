@@ -62,7 +62,7 @@ namespace Ossium::Editor
             selectedScene != nullptr && item.name == selectedScene->GetName() ? EditorStyle::HierarchySceneSelected : EditorStyle::HierarchyScene,
             Vector2(8 + arrowSize, 8 + arrowSize),
             [&] (bool on) {
-                renderer->SetDrawColor(Colors::BLACK);
+                renderer->SetDrawColor(Colors::Black);
                 // Draw an arrow
                 Line arrowLine = Line(arrowPos, arrowPos + (on && loaded ? Vector2(arrowSize, 0) : Vector2(0, arrowSize)));
 

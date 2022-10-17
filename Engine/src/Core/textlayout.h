@@ -30,7 +30,7 @@ namespace Ossium
         DECLARE_BASE_SCHEMA(TextLayoutSchema, 20);
 
         /// The default colour of the text.
-        M(SDL_Color, mainColor) = Colors::BLACK;
+        M(SDL_Color, mainColor) = Colors::Black;
 
         /// The default style of the text.
         M(int, mainStyle) = TTF_STYLE_NORMAL;

@@ -21,7 +21,7 @@
 
 #include "schemamodel.h"
 #include "resourcecontroller.h"
-#include "renderer.h"
+#include "renderinput.h"
 #include "colors.h"
 
 namespace Ossium
@@ -46,7 +46,7 @@ namespace Ossium
         bool Load(std::string guid_path);
 
         /// Creates an empty surface; you may also specify the colour of the empty surface.
-        static SDL_Surface* CreateEmptySurface(int w, int h, SDL_Color color = Colors::TRANSPARENT);
+        static SDL_Surface* CreateEmptySurface(int w, int h, SDL_Color color = Colors::Transparent);
 
         /// Frees the current surface and sets it to this. Useful if you want to generate surfaces on the fly.
         /// NOTE: Does not make a copy of the surface data. Simply takes ownership of the reference.
@@ -79,7 +79,7 @@ namespace Ossium
             SDL_Rect* clip = NULL,
             SDL_Point* origin = NULL,
             double rotation = 0.0,
-            SDL_Color modulation = Colors::WHITE,
+            SDL_Color modulation = Colors::White,
             SDL_BlendMode blending = SDL_BLENDMODE_BLEND,
             SDL_RendererFlip flip = SDL_FLIP_NONE
         );

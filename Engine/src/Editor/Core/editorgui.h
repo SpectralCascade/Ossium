@@ -244,12 +244,12 @@ namespace Ossium::Editor
 
         /// Takes text input and displays it. Returns the current string input.
         std::string TextField(std::string text);
-        std::string TextField(std::string text, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
+        std::string TextField(std::string text, StyleClickable style, SDL_Color cursorColor = Colors::Black);
 
         /// Similar to text fields, but an extra button allows you to pick a file path via the native file system dialogue.
         std::string FilePathField(const std::string path);
-        std::string FilePathField(const std::string path, StyleClickable style, SDL_Color cursorColor = Colors::BLACK);
-        std::string FilePathField(const std::string path, StyleClickable style, StyleClickable findButtonStyle, std::string findButtonText = "...", SDL_Color cursorColor = Colors::BLACK);
+        std::string FilePathField(const std::string path, StyleClickable style, SDL_Color cursorColor = Colors::Black);
+        std::string FilePathField(const std::string path, StyleClickable style, StyleClickable findButtonStyle, std::string findButtonText = "...", SDL_Color cursorColor = Colors::Black);
 
         /// Dumps an image at the current layout position.
         void PlaceImage(Image* image);
@@ -275,8 +275,8 @@ namespace Ossium::Editor
         Rect GetButtonRect(SDL_Rect dest, float xpadding = 4, float ypadding = 4);
 
         /// Displays a toggle button. When the toggleValue argument is true, appears enabled, otherwise appears disabled.
-        bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::BLACK);
-        bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, SDL_Color checkColor = Colors::BLACK);
+        bool Toggle(bool toggleValue, SDL_Color checkColor = Colors::Black);
+        bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, SDL_Color checkColor = Colors::Black);
         bool Toggle(bool toggleValue, StyleClickable style, Vector2 boxSize, std::function<void(bool)> drawFunc);
 
         float Slider(

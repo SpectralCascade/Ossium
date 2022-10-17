@@ -45,7 +45,7 @@ namespace Ossium::Editor
         DECLARE_BASE_SCHEMA(EditorWindowSettings, 20);
 
         M(std::string, title) = "Untitled";
-        M(SDL_Color, borderColor) = Colors::BLACK;
+        M(SDL_Color, borderColor) = Colors::Black;
         M(bool, bordered) = true;
         M(int, padding) = 6;
         M(Vector2, minDimensions) = {64, 64};

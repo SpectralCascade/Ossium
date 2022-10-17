@@ -34,20 +34,20 @@ namespace Ossium
     namespace Colors
     {
 
-        const SDL_Color WHITE       = {255,     255,    255,    255};
-        const SDL_Color BLACK       = {0,       0,      0,      255};
-        const SDL_Color GRAY        = {127,     127,    127,    255};
-        const SDL_Color RED         = {255,     0,      0,      255};
-        const SDL_Color GREEN       = {0,       255,    0,      255};
-        const SDL_Color BLUE        = {0,       0,      255,    255};
-        const SDL_Color MAGENTA     = {255,     0,      255,    255};
-        const SDL_Color CYAN        = {0,       255,    255,    255};
-        const SDL_Color YELLOW      = {255,     255,    0,      255};
-        const SDL_Color TRANSPARENT = {0,       0,      0,      0};
+        const SDL_Color White       = {255,     255,    255,    255};
+        const SDL_Color Black       = {0,       0,      0,      255};
+        const SDL_Color Gray        = {127,     127,    127,    255};
+        const SDL_Color Red         = {255,     0,      0,      255};
+        const SDL_Color Green       = {0,       255,    0,      255};
+        const SDL_Color Blue        = {0,       0,      255,    255};
+        const SDL_Color Magenta     = {255,     0,      255,    255};
+        const SDL_Color Cyan        = {0,       255,    255,    255};
+        const SDL_Color Yellow      = {255,     255,    0,      255};
+        const SDL_Color Transparent = {0,       0,      0,      0};
 
-        const HexCode RED_MASK   = 0xFF0000;
-        const HexCode GREEN_MASK = 0x00FF00;
-        const HexCode BLUE_MASK  = 0x0000FF;
+        const HexCode MaskRed   = 0xFF0000;
+        const HexCode MaskGreen = 0x00FF00;
+        const HexCode MaskBlue  = 0x0000FF;
 
     }
 
@@ -81,7 +81,7 @@ namespace Ossium
     /// Returns an SDL_Color from a 24 bit hex code
     OSSIUM_EDL SDL_Color Color(HexCode rgb);
 
-    /// Attempts to return an SDL_Color from a 6-character or 8-character string. Returns Colors::TRANSPARENT on failure.
+    /// Attempts to return an SDL_Color from a 6-character or 8-character string. Returns Colors::Transparent on failure.
     OSSIUM_EDL SDL_Color Color(std::string hexCode);
 
     // Convert an SDL_Color to Uint32

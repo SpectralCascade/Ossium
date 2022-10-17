@@ -16,7 +16,7 @@ namespace Ossium::Editor
         StyleText StandardText = StyleText(
             "assets/Orkney Regular.ttf",
             12,
-            Colors::BLACK,
+            Colors::Black,
             0,
             0,
             0,
@@ -27,7 +27,7 @@ namespace Ossium::Editor
         StyleText StandardTextWhite = StyleText(
             "assets/Orkney Regular.ttf",
             12,
-            Colors::WHITE,
+            Colors::White,
             0,
             0,
             0,
@@ -49,7 +49,7 @@ namespace Ossium::Editor
         StyleText EDITOR_TEXT_NORMAL_CENTERED_STYLE = StyleText(
             "assets/Orkney Regular.ttf",
             12,
-            Colors::BLACK,
+            Colors::Black,
             0,
             0,
             0,
@@ -60,7 +60,7 @@ namespace Ossium::Editor
         StyleText EDITOR_TEXT_INVERSE_CENTERED_STYLE = StyleText(
             "assets/Orkney Regular.ttf",
             12,
-            Colors::WHITE,
+            Colors::White,
             0,
             0,
             0,
@@ -87,10 +87,10 @@ namespace Ossium::Editor
             StandardText,
             StandardText,
             StandardText,
-            Colors::BLACK,
-            Colors::WHITE,
-            Colors::BLACK,
-            Colors::WHITE
+            Colors::Black,
+            Colors::White,
+            Colors::Black,
+            Colors::White
         );
         StyleClickable EDITOR_DROPDOWN_ITEM_STYLE = StyleClickable(
             Color(0, 220, 220),
@@ -99,18 +99,18 @@ namespace Ossium::Editor
             StandardText,
             StandardTextWhite,
             StandardTextWhite,
-            Colors::TRANSPARENT,
-            Colors::TRANSPARENT,
-            Colors::TRANSPARENT,
-            Colors::TRANSPARENT
+            Colors::Transparent,
+            Colors::Transparent,
+            Colors::Transparent,
+            Colors::Transparent
         );
         StyleClickable EDITOR_CHECKBOX_STYLE = StyleClickable(
-            Colors::WHITE,
+            Colors::White,
             StandardText,
-            Colors::BLACK,
-            Colors::WHITE,
-            Colors::BLACK,
-            Colors::WHITE
+            Colors::Black,
+            Colors::White,
+            Colors::Black,
+            Colors::White
         );
         StyleClickable EDITOR_CONTEXT_OPTION_STYLE = StyleClickable(
             Color(240, 240, 240),
@@ -210,10 +210,10 @@ namespace Ossium::Editor
         normalStyleText = textStyle;
         hoverStyleText = textStyle;
         clickStyleText = textStyle;
-        bottomEdgeColor = Colors::BLACK;
-        rightEdgeColor = Colors::BLACK;
-        topEdgeColor = Colors::WHITE;
-        leftEdgeColor = Colors::WHITE;
+        bottomEdgeColor = Colors::Black;
+        rightEdgeColor = Colors::Black;
+        topEdgeColor = Colors::White;
+        leftEdgeColor = Colors::White;
     }
 
     StyleClickable::StyleClickable(SDL_Color bodyColor, StyleText textStyle, SDL_Color outlineColor)

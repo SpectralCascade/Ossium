@@ -11,7 +11,7 @@ namespace Ossium::Editor
     protected:
         void OnGUI();
 
-        SDL_Color color = Colors::BLACK;
+        SDL_Color color = Colors::Black;
 
         std::string colorText = "000000";
 

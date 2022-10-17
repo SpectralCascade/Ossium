@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
             input.HandleEvent(e);
         }
 
-        renderer.SetBackgroundColor(Colors::BLACK);
+        renderer.SetBackgroundColor(Colors::Black);
         SDL_RenderClear(renderer.GetRendererSDL());
 
         angle += clock.GetDeltaTime() * angleSpeed;
@@ -134,53 +134,53 @@ int main(int argc, char* argv[])
         Line(
             Vector2(projA(0, 0), projA(0, 1)) + origin,
             Vector2(projB(0, 0), projB(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projB(0, 0), projB(0, 1)) + origin,
             Vector2(projC(0, 0), projC(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projC(0, 0), projC(0, 1)) + origin,
             Vector2(projD(0, 0), projD(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projD(0, 0), projD(0, 1)) + origin,
             Vector2(projA(0, 0), projA(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         // Sides
         Line(
             Vector2(projA(0, 0), projA(0, 1)) + origin,
             Vector2(projH(0, 0), projH(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projB(0, 0), projB(0, 1)) + origin,
             Vector2(projG(0, 0), projG(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projC(0, 0), projC(0, 1)) + origin,
             Vector2(projF(0, 0), projF(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projD(0, 0), projD(0, 1)) + origin,
             Vector2(projE(0, 0), projE(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         // Front plane
         Line(
             Vector2(projF(0, 0), projF(0, 1)) + origin,
             Vector2(projG(0, 0), projG(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projG(0, 0), projG(0, 1)) + origin,
             Vector2(projH(0, 0), projH(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projE(0, 0), projE(0, 1)) + origin,
             Vector2(projF(0, 0), projF(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
         Line(
             Vector2(projH(0, 0), projH(0, 1)) + origin,
             Vector2(projE(0, 0), projE(0, 1)) + origin
-        ).Draw(renderer, Colors::BLUE);
+        ).Draw(renderer, Colors::Blue);
 
         renderer.RenderPresent(true);
         SDL_RenderPresent(renderer.GetRendererSDL());

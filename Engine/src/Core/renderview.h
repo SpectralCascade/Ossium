@@ -7,7 +7,6 @@
 #include <vector>
 #include "bgfx/bgfx.h"
 
-#include "services.h"
 #include "helpermacros.h"
 
 namespace Ossium

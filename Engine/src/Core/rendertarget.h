@@ -14,7 +14,7 @@ namespace Ossium
     public:
         // The passed framebuffer will be destroyed automatically when this instance is destroyed, if valid
         RenderTarget() = default;
-        ~RenderTarget();
+        virtual ~RenderTarget();
 
         // Return a handle to the frame buffer
         bgfx::FrameBufferHandle GetFrameBuffer();

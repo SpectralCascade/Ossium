@@ -304,7 +304,7 @@ namespace Ossium
         Log.Verbose("Font {0} has atlas size: {1}, max glyphs: {2}, cache limit: {3}, mipmap depth: {4}", guid_path, actualTextureSize.x, maxAtlasGlyphs, cacheLimit, mipmapDepth);
 
         // Create the empty atlas surface in transparent white so color modulation works.
-        atlas.SetSurface(Image::CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, Alpha(Colors::WHITE, 0)));
+        atlas.SetSurface(Image::CreateEmptySurface(actualTextureSize.x, actualTextureSize.y, Alpha(Colors::White, 0)));
         return atlas.GetSurface() != NULL;
     }
 
@@ -412,8 +412,8 @@ namespace Ossium
                 }
                 // Render the glyph
                 // TODO: ditto regarding converting encoding from UCS-2 to UCS-4 when SDL_TTF gets updated
-                SDL_Surface* renderedGlyph = TTF_RenderGlyph_Blended(font, (Uint16)codepoint, Colors::WHITE);
-                SDL_Surface* created = Image::CreateEmptySurface(GetAtlasCellSize().x, GetAtlasCellSize().y, Alpha(Colors::WHITE, 0));
+                SDL_Surface* renderedGlyph = TTF_RenderGlyph_Blended(font, (Uint16)codepoint, Colors::White);
+                SDL_Surface* created = Image::CreateEmptySurface(GetAtlasCellSize().x, GetAtlasCellSize().y, Alpha(Colors::White, 0));
                 if (created != NULL && renderedGlyph != NULL)
                 {
                     // First, get the scaling correct
@@ -498,7 +498,7 @@ namespace Ossium
                             else
                             {
                                 // TODO: downscale mips that are too large
-                                SDL_Surface* mipped = TTF_RenderGlyph_Blended(mipFont, codepoint, Colors::WHITE);
+                                SDL_Surface* mipped = TTF_RenderGlyph_Blended(mipFont, codepoint, Colors::White);
                                 if (mipped != NULL)
                                 {
                                     //Log.Info("Blitting from {0} onto {1} (surface = {2})", Vector2(mipped->w, mipped->h), dest, Vector2(renderedGlyph->w, renderedGlyph->h));

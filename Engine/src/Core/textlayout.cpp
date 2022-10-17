@@ -210,7 +210,7 @@ namespace Ossium
             return;
         }
 
-        GlyphGroup currentGroup = (GlyphGroup){0, pointSize, mainColor, (Uint8)mainStyle, 0, 0, Colors::BLACK};
+        GlyphGroup currentGroup = (GlyphGroup){0, pointSize, mainColor, (Uint8)mainStyle, 0, 0, Colors::Black};
 
         // Keeps track of the last ideal place in the line to make a line break
         Uint32 lineBreakIndex = 0;

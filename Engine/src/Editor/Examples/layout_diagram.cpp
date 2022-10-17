@@ -14,9 +14,9 @@ namespace Ossium::Editor
 
         int yspacing = 40;
         int nodeSize = 16;
-        SDL_Color leafColor = Colors::GREEN;
-        SDL_Color parentColor = Colors::BLUE;
-        SDL_Color lineColor = Colors::BLACK;
+        SDL_Color leafColor = Colors::Green;
+        SDL_Color parentColor = Colors::Blue;
+        SDL_Color lineColor = Colors::Black;
 
         Node<EditorRect>* currentParent = nullptr;
         vector<int> parentX;
@@ -58,7 +58,7 @@ namespace Ossium::Editor
             Rect(x, y, nodeSize, nodeSize).DrawFilled(*renderer, n->children.empty() ? leafColor : parentColor);
             if (n->data.window != nullptr && n->data.window == mouseHovered)
             {
-                Rect(x - 1, y - 1, nodeSize + 2, nodeSize + 2).Draw(*renderer, Colors::WHITE);
+                Rect(x - 1, y - 1, nodeSize + 2, nodeSize + 2).Draw(*renderer, Colors::White);
             }
             if (!parentX.empty())
             {

@@ -22,11 +22,11 @@ namespace Ossium::Editor
             Space(20);
 
             StyleClickable style = EditorStyle::StandardButton;
-            style.hoverColor = Colors::RED;
+            style.hoverColor = Colors::Red;
             style.normalColor = Color(230, 0, 0);
             style.clickColor = Color(150, 0, 0);
-            style.normalStyleText.fg = Colors::WHITE;
-            style.hoverStyleText.fg = Colors::WHITE;
+            style.normalStyleText.fg = Colors::White;
+            style.hoverStyleText.fg = Colors::White;
             style.clickStyleText.fg = Color(100, 100, 100);
 
             if (Button("Windows"))

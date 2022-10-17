@@ -64,10 +64,10 @@ namespace Ossium::Editor
         M(StyleText, hoverStyleText);
         M(StyleText, clickStyleText);
 
-        M(SDL_Color, topEdgeColor) = Colors::WHITE;
-        M(SDL_Color, bottomEdgeColor) = Colors::BLACK;
-        M(SDL_Color, leftEdgeColor) = Colors::WHITE;
-        M(SDL_Color, rightEdgeColor) = Colors::BLACK;
+        M(SDL_Color, topEdgeColor) = Colors::White;
+        M(SDL_Color, bottomEdgeColor) = Colors::Black;
+        M(SDL_Color, leftEdgeColor) = Colors::White;
+        M(SDL_Color, rightEdgeColor) = Colors::Black;
     };
 
     namespace EditorStyle

@@ -21,7 +21,6 @@ extern "C"
 
 #include "image.h"
 #include "coremaths.h"
-#include "colors.h"
 #include "shader.h"
 
 using namespace std;
@@ -95,7 +94,7 @@ namespace Ossium
     {
         auto format = SDL_PIXELFORMAT_RGBA32;
         SDL_Surface* emptySurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format);
-        if (emptySurface != NULL && color != Colors::TRANSPARENT)
+        if (emptySurface != NULL && color != Colors::Transparent)
         {
             SDL_Rect rect = {0, 0, w, h};
             SDL_PixelFormat* allocatedFormat = SDL_AllocFormat(format);
@@ -212,10 +211,10 @@ namespace Ossium
         float xflip = (float)((bool)(flip & SDL_FLIP_HORIZONTAL));
         float yflip = (float)((bool)(flip & SDL_FLIP_VERTICAL));
         float vertices[4][5] = {
-            { dest.x, dest.y, 0.0f, xflip, yflip },
-            { dest.x + dest.w, dest.y, 0.0f, !xflip, yflip },
-            { dest.x + dest.w, dest.y + dest.h, 0.0f, !xflip, !yflip },
-            { dest.x, dest.y + dest.h, 0.0f, xflip, !yflip }
+            { (float)dest.x, (float)dest.y, 0.0f, xflip, yflip },
+            { (float)(dest.x + dest.w), (float)dest.y, 0.0f, (float)!xflip, yflip },
+            { (float)(dest.x + dest.w), (float)(dest.y + dest.h), 0.0f, (float)!xflip, (float)!yflip },
+            { (float)dest.x, (float)(dest.y + dest.h), 0.0f, xflip, (float)!yflip }
         };
 
         if (clip && clip->w > 0 && clip->h > 0)

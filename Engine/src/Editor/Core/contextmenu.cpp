@@ -248,7 +248,7 @@ namespace Ossium::Editor
                 Vector2 arrowPos = oldPos + Vector2(renderer->GetWidth() - ((iconWidth - 4) / 2), ((GetLayoutPosition().y - oldPos.y) / 2) - (arrowHeight / 2.0f));
                 Line arrowLine = Line(arrowPos, arrowPos + Vector2(0, arrowHeight));
 
-                renderer->SetDrawColor(hovered ? Colors::WHITE : Colors::BLACK);
+                renderer->SetDrawColor(hovered ? Colors::White : Colors::Black);
 
                 for (unsigned int i = 0, counti = (int)round(arrowHeight / 2.0f); i < counti; i++)
                 {

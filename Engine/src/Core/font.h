@@ -68,26 +68,26 @@ namespace Ossium
         StyleText(
             std::string font = "",
             int fontSize = 12,
-            SDL_Color color = Colors::BLACK,
+            SDL_Color color = Colors::Black,
             int hint = 0,
             int kern = 0,
             int outlineThickness = 0,
             int styling = 0,
             int renderingMode = RENDERTEXT_BLEND,
             int alignment = Typographic::TextAlignment::LEFT_ALIGNED,
-            SDL_Color backgroundColor = Colors::TRANSPARENT
+            SDL_Color backgroundColor = Colors::Transparent
         );
 
         M(std::string, fontPath);
         M(int, ptsize) = 12;
-        M(SDL_Color, fg) = Colors::BLACK;
+        M(SDL_Color, fg) = Colors::Black;
         M(int, hinting) = 0;
         M(int, kerning) = 0;
         M(int, outline) = 0;
         M(int, style) = 0;
         M(int, rendermode) = RENDERTEXT_SOLID;
         M(int, alignment) = Typographic::TextAlignment::LEFT_ALIGNED;
-        M(SDL_Color, bg) = Colors::TRANSPARENT;
+        M(SDL_Color, bg) = Colors::Transparent;
     };
 
     // Glyphs are different depending not only on their UTF-8 code point, but also their style and outline thickness in pixels.
@@ -200,12 +200,12 @@ namespace Ossium
          */
         SDL_Surface* GenerateFromText(
             std::string text,
-            SDL_Color color = Colors::RED,
+            SDL_Color color = Colors::Red,
             int hinting = 0,
             int kerning = 1,
             int style = 0,
             int renderMode = RENDERTEXT_BLEND,
-            SDL_Color bgColor = Colors::BLACK,
+            SDL_Color bgColor = Colors::Black,
             int outline = 0,
             Uint32 wrapLength = 0,
             TTF_Font* f = NULL
@@ -225,7 +225,7 @@ namespace Ossium
         Uint32 GetBatchPackTotal();
 
         /// Renders the font atlas texture at a given point size.
-        void Render(SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::RED, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void Render(SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::Red, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Renders a single glyph at the chosen position. Returns true if the glyph is valid and rendered successfully, otherwise renders an invalid glyph box and returns false.
         /// TODO: provide alternate method to render the invalid glyph box
@@ -233,7 +233,7 @@ namespace Ossium
             GlyphID id,
             Vector2 position,
             float pointSize,
-            SDL_Color color = Colors::RED,
+            SDL_Color color = Colors::Red,
             bool kerning = true,
             Typographic::TextDirection direction = Typographic::TextDirection::LEFT_TO_RIGHT,
             SDL_BlendMode blending = SDL_BLENDMODE_BLEND,
