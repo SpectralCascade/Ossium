@@ -146,7 +146,7 @@ namespace Ossium
         int heightGPU = 0;
 
         /// The pixel format of the surface.
-        Uint32 format = SDL_PIXELFORMAT_ARGB8888;
+        Uint32 format = SDL_PIXELFORMAT_RGBA32;
 
         /// GPU texture and sampler flags
         Uint64 flags;

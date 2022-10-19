@@ -19,6 +19,7 @@ namespace Ossium
         }
         else
         {
+            Log.Info("Initialising bgfx...");
             bgfx::PlatformData config;
             config.ndt = nullptr;
             config.nwh = nwh;

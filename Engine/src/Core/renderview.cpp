@@ -7,7 +7,7 @@ namespace Ossium
 
     RenderView::RenderView(RenderViewPool* pool, bgfx::ViewId id, SDL_Rect viewport, RenderTarget* target, std::string name)
     {
-        Log.Info("Creating render view {0} \"{1}\" with target: {2}", id, name, target->GetFrameBuffer().idx);
+        Log.Info("Creating render view {0} \"{1}\" with target: {2} (w: {3}, h: {4})", id, name, target->GetFrameBuffer().idx, target->GetWidth(), target->GetHeight());
         this->pool = pool;
         this->id = id;
         SetDebugName(name);

@@ -265,7 +265,14 @@ namespace Ossium
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
-        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(
+            0,
+            (float)renderer->GetHeight(),
+            0,
+            (float)renderer->GetWidth(),
+            -1,
+            1
+        );
 
         bgfx::setViewTransform(pass->GetID(), &view, &proj);
         bgfx::setVertexBuffer(0, vbo);

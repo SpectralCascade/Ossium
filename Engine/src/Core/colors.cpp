@@ -87,22 +87,8 @@ namespace Ossium
         SDL_PixelFormatEnumToMasks(format, &bpp, &dummy, &dummy, &dummy, &dummy);
 
         // TODO check this works with all bpp values... should probably float divide and ceil to int
-        SDL_ConvertPixels(1, 1,
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-            SDL_PIXELFORMAT_ABGR8888,
-#else
-            SDL_PIXELFORMAT_RGBA8888,
-#endif
-            &color, 4, format, &output, bpp / 8
-        );
+        SDL_ConvertPixels(1, 1, SDL_PIXELFORMAT_RGBA32, &color, sizeof(color), format, &output, bpp / 8);
         return output;
-/*
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        return ((Uint32)color.a || (Uint32)color.b >> 8 || (Uint32)color.g >> 16 || (Uint32)color.r >> 24);
-#else
-        return ((Uint32)color.a || (Uint32)color.b << 8 || (Uint32)color.g << 16 || (Uint32)color.r << 24);
-#endif
-*/
     }
 
     bool IsValidColor(string hexCode)

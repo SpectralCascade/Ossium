@@ -143,7 +143,7 @@ namespace Ossium
 
     std::string FontRenderInput::GetRenderDebugName()
     {
-        return Utilities::Format("FONT: {0}", this);
+        return Utilities::Format("Font:{0}", this);
     }
 
     void FontRenderInput::Render()
