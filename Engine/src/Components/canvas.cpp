@@ -7,6 +7,7 @@ namespace Ossium
 
     void Canvas::OnCreate()
     {
+        Log.Info("CANVAS CREATED");
         Renderer* renderer = GetEntity()->GetService<Renderer>();
         if (renderer != nullptr)
         {
@@ -36,10 +37,11 @@ namespace Ossium
 
     void Canvas::Render()
     {
+        //Log.Info("Rendering canvas...");
         Entity* root = GetEntity();
         root->GetScene()->WalkEntities([&] (Entity* child) {
-            
-            bool result = child->IsActive() && !child->HasComponent<Canvas>();
+            bool result = child->IsActive() && (!child->HasComponent<Canvas>() || child == root);
+            //Log.Info("Walk result = {0}", result);
             if (result)
             {
                 auto graphics = child->GetComponents<GraphicComponent>();
