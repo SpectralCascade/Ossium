@@ -26,7 +26,7 @@ namespace Ossium
 
     std::string Canvas::GetRenderDebugName()
     {
-        return GetEntity()->name;
+        return "Canvas." + GetEntity()->name;
     }
 
     int Canvas::GetViewMode()
