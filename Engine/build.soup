@@ -91,9 +91,8 @@
                         "robocopy -IT ../bx/scripts ./libs libbxRelease.a > nul",
                         "robocopy -IT ../bimg/scripts ./libs libbimgRelease.a > nul",
                         "robocopy -IT ./scripts ./libs libbgfxRelease.a > nul",
-                        "mkdir \"{root}/{output}/{platform}/{mode}\" > nul",
-                        "robocopy -IT ./scripts \"{root}/{output}/{platform}/{mode}\" shadercRelease.exe > nul",
-                        "ren \"{root}/{output}/{platform}/{mode}/shadercRelease.exe\" shaderc.exe > nul"
+                        "robocopy -IT ./scripts \"{root}/../tools\" shadercRelease.exe > nul",
+                        "ren \"{root}/../tools/shadercRelease.exe\" shaderc.exe > nul"
                     ]
                 }
             ],
@@ -170,7 +169,7 @@
                     "steps": [
                         "{run_task} Windows generate_makefile {mode}",
                         "cmd /c mingw32-make {mode} -j {cpu_count}",
-                        "py \"{root}/../tools/buildshaders.py\" -p windows -c \"{root}/{output}/{platform}/{mode}/shaderc.exe\" -i src/Shaders -o \"{root}/{output}/{platform}/{mode}/Shaders\""
+                        "py \"{root}/../tools/buildshaders.py\" -p windows -c \"{root}/../tools/shaderc.exe\" -i src/Shaders -o \"{root}/{output}/{platform}/{mode}/Shaders\""
                     ],
                     "outputs": ["bin/{mode}/lib{name}.a"],
                     "output_shared": false
