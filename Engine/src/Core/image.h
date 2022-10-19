@@ -34,7 +34,7 @@ namespace Ossium
     public:
         DECLARE_RESOURCE(Image);
 
-        Image() = default;
+        Image();
         ~Image();
 
         /// Destroys the image, freeing it from memory. Does not modify the temporary SDL_Surface
@@ -150,6 +150,16 @@ namespace Ossium
 
         /// GPU texture and sampler flags
         Uint64 flags;
+
+        // Vertices for rendering
+        // TODO 
+        float vertices[4][5];
+        
+        // Vertex buffer object
+        bgfx::VertexBufferHandle vbo;
+        
+        // Index buffer object
+        bgfx::IndexBufferHandle ibo;
 
     };
 

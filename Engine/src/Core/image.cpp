@@ -30,16 +30,42 @@ namespace Ossium
 
     REGISTER_RESOURCE(Image);
 
+    Image::Image()
+    {
+        // Create index array (quad formed of two triangles)
+        static const uint16_t indices[] = {
+            0, 1, 2, 
+            0, 2, 3
+        };
+
+        // Specify the layout of the vertex data to pass to the GPU
+        bgfx::VertexLayout layout;
+        layout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+        .end();
+
+        // Create vertex and index buffers
+        vbo = bgfx::createVertexBuffer(bgfx::makeRef(vertices, sizeof(vertices)), layout);
+        ibo = bgfx::createIndexBuffer(bgfx::makeRef(indices, sizeof(indices)));
+
+        // Load shaders
+        shaderVertex = LoadShader(GetShaderPath("image.vert.bin"));
+        shaderFrag = LoadShader(GetShaderPath("image.frag.bin"));
+        shaderProgram = bgfx::createProgram(shaderVertex, shaderFrag, false);
+    }
+
     Image::~Image()
     {
         PopGPU();
         FreeSurface();
-        if (shaderProgram.idx != bgfx::kInvalidHandle)
-        {
-            bgfx::destroy(shaderProgram);
-            bgfx::destroy(shaderVertex);
-            bgfx::destroy(shaderFrag);
-        }
+
+        bgfx::destroy(shaderProgram);
+        bgfx::destroy(shaderFrag);
+        bgfx::destroy(shaderVertex);
+
+        bgfx::destroy(ibo);
+        bgfx::destroy(vbo);
     }
 
     void Image::FreeSurface()
@@ -82,11 +108,6 @@ namespace Ossium
             SetSurfaceFormat(SDL_PIXELFORMAT_RGBA32);
         }
         
-        // Load shaders
-        shaderVertex = LoadShader(GetShaderPath("image.vert.bin"));
-        shaderFrag = LoadShader(GetShaderPath("image.frag.bin"));
-        shaderProgram = bgfx::createProgram(shaderVertex, shaderFrag, false);
-
         return tempSurface != NULL;
     }
 
@@ -189,7 +210,8 @@ namespace Ossium
         {
             // Draw error
             // TODO draw a tiled error texture?
-            Rect(dest).DrawFilled(pass, Color(255, 100, 255, 255));
+            Log.Error("Texture is invalid, can't render!");
+            //Rect(dest).DrawFilled(pass, Color(255, 100, 255, 255));
             return;
         }
 
@@ -199,23 +221,33 @@ namespace Ossium
         //SDL_SetTextureAlphaMod(texture, modulation.a);
 
         Renderer* renderer = pass->GetRenderer();
-
-        // First, specify the layout of the data to pass to the GPU
-        bgfx::VertexLayout layout;
-        layout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-        .end();
         
         // Create the quad vertices
         float xflip = (float)((bool)(flip & SDL_FLIP_HORIZONTAL));
         float yflip = (float)((bool)(flip & SDL_FLIP_VERTICAL));
-        float vertices[4][5] = {
-            { (float)dest.x, (float)dest.y, 0.0f, xflip, yflip },
-            { (float)(dest.x + dest.w), (float)dest.y, 0.0f, (float)!xflip, yflip },
-            { (float)(dest.x + dest.w), (float)(dest.y + dest.h), 0.0f, (float)!xflip, (float)!yflip },
-            { (float)dest.x, (float)(dest.y + dest.h), 0.0f, xflip, (float)!yflip }
-        };
+        vertices[0][0] = (float)dest.x;
+        vertices[0][1] = (float)dest.y;
+        vertices[0][2] = 0;
+        vertices[0][3] = xflip;
+        vertices[0][4] = yflip;
+
+        vertices[1][0] = (float)(dest.x + dest.w);
+        vertices[1][1] = (float)dest.y;
+        vertices[1][2] = 0;
+        vertices[1][3] = (float)!xflip;
+        vertices[1][4] = yflip;
+
+        vertices[2][0] = (float)(dest.x + dest.w);
+        vertices[2][1] = (float)(dest.y + dest.h);
+        vertices[2][2] = 0;
+        vertices[2][3] = (float)!xflip;
+        vertices[2][4] = (float)!yflip;
+
+        vertices[3][0] = (float)dest.x;
+        vertices[3][1] = (float)(dest.y + dest.h);
+        vertices[3][2] = 0;
+        vertices[3][3] = xflip;
+        vertices[3][4] = (float)!yflip;
 
         if (clip && clip->w > 0 && clip->h > 0)
         {
@@ -227,23 +259,9 @@ namespace Ossium
             }
         }
 
-        // Create index array (quad formed of two triangles)
-        uint16_t indices[] = {
-            0, 1, 2, 
-            0, 2, 3
-        };
-
-        // Draw points rather than triangles
+        // Set primitive type to triangles
+        renderer->SetState(renderer->GetState() & ~BGFX_STATE_PT_MASK);
         bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
-
-        // Create a VBO
-        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
-            bgfx::copy(&vertices, sizeof(vertices)),
-            layout
-        );
-
-        // Create an IBO
-        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
@@ -319,6 +337,8 @@ namespace Ossium
         }
         else
         {
+            uint32_t tex_size = tempSurface->pitch * tempSurface->h;
+            Log.Info("Creating 2D texture for the GPU ({0} bytes)", tex_size);
             texture = bgfx::createTexture2D(
                 tempSurface->w,
                 tempSurface->h,
@@ -326,7 +346,7 @@ namespace Ossium
                 1,
                 bgfx::TextureFormat::RGBA8,
                 flags,
-                bgfx::makeRef(tempSurface->pixels, tempSurface->pitch * tempSurface->h)
+                bgfx::copy(tempSurface->pixels, tex_size)
             );
             if (texture.idx == bgfx::kInvalidHandle)
             {
@@ -349,6 +369,7 @@ namespace Ossium
     {
         if (texture.idx != bgfx::kInvalidHandle)
         {
+            Log.Info("Destroying GPU texture...");
             bgfx::destroy(texture);
             texture = BGFX_INVALID_HANDLE;
         }
