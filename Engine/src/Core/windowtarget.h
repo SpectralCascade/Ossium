@@ -22,7 +22,7 @@ namespace Ossium
         virtual int GetHeight() = 0;
 
         // Initialise this target to either create a frame buffer or use the backbuffer
-        bool Init(uint32_t width, uint32_t height, uint32_t resetFlags, void* nwh);
+        bool Init(uint32_t width, uint32_t height, uint32_t resetFlags, void* nwh, bool useBackBuffer = false);
 
         /// Called when the associated window is destroyed.
         void OnWindowDestroyed();

@@ -54,22 +54,23 @@ namespace Ossium
 
     void Renderer::RenderPresent()
     {
-        // Always clear the render target view
-        // TODO this may not be necessary
-        for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
-        {
-            bgfx::setViewClear(
-                inputs[i]->renderView->GetID(),
-                BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
-                ColorToUint32(bufferColour, SDL_PIXELFORMAT_ABGR8888) // TODO check this is correct
-            );
-        }
-        
         // Render pipeline inputs
         for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
         {
             if (inputs[i]->IsRenderEnabled())
             {
+                // TODO each input should have it's own clear colour
+                auto bgcolor = ColorToUint32(bufferColour, SDL_PIXELFORMAT_ARGB32);
+                //Log.Info("View = {2}, background colour = {0}, converted = {1}", Utilities::ToString(bufferColour), bgcolor, inputs[i]->renderView->GetDebugName());
+                bgfx::setViewClear(
+                    inputs[i]->renderView->GetID(),
+                    BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, // Clear flags
+                    bgcolor,
+                    1.0f,
+                    0
+                );
+                bgfx::touch(inputs[i]->renderView->GetID());
+
                 inputs[i]->Render();
             }
         }
@@ -78,10 +79,19 @@ namespace Ossium
         numRenderedPrevious = numRendered;
         numRendered = 0;
         #endif // DEBUG
-        SetDrawColor(bufferColour);
 
         // Actually render everything
         bgfx::frame();
+    }
+
+    SDL_Color Renderer::GetBackgroundColor()
+    {
+        return bufferColour;
+    }
+
+    void Renderer::SetBackgroundColor(SDL_Color color)
+    {
+        bufferColour = color;
     }
 
     void Renderer::SetDrawColor(SDL_Color color)
@@ -101,7 +111,7 @@ namespace Ossium
 
     Uint32 Renderer::GetDrawColorUint32()
     {
-        return ColorToUint32(drawColour, SDL_PIXELFORMAT_ABGR8888);
+        return ColorToUint32(drawColour, SDL_PIXELFORMAT_ARGB32);
     }
 
     void Renderer::SetState(Uint64 state)
@@ -150,7 +160,10 @@ namespace Ossium
         aspect_width = (int)rect.w;
         aspect_height = (int)rect.h;
         viewportRect = rect;
-        bgfx::setViewRect(0, viewportRect.x, viewportRect.y, viewportRect.w, viewportRect.h);
+        for (unsigned int i = 0, counti = inputs.size(); i < counti; i++)
+        {
+            inputs[i]->GetRenderView()->SetViewport(viewportRect);
+        }
     }
 
     void Renderer::TargetToViewportPoint(int& x, int& y)
@@ -299,15 +312,5 @@ namespace Ossium
         return numRenderedPrevious;
     }
     #endif // DEBUG
-
-    SDL_Color Renderer::GetBackgroundColor()
-    {
-        return bufferColour;
-    }
-
-    void Renderer::SetBackgroundColor(SDL_Color color)
-    {
-        bufferColour = color;
-    }
 
 }

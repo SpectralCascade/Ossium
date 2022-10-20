@@ -3,10 +3,10 @@
 namespace Ossium
 {
     
-    bool WindowTarget::Init(uint32_t width, uint32_t height, uint32_t resetFlags, void* nwh)
+    bool WindowTarget::Init(uint32_t width, uint32_t height, uint32_t resetFlags, void* nwh, bool useBackBuffer)
     {
         bool success = true;
-        useBackBuffer = nwh == nullptr;
+        this->useBackBuffer = useBackBuffer;
         if (!useBackBuffer)
         {
             // Setup render target
@@ -52,6 +52,10 @@ namespace Ossium
                 {
                     Log.Error("Failed to initialise bgfx.");
                 }
+            }
+            if (success)
+            {
+                Log.Info("Successfully initialised bgfx.");
             }
         }
         return success;

@@ -50,7 +50,7 @@ namespace Ossium
 
         // TODO set vsync and other options such as MSAA according to settings
         backbufferFlags = BGFX_RESET_VSYNC;
-        Init(w, h, backbufferFlags, useBackBuffer ? nullptr : GetNativeHandle());
+        Init(w, h, backbufferFlags, GetNativeHandle(), useBackBuffer);
 
         if (fullscreen)
         {
@@ -320,6 +320,7 @@ namespace Ossium
         {
             return bgfx::createFrameBuffer(GetNativeHandle(), (uint16_t)width, (uint16_t)height);
         }
+        Log.Info("Resetting backbuffer...");
         bgfx::reset((uint32_t)width, (uint32_t)height, backbufferFlags);
         return BGFX_INVALID_HANDLE;
     }
