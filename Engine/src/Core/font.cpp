@@ -170,10 +170,10 @@ namespace Ossium
     {
         FreeGlyphs();
         FreeAtlas();
-        Renderer* renderer = pass.GetRenderer();
+        Renderer* renderer = texturePass.GetRenderer();
         if (renderer != nullptr)
         {
-            pass.GetRenderer()->RemoveInput(&pass);
+            //texturePass.GetRenderer()->RemoveInput(&texturePass);
         }
         if (font != NULL)
         {
@@ -215,7 +215,9 @@ namespace Ossium
 
     bool Font::Init(string guid_path, Renderer* renderer, Uint32 glyphCacheLimit, int mipDepth, Uint32 targetTextureSize)
     {
-        renderer->AddInput(&pass);
+        // TODO enable this but with a different renderer/render target
+        // DO NOT ENABLE THIS WITH A WINDOW RENDERER
+        //renderer->AddInput(&texturePass);
 
         updateAtlasTexture = true;
         mipOffsets.clear();
@@ -651,19 +653,20 @@ namespace Ossium
         return batched;
     }
 
-    void Font::Render(SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    void Font::Render(RenderInput* pass, SDL_Rect dest, SDL_Rect* clip, SDL_Color color, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
         if (updateAtlasTexture)
         {
             atlas.PushGPU(BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE);
             updateAtlasTexture = false;
         }
-        atlas.Render(&pass, dest, clip, origin, angle, color, blending, flip);
+        // TODO fix me, should render to target texture NOT window
+        atlas.Render(pass, dest, clip, origin, angle, color, blending, flip);
     }
 
-    bool Font::RenderGlyph(GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
+    bool Font::RenderGlyph(RenderInput* pass, GlyphID id, Vector2 position, float pointSize, SDL_Color color, bool kerning, Typographic::TextDirection direction, SDL_BlendMode blending, double angle, SDL_Point* origin, SDL_RendererFlip flip)
     {
-        Renderer* renderer = pass.GetRenderer();
+        Renderer* renderer = pass->GetRenderer();
         Glyph* glyph = GetGlyph(id);
         SDL_Rect dest = {(int)(position.x), (int)(position.y), 0, 0};
         float scale = (pointSize / loadedPointSize);
@@ -675,7 +678,7 @@ namespace Ossium
             dest.h = invalidDimensions.y * scale;
             dest.y += invalidPadding * scale;
             SDL_Color oldColor = renderer->GetDrawColor();
-            Rect(dest).Draw(&pass, color);
+            Rect(dest).Draw(pass, color);
             renderer->SetDrawColor(oldColor);
             return false;
         }
@@ -694,7 +697,7 @@ namespace Ossium
         clip = GetMipMapClip(clip, (int)level);
 
         // Render the glyph
-        Render(dest, &clip, color, blending, angle, origin, flip);
+        Render(pass, dest, &clip, color, blending, angle, origin, flip);
 
         return true;
     }

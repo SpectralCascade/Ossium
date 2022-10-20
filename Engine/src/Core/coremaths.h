@@ -262,7 +262,6 @@ namespace Ossium
     {
         Line() = default;
         Line(Point start, Point end);
-        Line(float ax, float ay, float az, float bx, float by, float bz);
 
         Point a;
         Point b;

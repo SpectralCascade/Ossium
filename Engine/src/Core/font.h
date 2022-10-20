@@ -225,11 +225,12 @@ namespace Ossium
         Uint32 GetBatchPackTotal();
 
         /// Renders the font atlas texture at a given point size.
-        void Render(SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::Red, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void Render(RenderInput* pass, SDL_Rect dest, SDL_Rect* clip = NULL, SDL_Color color = Colors::Red, SDL_BlendMode blending = SDL_BLENDMODE_BLEND, double angle = 0.0, SDL_Point* origin = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// Renders a single glyph at the chosen position. Returns true if the glyph is valid and rendered successfully, otherwise renders an invalid glyph box and returns false.
         /// TODO: provide alternate method to render the invalid glyph box
         bool RenderGlyph(
+            RenderInput* pass,
             GlyphID id,
             Vector2 position,
             float pointSize,
@@ -414,7 +415,7 @@ namespace Ossium
         Uint32 batched = 0;
 
         // RenderInput instance for creating the atlas
-        FontRenderInput pass;
+        FontRenderInput texturePass;
 
     };
 

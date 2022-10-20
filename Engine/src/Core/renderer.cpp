@@ -96,12 +96,17 @@ namespace Ossium
 
     void Renderer::SetDrawColor(SDL_Color color)
     {
+        bool update = drawColour != color;
         drawColour = color;
+        if (update)
+        {
+            UpdateStateAndColor();
+        }
     }
 
     void Renderer::SetDrawColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
     {
-        drawColour = { .r=red, .g=green, .b=blue, .a=alpha };
+        SetDrawColor(Color(red, green, blue, alpha));
     }
 
     SDL_Color Renderer::GetDrawColor()
@@ -111,7 +116,7 @@ namespace Ossium
 
     Uint32 Renderer::GetDrawColorUint32()
     {
-        return ColorToUint32(drawColour, SDL_PIXELFORMAT_ARGB32);
+        return ColorToUint32(drawColour, SDL_PIXELFORMAT_RGBA32);
     }
 
     void Renderer::SetState(Uint64 state)

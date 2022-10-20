@@ -313,14 +313,15 @@ namespace Ossium
             { round(x), round(y), 0.0f, (float)ColorToUint32(renderer->GetDrawColor(), SDL_PIXELFORMAT_ABGR8888) }
         };
         // Create index array
-        uint16_t indices[1] = { 0 };
+        uint16_t indices[] = { 0 };
 
-        // Draw points rather than triangles
+        // Set primitive type to points
+        renderer->SetState((renderer->GetState() & (~BGFX_STATE_PT_MASK)) | BGFX_STATE_PT_POINTS);
         bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
 
         // Create a VBO
         bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
-            bgfx::copy(&vertices, sizeof(vertices)),
+            bgfx::copy(vertices, sizeof(vertices)),
             layout
         );
 
@@ -486,42 +487,59 @@ namespace Ossium
         b = end;
     }
 
+    // TODO sort this out...
+    struct LineVertex
+    {
+        float x;
+        float y;
+        Uint32 color0;
+
+        static void Init()
+        {
+            layout.begin()
+                .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+        }
+
+        inline static bgfx::VertexLayout layout;
+    };
+
     void Line::Draw(RenderInput* pass)
     {
         Renderer* renderer = pass->GetRenderer();
-
-        // First, specify the layout of the data to pass to the GPU
-        bgfx::VertexLayout layout;
-        layout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-        .end();
         
         // Create the vertices
-        float color0 = (float)ColorToUint32(renderer->GetDrawColor(), SDL_PIXELFORMAT_ABGR8888);
-        float vertices[2][4] = {
-            { round(a.x), round(a.y), 0.0f, color0 },
-            { round(b.x), round(b.y), 0.0f, color0 }
+        auto color0 = renderer->GetDrawColorUint32();
+        LineVertex vertices[] = {
+            { a.x, a.y, color0 },
+            { b.x, b.y, color0 }
         };
-        // Create index array
-        uint16_t indices[2] = { 0, 1 };
+        LineVertex::Init();
 
-        // Draw line rather than triangles or points
-        if (!(renderer->GetState() & BGFX_STATE_PT_LINES))
-        {
-            renderer->SetState(renderer->GetState() | BGFX_STATE_PT_LINES);
-        }
-        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
-
-        // Create a VBO
-        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
-            bgfx::copy(&vertices, sizeof(vertices)),
-            layout
+        renderer->SetState(0
+            // Draw lines rather than triangles or points
+            | BGFX_STATE_PT_LINES
+            // Write colour
+            | BGFX_STATE_WRITE_RGB
+            // Write alpha
+            | BGFX_STATE_WRITE_A
+            // Depth testing
+            | BGFX_STATE_WRITE_Z
+            | BGFX_STATE_DEPTH_TEST_LESS
+            // Not applicable to lines really, but affects triangles
+            | BGFX_STATE_CULL_CW
+            // Alpha opacity blending
+            | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA)
+            | BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX)
         );
+        renderer->UpdateStateAndColor();
 
-        // Create an IBO
-        // TODO: check if this is necessary for lines?
-        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
+        // Create buffers
+        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
+            bgfx::copy(vertices, sizeof(vertices)),
+            LineVertex::layout
+        );
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
@@ -531,14 +549,21 @@ namespace Ossium
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
-        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(0, renderer->GetWidth(), renderer->GetHeight(), 0, 0, 100);
 
         bgfx::setViewTransform(pass->GetID(), &view, &proj);
         bgfx::setVertexBuffer(0, vbo);
-        bgfx::setIndexBuffer(ibo);
 
         // Submit the draw call
         bgfx::submit(pass->GetID(), program);
+
+        // TODO be less memory unfriendly
+        // Destroy everything - bgfx only frees them after the next frame() call
+        bgfx::destroy(vbo);
+
+        bgfx::destroy(program);
+        bgfx::destroy(fragmentShader);
+        bgfx::destroy(vertexShader);
     }
 
     void Line::Draw(RenderInput* pass, SDL_Color color)
@@ -605,15 +630,12 @@ namespace Ossium
         };
 
         // Draw triangles
-        if (!(renderer->GetState() & (~BGFX_STATE_PT_MASK)))
-        {
-            renderer->SetState(renderer->GetState() | BGFX_STATE_PT_LINES);
-        }
+        renderer->SetState(renderer->GetState() & (~BGFX_STATE_PT_MASK));
         bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
 
         // Create a VBO
         bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
-            bgfx::copy(&vertices, sizeof(vertices)),
+            bgfx::copy(vertices, sizeof(vertices)),
             layout
         );
 

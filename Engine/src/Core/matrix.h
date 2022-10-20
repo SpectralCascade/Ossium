@@ -348,6 +348,19 @@ namespace Ossium
             return !(*this == operand);
         }
 
+        inline static Matrix Zeroes()
+        {
+            Matrix<TotalDimensions, TotalVectors> mat;
+            for (unsigned int i = 0; i < TotalVectors; i++)
+            {
+                for (unsigned int dim = 0; dim < TotalDimensions; dim++)
+                {
+                    mat.data[i][dim] = 0;
+                }
+            }
+            return mat;
+        }
+
         // Identity matrix
         inline static Matrix Identity()
         {
@@ -376,13 +389,18 @@ namespace Ossium
         }
 
         // Orthographic projection matrix
-        inline static Matrix<4, 4> Orthographic(float top, float bottom, float left, float right, float near, float far)
+        inline static Matrix<4, 4> Orthographic(float left, float right, float bottom, float top, float near, float far)
         {
             return {
                 {2.0f / (right - left), 0, 0, 0},
                 {0, 2.0f / (top - bottom), 0, 0},
                 {0, 0, -2.0f / (far - near), 0},
-                {(left + right) / 2.0f, (top + bottom) / 2.0f, -((far + near) / 2.0f), 1}
+                {
+                    (left + right) / (left - right),
+                    (top + bottom) / (bottom - top),
+                    (near + far) / (near - far),
+                    1
+                }
             };
         }
 

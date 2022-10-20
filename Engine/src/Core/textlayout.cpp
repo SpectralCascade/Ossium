@@ -53,6 +53,7 @@ namespace Ossium
                     // Render outline first
                     GlyphID glyph = CreateGlyphID(glyphs[glyphIndex].GetCodepoint(), currentGroup.style, currentGroup.hinting, currentGroup.outline);
                     font.RenderGlyph(
+                        pass,
                         glyph,
                         position,
                         currentGroup.pointSize,
@@ -64,6 +65,7 @@ namespace Ossium
                 // Render the glyph with the current group styling.
                 GlyphID glyph = CreateGlyphID(glyphs[glyphIndex].GetCodepoint(), currentGroup.style, currentGroup.hinting, 0);
                 font.RenderGlyph(
+                    pass,
                     glyph,
                     position,
                     currentGroup.pointSize,
