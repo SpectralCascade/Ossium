@@ -531,8 +531,7 @@ namespace Ossium
             | BGFX_STATE_WRITE_Z
             | BGFX_STATE_DEPTH_TEST_LESS
             // Alpha opacity blending
-            //| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA)
-            //| BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX)
+            | OSSIUM_STANDARD_BLENDING
         );
         renderer->UpdateStateAndColor();
 
@@ -632,8 +631,10 @@ namespace Ossium
             // Write alpha
             | BGFX_STATE_WRITE_A
             // Depth testing
-            //| BGFX_STATE_WRITE_Z
-            //| BGFX_STATE_DEPTH_TEST_LESS
+            | BGFX_STATE_WRITE_Z
+            | BGFX_STATE_DEPTH_TEST_LESS
+            // Alpha opacity blending
+            | OSSIUM_STANDARD_BLENDING
         );
         renderer->UpdateStateAndColor();
 

@@ -214,11 +214,6 @@ namespace Ossium
             return;
         }
 
-        // TODO setup these texture effects
-        //SDL_SetTextureBlendMode(texture, blending);
-        //SDL_SetTextureColorMod(texture, modulation.r, modulation.g, modulation.b);
-        //SDL_SetTextureAlphaMod(texture, modulation.a);
-
         Renderer* renderer = pass->GetRenderer();
         
         // Vertices for rendering
@@ -242,11 +237,23 @@ namespace Ossium
             | BGFX_STATE_WRITE_RGB
             // Write alpha
             | BGFX_STATE_WRITE_A
+            // Depth testing
+            | BGFX_STATE_WRITE_Z
+            | BGFX_STATE_DEPTH_TEST_LESS
             // Alpha opacity blending
-            | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA)
-            //| BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX)
+            | OSSIUM_STANDARD_BLENDING
         );
         renderer->UpdateStateAndColor();
+
+        if (clip && clip->w > 0 && clip->h > 0)
+        {
+            // Modify UV coords to implement texture clipping
+            for (unsigned int i = 0, counti = 4; i < counti; i++)
+            {
+                vertices[i].u = ((float)clip->x / (float)widthGPU) + ((float)clip->w / (float)widthGPU) * vertices[i].u;
+                vertices[i].v = ((float)clip->y / (float)heightGPU) + ((float)clip->h / (float)heightGPU) * vertices[i].v;
+            }
+        }
 
         // Vertex buffer object
         bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
@@ -254,16 +261,6 @@ namespace Ossium
         );
         // Index buffer object
         bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
-
-        if (clip && clip->w > 0 && clip->h > 0)
-        {
-            // Modify UV coords to implement texture clipping
-            for (unsigned int i = 0, counti = 4; i < counti; i++)
-            {
-                vertices[i].u = ((widthGPU - clip->x) / widthGPU) + (clip->w / widthGPU) * vertices[i].u;
-                vertices[i].v = ((heightGPU - clip->y) / heightGPU) + (clip->h / heightGPU) * vertices[i].v;
-            }
-        }
 
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
         Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(
