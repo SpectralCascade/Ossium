@@ -331,9 +331,11 @@ namespace Ossium
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
-        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("default.vert.bin"));
-        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("default.frag.bin"));
-        bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
+        Shader vshader;
+        vshader.LoadAndInit(Shader::GetPath("default.vert"));
+        Shader fshader;
+        fshader.LoadAndInit(Shader::GetPath("default.frag"));
+        bgfx::ProgramHandle program = bgfx::createProgram(vshader.GetHandle(), fshader.GetHandle());
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
@@ -345,6 +347,8 @@ namespace Ossium
 
         // Submit the draw call
         bgfx::submit(pass->GetID(), program);
+
+        bgfx::destroy(program);
     }
 
     void Point::Draw(RenderInput* pass, SDL_Color color)
@@ -527,11 +531,9 @@ namespace Ossium
             // Depth testing
             | BGFX_STATE_WRITE_Z
             | BGFX_STATE_DEPTH_TEST_LESS
-            // Not applicable to lines really, but affects triangles
-            | BGFX_STATE_CULL_CW
             // Alpha opacity blending
-            | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA)
-            | BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX)
+            //| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA)
+            //| BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX)
         );
         renderer->UpdateStateAndColor();
 
@@ -543,9 +545,11 @@ namespace Ossium
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
-        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("default.vert.bin"));
-        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("default.frag.bin"));
-        bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
+        Shader vshader;
+        vshader.LoadAndInit(Shader::GetPath("default.vert"));
+        Shader fshader;
+        fshader.LoadAndInit(Shader::GetPath("default.frag"));
+        bgfx::ProgramHandle program = bgfx::createProgram(vshader.GetHandle(), fshader.GetHandle());
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
@@ -562,8 +566,6 @@ namespace Ossium
         bgfx::destroy(vbo);
 
         bgfx::destroy(program);
-        bgfx::destroy(fragmentShader);
-        bgfx::destroy(vertexShader);
     }
 
     void Line::Draw(RenderInput* pass, SDL_Color color)
@@ -645,9 +647,11 @@ namespace Ossium
 
         // Load the vertex and fragment shaders
         // TODO load shaders elsewhere
-        bgfx::ShaderHandle vertexShader = LoadShader(GetShaderPath("default.vert.bin"));
-        bgfx::ShaderHandle fragmentShader = LoadShader(GetShaderPath("default.frag.bin"));
-        bgfx::ProgramHandle program = bgfx::createProgram(vertexShader, fragmentShader, true);
+        Shader vshader;
+        vshader.LoadAndInit(Shader::GetPath("default.vert"));
+        Shader fshader;
+        fshader.LoadAndInit(Shader::GetPath("default.frag"));
+        bgfx::ProgramHandle program = bgfx::createProgram(vshader.GetHandle(), fshader.GetHandle());
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
@@ -659,6 +663,8 @@ namespace Ossium
         
         // Submit the draw call
         bgfx::submit(pass->GetID(), program);
+
+        bgfx::destroy(program);
     }
 
     void Rect::DrawFilled(RenderInput* pass, SDL_Color color)
