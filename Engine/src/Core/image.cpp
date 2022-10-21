@@ -216,16 +216,18 @@ namespace Ossium
 
         Renderer* renderer = pass->GetRenderer();
         
-        bool xflip = (flip & SDL_FLIP_HORIZONTAL);
-        bool yflip = (flip & SDL_FLIP_VERTICAL);
+        float xflip = (flip & SDL_FLIP_HORIZONTAL) != 0 ? 1 : 0;
+        float yflip = (flip & SDL_FLIP_VERTICAL) != 0 ? 1 : 0;
+        float notxflip = xflip == 0 ? 1 : 0;
+        float notyflip = yflip == 0 ? 1 : 0;
 
         // Vertices for rendering
         Uint32 color_mod = ColorToUint32(modulation, SDL_PIXELFORMAT_RGBA32);
         ImageVertex vertices[] = {
-            {(float)dest.x, (float)dest.y, (float)xflip, (float)yflip, color_mod},
-            {(float)dest.x, (float)dest.y + dest.h, (float)xflip, (float)!yflip, color_mod},
-            {(float)dest.x + dest.w, (float)dest.y + dest.h, (float)!xflip, (float)!yflip, color_mod},
-            {(float)dest.x + dest.w, (float)dest.y, (float)!xflip, (float)yflip, color_mod}
+            {(float)dest.x, (float)dest.y, xflip, yflip, color_mod},
+            {(float)dest.x, (float)dest.y + dest.h, xflip, notyflip, color_mod},
+            {(float)dest.x + dest.w, (float)dest.y + dest.h, notxflip, notyflip, color_mod},
+            {(float)dest.x + dest.w, (float)dest.y, notxflip, yflip, color_mod}
         };
 
         // Create index array (quad formed of two triangles)
@@ -244,7 +246,7 @@ namespace Ossium
             //| BGFX_STATE_WRITE_Z
             //| BGFX_STATE_DEPTH_TEST_LESS
             // Alpha opacity blending
-            | OSSIUM_STANDARD_BLENDING
+            | OSSIUM_BLEND_STANDARD
         );
         renderer->UpdateStateAndColor();
 
