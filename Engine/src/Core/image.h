@@ -23,6 +23,9 @@
 #include "resourcecontroller.h"
 #include "renderinput.h"
 #include "colors.h"
+#include "shader.h"
+
+#define IMAGE_FORMAT SDL_PIXELFORMAT_RGBA32
 
 namespace Ossium
 {
@@ -84,8 +87,6 @@ namespace Ossium
             SDL_RendererFlip flip = SDL_FLIP_NONE
         );
 
-        // TODO: blitting method for surfaces. Not strictly essential however, can just use SDL directly for now
-
         /// Returns the width of the image in GPU memory, or if not loaded in GPU memory, returns the width of the surface.
         int GetWidth();
         /// Returns the height of the image, or if not loaded in GPU memory, returns the height of the surface.
@@ -137,8 +138,8 @@ namespace Ossium
         bgfx::UniformHandle uniform = BGFX_INVALID_HANDLE;
 
         // TODO move shader program somewhere shared
-        bgfx::ShaderHandle shaderVertex = BGFX_INVALID_HANDLE;
-        bgfx::ShaderHandle shaderFrag = BGFX_INVALID_HANDLE;
+        Shader shaderVertex;
+        Shader shaderFragment;
         bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
 
         /// Dimensions of the GPU texture.
@@ -146,20 +147,10 @@ namespace Ossium
         int heightGPU = 0;
 
         /// The pixel format of the surface.
-        Uint32 format = SDL_PIXELFORMAT_RGBA32;
+        Uint32 format = IMAGE_FORMAT;
 
         /// GPU texture and sampler flags
         Uint64 flags;
-
-        // Vertices for rendering
-        // TODO 
-        float vertices[4][5];
-        
-        // Vertex buffer object
-        bgfx::VertexBufferHandle vbo;
-        
-        // Index buffer object
-        bgfx::IndexBufferHandle ibo;
 
     };
 

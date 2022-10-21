@@ -492,21 +492,21 @@ namespace Ossium
     }
 
     // TODO sort this out...
-    struct LineVertex
+    struct Vertex2D
     {
         float x;
         float y;
         Uint32 color0;
 
-        static void Init()
+        static bgfx::VertexLayout Layout()
         {
+            bgfx::VertexLayout layout;
             layout.begin()
                 .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
                 .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
             .end();
+            return layout;
         }
-
-        inline static bgfx::VertexLayout layout;
     };
 
     void Line::Draw(RenderInput* pass)
@@ -515,11 +515,10 @@ namespace Ossium
         
         // Create the vertices
         auto color0 = renderer->GetDrawColorUint32();
-        LineVertex vertices[] = {
+        Vertex2D vertices[] = {
             { a.x, a.y, color0 },
             { b.x, b.y, color0 }
         };
-        LineVertex::Init();
 
         renderer->SetState(0
             // Draw lines rather than triangles or points
@@ -540,7 +539,7 @@ namespace Ossium
         // Create buffers
         bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
             bgfx::copy(vertices, sizeof(vertices)),
-            LineVertex::layout
+            Vertex2D::Layout()
         );
 
         // Load the vertex and fragment shaders
@@ -553,7 +552,9 @@ namespace Ossium
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
-        Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(0, renderer->GetWidth(), renderer->GetHeight(), 0, 0, 100);
+        Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(
+            0, renderer->GetWidth(), renderer->GetHeight(), 0, 0, 100
+        );
 
         bgfx::setViewTransform(pass->GetID(), &view, &proj);
         bgfx::setVertexBuffer(0, vbo);
@@ -609,21 +610,14 @@ namespace Ossium
     void Rect::DrawFilled(RenderInput* pass)
     {
         Renderer* renderer = pass->GetRenderer();
-
-        // First, specify the layout of the data to pass to the GPU
-        bgfx::VertexLayout layout;
-        layout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-        .end();
         
         // Create the vertices
-        float color0 = (float)ColorToUint32(renderer->GetDrawColor(), SDL_PIXELFORMAT_ABGR8888);
-        float vertices[4][4] = {
-            { round(x), round(y), 0.0f, color0 },
-            { round(x + w), round(y), 0.0f, color0 },
-            { round(x + w), round(y + h), 0.0f, color0 },
-            { round(x), round(y + h), 0.0f, color0 }
+        auto color0 = renderer->GetDrawColorUint32();
+        Vertex2D vertices[] = {
+            { x, y, color0 },
+            { x + w, y, color0 },
+            { x + w, y + h, color0 },
+            { x, y + h, color0 }
         };
         // Create index array
         uint16_t indices[] = {
@@ -632,17 +626,22 @@ namespace Ossium
         };
 
         // Draw triangles
-        renderer->SetState(renderer->GetState() & (~BGFX_STATE_PT_MASK));
-        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
+        renderer->SetState(0
+            // Write colour
+            | BGFX_STATE_WRITE_RGB
+            // Write alpha
+            | BGFX_STATE_WRITE_A
+            // Depth testing
+            //| BGFX_STATE_WRITE_Z
+            //| BGFX_STATE_DEPTH_TEST_LESS
+        );
+        renderer->UpdateStateAndColor();
 
         // Create a VBO
         bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
-            bgfx::copy(vertices, sizeof(vertices)),
-            layout
+            bgfx::copy(vertices, sizeof(vertices)), Vertex2D::Layout()
         );
-
         // Create an IBO
-        // TODO: check if this is necessary for lines?
         bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 
         // Load the vertex and fragment shaders
@@ -655,7 +654,9 @@ namespace Ossium
 
         // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
-        Matrix<4, 4> proj = Matrix<4, 4>::Identity();
+        Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(
+            0, renderer->GetWidth(), renderer->GetHeight(), 0, 0, 100
+        );
 
         bgfx::setViewTransform(pass->GetID(), &view, &proj);
         bgfx::setVertexBuffer(0, vbo);
@@ -665,6 +666,8 @@ namespace Ossium
         bgfx::submit(pass->GetID(), program);
 
         bgfx::destroy(program);
+        bgfx::destroy(ibo);
+        bgfx::destroy(vbo);
     }
 
     void Rect::DrawFilled(RenderInput* pass, SDL_Color color)

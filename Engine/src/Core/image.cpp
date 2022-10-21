@@ -32,27 +32,10 @@ namespace Ossium
 
     Image::Image()
     {
-        // Create index array (quad formed of two triangles)
-        static const uint16_t indices[] = {
-            0, 1, 2, 
-            0, 2, 3
-        };
-
-        // Specify the layout of the vertex data to pass to the GPU
-        bgfx::VertexLayout layout;
-        layout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-        .end();
-
-        // Create vertex and index buffers
-        vbo = bgfx::createVertexBuffer(bgfx::makeRef(vertices, sizeof(vertices)), layout);
-        ibo = bgfx::createIndexBuffer(bgfx::makeRef(indices, sizeof(indices)));
-
         // Load shaders
-        shaderVertex = LoadShader(GetShaderPath("image.vert.bin"));
-        shaderFrag = LoadShader(GetShaderPath("image.frag.bin"));
-        shaderProgram = bgfx::createProgram(shaderVertex, shaderFrag, false);
+        shaderVertex.LoadAndInit(Shader::GetPath("image.vert"));
+        shaderFragment.LoadAndInit(Shader::GetPath("image.frag"));
+        shaderProgram = bgfx::createProgram(shaderVertex.GetHandle(), shaderFragment.GetHandle(), false);
     }
 
     Image::~Image()
@@ -61,11 +44,6 @@ namespace Ossium
         FreeSurface();
 
         bgfx::destroy(shaderProgram);
-        bgfx::destroy(shaderFrag);
-        bgfx::destroy(shaderVertex);
-
-        bgfx::destroy(ibo);
-        bgfx::destroy(vbo);
     }
 
     void Image::FreeSurface()
@@ -105,7 +83,7 @@ namespace Ossium
                 tempSurface->format->Amask
             );
             // Use this format by default
-            SetSurfaceFormat(SDL_PIXELFORMAT_RGBA32);
+            SetSurfaceFormat(IMAGE_FORMAT);
         }
         
         return tempSurface != NULL;
@@ -113,7 +91,7 @@ namespace Ossium
 
     SDL_Surface* Image::CreateEmptySurface(int w, int h, SDL_Color color)
     {
-        auto format = SDL_PIXELFORMAT_RGBA32;
+        auto format = IMAGE_FORMAT;
         SDL_Surface* emptySurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format);
         if (emptySurface != NULL && color != Colors::Transparent)
         {
@@ -143,7 +121,7 @@ namespace Ossium
             tempSurface->format->Bmask,
             tempSurface->format->Amask
         );
-        SetSurfaceFormat(SDL_PIXELFORMAT_RGBA32);
+        SetSurfaceFormat(IMAGE_FORMAT);
     }
 
     void Image::SetSurfaceFormat(Uint32 pixelFormat)
@@ -196,6 +174,27 @@ namespace Ossium
         return texture.idx != bgfx::kInvalidHandle;
     }
 
+    struct ImageVertex
+    {
+        float x;
+        float y;
+        float u;
+        float v;
+        Uint32 color;
+
+        static bgfx::VertexLayout Layout()
+        {
+            bgfx::VertexLayout layout;
+            layout.begin()
+                .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+            .end();
+            return layout;
+        }
+
+    };
+
     void Image::Render(
         RenderInput* pass,
         SDL_Rect dest,
@@ -206,12 +205,12 @@ namespace Ossium
         SDL_BlendMode blending,
         SDL_RendererFlip flip)
     {
-        if (texture.idx == bgfx::kInvalidHandle)
+        if (!bgfx::isValid(texture))
         {
             // Draw error
             // TODO draw a tiled error texture?
-            Log.Error("Texture is invalid, can't render!");
-            //Rect(dest).DrawFilled(pass, Color(255, 100, 255, 255));
+            //Log.Error("Texture is invalid, can't render!");
+            Rect(dest).DrawFilled(pass, Color(255, 100, 255, 255));
             return;
         }
 
@@ -222,59 +221,62 @@ namespace Ossium
 
         Renderer* renderer = pass->GetRenderer();
         
-        // Create the quad vertices
-        float xflip = (float)((bool)(flip & SDL_FLIP_HORIZONTAL));
-        float yflip = (float)((bool)(flip & SDL_FLIP_VERTICAL));
-        vertices[0][0] = (float)dest.x;
-        vertices[0][1] = (float)dest.y;
-        vertices[0][2] = 0;
-        vertices[0][3] = xflip;
-        vertices[0][4] = yflip;
+        // Vertices for rendering
+        Uint32 color_mod = ColorToUint32(modulation, SDL_PIXELFORMAT_RGBA32);
+        ImageVertex vertices[] = {
+            {(float)dest.x, (float)dest.y, 0, 0, color_mod},
+            {(float)dest.x, (float)dest.y + dest.h, 0, 1, color_mod},
+            {(float)dest.x + dest.w, (float)dest.y + dest.h, 1, 1, color_mod},
+            {(float)dest.x + dest.w, (float)dest.y, 1, 0, color_mod}
+        };
 
-        vertices[1][0] = (float)(dest.x + dest.w);
-        vertices[1][1] = (float)dest.y;
-        vertices[1][2] = 0;
-        vertices[1][3] = (float)!xflip;
-        vertices[1][4] = yflip;
+        // Create index array (quad formed of two triangles)
+        uint16_t indices[] = {
+            0, 1, 2,
+            0, 2, 3
+        };
 
-        vertices[2][0] = (float)(dest.x + dest.w);
-        vertices[2][1] = (float)(dest.y + dest.h);
-        vertices[2][2] = 0;
-        vertices[2][3] = (float)!xflip;
-        vertices[2][4] = (float)!yflip;
+        // Set primitive type to triangles
+        renderer->SetState(0
+            // Write colour
+            | BGFX_STATE_WRITE_RGB
+            // Write alpha
+            | BGFX_STATE_WRITE_A
+            // Alpha opacity blending
+            | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA)
+            //| BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX)
+        );
+        renderer->UpdateStateAndColor();
 
-        vertices[3][0] = (float)dest.x;
-        vertices[3][1] = (float)(dest.y + dest.h);
-        vertices[3][2] = 0;
-        vertices[3][3] = xflip;
-        vertices[3][4] = (float)!yflip;
+        // Vertex buffer object
+        bgfx::VertexBufferHandle vbo = bgfx::createVertexBuffer(
+            bgfx::copy(vertices, sizeof(vertices)), ImageVertex::Layout()
+        );
+        // Index buffer object
+        bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 
-        if (clip && clip->w > 0 && clip->h > 0)
+        /*if (clip && clip->w > 0 && clip->h > 0)
         {
             // Modify UV coords to implement texture clipping
             for (unsigned int i = 0, counti = 4; i < counti; i++)
             {
-                vertices[i][3] = ((widthGPU - clip->x) / widthGPU) + (clip->w / widthGPU) * vertices[i][3];
-                vertices[i][4] = ((heightGPU - clip->y) / heightGPU) + (clip->h / heightGPU) * vertices[i][4];
+                vertices[i].u = ((widthGPU - clip->x) / widthGPU) + (clip->w / widthGPU) * vertices[i].u;
+                vertices[i].v = ((heightGPU - clip->y) / heightGPU) + (clip->h / heightGPU) * vertices[i].v;
             }
-        }
+        }*/
 
-        // Set primitive type to triangles
-        renderer->SetState(renderer->GetState() & ~BGFX_STATE_PT_MASK);
-        bgfx::setState(renderer->GetState(), renderer->GetDrawColorUint32());
-
-        // Setup transform and projection matrix
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
         Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(
             0,
-            (float)renderer->GetHeight(),
+            renderer->GetWidth(),
+            renderer->GetHeight(),
             0,
-            (float)renderer->GetWidth(),
-            -1,
-            1
+            0,
+            100
         );
 
         bgfx::setViewTransform(pass->GetID(), &view, &proj);
+        
         bgfx::setVertexBuffer(0, vbo);
         bgfx::setIndexBuffer(ibo);
         // Set the first (and only) uniform - stage 0 - to the created sampler
@@ -282,6 +284,9 @@ namespace Ossium
 
         // Submit the draw call
         bgfx::submit(pass->GetID(), shaderProgram);
+
+        bgfx::destroy(vbo);
+        bgfx::destroy(ibo);
     }
 
     int Image::GetWidth()
