@@ -255,7 +255,7 @@ namespace Ossium
         // Index buffer object
         bgfx::IndexBufferHandle ibo = bgfx::createIndexBuffer(bgfx::copy(indices, sizeof(indices)));
 
-        /*if (clip && clip->w > 0 && clip->h > 0)
+        if (clip && clip->w > 0 && clip->h > 0)
         {
             // Modify UV coords to implement texture clipping
             for (unsigned int i = 0, counti = 4; i < counti; i++)
@@ -263,7 +263,7 @@ namespace Ossium
                 vertices[i].u = ((widthGPU - clip->x) / widthGPU) + (clip->w / widthGPU) * vertices[i].u;
                 vertices[i].v = ((heightGPU - clip->y) / heightGPU) + (clip->h / heightGPU) * vertices[i].v;
             }
-        }*/
+        }
 
         Matrix<4, 4> view = Matrix<4, 4>::Identity();
         Matrix<4, 4> proj = Matrix<4, 4>::Orthographic(
