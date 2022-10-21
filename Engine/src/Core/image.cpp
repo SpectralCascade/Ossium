@@ -216,13 +216,16 @@ namespace Ossium
 
         Renderer* renderer = pass->GetRenderer();
         
+        bool xflip = (flip & SDL_FLIP_HORIZONTAL);
+        bool yflip = (flip & SDL_FLIP_VERTICAL);
+
         // Vertices for rendering
         Uint32 color_mod = ColorToUint32(modulation, SDL_PIXELFORMAT_RGBA32);
         ImageVertex vertices[] = {
-            {(float)dest.x, (float)dest.y, 0, 0, color_mod},
-            {(float)dest.x, (float)dest.y + dest.h, 0, 1, color_mod},
-            {(float)dest.x + dest.w, (float)dest.y + dest.h, 1, 1, color_mod},
-            {(float)dest.x + dest.w, (float)dest.y, 1, 0, color_mod}
+            {(float)dest.x, (float)dest.y, (float)xflip, (float)yflip, color_mod},
+            {(float)dest.x, (float)dest.y + dest.h, (float)xflip, (float)!yflip, color_mod},
+            {(float)dest.x + dest.w, (float)dest.y + dest.h, (float)!xflip, (float)!yflip, color_mod},
+            {(float)dest.x + dest.w, (float)dest.y, (float)!xflip, (float)yflip, color_mod}
         };
 
         // Create index array (quad formed of two triangles)
