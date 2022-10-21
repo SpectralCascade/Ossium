@@ -29,7 +29,7 @@ namespace Ossium
         return "Canvas." + GetEntity()->name;
     }
 
-    int Canvas::GetViewMode()
+    bgfx::ViewMode::Enum Canvas::GetViewMode()
     {
         // TODO: Consider using Z-buffer instead for 2D GUI
         return bgfx::ViewMode::Sequential;

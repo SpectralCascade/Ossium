@@ -279,6 +279,7 @@ namespace Ossium
     void Renderer::AddInput(RenderInput* input)
     {
         input->renderView = renderViewPool->Create(viewportRect, target, input->GetRenderDebugName());
+        bgfx::setViewMode(input->renderView->GetID(), input->GetViewMode());
         input->renderer = this;
         inputs.push_back(input);
     }

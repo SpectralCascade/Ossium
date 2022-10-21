@@ -2,6 +2,7 @@
 #define RENDERINPUT_H
 
 #include <string>
+#include "bgfx/bgfx.h"
 
 namespace Ossium
 {
@@ -31,7 +32,7 @@ namespace Ossium
 
     protected:
         // Return the mode that determines draw call order, e.g. z-buffer depth or sequential rendering
-        virtual int GetViewMode();
+        virtual bgfx::ViewMode::Enum GetViewMode();
 
         // Return the associated render view
         RenderView* GetRenderView();

@@ -33,7 +33,7 @@ namespace Ossium
         std::string GetRenderDebugName();
         
         // Always returns sequential draw call order mode
-        int GetViewMode();
+        bgfx::ViewMode::Enum GetViewMode();
 
         // Render all child graphics
         void Render();
