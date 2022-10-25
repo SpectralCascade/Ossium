@@ -6,6 +6,8 @@
 
 namespace Ossium
 {
+    struct Vector3;
+
     // Base data type for all matrices
     template<unsigned int Dimensions, unsigned int Vectors, typename Enable = void>
     struct MatrixBase
@@ -348,6 +350,7 @@ namespace Ossium
             return !(*this == operand);
         }
 
+        // Matrix filled with zeroes
         inline static Matrix Zeroes()
         {
             Matrix<TotalDimensions, TotalVectors> mat;
@@ -403,6 +406,9 @@ namespace Ossium
                 }
             };
         }
+
+        // Generate a matrix oriented towards a point in world space from another point in world space
+        static Matrix<4, 4> LookAt(Vector3 from, Vector3 up, Vector3 at);
 
         // Generate a string representation of this matrix
         std::string ToString()

@@ -57,7 +57,7 @@ namespace Ossium
         dirty = true;
     }
 
-    void Text::Render(RenderInput* pass)
+    void Text::Draw(RenderInput* pass)
     {
         BoxLayout* boxLayout = entity->GetComponent<BoxLayout>();
         if (boxLayout != nullptr)

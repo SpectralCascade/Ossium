@@ -73,7 +73,7 @@ namespace Ossium
         void OnLoadFinish();
 
         /// Graphic override
-        void Render(RenderInput* pass);
+        void Draw(RenderInput* pass);
 
         bool dirty = true;
 

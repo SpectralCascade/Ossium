@@ -45,6 +45,62 @@ namespace Ossium
         );
     }
 
+    float Vector3::LengthSquared()
+    {
+        return x * x + y * y + z * z;
+    }
+
+    float Vector3::Length()
+    {
+        return sqrtf(LengthSquared());
+    }
+
+    Vector3 Vector3::Normalised()
+    {
+        if (x == 0.0f && y == 0.0f && z == 0.0f)
+        {
+            return *this;
+        }
+        return (*this) * (1.0f / Length());
+    }
+
+    void Vector3::Rotate(float pitch, float roll, float yaw)
+    {
+        (*this) = Rotation(pitch, roll, yaw);
+    }
+
+    void Vector3::RotateRad(float pitch, float roll, float yaw)
+    {
+        (*this) = RotationRad(pitch, roll, yaw);
+    }
+
+    Vector3 Vector3::Rotation(float pitch, float roll, float yaw)
+    {
+        return RotationRad(DegToRad(pitch), DegToRad(roll), DegToRad(yaw));
+    }
+
+    Vector3 Vector3::RotationRad(float roll, float pitch, float yaw)
+    {
+        // TODO optimise
+        return (
+            Matrix<3, 3>({
+                {cos(yaw),      -sin(yaw),  0           },
+                {sin(yaw),      cos(yaw),   0           },
+                {0,             0,          1           }
+            }) *
+            Matrix<3, 3>({
+                {cos(pitch),    0,          -sin(pitch) },
+                {0,             1,          0           },
+                {sin(pitch),    0,          cos(pitch)  }
+            }) *
+            Matrix<3, 3>({
+                {1,             0,          0           },
+                {0,             cos(roll),  -sin(roll)  },
+                {0,             sin(roll),  cos(roll)   }
+            })
+        ) * (*this);
+    }
+
     string Vector3::ToString()
     {
         return "(" + Utilities::ToString(x) + ", " + Utilities::ToString(y) + ", " + Utilities::ToString(z) + ")";
@@ -630,11 +686,10 @@ namespace Ossium
             | BGFX_STATE_WRITE_RGB
             // Write alpha
             | BGFX_STATE_WRITE_A
-            // Depth testing
-            //| BGFX_STATE_WRITE_Z
-            //| BGFX_STATE_DEPTH_TEST_LESS
             // Alpha opacity blending
             | OSSIUM_BLEND_STANDARD
+            // Cull backfaces
+            | BGFX_STATE_CULL_CW
         );
         renderer->UpdateStateAndColor();
 

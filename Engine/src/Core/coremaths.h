@@ -40,7 +40,8 @@ namespace Ossium
 
     struct Vector3;
 
-    /// Represents a 2D vector.
+    // Represents a 2D vector.
+    // TODO move many of these methods into Matrix as template specialisations if possible
     struct Vector2 : public Matrix<2, 1>
     {
         Vector2() = default;
@@ -100,9 +101,9 @@ namespace Ossium
         void Rotate(float degrees);
         /// Rotates the vector in radians
         void RotateRad(float radians);
-        /// Returns a vector rotated by degrees
+        /// Returns a new vector based on this vector, rotated in degrees
         Vector2 Rotation(float degrees);
-        /// Returns a vector rotated by radians
+        /// Returns a new vector based on this vector, rotated in radians
         Vector2 RotationRad(float radians);
 
         /// Returns a new vector with the biggest of each vector's components.
@@ -142,7 +143,29 @@ namespace Ossium
         Vector3(const Vector2& vec) : Matrix(Matrix<3, 1>({{vec.x, vec.y, 0}})) {}
         Vector3(const MatrixBase<3, 1>& matrix) : Matrix(Matrix<3, 1>(matrix)) {}
 
+        // Calculate the cross product of this vector with another vector
         Vector3 Cross(const Vector3& vec);
+
+        // Calculate the square magnitude of this vector
+        float LengthSquared();
+
+        // Calculate the magnitude of this vector
+        float Length();
+
+        // Calculate the normalised form of this vector
+        Vector3 Normalised();
+
+        // Rotate this vector about the origin around the x axis (pitch), y axis (roll) and z axis (yaw) in degrees
+        void Rotate(float pitch, float roll, float yaw);
+
+        // Rotate this vector about the origin around the x axis (pitch), y axis (roll) and z axis (yaw) in radians
+        void RotateRad(float pitch, float roll, float yaw);
+
+        /// Returns a rotated vector (in degrees)
+        Vector3 Rotation(float pitch, float roll, float yaw);
+
+        /// Returns a rotated vector (in radians)
+        Vector3 RotationRad(float pitch, float roll, float yaw);
 
         /// String conversion methods
         std::string ToString();

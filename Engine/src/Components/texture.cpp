@@ -29,7 +29,7 @@ namespace Ossium
 
     REGISTER_COMPONENT(Texture);
 
-    void Texture::Render(RenderInput* pass)
+    void Texture::Draw(RenderInput* pass)
     {
         if (width <= 0 || height <= 0 || (!IsEnabled() && source != nullptr))
         {

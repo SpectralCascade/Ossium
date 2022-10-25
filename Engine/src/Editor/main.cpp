@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
 
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
+// TODO update demo
 #ifdef OSSIUM_DEMO
     Vector2 origin = Vector2(640 / 2, 480 / 2);
     auto originMat = Matrix<2, 1>(

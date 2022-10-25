@@ -36,4 +36,10 @@ namespace Ossium
 
     REGISTER_ABSTRACT_COMPONENT(GraphicComponent);
 
+    ///
+    /// RenderComponent
+    ///
+
+    REGISTER_ABSTRACT_COMPONENT(RenderComponent);
+
 }

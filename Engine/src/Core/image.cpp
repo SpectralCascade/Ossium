@@ -242,11 +242,10 @@ namespace Ossium
             | BGFX_STATE_WRITE_RGB
             // Write alpha
             | BGFX_STATE_WRITE_A
-            // Depth testing
-            //| BGFX_STATE_WRITE_Z
-            //| BGFX_STATE_DEPTH_TEST_LESS
             // Alpha opacity blending
             | OSSIUM_BLEND_STANDARD
+            // Cull backfaces
+            | BGFX_STATE_CULL_CW
         );
         renderer->UpdateStateAndColor();
 

@@ -38,14 +38,25 @@ namespace Ossium
     // Forward declarations
     class Renderer;
 
-    // Anything that can be rendered should inherit from this interface and implement the Render method
+    // UI render elements should inherit from this base class
     class OSSIUM_EDL Graphic
     {
     public:
         friend class Renderer;
 
     protected:
-        virtual void Render(RenderInput* pass) = 0;
+        virtual void Draw(RenderInput* pass) = 0;
+
+    };
+
+    // Non-UI render elements should inherit from this base class
+    class OSSIUM_EDL Renderable
+    {
+    public:
+        friend class Renderer;
+
+    protected:
+        virtual void Render(RenderInput* pass, const Matrix<4, 4>& view, const Matrix<4, 4>& proj) = 0;
 
     };
 
@@ -93,6 +104,9 @@ namespace Ossium
         int GetAspectWidth();
         // Returns the aspect height
         int GetAspectHeight();
+
+        // Returns the aspect ratio
+        float GetAspectRatio();
 
         // Returns the viewport area used for rendering
         SDL_Rect GetViewportRect();

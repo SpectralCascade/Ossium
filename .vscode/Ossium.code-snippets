@@ -20,6 +20,7 @@
 		"scope": "c,cpp",
 		"prefix": "component",
 		"body": [
+			"#include \"../Core/component.h\""
 			"",
 			"namespace Ossium",
 			"{",

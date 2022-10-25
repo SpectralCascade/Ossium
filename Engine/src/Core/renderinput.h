@@ -3,6 +3,7 @@
 
 #include <string>
 #include "bgfx/bgfx.h"
+#include "matrix.h"
 
 namespace Ossium
 {

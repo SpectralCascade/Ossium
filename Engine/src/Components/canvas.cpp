@@ -49,7 +49,7 @@ namespace Ossium
                 {
                     if (graphic->IsEnabled())
                     {
-                        graphic->Render(this);
+                        graphic->Draw(this);
                     }
                 }
             }

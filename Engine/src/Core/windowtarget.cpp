@@ -36,6 +36,20 @@ namespace Ossium
             init.resolution.height = height;
             init.resolution.reset = resetFlags;
 
+            bgfx::RendererType::Enum backends[10];
+            auto numBackends = bgfx::getSupportedRenderers(sizeof(backends), backends);
+            std::string supported = "";
+            for (unsigned int i = 0; i < numBackends; i++)
+            {
+                supported += std::string(bgfx::getRendererName(backends[i])) + ", ";
+                if (backends[i] == bgfx::RendererType::Enum::OpenGL)
+                {
+                    // Use OpenGL by default where possible
+                    init.type = bgfx::RendererType::Enum::OpenGL;
+                }
+            }
+            Log.Info("Supported renderer backends are: {0}", supported);
+
             success = bgfx::init(init);
             if (!success)
             {

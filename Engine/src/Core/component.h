@@ -22,6 +22,7 @@
 namespace Ossium
 {
 
+    // General purpose component that is not rendered
     class OSSIUM_EDL Component : public BaseComponent
     {
     public:
@@ -31,12 +32,23 @@ namespace Ossium
 
     };
 
+    // General purpose component that a Canvas can render.
     class OSSIUM_EDL GraphicComponent : public Graphic, public Component
     {
     protected:
         DECLARE_ABSTRACT_COMPONENT(Component, GraphicComponent);
 
-        virtual void Render(RenderInput* pass) = 0;
+        virtual void Draw(RenderInput* pass) = 0;
+
+    };
+
+    // General purpose component that a Camera can render.
+    class OSSIUM_EDL RenderComponent : public Renderable, public Component
+    {
+    protected:
+        DECLARE_ABSTRACT_COMPONENT(Component, RenderComponent);
+
+        virtual void Render(RenderInput* pass, const Matrix<4, 4>& view, const Matrix<4, 4>& proj) = 0;
 
     };
 

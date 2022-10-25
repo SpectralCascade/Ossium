@@ -155,6 +155,11 @@ namespace Ossium
         return aspect_height;
     }
 
+    float Renderer::GetAspectRatio()
+    {
+        return (float)aspect_width / (float)aspect_height;
+    }
+
     SDL_Rect Renderer::GetViewportRect()
     {
         return viewportRect;
