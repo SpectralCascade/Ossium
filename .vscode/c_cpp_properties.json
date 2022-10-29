@@ -80,15 +80,17 @@
             "name": "Debug Editor",
             "includePath": [
                 "${workspaceFolder}/Engine/src",
-                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include",
-                "../bgfx-2022.09.12/include",
-                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include",
-                "C:/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include/SDL2",
-                "C:/SDL2/SDL2_image-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                "C:/SDL2/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include/SDL2",
-                "C:/SDL2/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include/SDL2"
+                "~/AppData/Local/Soupbuild/source/SDL2-2.0.22/i686-w64-mingw32/include",
+                "~/AppData/Local/Soupbuild/source/SDL2_mixer-2.6.2/i686-w64-mingw32/include",
+                "~/AppData/Local/Soupbuild/source/SDL2_image-2.6.2/i686-w64-mingw32/include",
+                "~/AppData/Local/Soupbuild/source/SDL2_ttf-2.20.1/i686-w64-mingw32/include",
+                "~/AppData/Local/Soupbuild/source/SDL2_net-2.2.0/i686-w64-mingw32/include",
+                "~/AppData/Local/Soupbuild/source/SDL2-2.0.22/i686-w64-mingw32/include/SDL2",
+                "~/AppData/Local/Soupbuild/source/SDL2_mixer-2.6.2/i686-w64-mingw32/include/SDL2",
+                "~/AppData/Local/Soupbuild/source/SDL2_image-2.6.2/i686-w64-mingw32/include/SDL2",
+                "~/AppData/Local/Soupbuild/source/SDL2_ttf-2.20.1/i686-w64-mingw32/include/SDL2",
+                "~/AppData/Local/Soupbuild/source/SDL2_net-2.2.0/i686-w64-mingw32/include/SDL2",
+                "~/AppData/Local/Soupbuild/source/bgfx-2022.09.12/include"
             ],
             "defines": [
                 "_DEBUG",
