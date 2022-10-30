@@ -34,7 +34,7 @@ namespace Ossium
     #define DEBUG_ASSERT(CONDITION, ...)                                                        \
             if (!(CONDITION))                                                                   \
             {                                                                                   \
-                Log.Error("Debug Assertion failure at {0}:{1} {2}", __FILE__ , __LINE__ ,##__VA_ARGS__);   \
+                Log.Error("Debug Assertion failure at {0}:{1} {2}", __FILE__ , __LINE__ , Utilities::Format(##__VA_ARGS__));   \
                 SDL_assert(CONDITION);                                                          \
             }                                                                                   \
             SDL_assert(true)
