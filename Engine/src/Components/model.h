@@ -10,6 +10,9 @@ namespace Ossium
     {
         DECLARE_BASE_SCHEMA(ModelSchema, 20);
         
+        // Resource GUIDs for the meshes
+        M(std::vector<std::string>, meshes);
+
     };
 
     // A 3D model that can be rendered, consisting of one or more meshes and materials.
@@ -20,7 +23,7 @@ namespace Ossium
         DECLARE_COMPONENT(RenderComponent, Model);
         
         // Render the model
-        void Render(RenderInput* pass);
+        void Render(RenderInput* pass, const Matrix<4, 4>& view, const Matrix<4, 4>& proj);
         
     };
     

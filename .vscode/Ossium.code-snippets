@@ -46,5 +46,24 @@
 			""
 		],
 		"description": "Create boilerplate code for a new component"
+	},
+	"Header": {
+		"scope": "c,cpp",
+		"prefix": "header",
+		"body": [
+			"#ifndef ${TM_FILENAME_BASE/(.*)/${1:/upcase}/}_H",
+			"#define ${TM_FILENAME_BASE/(.*)/${1:/upcase}/}_H",
+			"",
+			"namespace Ossium",
+			"{",
+			"\t",
+			"\t$0",
+			"\t",
+			"}",
+			"",
+			"#endif // ${TM_FILENAME_BASE/(.*)/${1:/upcase}/}_H",
+			"",
+		],
+		"description": "Create boilerplate code for a new header file"
 	}
 }
